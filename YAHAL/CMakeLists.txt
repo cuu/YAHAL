@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.7)
 
 project(YAHAL CXX)
 
-include_directories(src/util)
-include_directories(src/interface)
+include_directories(include/interface)
 include_directories(src/driver)
+include_directories(src/util)
 include_directories(${YAHAL_TARGET_INCLUDES})
 
 add_library(YAHAL STATIC

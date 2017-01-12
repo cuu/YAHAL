@@ -19,8 +19,8 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 # TI include files
 ##################
-include_directories(build/msp432/include)
-include_directories(build/msp432/include/CMSIS)
+include_directories(include/platform/msp432)
+include_directories(include/platform/msp432/CMSIS)
 
 # Compiler and Linker flags
 ###########################
