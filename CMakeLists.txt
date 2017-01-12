@@ -11,6 +11,6 @@ add_library(YAHAL STATIC
 	src/driver/cy8x95xxa_drv.cpp
 	src/driver/mcp23s17_drv.cpp
 	src/driver/st7735s_drv.cpp
-	util/byte_bitstream.cpp
+	src/util/byte_bitstream.cpp
 	${YAHAL_TARGET_SOURCES})
 
