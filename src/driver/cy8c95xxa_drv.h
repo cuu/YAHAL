@@ -55,29 +55,31 @@ class cy8c95xxa_drv : public gpio_interface {
     cy8c95xxa_drv(i2c_interface & hw, uint8_t addr);
 
     /* Basic GPIO handling */
-    void pinMode      (uint8_t port, uint8_t pin, uint16_t mode);
-    bool digitalRead  (uint8_t port, uint8_t pin);
-    void digitalWrite (uint8_t port, uint8_t pin, bool value);
+    void pinMode      (uint16_t gpio, uint16_t mode);
+    bool digitalRead  (uint16_t gpio);
+    void digitalWrite (uint16_t gpio, bool value);
 
     /* Interrupt handling */
-    void attachInterrupt (uint8_t port, uint8_t  pin,
-    					  void (*)(uint8_t port, uint8_t pin),
+    void attachInterrupt (uint16_t gpio,
+    					  void (*)(uint16_t gpio),
                           uint16_t mode);
-    void detachInterrupt (uint8_t port, uint8_t pin);
-    void enableInterrupt (uint8_t port, uint8_t pin);
-    void disableInterrupt(uint8_t port, uint8_t pin);
+    void detachInterrupt (uint16_t gpio);
+    void enableInterrupt (uint16_t gpio);
+    void disableInterrupt(uint16_t gpio);
     void handleInterrupt();
 
     // PWM stuff
     bool configPWM (uint8_t port,  uint8_t pin, CY8C95XXA::pwm_clk clk,
                     uint8_t period,uint8_t width);
     void setDivider(uint8_t div);
-    void enablePWM (uint8_t port, uint8_t pin);
-    void disablePWM(uint8_t port, uint8_t pin);
+    void enablePWM (uint16_t gpio);
+    void disablePWM(uint16_t gpio);
 
     // Config
     void sendCommand (CY8C95XXA::gpio_cmd cmd);
     void setEnableReg(CY8C95XXA::gpio_en  en);
+
+    virtual ~cy8c95xxa_drv() { }
 
   private:
     // Reference to HW interface
@@ -90,7 +92,7 @@ class cy8c95xxa_drv : public gpio_interface {
     uint8_t _pwm_mask;
 
     // interrupt handler functions
-    void   (*intHandler[8][8])(uint8_t port, uint8_t pin);
+    void   (*intHandler[8][8])(uint16_t gpio);
     uint16_t intMode[8][8];
 
     // Register access

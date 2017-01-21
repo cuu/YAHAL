@@ -41,22 +41,24 @@ class mcp23s17_drv : public gpio_interface {
     mcp23s17_drv(spi_interface & hw, uint8_t spi_addr);
 
     // Basic GPIO handling
-    void gpioMode (uint8_t port, uint8_t pin, uint16_t mode);
-    bool gpioRead (uint8_t port, uint8_t pin);
-    void gpioWrite(uint8_t port, uint8_t pin, bool value);
+    void gpioMode (uint16_t gpio, uint16_t mode);
+    bool gpioRead (uint16_t gpio);
+    void gpioWrite(uint16_t gpio, bool value);
 
     // Interrupt handling
-    void attachInterrupt (uint8_t port, uint8_t pin,
-    					  void (*)(uint8_t port, uint8_t pin), uint16_t mode);
-    void detachInterrupt (uint8_t port, uint8_t pin);
-    void enableInterrupt (uint8_t port, uint8_t pin);
-    void disableInterrupt(uint8_t port, uint8_t pin);
+    void attachInterrupt (uint16_t gpio,
+    					  void (*)(uint16_t gpio), uint16_t mode);
+    void detachInterrupt (uint16_t gpio);
+    void enableInterrupt (uint16_t gpio);
+    void disableInterrupt(uint16_t gpio);
     void handleInterrupt();
 
     // Methods to read/write the entire port
     // Only bits with '1' in the mask are processed
     uint16_t digitalReadPort (uint16_t mask = 0xffff);
     void     digitalWritePort(uint16_t value, uint16_t mask = 0xffff);
+
+    virtual ~mcp23s17_drv() { }
 
   private:
 
@@ -73,7 +75,7 @@ class mcp23s17_drv : public gpio_interface {
     uint16_t _intcon;
 
     // interrupt handler functions
-    void   (*intHandler[2][8])(uint8_t port, uint8_t pin);
+    void   (*intHandler[2][8])(uint16_t gpio);
     uint16_t intMode[2][8];
 
     // Hardware interface

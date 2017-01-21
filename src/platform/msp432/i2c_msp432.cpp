@@ -14,17 +14,17 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 	// Configure hardware characteristics
 	/////////////////////////////////////
 	if (mod==EUSCI_B0) {
-		_sda.setPortPin (1, 6);
-		_scl.setPortPin (1, 7);
+		_sda.setGpio (PORT_PIN(1, 6));
+		_scl.setGpio (PORT_PIN(1, 7));
 	} else if (mod==EUSCI_B1) {
-		_sda.setPortPin (6, 4);
-		_scl.setPortPin (6, 5);
+		_sda.setGpio (PORT_PIN(6, 4));
+		_scl.setGpio (PORT_PIN(6, 5));
 	} else if (mod==EUSCI_B2) {
-		_sda.setPortPin (3, 6);
-		_scl.setPortPin (3, 7);
+		_sda.setGpio (PORT_PIN(3, 6));
+		_scl.setGpio (PORT_PIN(3, 7));
 	} else if (mod==EUSCI_B3) {
-		_sda.setPortPin (10, 2);
-		_scl.setPortPin (10, 3);
+		_sda.setGpio (PORT_PIN(10, 2));
+		_scl.setGpio (PORT_PIN(10, 3));
 	}
 	else assert(false);
 

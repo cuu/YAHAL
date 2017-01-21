@@ -49,7 +49,9 @@ mcp23s17_drv::mcp23s17_drv(spi_interface & hw, uint8_t spi_addr)
 	writeRegister(MCP23S17::IOCON_REG, 0x4a4a);
 }
 
-void mcp23s17_drv::gpioMode(uint8_t port, uint8_t pin, uint16_t mode) {
+void mcp23s17_drv::gpioMode(uint16_t gpio, uint16_t mode) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	uint16_t mask      = (1 << (port*8 + pin));
 	uint16_t iodir_old = _iodir;
 	uint16_t gppu_old  = _gppu;
@@ -59,13 +61,16 @@ void mcp23s17_drv::gpioMode(uint8_t port, uint8_t pin, uint16_t mode) {
 		case GPIO::INPUT: {
 			_iodir |=  mask;
 			_gppu  &= ~mask;
+			break;
 		}
 		case GPIO::INPUT | GPIO::PULLUP: {
 			_iodir |=  mask;
 			_gppu  |= mask;
+			break;
 		}
 		case GPIO::OUTPUT: {
 			_iodir &= ~mask;
+			break;
 		}
 		default: {
 			assert(false);
@@ -84,13 +89,17 @@ void mcp23s17_drv::gpioMode(uint8_t port, uint8_t pin, uint16_t mode) {
 		writeRegister(MCP23S17::OLAT_REG, _olat);
 }
 
-bool mcp23s17_drv::gpioRead(uint8_t port, uint8_t pin) {
-	uint16_t mask = (1 << (port*8 + pin));
+bool mcp23s17_drv::gpioRead(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+    uint16_t mask = (1 << (port*8 + pin));
 	return readRegister(MCP23S17::GPIO_REG) & mask ? true : false;
 }
 
-void mcp23s17_drv::gpioWrite(uint8_t port, uint8_t pin, bool value) {
-	uint16_t mask = (1 << (port*8 + pin));
+void mcp23s17_drv::gpioWrite(uint16_t gpio, bool value) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+    uint16_t mask = (1 << (port*8 + pin));
 	uint16_t olat_old = _olat;
 	if (value) {
 		_olat |= mask;
@@ -101,10 +110,12 @@ void mcp23s17_drv::gpioWrite(uint8_t port, uint8_t pin, bool value) {
 		writeRegister(MCP23S17::OLAT_REG, _olat);
 }
 
-void mcp23s17_drv::attachInterrupt(uint8_t port, uint8_t  pin,
-		void (*handler)(uint8_t port, uint8_t pin),
+void mcp23s17_drv::attachInterrupt(uint16_t gpio,
+		void (*handler)(uint16_t gpio),
 		uint16_t mode) {
-	uint16_t mask      = (1 << (port*8 + pin));
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+    uint16_t mask      = (1 << (port*8 + pin));
 	uint16_t defvalold = _defval;
 	uint16_t intconold = _intcon;
 
@@ -136,16 +147,20 @@ void mcp23s17_drv::attachInterrupt(uint8_t port, uint8_t  pin,
 	if (intconold != _intcon)
 		writeRegister(MCP23S17::INTCON_REG, _intcon);
 	// finally enable the interrupt
-	enableInterrupt(port, pin);
+	enableInterrupt(gpio);
 }
 
-void mcp23s17_drv::detachInterrupt(uint8_t port, uint8_t pin) {
-	disableInterrupt(port, pin);
+void mcp23s17_drv::detachInterrupt(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+	disableInterrupt(gpio);
 	intHandler[port][pin] = 0;
 	intMode   [port][pin] = 0;
 }
 
-void mcp23s17_drv::enableInterrupt (uint8_t port, uint8_t pin) {
+void mcp23s17_drv::enableInterrupt (uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	uint16_t mask       = (1 << (port*8 + pin));
 	uint16_t gpintenold = _gpinten;
 	_gpinten |= mask;
@@ -153,8 +168,10 @@ void mcp23s17_drv::enableInterrupt (uint8_t port, uint8_t pin) {
 		writeRegister(MCP23S17::GPINTEN_REG, _gpinten);
 }
 
-void mcp23s17_drv::disableInterrupt (uint8_t port, uint8_t pin) {
-	uint16_t mask       = (1 << (port*8 + pin));
+void mcp23s17_drv::disableInterrupt (uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+    uint16_t mask       = (1 << (port*8 + pin));
 	uint16_t gpintenold = _gpinten;
 	_gpinten &= ~mask;
 	if (gpintenold != _gpinten)
@@ -173,14 +190,14 @@ void mcp23s17_drv::handleInterrupt() {
 			switch(intMode[port][pin]) {
 			case GPIO::RISING:
 				if ((intValue & mask) != 0)
-					intHandler[port][pin](port, pin);
+					intHandler[port][pin](PORT_PIN(port, pin));
 				break;
 			case GPIO::FALLING:
 				if ((intValue & mask) == 0)
-					intHandler[port][pin](port, pin);
+					intHandler[port][pin](PORT_PIN(port, pin));
 				break;
 			default:
-				intHandler[port][pin](port, pin);
+				intHandler[port][pin](PORT_PIN(port, pin));
 			}
 		}
 		mask <<= 1;

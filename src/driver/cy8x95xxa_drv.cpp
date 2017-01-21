@@ -60,7 +60,9 @@ cy8c95xxa_drv::cy8c95xxa_drv(i2c_interface & hw, uint8_t addr)
 	}
 }
 
-void cy8c95xxa_drv::pinMode(uint8_t port, uint8_t pin, uint16_t mode) {
+void cy8c95xxa_drv::pinMode(uint16_t gpio, uint16_t mode) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
 	writeRegister(CY8C95XXA::PRT_SEL_REG, port);
 
@@ -71,13 +73,13 @@ void cy8c95xxa_drv::pinMode(uint8_t port, uint8_t pin, uint16_t mode) {
 			break;
 		}
 		case GPIO::INPUT | GPIO::PULLUP: {
-			digitalWrite(port, pin, true);
+			digitalWrite(gpio, true);
 			writeRegister(CY8C95XXA::PIN_DIR_REG, 0xff, mask);
 			writeRegister(CY8C95XXA::PULLUP_REG,  0xff, mask);
 			break;
 		}
 		case GPIO::INPUT | GPIO::PULLDOWN: {
-			digitalWrite(port, pin, false);
+			digitalWrite(gpio, false);
 			writeRegister(CY8C95XXA::PIN_DIR_REG, 0xff, mask);
 			writeRegister(CY8C95XXA::PULLDN_REG,  0xff, mask);
 			break;
@@ -116,16 +118,20 @@ void cy8c95xxa_drv::pinMode(uint8_t port, uint8_t pin, uint16_t mode) {
 			assert(false);
 		}
 	}
-	if (mode & GPIO::INIT_HIGH) digitalWrite(port, pin, true);
-	if (mode & GPIO::INIT_LOW)  digitalWrite(port, pin, false);
+	if (mode & GPIO::INIT_HIGH) digitalWrite(gpio, true);
+	if (mode & GPIO::INIT_LOW)  digitalWrite(gpio, false);
 }
 
-bool cy8c95xxa_drv::digitalRead(uint8_t port, uint8_t pin) {
+bool cy8c95xxa_drv::digitalRead(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
 	return (readRegister(CY8C95XXA::INPUT_REG + port) & mask);
 }
 
-void cy8c95xxa_drv::digitalWrite(uint8_t port, uint8_t pin, bool value) {
+void cy8c95xxa_drv::digitalWrite(uint16_t gpio, bool value) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
 	uint8_t old = _output[port];
 	if (value) _output[port] |= mask;
@@ -137,29 +143,36 @@ void cy8c95xxa_drv::digitalWrite(uint8_t port, uint8_t pin, bool value) {
 
 // Interrupt handling
 /////////////////////
-void cy8c95xxa_drv::attachInterrupt (uint8_t port, uint8_t pin,
-		void (*handler)(uint8_t port, uint8_t),
-		uint16_t mode) {
-
+void cy8c95xxa_drv::attachInterrupt (uint16_t gpio,
+                                     void (*handler)(uint16_t gpio),
+                                     uint16_t mode) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert(!(mode & ~GPIO::RISING & ~GPIO::FALLING));
 	intHandler[port][pin] = handler;
 	intMode   [port][pin] = mode;
-	enableInterrupt(port, pin);
+	enableInterrupt(gpio);
 }
 
-void cy8c95xxa_drv::detachInterrupt (uint8_t port, uint8_t pin) {
-	disableInterrupt(port, pin);
+void cy8c95xxa_drv::detachInterrupt (uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+	disableInterrupt(gpio);
 	intHandler[port][pin] = 0;
 	intMode   [port][pin] = 0;
 }
 
-void cy8c95xxa_drv::enableInterrupt (uint8_t port, uint8_t pin) {
+void cy8c95xxa_drv::enableInterrupt (uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
 	writeRegister(CY8C95XXA::PRT_SEL_REG, port);
 	writeRegister(CY8C95XXA::INT_MSK_REG, 0x00, mask);
 }
 
-void cy8c95xxa_drv::disableInterrupt(uint8_t port, uint8_t pin) {
+void cy8c95xxa_drv::disableInterrupt(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
 	writeRegister(CY8C95XXA::PRT_SEL_REG, port);
 	writeRegister(CY8C95XXA::INT_MSK_REG, 0xff, mask);
@@ -184,16 +197,16 @@ void cy8c95xxa_drv::handleInterrupt() {
 			switch(intMode[port][pin]) {
 			case GPIO::RISING:
 				if (irqValue[port] & mask) {
-					intHandler[port][pin](port, pin);
+					intHandler[port][pin](PORT_PIN(port, pin));
 				}
 				break;
 			case GPIO::FALLING:
 				if (!(irqValue[port] & mask)) {
-					intHandler[port][pin](port, pin);
+					intHandler[port][pin](PORT_PIN(port, pin));
 				}
 				break;
 			case GPIO::RISING | GPIO::FALLING:
-			intHandler[port][pin](port, pin);
+			intHandler[port][pin](PORT_PIN(port, pin));
 			break;
 			default:
 				// Do nothing for all other triggers
@@ -224,15 +237,19 @@ void cy8c95xxa_drv::setDivider(uint8_t div) {
 	writeRegister(CY8C95XXA::DIVIDER_REG, div);
 }
 
-void cy8c95xxa_drv::enablePWM (uint8_t port, uint8_t pin) {
-	gpioWrite(port, pin, true); // PWM is only generated when output is HIGH
+void cy8c95xxa_drv::enablePWM (uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+	gpioWrite(gpio, true); // PWM is only generated when output is HIGH
 	uint8_t mask = (1 << pin);
 	writeRegister(CY8C95XXA::PRT_SEL_REG, port);
 	writeRegister(CY8C95XXA::SEL_PWM_REG, mask, mask);
 }
 
-void cy8c95xxa_drv::disablePWM(uint8_t port, uint8_t pin) {
-	gpioWrite (port, pin, false);
+void cy8c95xxa_drv::disablePWM(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+	gpioWrite (gpio, false);
 	uint8_t mask = (1 << pin);
 	writeRegister(CY8C95XXA::PRT_SEL_REG, port);
 	writeRegister(CY8C95XXA::SEL_PWM_REG, 0, mask);

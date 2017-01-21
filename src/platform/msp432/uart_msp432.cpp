@@ -10,10 +10,10 @@ uart_msp432::uart_msp432(EUSCI_A_Type * mod,
 
 	// Configure hardware characteristics of the 4 UART modules
 	///////////////////////////////////////////////////////////
-	if      (mod==EUSCI_A0) { _rx.setPortPin(1, 2);  _tx.setPortPin(1, 3); }
-	else if (mod==EUSCI_A1) { _rx.setPortPin(2, 2);  _tx.setPortPin(2, 3); }
-	else if (mod==EUSCI_A2) { _rx.setPortPin(3, 2);  _tx.setPortPin(3, 3); }
-	else if (mod==EUSCI_A3) { _rx.setPortPin(9, 6);  _tx.setPortPin(9, 7); }
+	if      (mod==EUSCI_A0) { _rx.setGpio(PORT_PIN(1, 2)); _tx.setGpio(PORT_PIN(1, 3)); }
+	else if (mod==EUSCI_A1) { _rx.setGpio(PORT_PIN(2, 2)); _tx.setGpio(PORT_PIN(2, 3)); }
+	else if (mod==EUSCI_A2) { _rx.setGpio(PORT_PIN(3, 2)); _tx.setGpio(PORT_PIN(3, 3)); }
+	else if (mod==EUSCI_A3) { _rx.setGpio(PORT_PIN(9, 6)); _tx.setGpio(PORT_PIN(9, 7)); }
 	else return;
 
 	// Reset CTLW0 register to default values

@@ -5,9 +5,9 @@
 //      \  / /(__)\  ) _ (  /(__)\  )(__
 //      (__)(__)(__)(_) (_)(__)(__)(____)
 //
-//    YAHAL - Another HW Abstraction Library
+//    YAHAL,  Another HW Abstraction Library
 //     Copyright (C) 2016 Andreas Terstegge
-//       BSD Licensed (see file LICENSE)
+//     BSD Licensed (see file LICENSE)
 //
 // ---------------------------------------------
 //
@@ -31,6 +31,10 @@
 #ifndef LOW
 #define LOW false
 #endif
+
+#define PORT_PIN(port, pin) ((port) << 8 | (pin))
+#define PORT(gpio) ((gpio) >> 8)
+#define PIN(gpio) ((gpio) & 0xff)
 
 namespace GPIO {
 
@@ -59,17 +63,18 @@ class gpio_interface {
 
   public:
     // Basic GPIO handling
-    virtual void gpioMode  (uint8_t port, uint8_t pin, uint16_t mode) = 0;
-    virtual bool gpioRead  (uint8_t port, uint8_t pin) = 0;
-    virtual void gpioWrite (uint8_t port, uint8_t pin, bool value) = 0;
+    virtual void gpioMode  (uint16_t gpio, uint16_t mode) = 0;
+    virtual bool gpioRead  (uint16_t gpio) = 0;
+    virtual void gpioWrite (uint16_t gpio, bool value) = 0;
 
     // Interrupt handling
-    virtual void gpioAttachIrq (uint8_t port, uint8_t pin,
-    							void (*handler)(uint8_t port, uint8_t pin),
+    virtual void gpioAttachIrq (uint16_t gpio,
+    							void (*handler)(uint16_t gpio),
                                 uint16_t irq_mode) = 0;
-    virtual void gpioDetachIrq (uint8_t port, uint8_t pin) = 0;
-    virtual void gpioEnableIrq (uint8_t port, uint8_t pin) = 0;
-    virtual void gpioDisableIrq(uint8_t port, uint8_t pin) = 0;
+    virtual void gpioDetachIrq (uint16_t gpio) = 0;
+    virtual void gpioEnableIrq (uint16_t gpio) = 0;
+    virtual void gpioDisableIrq(uint16_t gpio) = 0;
+
 };
 
 // This small wrapper class provides GPIO
@@ -78,42 +83,40 @@ class gpio_interface {
 class gpio_pin {
   public:
 	gpio_pin(gpio_interface & interf)
-    : _interf(interf) { }
+    : _interf(interf), _gpio(0) { }
 
-	gpio_pin(gpio_interface & interf, uint8_t port, uint8_t pin)
-	: _interf(interf), _port(port), _pin(pin) { }
+	gpio_pin(gpio_interface & interf, uint16_t gpio)
+	: _interf(interf), _gpio(gpio) { }
 
-	inline void setPortPin(uint8_t port, uint8_t pin) {
-		_port = port;
-		_pin  = pin;
+	inline void setGpio(uint16_t gpio) {
+		_gpio = gpio;
 	}
 	inline void gpioMode(uint16_t mode) {
-		_interf.gpioMode(_port, _pin, mode);
+		_interf.gpioMode(_gpio, mode);
 	}
 	inline bool gpioRead() {
-		return _interf.gpioRead (_port, _pin);
+		return _interf.gpioRead (_gpio);
 	}
 	inline void gpioWrite(bool val) {
-		_interf.gpioWrite(_port, _pin, val);
+		_interf.gpioWrite(_gpio, val);
 	}
-	inline void gpioAttachIrq (void (*handler)(uint8_t port, uint8_t pin),
+	inline void gpioAttachIrq (void (*handler)(uint16_t gpio),
 							   uint16_t irq_mode)  {
-		_interf.gpioAttachIrq(_port, _pin, handler, irq_mode);
+		_interf.gpioAttachIrq(_gpio, handler, irq_mode);
 	}
     inline void gpioDetachIrq() {
-    	_interf.gpioDetachIrq(_port, _pin);
+    	_interf.gpioDetachIrq(_gpio);
     }
     inline void gpioEnableIrq() {
-    	_interf.gpioEnableIrq(_port, _pin);
+    	_interf.gpioEnableIrq(_gpio);
     }
     inline void gpioDisableIrq() {
-    	_interf.gpioDisableIrq(_port, _pin);
+    	_interf.gpioDisableIrq(_gpio);
     }
 
   protected:
 	gpio_interface & _interf;
-	uint8_t          _port;
-	uint8_t          _pin;
+	uint16_t         _gpio;
 };
 
 #endif // _GPIO_INTERFACE_H_

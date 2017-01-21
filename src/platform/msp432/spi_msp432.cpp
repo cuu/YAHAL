@@ -18,25 +18,25 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
 	// Configure hardware characteristics of the 4 A-type modules
 	/////////////////////////////////////////////////////////////
 	if (mod==EUSCI_A0_SPI) {
-		_ste.setPortPin (1, 0);
-		_clk.setPortPin (1, 1);
-		_miso.setPortPin(1, 2);
-		_mosi.setPortPin(1, 3);
+		_ste.setGpio (PORT_PIN(1, 0));
+		_clk.setGpio (PORT_PIN(1, 1));
+		_miso.setGpio(PORT_PIN(1, 2));
+		_mosi.setGpio(PORT_PIN(1, 3));
 	} else if (mod==EUSCI_A1_SPI) {
-		_ste.setPortPin (2, 0);
-		_clk.setPortPin (2, 1);
-		_miso.setPortPin(2, 2);
-		_mosi.setPortPin(2, 3);
+		_ste.setGpio (PORT_PIN(2, 0));
+		_clk.setGpio (PORT_PIN(2, 1));
+		_miso.setGpio(PORT_PIN(2, 2));
+		_mosi.setGpio(PORT_PIN(2, 3));
 	} else if (mod==EUSCI_A2_SPI) {
-		_ste.setPortPin (3, 0);
-		_clk.setPortPin (3, 1);
-		_miso.setPortPin(3, 2);
-		_mosi.setPortPin(3, 3);
+		_ste.setGpio (PORT_PIN(3, 0));
+		_clk.setGpio (PORT_PIN(3, 1));
+		_miso.setGpio(PORT_PIN(3, 2));
+		_mosi.setGpio(PORT_PIN(3, 3));
 	} else if (mod==EUSCI_A3_SPI) {
-		_ste.setPortPin (9, 4);
-		_clk.setPortPin (9, 5);
-		_miso.setPortPin(9, 6);
-		_mosi.setPortPin(9, 7);
+		_ste.setGpio (PORT_PIN(9, 4));
+		_clk.setGpio (PORT_PIN(9, 5));
+		_miso.setGpio(PORT_PIN(9, 6));
+		_mosi.setGpio(PORT_PIN(9, 7));
 	}
 	else assert(false);
     spi_init();
@@ -52,25 +52,25 @@ spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin & cs,
 	// Configure hardware characteristics of the 4 B-type modules
 	/////////////////////////////////////////////////////////////
 	if (mod==EUSCI_B0_SPI) {
-		_ste.setPortPin (1, 4);
-		_clk.setPortPin (1, 5);
-		_miso.setPortPin(1, 7);
-		_mosi.setPortPin(1, 6);
+		_ste.setGpio (PORT_PIN(1, 4));
+		_clk.setGpio (PORT_PIN(1, 5));
+		_miso.setGpio(PORT_PIN(1, 7));
+		_mosi.setGpio(PORT_PIN(1, 6));
 	} else if (mod==EUSCI_B1_SPI) {
-		_ste.setPortPin (6, 2);
-		_clk.setPortPin (6, 3);
-		_miso.setPortPin(6, 5);
-		_mosi.setPortPin(6, 4);
+		_ste.setGpio (PORT_PIN(6, 2));
+		_clk.setGpio (PORT_PIN(6, 3));
+		_miso.setGpio(PORT_PIN(6, 5));
+		_mosi.setGpio(PORT_PIN(6, 4));
 	} else if (mod==EUSCI_B2_SPI) {
-		_ste.setPortPin (3, 4);
-		_clk.setPortPin (3, 5);
-		_miso.setPortPin(3, 7);
-		_mosi.setPortPin(3, 6);
+		_ste.setGpio (PORT_PIN(3, 4));
+		_clk.setGpio (PORT_PIN(3, 5));
+		_miso.setGpio(PORT_PIN(3, 7));
+		_mosi.setGpio(PORT_PIN(3, 6));
 	} else if (mod==EUSCI_B3_SPI) {
-		_ste.setPortPin (10, 0);
-		_clk.setPortPin (10, 1);
-		_miso.setPortPin(10, 3);
-		_mosi.setPortPin(10, 2);
+		_ste.setGpio (PORT_PIN(10, 0));
+		_clk.setGpio (PORT_PIN(10, 1));
+		_miso.setGpio(PORT_PIN(10, 3));
+		_mosi.setGpio(PORT_PIN(10, 2));
 	}
 	else assert(false);
     spi_init();

@@ -32,25 +32,33 @@ gpio_msp432::gpio_msp432() {
 		_port_base[i] += BITBAND_PERI_BASE;
 	}
 }
-void gpio_msp432::gpioMode (uint8_t port, uint8_t pin, uint16_t mode) {
-	assert((port > 0) && (port < 11) && (pin < 8));
-	setSEL (port, pin, 0);
-	setMode(port, pin, mode);
+void gpio_msp432::gpioMode (uint16_t gpio, uint16_t mode) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+    assert((port > 0) && (port < 11) && (pin < 8));
+	setSEL (gpio, 0);
+	setMode(gpio, mode);
 }
 
-bool gpio_msp432::gpioRead (uint8_t port, uint8_t pin) {
+bool gpio_msp432::gpioRead (uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert((port > 0) && (port < 11) && (pin < 8));
 	return DIO_BIT(port, pin, IN_OFS);
 }
 
-void gpio_msp432::gpioWrite(uint8_t port, uint8_t pin, bool value) {
+void gpio_msp432::gpioWrite(uint16_t gpio, bool value) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert((port > 0) && (port < 11) && (pin < 8));
 	DIO_BIT(port, pin, OUT_OFS) = value;
 }
 
-void gpio_msp432::gpioAttachIrq (uint8_t port, uint8_t pin,
-								 void (*handler)(uint8_t port, uint8_t gpio),
-								   uint16_t mode) {
+void gpio_msp432::gpioAttachIrq (uint16_t gpio,
+								 void (*handler)(uint16_t gpio),
+ 							     uint16_t mode) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert((port > 0) && (port < 7) && (pin < 8));
 	switch(mode) {
 	case GPIO::RISING: {
@@ -70,37 +78,47 @@ void gpio_msp432::gpioAttachIrq (uint8_t port, uint8_t pin,
 	for (uint32_t i=0; i < 8; ++i) {
 		DIO_BIT(port, i, IFG_OFS) = 0;
 	}
-	gpioEnableIrq(port, pin);
+	gpioEnableIrq(gpio);
 }
 
-void gpio_msp432::gpioDetachIrq(uint8_t port, uint8_t pin) {
+void gpio_msp432::gpioDetachIrq(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert((port > 0) && (port < 7) && (pin < 8));
-	gpioDisableIrq(port, pin);
+	gpioDisableIrq(gpio);
 	_intHandler[port-1][pin] = 0;
 }
 
-void gpio_msp432::gpioEnableIrq(uint8_t port, uint8_t pin) {
+void gpio_msp432::gpioEnableIrq(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert((port > 0) && (port < 7) && (pin < 8));
 	DIO_BIT(port, pin, IE_OFS) = HIGH;
 	NVIC_EnableIRQ((IRQn_Type)(34 + port));
 }
 
-void gpio_msp432::gpioDisableIrq(uint8_t port, uint8_t pin) {
+void gpio_msp432::gpioDisableIrq(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert((port > 0) && (port < 7) && (pin < 8));
 	DIO_BIT(port, pin, IE_OFS) = LOW;
 }
 
 void gpio_msp432::handleIrq(uint8_t port, uint8_t pin) {
-	_intHandler[port-1][pin](port, pin);
+	_intHandler[port-1][pin](PORT_PIN(port, pin));
 }
 
-void gpio_msp432::setSEL(uint8_t port, uint8_t pin, uint8_t mode) {
+void gpio_msp432::setSEL(uint16_t gpio, uint8_t mode) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert((port > 0) && (port < 11) && (pin < 8));
 	DIO_BIT(port, pin, SEL0_OFS) =  mode       & 0x01;
 	DIO_BIT(port, pin, SEL1_OFS) = (mode >> 1) & 0x01;
 }
 
-void gpio_msp432::setMode(uint8_t port, uint8_t pin, uint16_t mode) {
+void gpio_msp432::setMode(uint16_t gpio, uint16_t mode) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
 	assert((port > 0) && (port < 11) && (pin < 8));
 	switch (mode & ~GPIO::INIT_HIGH & ~GPIO::INIT_LOW) {
 		case GPIO::INPUT: {

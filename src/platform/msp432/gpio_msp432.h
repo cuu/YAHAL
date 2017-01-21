@@ -16,28 +16,28 @@ class gpio_msp432 : public gpio_interface {
 
     // Generic GPIO methods
     ///////////////////////
-    void gpioMode (uint8_t port, uint8_t pin, uint16_t mode);
-    bool gpioRead (uint8_t port, uint8_t pin);
-    void gpioWrite(uint8_t port, uint8_t pin, bool value);
+    void gpioMode (uint16_t gpio, uint16_t mode);
+    bool gpioRead (uint16_t gpio);
+    void gpioWrite(uint16_t gpio, bool value);
 
     // Interrupt handling
-    void gpioAttachIrq (uint8_t port, uint8_t pin,
-    			void (*)(uint8_t port, uint8_t pin), uint16_t mode);
-    void gpioDetachIrq (uint8_t port, uint8_t pin);
-    void gpioEnableIrq (uint8_t port, uint8_t pin);
-    void gpioDisableIrq(uint8_t port, uint8_t pin);
+    void gpioAttachIrq (uint16_t gpio,
+    			void (*)(uint16_t gpio), uint16_t mode);
+    void gpioDetachIrq (uint16_t gpio);
+    void gpioEnableIrq (uint16_t gpio);
+    void gpioDisableIrq(uint16_t gpio);
     void handleIrq     (uint8_t port, uint8_t pin);
 
     // MSP432 specific methods
     //////////////////////////
-    void setSEL (uint8_t port, uint8_t pin, uint8_t  sel);
-    void setMode(uint8_t port, uint8_t pin, uint16_t mode);
+    void setSEL (uint16_t gpio, uint8_t  sel);
+    void setMode(uint16_t gpio, uint16_t mode);
 
   private:
     gpio_msp432();
 
     volatile int8_t * _port_base[10];
-    void (*_intHandler[6][8])(uint8_t port, uint8_t gpio);
+    void (*_intHandler[6][8])(uint16_t gpio);
 };
 
 
@@ -48,15 +48,15 @@ class gpio_msp432_pin : public gpio_pin {
   public:
 	gpio_msp432_pin() : gpio_pin(gpio_msp432::inst) { }
 
-	gpio_msp432_pin(uint8_t port, uint8_t pin) : gpio_pin(gpio_msp432::inst) {
-		setPortPin(port, pin);
+	gpio_msp432_pin(uint16_t gpio) : gpio_pin(gpio_msp432::inst) {
+		setGpio(gpio);
 	}
 
 	inline void setSEL (uint8_t sel) {
-		gpio_msp432::inst.setSEL(_port, _pin, sel);
+		gpio_msp432::inst.setSEL(_gpio, sel);
     }
     inline void setMode(uint16_t mode) {
-    	gpio_msp432::inst.setMode(_port, _pin, mode);
+    	gpio_msp432::inst.setMode(_gpio, mode);
     }
 };
 
