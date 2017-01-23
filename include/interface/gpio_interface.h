@@ -36,6 +36,13 @@
 #define PORT(gpio) ((gpio) >> 8)
 #define PIN(gpio) ((gpio) & 0xff)
 
+// For Arduino compatibility
+#undef INPUT
+#undef OUTPUT
+#undef OUTPUT_OPEN_DRAIN
+#undef RISING
+#undef FALLING
+
 namespace GPIO {
 
   // basic gpio modes
@@ -62,7 +69,9 @@ namespace GPIO {
 class gpio_interface {
 
   public:
-    // Basic GPIO handling
+	virtual ~gpio_interface() { }
+
+	// Basic GPIO handling
     virtual void gpioMode  (uint16_t gpio, uint16_t mode) = 0;
     virtual bool gpioRead  (uint16_t gpio) = 0;
     virtual void gpioWrite (uint16_t gpio, bool value) = 0;

@@ -27,6 +27,7 @@
 #define GPIO_BASE	(MM_IO + 0x300)			// Base address of GPIO module
 #define FRC_BASE	(MM_IO + 0x600)			// Base address of FRC module
 #define RTC_BASE	(MM_IO + 0x700)			// Base address of RTC module
+#define IOMUX_BASE  (MM_IO + 0x800)			// Base address of IOMUX module
 #define WDT_BASE	(MM_IO + 0x900)			// Base address of WDT module
 #define UART1_BASE	(MM_IO + 0xf00)			// Base address of UART1 module
 
@@ -325,8 +326,88 @@ namespace SPI {
 	};
 }
 
-#define SPI0 (*(SPI::Type *) SPI0_BASE)
-#define SPI1 (*(SPI::Type *) SPI1_BASE)
+#define ESP_SPI0 (*(SPI::Type *) SPI0_BASE)
+#define ESP_SPI1 (*(SPI::Type *) SPI1_BASE)
+
+//////////////////////
+// GPIO definitions //
+//////////////////////
+
+namespace GPIO {
+
+	BEGIN_BITFIELD_TYPE(out_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RW(DATA,	 0, 16)
+		ADD_BITFIELD_MEMBER_RW(BT_SEL,	16, 16)
+	END_BITFIELD_TYPE()
+
+	BEGIN_BITFIELD_TYPE(enable_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RW(DATA,	 0, 16)
+		ADD_BITFIELD_MEMBER_RW(SDIO_SEL,16,  6)
+	END_BITFIELD_TYPE()
+
+	BEGIN_BITFIELD_TYPE(in_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RO(DATA,	  	 0, 16)
+		ADD_BITFIELD_MEMBER_RO(STRAPPING,	16, 16)
+	END_BITFIELD_TYPE()
+
+	BEGIN_BITFIELD_TYPE(pin_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RW(SOURCE,         0, 1)
+		ADD_BITFIELD_MEMBER_RW(DRIVER,         2, 1)
+		ADD_BITFIELD_MEMBER_RW(INT_TYPE,       7, 3)
+		ADD_BITFIELD_MEMBER_RW(WAKEUP_ENABLE, 10, 1)
+	END_BITFIELD_TYPE()
+
+	// values for SOURCE
+	const uint32_t SOURCE_GPIO        = 0;
+	const uint32_t SOURCE_SIGMA_DELTA = 1;
+	// values for DRIVER
+	const uint32_t DRIVER_PUSH_PULL   = 0;
+	const uint32_t DRIVER_OPEN_DRAIN  = 1;
+	// values for INT_TYPE
+	const uint32_t INT_DISABLE        = 0;
+	const uint32_t INT_RAISING_EDGE   = 1;
+	const uint32_t INT_FALLING_EDGE   = 2;
+	const uint32_t INT_BOTH_EDGES     = 3;
+	const uint32_t INT_LEVEL_LOW      = 4;
+	const uint32_t INT_LEVEL_HIGH     = 5;
+
+	BEGIN_BITFIELD_TYPE(sigmadelta_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RW(TARGET,		 0, 8)
+		ADD_BITFIELD_MEMBER_RW(PRESCALE,	 8, 8)
+		ADD_BITFIELD_MEMBER_RW(ENABLE,		16, 1)
+	END_BITFIELD_TYPE()
+
+	BEGIN_BITFIELD_TYPE(rtc_sync_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RW(PERIOD_NUM,	 0, 10)
+		ADD_BITFIELD_MEMBER_RW(CALIB_START,	 31, 1)
+	END_BITFIELD_TYPE()
+
+	BEGIN_BITFIELD_TYPE(rtc_value_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RW(CALIB_VALUE,		 0, 20)
+		ADD_BITFIELD_MEMBER_RW(CALIB_RDY_REAL,	30,  1)
+		ADD_BITFIELD_MEMBER_RW(CALIB_RDY,		31,  1)
+	END_BITFIELD_TYPE()
+
+	struct Type {
+				out_t			OUT;
+		__WO	uint32_t		OUT_DATA_W1TS;
+		__WO	uint32_t		OUT_DATA_W1TC;
+				enable_t		ENABLE;
+		__WO	uint32_t		ENABLE_W1TS;
+		__WO	uint32_t		ENABLE_W1TC;
+				in_t			IN;
+		__RW	uint32_t		STATUS;
+		__WO	uint32_t		STATUS_W1TS;
+		__WO	uint32_t		STATUS_W1TC;
+				pin_t			PIN[16];
+				sigmadelta_t	SIGMA_DELTA;
+				rtc_sync_t		RTC_CALIB_SYNC;
+				rtc_value_t		RTC_CALIB_VALUE;
+	};
+}
+
+#define ESP_GPIO (*(GPIO::Type *) GPIO_BASE)
+
 
 ////////////////////////////////////
 // Timer (FRC1, FRC2) definitions //
@@ -342,6 +423,16 @@ namespace FRC {
 		ADD_BITFIELD_MEMBER_RO(INT_STATUS,	8, 1)
 	END_BITFIELD_TYPE()
 
+	// values for CTRL.INT_TYPE bitfield
+	const uint32_t INT_TYPE_EDGE  = 0;
+	const uint32_t INT_TYPE_LEVEL = 1;
+	// values for CTRL.DIVIDER bitfield
+	const uint32_t DIVIDER_1      = 0;
+	const uint32_t DIVIDER_16     = 1;
+	const uint32_t DIVIDER_256    = 2;
+	// values for INT register
+	const uint32_t INT_CLR        = 0;
+
 	struct Type1 {
 		__RW	uint32_t	LOAD;	// 23 bit value !
 		__RO	uint32_t	COUNT;	// 23 bit value, default 0x7fffff
@@ -352,19 +443,40 @@ namespace FRC {
 	struct Type2 : public Type1 {
 		__RW	uint32_t	ALARM;
 	}; // __attribute__((packed));
-
-	// values for CTRL.INT_TYPE bitfield
-	const uint32_t INT_TYPE_EDGE  = 0;
-	const uint32_t INT_TYPE_LEVEL = 1;
-	// values for CTRL.DIVIDER bitfield
-	const uint32_t DIVIDER_1      = 0;
-	const uint32_t DIVIDER_16     = 1;
-	const uint32_t DIVIDER_256    = 2;
-	// values for INT register
-	const uint32_t INT_CLR        = 0;
 }
 
-#define FRC1 (*(FRC::Type1 *) (FRC_BASE + 0x0000))
-#define FRC2 (*(FRC::Type2 *) (FRC_BASE + 0x0020))
+#define ESP_FRC1 (*(FRC::Type1 *) (FRC_BASE + 0x0000))
+#define ESP_FRC2 (*(FRC::Type2 *) (FRC_BASE + 0x0020))
+
+namespace IOMUX {
+
+	BEGIN_BITFIELD_TYPE(conf_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RW(SPI0_CLK_EQU_SYS_CLK,	8, 1)
+		ADD_BITFIELD_MEMBER_RW(SPI1_CLK_EQU_SYS_CLK,	9, 1)
+	END_BITFIELD_TYPE()
+
+	BEGIN_BITFIELD_TYPE(mux_t, uint32_t)
+		ADD_BITFIELD_MEMBER_RW(OE,				0, 1)
+		ADD_BITFIELD_MEMBER_RW(SLEEP_OE,		1, 1)
+		ADD_BITFIELD_MEMBER_RW(SLEEP_PULLDOWN,	2, 1)
+		ADD_BITFIELD_MEMBER_RW(SLEEP_PULLUP,	3, 1)
+		ADD_BITFIELD_MEMBER_RW(PULLDOWN,		6, 1)
+		ADD_BITFIELD_MEMBER_RW(PULLUP,			7, 1)
+		ADD_BITFIELD_MEMBER_RW(FUNC,		   19, 4)
+	END_BITFIELD_TYPE()
+
+	const static uint32_t GPIO_TO_IOMUX[] = { 12,5,13,4,14,15,6,7,8,9,10,11,0,1,2,3 };
+
+	struct Type {
+				conf_t			CONF;
+				mux_t			ENTRY[16];
+
+		mux_t & operator() (int i) {
+			return ENTRY[ GPIO_TO_IOMUX[i] ];
+		}
+	};
+}
+
+#define ESP_IOMUX (*(IOMUX::Type *) IOMUX_BASE)
 
 #endif /* ESP8266EX_H_ */

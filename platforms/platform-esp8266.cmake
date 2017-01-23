@@ -20,7 +20,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 # SDK include files
 ###################
-#include_directories(${SDK_PATH}/include)
+include_directories(${SDK_PATH}/include)
 #include_directories(${SDK_PATH}/lwip/include)
 
 # Compiler and Linker flags
@@ -50,7 +50,12 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${GCC_LINK_FLAGS} ${GCC_LI
 
 # Platform sources
 ##################
-set(YAHAL_TARGET_DIR      src/platform/esp8266)
-set(YAHAL_TARGET_INCLUDES ${YAHAL_TARGET_DIR})
-set(YAHAL_TARGET_SOURCES )
+set(YAHAL_TARGET_SRC_DIR      src/platform/esp8266)
+set(YAHAL_TARGET_INC_DIR  include/platform/esp8266)
+
+set(YAHAL_TARGET_INCLUDES ${YAHAL_TARGET_SRC_DIR} ${YAHAL_TARGET_INC_DIR} )
+set(YAHAL_TARGET_SOURCES 
+	${YAHAL_TARGET_SRC_DIR}/timer_esp8266.cpp
+	${YAHAL_TARGET_SRC_DIR}/gpio_esp8266.cpp
+)
 
