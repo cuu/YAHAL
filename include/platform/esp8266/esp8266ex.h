@@ -105,7 +105,7 @@ struct BitFieldMember_RW
 // SPI (SPI0, SPI1) definitions //
 //////////////////////////////////
 
-namespace SPI {
+namespace _SPI_ {
 
 	BEGIN_BITFIELD_TYPE(cmd_t, uint32_t)
 		ADD_BITFIELD_MEMBER_RW(USR,			18, 1)
@@ -326,14 +326,17 @@ namespace SPI {
 	};
 }
 
-#define ESP_SPI0 (*(SPI::Type *) SPI0_BASE)
-#define ESP_SPI1 (*(SPI::Type *) SPI1_BASE)
+_SPI_::Type & ESP_SPI0 = (*(_SPI_::Type *) SPI0_BASE);
+_SPI_::Type & ESP_SPI1 = (*(_SPI_::Type *) SPI1_BASE);
+
+//#define SPI0 (*(ESP_SPI::Type *) SPI0_BASE)
+//#define SPI1 (*(ESP_SPI::Type *) SPI1_BASE)
 
 //////////////////////
 // GPIO definitions //
 //////////////////////
 
-namespace GPIO {
+namespace _GPIO_ {
 
 	BEGIN_BITFIELD_TYPE(out_t, uint32_t)
 		ADD_BITFIELD_MEMBER_RW(DATA,	 0, 16)
@@ -406,14 +409,15 @@ namespace GPIO {
 	};
 }
 
-#define ESP_GPIO (*(GPIO::Type *) GPIO_BASE)
+_GPIO_::Type & ESP_GPIO = (*(_GPIO_::Type *) GPIO_BASE);
+//#define GPIO (*(ESP_GPIO::Type *) GPIO_BASE)
 
 
 ////////////////////////////////////
 // Timer (FRC1, FRC2) definitions //
 ////////////////////////////////////
 
-namespace FRC {
+namespace _FRC_ {
 
 	BEGIN_BITFIELD_TYPE(frctrl_t, uint32_t)
 		ADD_BITFIELD_MEMBER_RW(INT_TYPE,	0, 1)
@@ -445,10 +449,13 @@ namespace FRC {
 	}; // __attribute__((packed));
 }
 
-#define ESP_FRC1 (*(FRC::Type1 *) (FRC_BASE + 0x0000))
-#define ESP_FRC2 (*(FRC::Type2 *) (FRC_BASE + 0x0020))
+_FRC_::Type1 & ESP_FRC1 = (*(_FRC_::Type1 *) (FRC_BASE + 0x0000));
+_FRC_::Type2 & ESP_FRC2 = (*(_FRC_::Type2 *) (FRC_BASE + 0x0020));
 
-namespace IOMUX {
+//#define ESP_FRC1 (*(FRC::Type1 *) (FRC_BASE + 0x0000))
+//#define ESP_FRC2 (*(FRC::Type2 *) (FRC_BASE + 0x0020))
+
+namespace _IOMUX_ {
 
 	BEGIN_BITFIELD_TYPE(conf_t, uint32_t)
 		ADD_BITFIELD_MEMBER_RW(SPI0_CLK_EQU_SYS_CLK,	8, 1)
@@ -477,6 +484,8 @@ namespace IOMUX {
 	};
 }
 
-#define ESP_IOMUX (*(IOMUX::Type *) IOMUX_BASE)
+_IOMUX_::Type & ESP_IOMUX = (*(_IOMUX_::Type *) IOMUX_BASE);
+
+//#define ESP_IOMUX (*(IOMUX::Type *) IOMUX_BASE)
 
 #endif /* ESP8266EX_H_ */

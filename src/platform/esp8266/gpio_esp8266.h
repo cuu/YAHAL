@@ -20,9 +20,15 @@ class gpio_esp8266 : public gpio_interface {
     void gpioDetachIrq (uint16_t gpio);
     void gpioEnableIrq (uint16_t gpio);
     void gpioDisableIrq(uint16_t gpio);
+    void handleInterrupt();
 
   private:
     gpio_esp8266();
+
+    void   (*intHandler[16])(uint16_t gpio);
+    uint16_t intMode[16];
 };
+
+void gpio_irq_handler(gpio_esp8266 *);
 
 #endif // _GPIO_ESP8266_H_

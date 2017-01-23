@@ -37,17 +37,17 @@ void timer_esp8266::setPeriod(uint32_t us, TIMER::timer_mode mode) {
 	_period_us   = us;
 	_period_load = 80 * us;
 	_divider     = 1;
-	ESP_FRC1.CTRL.DIVIDER = FRC::DIVIDER_1;
+	ESP_FRC1.CTRL.DIVIDER = _FRC_::DIVIDER_1;
 	// check if we need a divider = 16
 	if (_period_load > 0x7fffff) {
 		_period_load /= 16;
 		_divider     *= 16;
-		ESP_FRC1.CTRL.DIVIDER = FRC::DIVIDER_16;
+		ESP_FRC1.CTRL.DIVIDER = _FRC_::DIVIDER_16;
 		// even a divider = 256 ?
 		if (_period_load > 0x7fffff) {
 			_period_load /= 16;
 			_divider     *= 16;
-			ESP_FRC1.CTRL.DIVIDER = FRC::DIVIDER_256;
+			ESP_FRC1.CTRL.DIVIDER = _FRC_::DIVIDER_256;
 		}
 	}
 	// the period should be in the valid range now
@@ -60,7 +60,7 @@ uint32_t timer_esp8266::getPeriod() {
 }
 
 void timer_esp8266::setCallback(void (*f)(timer_interface *)) {
-	ESP_FRC1.CTRL.INT_TYPE = FRC::INT_TYPE_EDGE;
+	ESP_FRC1.CTRL.INT_TYPE = _FRC_::INT_TYPE_EDGE;
 	ETS_FRC_TIMER1_INTR_ATTACH(f, this);
 	TM1_EDGE_INT_ENABLE();
 	ETS_FRC1_INTR_ENABLE();

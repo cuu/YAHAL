@@ -3,25 +3,34 @@
 #include "esp8266ex.h"
 #include "assert.h"
 
-//#include "ets_sys.h"
-//extern "C" {
-//// Missing defines for ROM code
-//void ets_isr_attach(int intr, void (*handler)(gpio_interface*), void *arg);
-//void ets_isr_mask(unsigned intr);
-//void ets_isr_unmask(unsigned intr);
-//
-//}
+#include "ets_sys.h"
+extern "C" {
+// Missing defines for ROM code
+void ets_isr_attach(int intr, void (*handler)(gpio_esp8266 *), void *arg);
+void ets_isr_mask(unsigned intr);
+void ets_isr_unmask(unsigned intr);
+}
 
 gpio_esp8266 gpio_esp8266::inst;
 
-gpio_esp8266:: gpio_esp8266() { }
-gpio_esp8266::~gpio_esp8266() { }
+gpio_esp8266:: gpio_esp8266() {
+	for (int i=0; i < 16; ++i) {
+		intHandler[i] = 0;
+		intMode[i] = _GPIO_::INT_DISABLE;
+	}
+	ETS_GPIO_INTR_ATTACH(gpio_irq_handler, this);
+	ETS_INTR_ENABLE(ETS_GPIO_INUM);
+}
 
-void gpio_esp8266::gpioMode  (uint16_t gpio, uint16_t mode) {
+gpio_esp8266::~gpio_esp8266() {
+	ETS_INTR_DISABLE(ETS_GPIO_INUM);
+}
+
+void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode) {
 	assert(gpio < 16);
 
 	// Select GPIO as pin function
-	ESP_IOMUX(gpio).FUNC = (IOMUX::GPIO_TO_IOMUX[gpio] > 11) ? 1 : 4;
+	ESP_IOMUX(gpio).FUNC = (_IOMUX_::GPIO_TO_IOMUX[gpio] > 11) ? 1 : 4;
 
 	// Configure basic GPIO modes
 	if (mode & GPIO::INPUT) {
@@ -30,11 +39,11 @@ void gpio_esp8266::gpioMode  (uint16_t gpio, uint16_t mode) {
 	} else if (mode & GPIO::OUTPUT) {
 		ESP_IOMUX(gpio).OE = 1;
 		ESP_GPIO.ENABLE_W1TS = 1 << gpio;
-		ESP_GPIO.PIN[gpio].DRIVER = GPIO::DRIVER_PUSH_PULL;
+		ESP_GPIO.PIN[gpio].DRIVER = _GPIO_::DRIVER_PUSH_PULL;
 	} else if (mode & GPIO::OUTPUT_OPEN_DRAIN) {
 		ESP_IOMUX(gpio).OE = 1;
 		ESP_GPIO.ENABLE_W1TS = 1 << gpio;
-		ESP_GPIO.PIN[gpio].DRIVER = GPIO::DRIVER_OPEN_DRAIN;
+		ESP_GPIO.PIN[gpio].DRIVER = _GPIO_::DRIVER_OPEN_DRAIN;
 	} else assert(false);
 
 	ESP_IOMUX(gpio).PULLUP   = (mode & GPIO::PULLUP)   ? 1:0;
@@ -47,12 +56,12 @@ void gpio_esp8266::gpioMode  (uint16_t gpio, uint16_t mode) {
 	}
 }
 
-bool gpio_esp8266::gpioRead  (uint16_t gpio) {
+bool gpio_esp8266::gpioRead(uint16_t gpio) {
 	assert(gpio < 16);
 	return (ESP_GPIO.IN.DATA & (1 << gpio));
 }
 
-void gpio_esp8266::gpioWrite (uint16_t gpio, bool value) {
+void gpio_esp8266::gpioWrite(uint16_t gpio, bool value) {
 	assert(gpio < 16);
 	if (value) {
 		ESP_GPIO.OUT_DATA_W1TS = (1 << gpio);
@@ -61,20 +70,54 @@ void gpio_esp8266::gpioWrite (uint16_t gpio, bool value) {
 	}
 }
 
-void gpio_esp8266::gpioAttachIrq (uint16_t gpio, void (*handler)(uint16_t gpio),
-                                  uint16_t irq_mode) {
-
+void gpio_esp8266::gpioAttachIrq(uint16_t gpio, void (*handler)(uint16_t gpio),
+                                 uint16_t irq_mode) {
+	assert(gpio < 16);
+	intHandler[gpio] = handler;
+	int esp_mode = _GPIO_::INT_DISABLE;
+	switch(irq_mode) {
+	case GPIO::RISING:      esp_mode = _GPIO_::INT_RAISING_EDGE; break;
+	case GPIO::FALLING:     esp_mode = _GPIO_::INT_FALLING_EDGE; break;
+	case GPIO::RISING |
+	     GPIO::FALLING: 	esp_mode = _GPIO_::INT_BOTH_EDGES;   break;
+	case GPIO::LEVEL_HIGH:	esp_mode = _GPIO_::INT_LEVEL_HIGH;   break;
+	case GPIO::LEVEL_LOW:	esp_mode = _GPIO_::INT_LEVEL_LOW;    break;
+	default: assert(false);
+	}
+	intMode[gpio] = esp_mode;
+	ESP_GPIO.PIN[gpio].INT_TYPE = esp_mode;
 }
 
-void gpio_esp8266::gpioDetachIrq (uint16_t gpio) {
-
+void gpio_esp8266::gpioDetachIrq(uint16_t gpio) {
+	assert(gpio < 16);
+	gpioDisableIrq(gpio);
+	intMode[gpio] = _GPIO_::INT_DISABLE;
+	intHandler[gpio] = 0;
 }
 
-void gpio_esp8266::gpioEnableIrq (uint16_t gpio) {
-
+void gpio_esp8266::gpioEnableIrq(uint16_t gpio) {
+	assert(gpio < 16);
+	ESP_GPIO.PIN[gpio].INT_TYPE = intMode[gpio];
 }
 
 void gpio_esp8266::gpioDisableIrq(uint16_t gpio) {
-
+	assert(gpio < 16);
+	ESP_GPIO.PIN[gpio].INT_TYPE = _GPIO_::INT_DISABLE;
 }
 
+void gpio_esp8266::handleInterrupt() {
+	// Acknowledge all pending IRQs
+	uint16_t status = ESP_GPIO.STATUS;
+	ESP_GPIO.STATUS_W1TC = status;
+
+	// Serve all pending IRQs
+	while(uint8_t gpio = __builtin_ffs(status)) {
+		--gpio;
+		status &= ~(1 << gpio);
+		if (intHandler[gpio]) intHandler[gpio](gpio);
+	}
+}
+
+void gpio_irq_handler(gpio_esp8266 * gpio) {
+	gpio->handleInterrupt();
+}
