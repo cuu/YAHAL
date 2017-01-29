@@ -117,6 +117,8 @@ st7735s_drv::st7735s_drv(spi_interface  & spi,
     writeCommand(CMD_DISPON);
 }
 
+st7735s_drv::~st7735s_drv() { }
+
 uint16_t st7735s_drv::getSizeX() {
 	if ((_orientation == LCD::UP) ||
 		(_orientation == LCD::DOWN))

@@ -13,19 +13,22 @@ void ets_isr_unmask(unsigned intr);
 
 gpio_esp8266 gpio_esp8266::inst;
 
+ICACHE_FLASH_ATTR
 gpio_esp8266:: gpio_esp8266() {
 	for (int i=0; i < 16; ++i) {
 		intHandler[i] = 0;
-		intMode[i] = _GPIO_::INT_DISABLE;
+		intMode[i]    = _GPIO_::INT_DISABLE;
 	}
 	ETS_GPIO_INTR_ATTACH(gpio_irq_handler, this);
-	ETS_INTR_ENABLE(ETS_GPIO_INUM);
+	ETS_GPIO_INTR_ENABLE();
 }
 
+ICACHE_FLASH_ATTR
 gpio_esp8266::~gpio_esp8266() {
-	ETS_INTR_DISABLE(ETS_GPIO_INUM);
+	ETS_GPIO_INTR_DISABLE();
 }
 
+ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode) {
 	assert(gpio < 16);
 
@@ -56,11 +59,13 @@ void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode) {
 	}
 }
 
+ICACHE_FLASH_ATTR
 bool gpio_esp8266::gpioRead(uint16_t gpio) {
 	assert(gpio < 16);
 	return (ESP_GPIO.IN.DATA & (1 << gpio));
 }
 
+ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioWrite(uint16_t gpio, bool value) {
 	assert(gpio < 16);
 	if (value) {
@@ -70,6 +75,7 @@ void gpio_esp8266::gpioWrite(uint16_t gpio, bool value) {
 	}
 }
 
+ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioAttachIrq(uint16_t gpio, void (*handler)(uint16_t gpio),
                                  uint16_t irq_mode) {
 	assert(gpio < 16);
@@ -88,6 +94,7 @@ void gpio_esp8266::gpioAttachIrq(uint16_t gpio, void (*handler)(uint16_t gpio),
 	ESP_GPIO.PIN[gpio].INT_TYPE = esp_mode;
 }
 
+ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioDetachIrq(uint16_t gpio) {
 	assert(gpio < 16);
 	gpioDisableIrq(gpio);
@@ -95,16 +102,19 @@ void gpio_esp8266::gpioDetachIrq(uint16_t gpio) {
 	intHandler[gpio] = 0;
 }
 
+ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioEnableIrq(uint16_t gpio) {
 	assert(gpio < 16);
 	ESP_GPIO.PIN[gpio].INT_TYPE = intMode[gpio];
 }
 
+ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioDisableIrq(uint16_t gpio) {
 	assert(gpio < 16);
 	ESP_GPIO.PIN[gpio].INT_TYPE = _GPIO_::INT_DISABLE;
 }
 
+ICACHE_FLASH_ATTR
 void gpio_esp8266::handleInterrupt() {
 	// Acknowledge all pending IRQs
 	uint16_t status = ESP_GPIO.STATUS;
@@ -118,6 +128,7 @@ void gpio_esp8266::handleInterrupt() {
 	}
 }
 
+ICACHE_FLASH_ATTR
 void gpio_irq_handler(gpio_esp8266 * gpio) {
 	gpio->handleInterrupt();
 }

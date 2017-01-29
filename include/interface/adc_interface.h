@@ -1,5 +1,5 @@
 //
-//  gpio_interface.h
+//  adc_interface.h
 //
 //  This file is part of the YAHAL Hardware Abstraction Libray
 //
@@ -13,7 +13,7 @@
 #include <stdint.h>
 
 namespace ADC {
-  // adc modes
+  // ADC modes
   const uint16_t  ADC_8_BIT          = 0x0001;
   const uint16_t  ADC_10_BIT         = 0x0002;
   const uint16_t  ADC_12_BIT         = 0x0004;
@@ -23,9 +23,40 @@ namespace ADC {
 class adc_interface {
 
   public:
-    // Basic GPIO handling
-    virtual void     adcMode  (uint8_t channel, uint16_t mode) = 0;
-    virtual uint16_t adcRead  (uint8_t channel) = 0;
+	virtual ~adc_interface() { }
+
+    virtual void     adcMode(uint8_t channel, uint16_t mode) = 0;
+    virtual uint16_t adcReadRaw(uint8_t channel) = 0;
+    virtual float    adcReadVoltage(uint8_t channel) = 0;
+};
+
+// This small wrapper class provides ADC
+// functionality for a single channel/pin.
+
+class adc_pin {
+  public:
+	adc_pin(adc_interface & interf)
+    : _interf(interf), _channel(0) { }
+
+	adc_pin(adc_interface & interf, uint8_t c)
+	: _interf(interf), _channel(c) { }
+
+	inline void setChannel(uint8_t c) {
+		_channel = c;
+	}
+	inline void adcMode(uint16_t mode) {
+		_interf.adcMode(_channel, mode);
+	}
+	inline uint16_t adcReadRaw() {
+		return _interf.adcReadRaw(_channel);
+	}
+	inline float adcReadVoltage() {
+		return _interf.adcReadVoltage(_channel);
+	}
+
+  protected:
+	adc_interface & _interf;
+	uint8_t         _channel;
 };
 
 #endif // _ADC_INTERFACE_H_

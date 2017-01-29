@@ -26,7 +26,10 @@ include_directories(${SDK_PATH}/include)
 # Compiler and Linker flags
 ###########################
 add_definitions(-D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ )
-add_definitions(-DF_CPU=80000000L -DLWIP_OPEN_SRC -DESP8266)
+add_definitions(-DF_CPU=80000000L  -DESP8266)
+
+# Taken out because of errors
+# -DLWIP_OPEN_SRC
 
 set(GCC_DEBUG_FLAGS "-g")
 set(GCC_MISC_FLAGS  "-Wall -std=c++11")
@@ -55,6 +58,7 @@ set(YAHAL_TARGET_INC_DIR  include/platform/esp8266)
 
 set(YAHAL_TARGET_INCLUDES ${YAHAL_TARGET_SRC_DIR} ${YAHAL_TARGET_INC_DIR} )
 set(YAHAL_TARGET_SOURCES 
+	${YAHAL_TARGET_SRC_DIR}/adc_esp8266.cpp
 	${YAHAL_TARGET_SRC_DIR}/timer_esp8266.cpp
 	${YAHAL_TARGET_SRC_DIR}/gpio_esp8266.cpp
 )

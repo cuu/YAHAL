@@ -23,6 +23,8 @@ class st7735s_drv : public lcd_interface {
 				gpio_pin       & dc_pin,
 				lcd_config     & lcd);
 
+    virtual ~st7735s_drv();
+
     uint16_t getSizeX();
 	uint16_t getSizeY();
 

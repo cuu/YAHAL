@@ -326,11 +326,11 @@ namespace _SPI_ {
 	};
 }
 
-_SPI_::Type & ESP_SPI0 = (*(_SPI_::Type *) SPI0_BASE);
-_SPI_::Type & ESP_SPI1 = (*(_SPI_::Type *) SPI1_BASE);
+//_SPI_::Type & ESP_SPI0 = (*(_SPI_::Type *) SPI0_BASE);
+//_SPI_::Type & ESP_SPI1 = (*(_SPI_::Type *) SPI1_BASE);
 
-//#define SPI0 (*(ESP_SPI::Type *) SPI0_BASE)
-//#define SPI1 (*(ESP_SPI::Type *) SPI1_BASE)
+#define SPI0 (*(ESP_SPI::Type *) SPI0_BASE)
+#define SPI1 (*(ESP_SPI::Type *) SPI1_BASE)
 
 //////////////////////
 // GPIO definitions //
@@ -409,8 +409,8 @@ namespace _GPIO_ {
 	};
 }
 
-_GPIO_::Type & ESP_GPIO = (*(_GPIO_::Type *) GPIO_BASE);
-//#define GPIO (*(ESP_GPIO::Type *) GPIO_BASE)
+//_GPIO_::Type & ESP_GPIO = (*(_GPIO_::Type *) GPIO_BASE);
+#define ESP_GPIO (*(_GPIO_::Type *) GPIO_BASE)
 
 
 ////////////////////////////////////
@@ -449,11 +449,11 @@ namespace _FRC_ {
 	}; // __attribute__((packed));
 }
 
-_FRC_::Type1 & ESP_FRC1 = (*(_FRC_::Type1 *) (FRC_BASE + 0x0000));
-_FRC_::Type2 & ESP_FRC2 = (*(_FRC_::Type2 *) (FRC_BASE + 0x0020));
+//_FRC_::Type1 & ESP_FRC1 = (*(_FRC_::Type1 *) (FRC_BASE + 0x0000));
+//_FRC_::Type2 & ESP_FRC2 = (*(_FRC_::Type2 *) (FRC_BASE + 0x0020));
 
-//#define ESP_FRC1 (*(FRC::Type1 *) (FRC_BASE + 0x0000))
-//#define ESP_FRC2 (*(FRC::Type2 *) (FRC_BASE + 0x0020))
+#define ESP_FRC1 (*(_FRC_::Type1 *) (FRC_BASE + 0x0000))
+#define ESP_FRC2 (*(_FRC_::Type2 *) (FRC_BASE + 0x0020))
 
 namespace _IOMUX_ {
 
@@ -478,14 +478,14 @@ namespace _IOMUX_ {
 				conf_t			CONF;
 				mux_t			ENTRY[16];
 
-		mux_t & operator() (int i) {
-			return ENTRY[ GPIO_TO_IOMUX[i] ];
+		mux_t & operator() (int gpio) {
+			return ENTRY[ GPIO_TO_IOMUX[gpio] ];
 		}
 	};
 }
 
-_IOMUX_::Type & ESP_IOMUX = (*(_IOMUX_::Type *) IOMUX_BASE);
+//_IOMUX_::Type & ESP_IOMUX = (*(_IOMUX_::Type *) IOMUX_BASE);
 
-//#define ESP_IOMUX (*(IOMUX::Type *) IOMUX_BASE)
+#define ESP_IOMUX (*(_IOMUX_::Type *) IOMUX_BASE)
 
 #endif /* ESP8266EX_H_ */
