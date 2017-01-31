@@ -17,7 +17,7 @@ class timer_esp8266 : public timer_interface {
 	void	 setPeriod(uint32_t us, TIMER::timer_mode mode = TIMER::ONE_SHOT);
 	uint32_t getPeriod();
 
-	void	 setCallback( void (*f)(timer_interface *) );
+	void	 setCallback(void (*f)(void *), void * arg);
 
 	void	 start();
 	void	 stop();

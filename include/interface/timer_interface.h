@@ -22,7 +22,7 @@ class timer_interface {
 	virtual void	 setPeriod(uint32_t us, TIMER::timer_mode mode) = 0;
 	virtual uint32_t getPeriod() = 0;
 
-	virtual void	 setCallback( void (*f)(timer_interface *) ) = 0;
+	virtual void	 setCallback(void (*f)(void *), void * arg) = 0;
 
 	virtual void	 start() = 0;
 	virtual void	 stop()  = 0;

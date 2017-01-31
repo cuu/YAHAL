@@ -11,11 +11,10 @@
 
 #include "ets_sys.h"
 extern "C" {
-// Missing defines for ROM code
-void ets_isr_attach(int intr, void (*handler)(timer_interface*), void *arg);
-void ets_isr_mask(unsigned intr);
-void ets_isr_unmask(unsigned intr);
-
+	// Missing defines for ROM code
+	void ets_isr_attach(int intr, void (*handler)(void *), void * arg);
+	void ets_isr_mask  (unsigned intr);
+	void ets_isr_unmask(unsigned intr);
 }
 
 ICACHE_FLASH_ATTR
@@ -28,7 +27,7 @@ timer_esp8266::timer_esp8266() {
 
 ICACHE_FLASH_ATTR
 timer_esp8266::~timer_esp8266() {
-	ESP_FRC1.CTRL.value = 0;		// stop the timer and
+	ESP_FRC1.CTRL.value = 0;	// stop the timer and
 	TM1_EDGE_INT_DISABLE();		// disable the interrupts
 	ETS_FRC1_INTR_DISABLE();
 }
@@ -64,9 +63,9 @@ uint32_t timer_esp8266::getPeriod() {
 }
 
 ICACHE_FLASH_ATTR
-void timer_esp8266::setCallback(void (*f)(timer_interface *)) {
+void timer_esp8266::setCallback(void (*f)(void *), void * arg) {
 	ESP_FRC1.CTRL.INT_TYPE = _FRC_::INT_TYPE_EDGE;
-	ETS_FRC_TIMER1_INTR_ATTACH(f, this);
+	ETS_FRC_TIMER1_INTR_ATTACH(f, arg);
 	TM1_EDGE_INT_ENABLE();
 	ETS_FRC1_INTR_ENABLE();
 }

@@ -1,6 +1,6 @@
-
 #ifndef _GPIO_ESP8266_H_
 #define _GPIO_ESP8266_H_
+
 #include "gpio_interface.h"
 
 class gpio_esp8266 : public gpio_interface {

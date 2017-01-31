@@ -12,9 +12,10 @@
 #include "adc_interface.h"
 #include "timer_interface.h"
 
+void callback_helper(void * arg);
+
 class gp2y1010au0f_drv {
 public:
-	static gp2y1010au0f_drv *inst;
 
 	gp2y1010au0f_drv(adc_pin  & adc,
 				     gpio_pin & led,
@@ -23,30 +24,47 @@ public:
 
 	~gp2y1010au0f_drv();
 
-	float get_dust(uint16_t samples);
-	void  process_state(timer_interface *timer);
+	void start_measure(uint16_t measurements,
+					   void (*callback)(gp2y1010au0f_drv *));
+
+	inline float get_volt()     { return _volt;     }
+	inline float get_volt_min() { return _volt_min; }
+	inline float get_volt_max() { return _volt_max; }
+	inline float get_dust()     { return _dust;     }
 
 private:
 
-	static const uint16_t	T				= 10000;	// T is 10ms according to data sheet
-	static const uint16_t	PULSEWIDTH		= 320;		// Pulse width is 320 us
-	static const uint16_t	DELAY			= 280;		// Delay before ADC measurement
+	// Delay values in us. The pre-measurement delay should be 280us according
+	// to the data sheet, but the esp adc takes 90us to convert, so we align the
+	// _center_ of the adc 'window' to 280us and start 50us earlier...
+	static const uint16_t	T		= 10000;	// T is 10ms according to data sheet
+	static const uint16_t	DELAY	= 230;		// Delay before ADC measurement
 
-	float get_VO();
+	friend void callback_helper(void * arg);
+	void  process_state();
 	float voltage_to_dust(float VO);
 
-	enum sensor_state_t {
-		START_MEASURE, DO_MEASURE, WAIT_FOR_NEXT_MEASURE, STOP
-	};
-
-	sensor_state_t		_state;
+	// HW members: ADC, LED and timer references
 	adc_pin	 &			_adc;
-	gpio_pin &			_led;
+	gpio_pin &			_ir_led;
 	timer_interface &	_timer;
-	float				_voltage_factor;
-	float				_VO_avg;
-	uint16_t			_samples;
-	uint16_t			_sample_counter;
+
+	float				_voltage_divider;	// factor of voltage divider
+	uint32_t			_raw_sum;			// sum of all raw adc values
+	uint16_t			_measurements;		// Number of measurements to perform
+	uint16_t			_counter;	   		// Measurement counter
+	float				_volt;
+	float				_volt_min;
+	float				_volt_max;
+	float				_dust;
+	void				(*_callback)(gp2y1010au0f_drv *);
+
+	enum sensor_state_t {
+		START_MEASURE, DO_MEASURE, STOP_MEASURE
+	};
+	sensor_state_t		_state;		// The current state of the sensor
+
 };
 
 #endif /* SRC_DRIVER_GP2Y1010AU0FDRV_H_ */
+

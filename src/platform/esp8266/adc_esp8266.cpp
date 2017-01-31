@@ -19,13 +19,17 @@ void adc_esp8266::adcMode(uint8_t channel, uint16_t mode) {
 
 ICACHE_FLASH_ATTR
 uint16_t adc_esp8266::adcReadRaw(uint8_t channel) {
-	assert(channel == 0);
+//	assert(channel == 0);
 	return system_adc_read();
 }
 
 ICACHE_FLASH_ATTR
 float adc_esp8266::adcReadVoltage(uint8_t channel) {
 	assert(channel == 0);
-	return (float)system_adc_read() / 1024.0f;
+	return rawToVoltage(system_adc_read());
 }
 
+ICACHE_FLASH_ATTR
+float adc_esp8266::rawToVoltage(uint16_t raw) {
+	return (float)raw / 1023.0f;
+}
