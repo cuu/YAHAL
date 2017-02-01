@@ -14,6 +14,7 @@
 adc14_msp432 adc14_msp432::inst;
 
 adc14_msp432::adc14_msp432() {
+    _mode = 0;
 	// wait until ADC is not busy
 	while (BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_BUSY_OFS));
 	BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_ENC_OFS) = 0; // disable ADC
@@ -43,7 +44,8 @@ adc14_msp432::adc14_msp432() {
 }
 
 void adc14_msp432::adcMode  (uint8_t channel, uint16_t mode) {
-	uint16_t port_pin = (5 << 3) + 5; // A0 is on P5.5
+    _mode = mode;
+    uint16_t port_pin = (5 << 3) + 5; // A0 is on P5.5
 	if (channel > 13)
 		port_pin = (6 << 3) + 1 + 14; // A14 is on P6.1
 	if (channel > 15)
@@ -57,7 +59,7 @@ void adc14_msp432::adcMode  (uint8_t channel, uint16_t mode) {
 	gpio_msp432::inst.setSEL(PORT_PIN(port, pin), 3); // Select ADC mode
 
 	uint8_t ctl1;
-	switch(mode) {
+	switch(_mode) {
 	case ADC::ADC_8_BIT:
 		ctl1 = ADC14_CTL1_RES__8BIT;
 		break;
@@ -77,7 +79,7 @@ void adc14_msp432::adcMode  (uint8_t channel, uint16_t mode) {
 	ADC14->CTL1 |= ctl1;
 }
 
-uint16_t adc14_msp432::adcRead  (uint8_t channel) {
+uint16_t adc14_msp432::adcReadRaw(uint8_t channel) {
 	// wait until active conversion is done
 	while (BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_BUSY_OFS));
 	// set the channel
@@ -96,3 +98,17 @@ uint16_t adc14_msp432::adcRead  (uint8_t channel) {
 	return ADC14->MEM[0];
 }
 
+float adc14_msp432::adcReadVoltage(uint8_t channel) {
+    return rawToVoltage( adcReadRaw(channel) );
+}
+
+float adc14_msp432::rawToVoltage  (uint16_t raw) {
+    float voltage = 3.3f * (float)raw;
+    switch(_mode) {
+    case ADC::ADC_8_BIT:  voltage /= 255.0f;   break;
+    case ADC::ADC_10_BIT: voltage /= 1023.0f;  break;
+    case ADC::ADC_12_BIT: voltage /= 4095.0f;  break;
+    case ADC::ADC_14_BIT: voltage /= 16383.0f; break;
+    }
+    return voltage;
+}
