@@ -18,8 +18,9 @@ enum i2c_mode { READ = 0x01, WRITE = 0x00 };
 }
 
 class i2c_interface {
-
   public:
+    virtual ~i2c_interface() { }
+
     // Write len bytes from txbuf to I2C interface.
     // The number of bytes written is returned,
     // otherwise -1 in case of errors
