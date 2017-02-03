@@ -32,10 +32,8 @@ gpio_msp432::gpio_msp432() {
 		_port_base[i] += BITBAND_PERI_BASE;
 	}
 }
+
 void gpio_msp432::gpioMode (uint16_t gpio, uint16_t mode) {
-    uint8_t port = PORT(gpio);
-    uint8_t pin  = PIN (gpio);
-    assert((port > 0) && (port < 11) && (pin < 8));
 	setSEL (gpio, 0);
 	setMode(gpio, mode);
 }

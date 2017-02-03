@@ -12,6 +12,7 @@
 
 class gpio_msp432 : public gpio_interface {
   public:
+    virtual ~gpio_msp432() { }
     static gpio_msp432 inst;
 
     // Generic GPIO methods
@@ -22,7 +23,7 @@ class gpio_msp432 : public gpio_interface {
 
     // Interrupt handling
     void gpioAttachIrq (uint16_t gpio,
-    			void (*)(uint16_t gpio), uint16_t mode);
+    		   void (*)(uint16_t gpio), uint16_t mode);
     void gpioDetachIrq (uint16_t gpio);
     void gpioEnableIrq (uint16_t gpio);
     void gpioDisableIrq(uint16_t gpio);
