@@ -10,6 +10,7 @@
 
 class stdin_interface {
   public:
+    virtual ~stdin_interface() { }
 	virtual char getc() = 0;
 };
 

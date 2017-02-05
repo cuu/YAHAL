@@ -26,12 +26,12 @@ class i2c_msp432  {
 
   public:
 
-    i2c_msp432(EUSCI_B_Type *i2c,
-    		   uint16_t mode = I2C::SLAVE_7_BIT_ADDR |
+   i2c_msp432(EUSCI_B_Type *i2c,
+              uint16_t mode = I2C::SLAVE_7_BIT_ADDR |
 			                   I2C::MASTER_MODE |
 							   I2C::CLK_SMCLK);
 
-   ~i2c_msp432();
+   virtual ~i2c_msp432();
 
    int16_t write(uint16_t addr, uint8_t *txbuf, uint8_t len);
    int16_t read (uint16_t addr, uint8_t *rxbuf, uint8_t len);

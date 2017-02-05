@@ -7,11 +7,8 @@
 
 #include "soft_i2c_master.h"
 
-soft_i2c_master::soft_i2c_master(gpio_pin & sda, gpio_pin & scl, void (*delay)())
-: _sda(sda), _scl(scl), _delay(delay) {
-	// Initialize HW pins
-	_sda.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
-	_scl.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
+soft_i2c_master::soft_i2c_master(gpio_pin & sda, gpio_pin & scl, void (*delay)(), bool pullup)
+: _init(false), _sda(sda), _scl(scl), _delay(delay), _pullup(pullup) {
 }
 
 soft_i2c_master::~soft_i2c_master() {
@@ -19,18 +16,30 @@ soft_i2c_master::~soft_i2c_master() {
 	_scl.gpioMode(GPIO::INPUT);
 }
 
+void soft_i2c_master::init() {
+    uint16_t    mode =  GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
+    if (_pullup) mode |= GPIO::PULLUP;
+    // Initialize HW pins
+    _sda.gpioMode(mode);
+    _scl.gpioMode(mode);
+    _init = true;
+}
+
 int16_t soft_i2c_master::write(uint8_t addr, uint8_t *txbuf, uint8_t len) {
-	return write(addr, txbuf, len, true);
+    if (!_init) init();
+    return write(addr, txbuf, len, true);
 }
 
 int16_t soft_i2c_master::read (uint8_t addr, uint8_t *rxbuf, uint8_t len) {
-	return read(addr, rxbuf, len, true);
+    if (!_init) init();
+    return read(addr, rxbuf, len, true);
 }
 
 void soft_i2c_master::twice(uint8_t addr,
            I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
            I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) {
-	switch(m1) {
+    if (!_init) init();
+    switch(m1) {
 	case I2C::READ:	 read (addr, buf1, len1, false);
 	case I2C::WRITE: write(addr, buf1, len1, false);
 	}

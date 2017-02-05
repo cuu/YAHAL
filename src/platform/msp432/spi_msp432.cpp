@@ -6,7 +6,7 @@
  */
 
 #include "spi_msp432.h"
-#include "assert.h"
+#include "yahal_assert.h"
 
 spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
 					   uint16_t mode)
@@ -38,7 +38,7 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
 		_miso.setGpio(PORT_PIN(9, 6));
 		_mosi.setGpio(PORT_PIN(9, 7));
 	}
-	else assert(false);
+	else yahal_assert(false);
     spi_init();
 }
 
@@ -72,7 +72,7 @@ spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin & cs,
 		_miso.setGpio(PORT_PIN(10, 3));
 		_mosi.setGpio(PORT_PIN(10, 2));
 	}
-	else assert(false);
+	else yahal_assert(false);
     spi_init();
 }
 

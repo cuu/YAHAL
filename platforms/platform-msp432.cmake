@@ -31,9 +31,10 @@ set(GCC_F_FLAGS     "-ffunction-sections -fdata-sections -fno-unwind-tables -fno
 set(GCC_CXX_F_FLAGS "-fno-threadsafe-statics -fno-rtti -fno-exceptions")
 set(GCC_DEBUG_FLAGS "-g -gdwarf-3 -gstrict-dwarf")
 set(GCC_WARN_FLAGS  "-Wall -Wextra")
-#set(GCC_OPT_FLAGS   "-Os")
+set(GCC_LANG_FLAGS  "-std=c++11")
+set(GCC_OPT_FLAGS   "-Os")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_ARCH_FLAGS} ${GCC_F_FLAGS} ${GCC_CXX_F_FLAGS} ${GCC_DEBUG_FLAGS} ${GCC_WARN_FLAGS} ${GCC_OPT_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_ARCH_FLAGS} ${GCC_F_FLAGS} ${GCC_CXX_F_FLAGS} ${GCC_DEBUG_FLAGS} ${GCC_WARN_FLAGS} ${GCC_OPT_FLAGS} ${GCC_LANG_FLAGS}")
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${GCC_ARCH_FLAGS} ${GCC_F_FLAGS} ${GCC_DEBUG_FLAGS} ${GCC_WARN_FLAGS} ${GCC_OPT_FLAGS}")
 
 add_definitions(-D__MSP432P401R__ -DTARGET_IS_MSP432P4XX)

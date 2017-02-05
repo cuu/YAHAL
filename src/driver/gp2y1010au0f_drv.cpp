@@ -6,7 +6,7 @@
  */
 
 #include "gp2y1010au0f_drv.h"
-#include "assert.h"
+#include "yahal_assert.h"
 
 void callback_helper(void * arg) {
 	gp2y1010au0f_drv * sensor = static_cast<gp2y1010au0f_drv *>(arg);

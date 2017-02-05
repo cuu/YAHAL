@@ -32,16 +32,18 @@
 #define LOW false
 #endif
 
-#define PORT_PIN(port, pin) ((port) << 8 | (pin))
-#define PORT(gpio) ((gpio) >> 8)
-#define PIN(gpio) ((gpio) & 0xff)
-
 // For Arduino compatibility
 #undef INPUT
 #undef OUTPUT
 #undef OUTPUT_OPEN_DRAIN
 #undef RISING
 #undef FALLING
+
+// PORT and PIN macros for systems having
+// these concepts. Value is 0...255 each.
+#define PORT_PIN(port, pin) ((port) << 8 | (pin))
+#define PORT(gpio)          ((gpio) >> 8)
+#define PIN(gpio)           ((gpio) & 0xff)
 
 namespace GPIO {
 
@@ -83,7 +85,6 @@ class gpio_interface {
     virtual void gpioDetachIrq (uint16_t gpio) = 0;
     virtual void gpioEnableIrq (uint16_t gpio) = 0;
     virtual void gpioDisableIrq(uint16_t gpio) = 0;
-
 };
 
 // This small wrapper class provides GPIO

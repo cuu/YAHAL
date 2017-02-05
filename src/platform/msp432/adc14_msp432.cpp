@@ -9,7 +9,7 @@
 
 #include "adc14_msp432.h"
 #include "gpio_msp432.h"
-#include "assert.h"
+#include "yahal_assert.h"
 
 adc14_msp432 adc14_msp432::inst;
 
@@ -51,7 +51,7 @@ void adc14_msp432::adcMode  (uint8_t channel, uint16_t mode) {
 	if (channel > 15)
 		port_pin = (9 << 3) + 1 + 16; // A16 is on P9.1
 	if (channel > 23)
-		assert(false);
+		yahal_assert(false);
 	// Calculate the port and pin for the given ADC channel
 	port_pin -= channel;
 	uint8_t port = port_pin >>  3;

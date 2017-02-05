@@ -13,8 +13,8 @@
 // generic interface for SPI communication
 
 class spi_interface {
-
   public:
+    virtual ~spi_interface() { }
 
 	// Perform a combines read/write operation.
     // len bytes from txbuf are sent via SPI, and at

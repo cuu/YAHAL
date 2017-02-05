@@ -14,5 +14,6 @@ add_library(YAHAL STATIC
 	src/driver/soft_i2c_master.cpp
 	src/driver/st7735s_drv.cpp
 	src/util/byte_bitstream.cpp
+	src/util/std_io.cpp
 	${YAHAL_TARGET_SOURCES})
 

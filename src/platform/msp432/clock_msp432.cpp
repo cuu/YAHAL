@@ -6,7 +6,7 @@
  */
 
 #include "msp.h"
-#include "assert.h"
+#include "yahal_assert.h"
 #include <clock_msp432.h>
 
 clock_msp432::clock_msp432() {
@@ -36,7 +36,7 @@ void clock_msp432::setOscFrequency(CLKSYS::OSC clk, uint32_t hz) {
 		// DCO Configuration //
 		///////////////////////
 		case CLKSYS::DCO: {
-			assert(hz>=1000000 && hz<=64000000);
+			yahal_assert(hz>=1000000 && hz<=64000000);
 
 			int16_t maxtune04 = (int16_t)(TLV->DCOIR_MAXPOSTUNE_RSEL04);
 			int16_t mintune04 = (int16_t)(TLV->DCOIR_MAXNEGTUNE_RSEL04 | 0xffffe000);
@@ -59,7 +59,7 @@ void clock_msp432::setOscFrequency(CLKSYS::OSC clk, uint32_t hz) {
 					f_center *= 2;
 				}
 			}
-			assert(rsel < 6);
+			yahal_assert(rsel < 6);
 			// Mostly default values for DCO (internal resistor)
 			int16_t tune_int = (int16_t)(tune + 0.5f);
 			CS->CTL0 = (rsel << CS_CTL0_DCORSEL_OFS) | (tune_int & 0x1fff);
@@ -69,7 +69,7 @@ void clock_msp432::setOscFrequency(CLKSYS::OSC clk, uint32_t hz) {
 		// REFO Configuration //
 		////////////////////////
 		case CLKSYS::REFO: {
-			assert(hz==32768 || hz==128000);
+			yahal_assert(hz==32768 || hz==128000);
 			if (hz==32768) {
 				CS->CLKEN &= ~CS_CLKEN_REFOFSEL;
 			} else {
@@ -77,7 +77,7 @@ void clock_msp432::setOscFrequency(CLKSYS::OSC clk, uint32_t hz) {
 			}
 			break;
 		}
-		default: assert(false);
+		default: yahal_assert(false);
 	}
 	// lock clock system (prevent unintended access)
 	CS->KEY = 0;
@@ -133,14 +133,14 @@ uint32_t clock_msp432::getClockFrequency(CLKSYS::CLK clk) {
 	  case 3: f=getOscFrequency(CLKSYS::DCO);    break;
 	  case 4: f=getOscFrequency(CLKSYS::MODOSC); break;
 	  case 5: f=getOscFrequency(CLKSYS::HFXT);   break;
-	  default: assert(false);
+	  default: yahal_assert(false);
 	  }
 	return f >> shift;
 }
 
 
 void clock_msp432::setCLockSource(CLKSYS::CLK clk, CLKSYS::OSC osc, uint8_t div) {
-	assert ((div > 0) && (div < 129) && !(div & (div-1)));
+	yahal_assert ((div > 0) && (div < 129) && !(div & (div-1)));
 	// Unlock the clock system
 	CS->KEY = CS_KEY_VAL;
 	// Calculate the div value (0...7) representing dividing
@@ -154,7 +154,7 @@ void clock_msp432::setCLockSource(CLKSYS::CLK clk, CLKSYS::OSC osc, uint8_t div)
 	}
 	switch(clk) {
 	  case CLKSYS::ACLK: {
-		  assert(osc == CLKSYS::LFXT ||
+		  yahal_assert(osc == CLKSYS::LFXT ||
 				 osc == CLKSYS::VLO  ||
 				 osc == CLKSYS::REFO);
 		  osc_shift = CS_CTL1_SELA_OFS;
@@ -177,11 +177,11 @@ void clock_msp432::setCLockSource(CLKSYS::CLK clk, CLKSYS::OSC osc, uint8_t div)
 		  break;
 	  }
 	  case CLKSYS::BCLK: {
-		  assert(div == 1);
+		  yahal_assert(div == 1);
 		  switch(osc) {
 		    case CLKSYS::LFXT: CS->CTL1 &= ~CS_CTL1_SELB; break;
 		    case CLKSYS::REFO: CS->CTL1 |=  CS_CTL1_SELB; break;
-		    default: assert(false);
+		    default: yahal_assert(false);
 		  }
 		  break;
 	  }

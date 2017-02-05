@@ -12,7 +12,8 @@
 
 class zero_bitstream : public bitstream_interface {
 public:
-	uint16_t getNext(uint8_t n = 0) { return 0; }
+    virtual ~zero_bitstream() { }
+	uint16_t getNext(uint8_t = 0) { return 0; }
 };
 
 #endif // _ZERO_BITSTREAM_H_ */

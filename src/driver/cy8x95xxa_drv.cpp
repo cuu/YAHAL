@@ -6,7 +6,7 @@
  */
 
 #include "cy8c95xxa_drv.h"
-#include "assert.h"
+#include "yahal_assert.h"
 
 #include <iostream>
 using namespace std;
@@ -52,7 +52,7 @@ cy8c95xxa_drv::cy8c95xxa_drv(i2c_interface & hw, uint8_t addr)
 	case 0x20: _pwm_mask = 0x03; break;
 	case 0x40: _pwm_mask = 0x07; break;
 	case 0x60: _pwm_mask = 0x0f; break;
-	default: assert(false);
+	default: yahal_assert(false);
 	}
 	// read current output values
 	for (uint8_t port = 0; port < 8; ++port) {
@@ -115,7 +115,7 @@ void cy8c95xxa_drv::pinMode(uint16_t gpio, uint16_t mode) {
 			break;
 		}
 		default: {
-			assert(false);
+			yahal_assert(false);
 		}
 	}
 	if (mode & GPIO::INIT_HIGH) digitalWrite(gpio, true);
@@ -148,7 +148,7 @@ void cy8c95xxa_drv::attachInterrupt (uint16_t gpio,
                                      uint16_t mode) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
-	assert(!(mode & ~GPIO::RISING & ~GPIO::FALLING));
+	yahal_assert(!(mode & ~GPIO::RISING & ~GPIO::FALLING));
 	intHandler[port][pin] = handler;
 	intMode   [port][pin] = mode;
 	enableInterrupt(gpio);
@@ -224,7 +224,7 @@ bool cy8c95xxa_drv::configPWM (uint8_t port, uint8_t pin,
 		uint8_t period, uint8_t width) {
 	uint8_t buf[5];
 	int8_t pwm = CY8C95XXA::gpio_to_pwm[port][pin];
-	assert(pwm != -1);
+	yahal_assert(pwm != -1);
 	buf[0] = CY8C95XXA::PWM_SEL_REG;
 	buf[1] = pwm & _pwm_mask;
 	buf[2] = clk;

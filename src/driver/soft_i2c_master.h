@@ -14,7 +14,7 @@
 class soft_i2c_master : public i2c_interface {
   public:
 
-	soft_i2c_master(gpio_pin & sda, gpio_pin & scl, void (*delay)());
+	soft_i2c_master(gpio_pin & sda, gpio_pin & scl, void (*delay)(), bool pullup = false);
 	virtual ~soft_i2c_master();
 
     int16_t write(uint8_t addr, uint8_t *txbuf, uint8_t len);
@@ -34,9 +34,13 @@ class soft_i2c_master : public i2c_interface {
     int16_t write(uint8_t addr, uint8_t *txbuf, uint8_t len, bool sendStop);
     int16_t read (uint8_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop);
 
+    bool _init;
+    void init();
+
     gpio_pin & _sda;
     gpio_pin & _scl;
     void (*_delay)();
+    bool _pullup;
 };
 
 #endif /* SRC_DRIVER_SOFT_I2C_MASTER_H_ */

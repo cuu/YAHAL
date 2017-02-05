@@ -10,6 +10,15 @@
 
 #include "gpio_interface.h"
 
+extern "C" {
+void PORT1_IRQHandler(void);
+void PORT2_IRQHandler(void);
+void PORT3_IRQHandler(void);
+void PORT4_IRQHandler(void);
+void PORT5_IRQHandler(void);
+void PORT6_IRQHandler(void);
+}
+
 class gpio_msp432 : public gpio_interface {
   public:
     virtual ~gpio_msp432() { }
@@ -27,18 +36,32 @@ class gpio_msp432 : public gpio_interface {
     void gpioDetachIrq (uint16_t gpio);
     void gpioEnableIrq (uint16_t gpio);
     void gpioDisableIrq(uint16_t gpio);
-    void handleIrq     (uint8_t port, uint8_t pin);
 
     // MSP432 specific methods
     //////////////////////////
     void setSEL (uint16_t gpio, uint8_t  sel);
     void setMode(uint16_t gpio, uint16_t mode);
 
-  private:
-    gpio_msp432();
+    // IRQ handlers are our best friends
+    ////////////////////////////////////
+    friend void PORT1_IRQHandler(void);
+    friend void PORT2_IRQHandler(void);
+    friend void PORT3_IRQHandler(void);
+    friend void PORT4_IRQHandler(void);
+    friend void PORT5_IRQHandler(void);
+    friend void PORT6_IRQHandler(void);
 
+  private:
+    gpio_msp432() { }
+
+    void handleIrq(uint8_t port, uint8_t pin);
     volatile int8_t * _port_base[10];
     void (*_intHandler[6][8])(uint16_t gpio);
+
+    uint8_t _open_source[10];
+    uint8_t _open_drain [10];
+    uint8_t _pull_up    [10];
+    uint8_t _pull_down  [10];
 };
 
 

@@ -6,7 +6,7 @@
  */
 
 #include "i2c_msp432.h"
-#include "assert.h"
+#include "yahal_assert.h"
 
 i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 : _EUSCI(mod), _mode(mode)
@@ -26,7 +26,7 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 		_sda.setGpio (PORT_PIN(10, 2));
 		_scl.setGpio (PORT_PIN(10, 3));
 	}
-	else assert(false);
+	else yahal_assert(false);
 
 	// Reset CTLW0 register to default values
 	// (EUSCI is in reset state)
@@ -132,7 +132,7 @@ void i2c_msp432::twice(uint16_t addr,
 		while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
 		if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
 			send_STOP();
-			assert(false);
+			yahal_assert(false);
 		}
 		_EUSCI->TXBUF = txbuf[i];
 	}
@@ -144,7 +144,7 @@ void i2c_msp432::twice(uint16_t addr,
 		while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
 		if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
 			send_STOP();
-			assert(false);
+			yahal_assert(false);
 		}
 		rxbuf[i] = _EUSCI->RXBUF;
 	}
