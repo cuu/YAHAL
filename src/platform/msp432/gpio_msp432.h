@@ -55,7 +55,7 @@ class gpio_msp432 : public gpio_interface {
     gpio_msp432() { }
 
     void handleIrq(uint8_t port, uint8_t pin);
-    volatile int8_t * _port_base[10];
+//    volatile int8_t * _port_base[10];
     void (*_intHandler[6][8])(uint16_t gpio);
 
     uint8_t _open_source[10];

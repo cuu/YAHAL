@@ -6,6 +6,10 @@
 #include <string.h>
 #include "msp.h"
 
+extern uint32_t SystemCoreClock;
+
+void (*uart_msp432::_intHandler[4])(char) = {nullptr, nullptr, nullptr, nullptr};
+
 uart_msp432::uart_msp432(EUSCI_A_Type * mod,
 		   uint32_t    baud, UART_BITS bits,
 		   UART_PARITY par,  UART_STOP stop)
@@ -50,7 +54,7 @@ void uart_msp432::init() {
 
 	// Set baud rate (assume SMCLK is 3MHz)
 	///////////////////////////////////////
-	_EUSCI->BRW = (uint16_t)(3000000 / _baud);
+	_EUSCI->BRW = (uint16_t)(SystemCoreClock / _baud);
 
 	// Disable modulation stages
 	////////////////////////////
@@ -116,6 +120,50 @@ char uart_msp432::getc() {
 }
 
 bool uart_msp432::available() {
+    if (!_init) init();
 	return _EUSCI->IFG & EUSCI_A_IFG_RXIFG;
 }
+
+void uart_msp432::setBaudrate(uint32_t baud) {
+    _baud = baud;
+//    init();
+//    // put uart in reset state to write
+//    // baud rate register
+//    _EUSCI->CTLW0 |=  EUSCI_A_CTLW0_SWRST;
+    _EUSCI->BRW = (uint16_t)(SystemCoreClock / baud);
+//    _EUSCI->CTLW0 &= ~EUSCI_A_CTLW0_SWRST;
+}
+
+void uart_msp432::attachRxIrq( void (*handler)(char) ) {
+    if (!_init) init();
+    uint8_t index = (((uint32_t)_EUSCI) >> 10) & 0x3;
+    _intHandler[index] = handler;
+    _EUSCI->IE = EUSCI_A_IE_RXIE;
+    NVIC_EnableIRQ((IRQn_Type)(16 + index));
+}
+
+void uart_msp432::handleIrq(EUSCI_A_Type * uart) {
+    char c = uart->RXBUF;
+    uint8_t index = (((uint32_t)uart) >> 10) & 0x3;
+    if (_intHandler[index])
+        _intHandler[index](c);
+}
+
+
+// Interrupt handler for EUSCIA0..4
+///////////////////////////////////
+extern "C" {
+void EUSCIA0_IRQHandler(void) {
+    uart_msp432::handleIrq(EUSCI_A0);
+}
+void EUSCIA1_IRQHandler(void) {
+    uart_msp432::handleIrq(EUSCI_A1);
+}
+void EUSCIA2_IRQHandler(void) {
+    uart_msp432::handleIrq(EUSCI_A2);
+}
+void EUSCIA3_IRQHandler(void) {
+    uart_msp432::handleIrq(EUSCI_A3);
+}
+} // extern "C"
 

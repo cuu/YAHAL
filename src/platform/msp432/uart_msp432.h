@@ -4,6 +4,13 @@
 #include "stdout_interface.h"
 #include "msp.h"
 
+extern "C" {
+void EUSCIA0_IRQHandler(void);
+void EUSCIA1_IRQHandler(void);
+void EUSCIA2_IRQHandler(void);
+void EUSCIA3_IRQHandler(void);
+}
+
 enum UART_BITS   { _7_BITS, _8_BITS };
 enum UART_PARITY { _NO_PARITY, _EVEN_PARITY, _ODD_PARITY };
 enum UART_STOP   { _1_STOPBIT, _2_STOPBITS };
@@ -22,10 +29,21 @@ public:
 	int  puts(const char *s);
 	char getc();
 	bool available();
+	void setBaudrate(uint32_t);
+
+	void attachRxIrq( void (*)(char) );
+
+	friend void EUSCIA0_IRQHandler(void);
+	friend void EUSCIA1_IRQHandler(void);
+	friend void EUSCIA2_IRQHandler(void);
+	friend void EUSCIA3_IRQHandler(void);
 
 private:
     bool _init;
     void init();
+
+    static void handleIrq(EUSCI_A_Type *);
+    static void (*_intHandler[4])(char);
 
 	EUSCI_A_Type  * _EUSCI;
     uint32_t        _baud;
