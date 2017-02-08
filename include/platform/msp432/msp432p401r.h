@@ -45,7 +45,7 @@
 *  - ADC14->CTL0 |= ADC14_CTL0_ENC;
 *  - BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_ENC_OFS) = 1;
 *
-* File creation date: 2016-01-28
+* File creation date: 2016-08-16
 *
 ******************************************************************************/
 
@@ -59,7 +59,7 @@
  extern "C" {
 #endif
 
-#define __MSP432_HEADER_VERSION__ 2100
+#define __MSP432_HEADER_VERSION__ 2210
 
 /* Remap MSP432 intrinsics to ARM equivalents */
 #include "msp_compatibility.h"
@@ -151,6 +151,7 @@ typedef enum IRQn
   PORT4_IRQn                  = 38,     /* 54 PORT4 Interrupt */
   PORT5_IRQn                  = 39,     /* 55 PORT5 Interrupt */
   PORT6_IRQn                  = 40      /* 56 PORT6 Interrupt */
+
 } IRQn_Type;
 
 /******************************************************************************
@@ -184,6 +185,7 @@ typedef enum IRQn
 #define __MCU_HAS_EUSCI_B2__                                                     /*!< Module EUSCI_B2 is available */
 #define __MCU_HAS_EUSCI_B3__                                                     /*!< Module EUSCI_B3 is available */
 #define __MCU_HAS_FLCTL__                                                        /*!< Module FLCTL is available */
+#define __MCU_HAS_FL_BOOTOVER_MAILBOX__                                          /*!< Module FL_BOOTOVER_MAILBOX is available */
 #define __MCU_HAS_PCM__                                                          /*!< Module PCM is available */
 #define __MCU_HAS_PMAP__                                                         /*!< Module PMAP is available */
 #define __MCU_HAS_PSS__                                                          /*!< Module PSS is available */
@@ -296,6 +298,7 @@ typedef enum IRQn
 #define EUSCI_B3_BASE                         (PERIPH_BASE +0x00002C00)          /*!< Base address of module EUSCI_B3 registers */
 #define EUSCI_B3_SPI_BASE                     (PERIPH_BASE +0x00002C00)          /*!< Base address of module EUSCI_B3 registers */
 #define FLCTL_BASE                            (PERIPH_BASE +0x00011000)          /*!< Base address of module FLCTL registers */
+#define FL_BOOTOVER_MAILBOX_BASE                 ((uint32_t)0x00200000)          /*!< Base address of module FL_BOOTOVER_MAILBOX registers */
 #define PCM_BASE                              (PERIPH_BASE +0x00010000)          /*!< Base address of module PCM registers */
 #define PMAP_BASE                             (PERIPH_BASE +0x00005000)          /*!< Base address of module PMAP registers */
 #define PSS_BASE                              (PERIPH_BASE +0x00010800)          /*!< Base address of module PSS registers */
@@ -476,6 +479,7 @@ typedef struct {
 } CS_Type;
 
 /*@}*/ /* end of group CS */
+
 
 /******************************************************************************
 * DIO Registers
@@ -894,6 +898,79 @@ typedef struct {
 
 
 /******************************************************************************
+* FL_BOOTOVER_MAILBOX Registers
+******************************************************************************/
+/** @addtogroup SEC_ZONE_PARAMS MSP432P401R (FL_BOOTOVER_MAILBOX)
+  @{
+*/
+typedef struct {
+  __IO uint32_t SEC_ZONE_SECEN;                                                  /*!< IP Protection Secure Zone Enable. */
+  __IO uint32_t SEC_ZONE_START_ADDR;                                             /*!< Start address of IP protected secure zone. */
+  __IO uint32_t SEC_ZONE_LENGTH;                                                 /*!< Length of IP protected secure zone in number of bytes. */
+  __IO uint32_t SEC_ZONE_AESINIT_VECT[4];                                        /*!< IP protected secure zone 0 AES initialization vector */
+  __IO uint32_t SEC_ZONE_SECKEYS[8];                                             /*!< AES-CBC security keys. */
+  __IO uint32_t SEC_ZONE_UNENC_PWD[4];                                           /*!< Unencrypted password for authentication. */
+  __IO uint32_t SEC_ZONE_ENCUPDATE_EN;                                           /*!< IP Protected Secure Zone Encrypted In-field Update Enable */
+  __IO uint32_t SEC_ZONE_DATA_EN;                                                /*!< IP Protected Secure Zone Data Access Enable */
+  __IO uint32_t SEC_ZONE_ACK;                                                    /*!< Acknowledgment for IP Protection Secure Zone Enable Command. */
+       uint32_t RESERVED0[2];
+} SEC_ZONE_PARAMS_Type;
+
+/*@}*/ /* end of group SEC_ZONE_PARAMS */
+
+/** @addtogroup SEC_ZONE_UPDATE MSP432P401R (FL_BOOTOVER_MAILBOX)
+  @{
+*/
+typedef struct {
+  __IO uint32_t SEC_ZONE_PAYLOADADDR;                                            /*!< Start address where the payload is loaded in the device. */
+  __IO uint32_t SEC_ZONE_PAYLOADLEN;                                             /*!< Length of the payload in bytes. */
+  __IO uint32_t SEC_ZONE_UPDATE_ACK;                                             /*!< Acknowledgment for the IP Protected Secure Zone Update Command */
+       uint32_t RESERVED0;
+} SEC_ZONE_UPDATE_Type;
+
+/*@}*/ /* end of group SEC_ZONE_UPDATE */
+
+/** @addtogroup FL_BOOTOVER_MAILBOX MSP432P401R (FL_BOOTOVER_MAILBOX)
+  @{
+*/
+typedef struct {
+  __IO uint32_t MB_START;                                                        /*!< Flash MailBox start: 0x0115ACF6 */
+  __IO uint32_t CMD;                                                             /*!< Command for Boot override operations. */
+       uint32_t RESERVED0[2];
+  __IO uint32_t JTAG_SWD_LOCK_SECEN;                                             /*!< JTAG and SWD Lock Enable */
+  __IO uint32_t JTAG_SWD_LOCK_AES_INIT_VECT[4];                                  /*!< JTAG and SWD lock AES initialization vector for AES-CBC */
+  __IO uint32_t JTAG_SWD_LOCK_AES_SECKEYS[8];                                    /*!< JTAG and SWD lock AES CBC security Keys 0-7. */
+  __IO uint32_t JTAG_SWD_LOCK_UNENC_PWD[4];                                      /*!< JTAG and SWD lock unencrypted password */
+  __IO uint32_t JTAG_SWD_LOCK_ACK;                                               /*!< Acknowledgment for JTAG and SWD Lock command */
+       uint32_t RESERVED1[2];
+  SEC_ZONE_PARAMS_Type SEC_ZONE_PARAMS[4];
+  __IO uint32_t BSL_ENABLE;                                                      /*!< BSL Enable. */
+  __IO uint32_t BSL_START_ADDRESS;                                               /*!< Contains the pointer to the BSL function. */
+  __IO uint32_t BSL_PARAMETERS;                                                  /*!< BSL hardware invoke conifguration field. */
+       uint32_t RESERVED2[2];
+  __IO uint32_t BSL_ACK;                                                         /*!< Acknowledgment for the BSL Configuration Command */
+  __IO uint32_t JTAG_SWD_LOCK_ENCPAYLOADADD;                                     /*!< Start address where the payload is loaded in the device. */
+  __IO uint32_t JTAG_SWD_LOCK_ENCPAYLOADLEN;                                     /*!< Length of the encrypted payload in bytes */
+  __IO uint32_t JTAG_SWD_LOCK_DST_ADDR;                                          /*!< Destination address where the final data needs to be stored into the device. */
+  __IO uint32_t ENC_UPDATE_ACK;                                                  /*!< Acknowledgment for JTAG and SWD Lock Encrypted Update Command */
+       uint32_t RESERVED3;
+  SEC_ZONE_UPDATE_Type SEC_ZONE_UPDATE[4];                                       /*!< IP Protection Secure Zone Update */
+       uint32_t RESERVED4;
+  __IO uint32_t FACTORY_RESET_ENABLE;                                            /*!< Enable/Disable Factory Reset */
+  __IO uint32_t FACTORY_RESET_PWDEN;                                             /*!< Factory reset password enable */
+  __IO uint32_t FACTORY_RESET_PWD[4];                                            /*!< 128-bit Password for factory reset to be saved into the device. */
+  __IO uint32_t FACTORY_RESET_PARAMS_ACK;                                        /*!< Acknowledgment for the Factory Reset Params Command */
+       uint32_t RESERVED5;
+  __IO uint32_t FACTORY_RESET_PASSWORD[4];                                       /*!< 128-bit Password for factory reset. */
+  __IO uint32_t FACTORY_RESET_ACK;                                               /*!< Acknowledgment for the Factory Reset Command */
+       uint32_t RESERVED6[2];
+  __IO uint32_t MB_END;                                                          /*!< Mailbox end */
+} FL_BOOTOVER_MAILBOX_Type;
+
+/*@}*/ /* end of group FL_BOOTOVER_MAILBOX */
+
+
+/******************************************************************************
 * PCM Registers
 ******************************************************************************/
 /** @addtogroup PCM MSP432P401R (PCM)
@@ -908,6 +985,7 @@ typedef struct {
 } PCM_Type;
 
 /*@}*/ /* end of group PCM */
+
 
 /******************************************************************************
 * PMAP Registers
@@ -1085,13 +1163,13 @@ typedef struct {
   @{
 */
 typedef struct {
-  __IO uint32_t LOAD;                                                            /*!< Timer 1 Load Register */
-  __I  uint32_t VALUE;                                                           /*!< Timer 1 Current Value Register */
-  __IO uint32_t CONTROL;                                                         /*!< Timer 1 Timer Control Register */
-  __O  uint32_t INTCLR;                                                          /*!< Timer 1 Interrupt Clear Register */
-  __I  uint32_t RIS;                                                             /*!< Timer 1 Raw Interrupt Status Register */
-  __I  uint32_t MIS;                                                             /*!< Timer 1 Interrupt Status Register */
-  __IO uint32_t BGLOAD;                                                          /*!< Timer 1 Background Load Register */
+  __IO uint32_t LOAD;                                                            /*!< Timer Load Register */
+  __I  uint32_t VALUE;                                                           /*!< Timer Current Value Register */
+  __IO uint32_t CONTROL;                                                         /*!< Timer Control Register */
+  __O  uint32_t INTCLR;                                                          /*!< Timer Interrupt Clear Register */
+  __I  uint32_t RIS;                                                             /*!< Timer Raw Interrupt Status Register */
+  __I  uint32_t MIS;                                                             /*!< Timer Interrupt Status Register */
+  __IO uint32_t BGLOAD;                                                          /*!< Timer Background Load Register */
 } Timer32_Type;
 
 /*@}*/ /* end of group Timer32 */
@@ -1144,40 +1222,40 @@ typedef struct {
   __I  uint32_t CS_CAL_LEN;                                                      /*!< Clock System Calibration Length */
   __I  uint32_t DCOIR_FCAL_RSEL04;                                               /*!< DCO IR mode: Frequency calibration for DCORSEL 0 to 4 */
   __I  uint32_t DCOIR_FCAL_RSEL5;                                                /*!< DCO IR mode: Frequency calibration for DCORSEL 5 */
-  __I  uint32_t DCOIR_MAXPOSTUNE_RSEL04;                                         /*!< DCO IR mode: Max Positive Tune for DCORSEL 0 to 4 */
-  __I  uint32_t DCOIR_MAXNEGTUNE_RSEL04;                                         /*!< DCO IR mode: Max Negative Tune for DCORSEL 0 to 4 */
-  __I  uint32_t DCOIR_MAXPOSTUNE_RSEL5;                                          /*!< DCO IR mode: Max Positive Tune for DCORSEL 5 */
-  __I  uint32_t DCOIR_MAXNEGTUNE_RSEL5;                                          /*!< DCO IR mode: Max Negative Tune for DCORSEL 5 */
+  __I  uint32_t RESERVED3;                                                       /*!< Reserved */
+  __I  uint32_t RESERVED4;                                                       /*!< Reserved */
+  __I  uint32_t RESERVED5;                                                       /*!< Reserved */
+  __I  uint32_t RESERVED6;                                                       /*!< Reserved */
   __I  uint32_t DCOIR_CONSTK_RSEL04;                                             /*!< DCO IR mode: DCO Constant (K) for DCORSEL 0 to 4 */
   __I  uint32_t DCOIR_CONSTK_RSEL5;                                              /*!< DCO IR mode: DCO Constant (K) for DCORSEL 5 */
   __I  uint32_t DCOER_FCAL_RSEL04;                                               /*!< DCO ER mode: Frequency calibration for DCORSEL 0 to 4 */
   __I  uint32_t DCOER_FCAL_RSEL5;                                                /*!< DCO ER mode: Frequency calibration for DCORSEL 5 */
-  __I  uint32_t DCOER_MAXPOSTUNE_RSEL04;                                         /*!< DCO ER mode: Max Positive Tune for DCORSEL 0 to 4 */
-  __I  uint32_t DCOER_MAXNEGTUNE_RSEL04;                                         /*!< DCO ER mode: Max Negative Tune for DCORSEL 0 to 4 */
-  __I  uint32_t DCOER_MAXPOSTUNE_RSEL5;                                          /*!< DCO ER mode: Max Positive Tune for DCORSEL 5 */
-  __I  uint32_t DCOER_MAXNEGTUNE_RSEL5;                                          /*!< DCO ER mode: Max Negative Tune for DCORSEL 5 */
+  __I  uint32_t RESERVED7;                                                       /*!< Reserved */
+  __I  uint32_t RESERVED8;                                                       /*!< Reserved */
+  __I  uint32_t RESERVED9;                                                       /*!< Reserved */
+  __I  uint32_t RESERVED10;                                                      /*!< Reserved */
   __I  uint32_t DCOER_CONSTK_RSEL04;                                             /*!< DCO ER mode: DCO Constant (K) for DCORSEL 0 to 4 */
   __I  uint32_t DCOER_CONSTK_RSEL5;                                              /*!< DCO ER mode: DCO Constant (K) for DCORSEL 5 */
   __I  uint32_t ADC14_CAL_TAG;                                                   /*!< ADC14 Calibration Tag */
   __I  uint32_t ADC14_CAL_LEN;                                                   /*!< ADC14 Calibration Length */
-  __I  uint32_t ADC14_GF_EXTREF30C;                                              /*!< ADC14 Gain Factor for External Reference 30°C */
-  __I  uint32_t ADC14_GF_EXTREF85C;                                              /*!< ADC14 Gain Factor for External Reference 85°C */
-  __I  uint32_t ADC14_GF_BUF_EXTREF30C;                                          /*!< ADC14 Gain Factor for Buffered External Reference 30°C */
-  __I  uint32_t ADC14_GF_BUF_EXTREF85C;                                          /*!< ADC14 Gain Factor for Buffered External Reference 85°C */
-  __I  uint32_t ADC14_GF_BUF1P2V_INTREF30C_REFOUT0;                              /*!< ADC14 Gain Factor for Buffered 1.2V Internal Reference 30°C (REFOUT = 0) */
-  __I  uint32_t ADC14_GF_BUF1P2V_INTREF85C_REFOUT0;                              /*!< ADC14 Gain Factor for Buffered 1.2V Internal Reference 85°C (REFOUT = 0) */
-  __I  uint32_t ADC14_GF_BUF1P2V_INTREF30C_REFOUT1;                              /*!< ADC14 Gain Factor for Buffered 1.2V Internal Reference 30°C (REFOUT = 1) */
-  __I  uint32_t ADC14_GF_BUF1P2V_INTREF85C_REFOUT1;                              /*!< ADC14 Gain Factor for Buffered 1.2V Internal Reference 85°C (REFOUT = 1) */
-  __I  uint32_t ADC14_GF_BUF1P45V_INTREF30C_REFOUT0;                             /*!< ADC14 Gain Factor for Buffered 1.45V Internal Reference 30°C (REFOUT = 0) */
-  __I  uint32_t ADC14_GF_BUF1P45V_INTREF85C_REFOUT0;                             /*!< ADC14 Gain Factor for Buffered 1.45V Internal Reference 85°C (REFOUT = 0) */
-  __I  uint32_t ADC14_GF_BUF1P45V_INTREF30C_REFOUT1;                             /*!< ADC14 Gain Factor for Buffered 1.45V Internal Reference 30°C (REFOUT = 1) */
-  __I  uint32_t ADC14_GF_BUF1P45V_INTREF85C_REFOUT1;                             /*!< ADC14 Gain Factor for Buffered 1.45V Internal Reference 85°C (REFOUT = 1) */
-  __I  uint32_t ADC14_GF_BUF2P5V_INTREF30C_REFOUT0;                              /*!< ADC14 Gain Factor for Buffered 2.5V Internal Reference 30°C (REFOUT = 0) */
-  __I  uint32_t ADC14_GF_BUF2P5V_INTREF85C_REFOUT0;                              /*!< ADC14 Gain Factor for Buffered 2.5V Internal Reference 85°C (REFOUT = 0) */
-  __I  uint32_t ADC14_GF_BUF2P5V_INTREF30C_REFOUT1;                              /*!< ADC14 Gain Factor for Buffered 2.5V Internal Reference 30°C (REFOUT = 1) */
-  __I  uint32_t ADC14_GF_BUF2P5V_INTREF85C_REFOUT1;                              /*!< ADC14 Gain Factor for Buffered 2.5V Internal Reference 85°C (REFOUT = 1) */
-  __I  uint32_t ADC14_OFFSET_VRSEL_1;                                            /*!< ADC14 Offset (ADC14VRSEL = 1h) */
-  __I  uint32_t ADC14_OFFSET_VRSEL_E;                                            /*!< ADC14 Offset (ADC14VRSEL = Eh) */
+  __I  uint32_t ADC_GAIN_FACTOR;                                                 /*!< ADC Gain Factor */
+  __I  uint32_t ADC_OFFSET;                                                      /*!< ADC Offset */
+  __I  uint32_t RESERVED11;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED12;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED13;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED14;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED15;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED16;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED17;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED18;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED19;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED20;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED21;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED22;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED23;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED24;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED25;                                                      /*!< Reserved */
+  __I  uint32_t RESERVED26;                                                      /*!< Reserved */
   __I  uint32_t ADC14_REF1P2V_TS30C;                                             /*!< ADC14 1.2V Reference Temp. Sensor 30°C */
   __I  uint32_t ADC14_REF1P2V_TS85C;                                             /*!< ADC14 1.2V Reference Temp. Sensor 85°C */
   __I  uint32_t ADC14_REF1P45V_TS30C;                                            /*!< ADC14 1.45V Reference Temp. Sensor 30°C */
@@ -1281,6 +1359,7 @@ typedef struct {
 #define EUSCI_B3                         ((EUSCI_B_Type *) EUSCI_B3_BASE)
 #define EUSCI_B3_SPI                     ((EUSCI_B_SPI_Type *) EUSCI_B3_SPI_BASE)
 #define FLCTL                            ((FLCTL_Type *) FLCTL_BASE)   
+#define FL_BOOTOVER_MAILBOX              ((FL_BOOTOVER_MAILBOX_Type *) FL_BOOTOVER_MAILBOX_BASE)
 #define PCM                              ((PCM_Type *) PCM_BASE)       
 #define PMAP                             ((PMAP_COMMON_Type*) PMAP_BASE)
 #define P1MAP                            ((PMAP_REGISTER_Type*) (PMAP_BASE + 0x0008))
@@ -2307,6 +2386,43 @@ typedef struct {
 /* COMP_E_CTL2[REF0] Bits */
 #define COMP_E_CTL2_REF0_OFS                     ( 0)                            /*!< CEREF0 Bit Offset */
 #define COMP_E_CTL2_REF0_MASK                    ((uint16_t)0x001F)              /*!< CEREF0 Bit Mask */
+#define COMP_E_CTL2_REF00                        ((uint16_t)0x0001)              /*!< REF0 Bit 0 */
+#define COMP_E_CTL2_REF01                        ((uint16_t)0x0002)              /*!< REF0 Bit 1 */
+#define COMP_E_CTL2_REF02                        ((uint16_t)0x0004)              /*!< REF0 Bit 2 */
+#define COMP_E_CTL2_REF03                        ((uint16_t)0x0008)              /*!< REF0 Bit 3 */
+#define COMP_E_CTL2_REF04                        ((uint16_t)0x0010)              /*!< REF0 Bit 4 */
+#define COMP_E_CTL2_REF0_0                       ((uint16_t)0x0000)              /*!< Reference resistor tap for setting 0. */
+#define COMP_E_CTL2_REF0_1                       ((uint16_t)0x0001)              /*!< Reference resistor tap for setting 1. */
+#define COMP_E_CTL2_REF0_2                       ((uint16_t)0x0002)              /*!< Reference resistor tap for setting 2. */
+#define COMP_E_CTL2_REF0_3                       ((uint16_t)0x0003)              /*!< Reference resistor tap for setting 3. */
+#define COMP_E_CTL2_REF0_4                       ((uint16_t)0x0004)              /*!< Reference resistor tap for setting 4. */
+#define COMP_E_CTL2_REF0_5                       ((uint16_t)0x0005)              /*!< Reference resistor tap for setting 5. */
+#define COMP_E_CTL2_REF0_6                       ((uint16_t)0x0006)              /*!< Reference resistor tap for setting 6. */
+#define COMP_E_CTL2_REF0_7                       ((uint16_t)0x0007)              /*!< Reference resistor tap for setting 7. */
+#define COMP_E_CTL2_REF0_8                       ((uint16_t)0x0008)              /*!< Reference resistor tap for setting 8. */
+#define COMP_E_CTL2_REF0_9                       ((uint16_t)0x0009)              /*!< Reference resistor tap for setting 9. */
+#define COMP_E_CTL2_REF0_10                      ((uint16_t)0x000A)              /*!< Reference resistor tap for setting 10. */
+#define COMP_E_CTL2_REF0_11                      ((uint16_t)0x000B)              /*!< Reference resistor tap for setting 11. */
+#define COMP_E_CTL2_REF0_12                      ((uint16_t)0x000C)              /*!< Reference resistor tap for setting 12. */
+#define COMP_E_CTL2_REF0_13                      ((uint16_t)0x000D)              /*!< Reference resistor tap for setting 13. */
+#define COMP_E_CTL2_REF0_14                      ((uint16_t)0x000E)              /*!< Reference resistor tap for setting 14. */
+#define COMP_E_CTL2_REF0_15                      ((uint16_t)0x000F)              /*!< Reference resistor tap for setting 15. */
+#define COMP_E_CTL2_REF0_16                      ((uint16_t)0x0010)              /*!< Reference resistor tap for setting 16. */
+#define COMP_E_CTL2_REF0_17                      ((uint16_t)0x0011)              /*!< Reference resistor tap for setting 17. */
+#define COMP_E_CTL2_REF0_18                      ((uint16_t)0x0012)              /*!< Reference resistor tap for setting 18. */
+#define COMP_E_CTL2_REF0_19                      ((uint16_t)0x0013)              /*!< Reference resistor tap for setting 19. */
+#define COMP_E_CTL2_REF0_20                      ((uint16_t)0x0014)              /*!< Reference resistor tap for setting 20. */
+#define COMP_E_CTL2_REF0_21                      ((uint16_t)0x0015)              /*!< Reference resistor tap for setting 21. */
+#define COMP_E_CTL2_REF0_22                      ((uint16_t)0x0016)              /*!< Reference resistor tap for setting 22. */
+#define COMP_E_CTL2_REF0_23                      ((uint16_t)0x0017)              /*!< Reference resistor tap for setting 23. */
+#define COMP_E_CTL2_REF0_24                      ((uint16_t)0x0018)              /*!< Reference resistor tap for setting 24. */
+#define COMP_E_CTL2_REF0_25                      ((uint16_t)0x0019)              /*!< Reference resistor tap for setting 25. */
+#define COMP_E_CTL2_REF0_26                      ((uint16_t)0x001A)              /*!< Reference resistor tap for setting 26. */
+#define COMP_E_CTL2_REF0_27                      ((uint16_t)0x001B)              /*!< Reference resistor tap for setting 27. */
+#define COMP_E_CTL2_REF0_28                      ((uint16_t)0x001C)              /*!< Reference resistor tap for setting 28. */
+#define COMP_E_CTL2_REF0_29                      ((uint16_t)0x001D)              /*!< Reference resistor tap for setting 29. */
+#define COMP_E_CTL2_REF0_30                      ((uint16_t)0x001E)              /*!< Reference resistor tap for setting 30. */
+#define COMP_E_CTL2_REF0_31                      ((uint16_t)0x001F)              /*!< Reference resistor tap for setting 31. */
 /* COMP_E_CTL2[RSEL] Bits */
 #define COMP_E_CTL2_RSEL_OFS                     ( 5)                            /*!< CERSEL Bit Offset */
 #define COMP_E_CTL2_RSEL                         ((uint16_t)0x0020)              /*!< Reference select */
@@ -2322,6 +2438,43 @@ typedef struct {
 /* COMP_E_CTL2[REF1] Bits */
 #define COMP_E_CTL2_REF1_OFS                     ( 8)                            /*!< CEREF1 Bit Offset */
 #define COMP_E_CTL2_REF1_MASK                    ((uint16_t)0x1F00)              /*!< CEREF1 Bit Mask */
+#define COMP_E_CTL2_REF10                        ((uint16_t)0x0100)              /*!< REF1 Bit 0 */
+#define COMP_E_CTL2_REF11                        ((uint16_t)0x0200)              /*!< REF1 Bit 1 */
+#define COMP_E_CTL2_REF12                        ((uint16_t)0x0400)              /*!< REF1 Bit 2 */
+#define COMP_E_CTL2_REF13                        ((uint16_t)0x0800)              /*!< REF1 Bit 3 */
+#define COMP_E_CTL2_REF14                        ((uint16_t)0x1000)              /*!< REF1 Bit 4 */
+#define COMP_E_CTL2_REF1_0                       ((uint16_t)0x0000)              /*!< Reference resistor tap for setting 0. */
+#define COMP_E_CTL2_REF1_1                       ((uint16_t)0x0100)              /*!< Reference resistor tap for setting 1. */
+#define COMP_E_CTL2_REF1_2                       ((uint16_t)0x0200)              /*!< Reference resistor tap for setting 2. */
+#define COMP_E_CTL2_REF1_3                       ((uint16_t)0x0300)              /*!< Reference resistor tap for setting 3. */
+#define COMP_E_CTL2_REF1_4                       ((uint16_t)0x0400)              /*!< Reference resistor tap for setting 4. */
+#define COMP_E_CTL2_REF1_5                       ((uint16_t)0x0500)              /*!< Reference resistor tap for setting 5. */
+#define COMP_E_CTL2_REF1_6                       ((uint16_t)0x0600)              /*!< Reference resistor tap for setting 6. */
+#define COMP_E_CTL2_REF1_7                       ((uint16_t)0x0700)              /*!< Reference resistor tap for setting 7. */
+#define COMP_E_CTL2_REF1_8                       ((uint16_t)0x0800)              /*!< Reference resistor tap for setting 8. */
+#define COMP_E_CTL2_REF1_9                       ((uint16_t)0x0900)              /*!< Reference resistor tap for setting 9. */
+#define COMP_E_CTL2_REF1_10                      ((uint16_t)0x0A00)              /*!< Reference resistor tap for setting 10. */
+#define COMP_E_CTL2_REF1_11                      ((uint16_t)0x0B00)              /*!< Reference resistor tap for setting 11. */
+#define COMP_E_CTL2_REF1_12                      ((uint16_t)0x0C00)              /*!< Reference resistor tap for setting 12. */
+#define COMP_E_CTL2_REF1_13                      ((uint16_t)0x0D00)              /*!< Reference resistor tap for setting 13. */
+#define COMP_E_CTL2_REF1_14                      ((uint16_t)0x0E00)              /*!< Reference resistor tap for setting 14. */
+#define COMP_E_CTL2_REF1_15                      ((uint16_t)0x0F00)              /*!< Reference resistor tap for setting 15. */
+#define COMP_E_CTL2_REF1_16                      ((uint16_t)0x1000)              /*!< Reference resistor tap for setting 16. */
+#define COMP_E_CTL2_REF1_17                      ((uint16_t)0x1100)              /*!< Reference resistor tap for setting 17. */
+#define COMP_E_CTL2_REF1_18                      ((uint16_t)0x1200)              /*!< Reference resistor tap for setting 18. */
+#define COMP_E_CTL2_REF1_19                      ((uint16_t)0x1300)              /*!< Reference resistor tap for setting 19. */
+#define COMP_E_CTL2_REF1_20                      ((uint16_t)0x1400)              /*!< Reference resistor tap for setting 20. */
+#define COMP_E_CTL2_REF1_21                      ((uint16_t)0x1500)              /*!< Reference resistor tap for setting 21. */
+#define COMP_E_CTL2_REF1_22                      ((uint16_t)0x1600)              /*!< Reference resistor tap for setting 22. */
+#define COMP_E_CTL2_REF1_23                      ((uint16_t)0x1700)              /*!< Reference resistor tap for setting 23. */
+#define COMP_E_CTL2_REF1_24                      ((uint16_t)0x1800)              /*!< Reference resistor tap for setting 24. */
+#define COMP_E_CTL2_REF1_25                      ((uint16_t)0x1900)              /*!< Reference resistor tap for setting 25. */
+#define COMP_E_CTL2_REF1_26                      ((uint16_t)0x1A00)              /*!< Reference resistor tap for setting 26. */
+#define COMP_E_CTL2_REF1_27                      ((uint16_t)0x1B00)              /*!< Reference resistor tap for setting 27. */
+#define COMP_E_CTL2_REF1_28                      ((uint16_t)0x1C00)              /*!< Reference resistor tap for setting 28. */
+#define COMP_E_CTL2_REF1_29                      ((uint16_t)0x1D00)              /*!< Reference resistor tap for setting 29. */
+#define COMP_E_CTL2_REF1_30                      ((uint16_t)0x1E00)              /*!< Reference resistor tap for setting 30. */
+#define COMP_E_CTL2_REF1_31                      ((uint16_t)0x1F00)              /*!< Reference resistor tap for setting 31. */
 /* COMP_E_CTL2[REFL] Bits */
 #define COMP_E_CTL2_REFL_OFS                     (13)                            /*!< CEREFL Bit Offset */
 #define COMP_E_CTL2_REFL_MASK                    ((uint16_t)0x6000)              /*!< CEREFL Bit Mask */
@@ -3346,6 +3499,11 @@ typedef struct {
 #define DMA_ERRCLR_ERRCLR_OFS                    ( 0)                            /*!< ERRCLR Bit Offset */
 #define DMA_ERRCLR_ERRCLR                        ((uint32_t)0x00000001)
 
+/* DMA channel definitions and memory structure alignment */
+#define __MCU_NUM_DMA_CHANNELS__                8
+#define DMA_CHANNEL_CONTROL_STRUCT_SIZE         0x10
+#define DMA_CONTROL_MEMORY_ALIGNMENT            (__MCU_NUM_DMA_CHANNELS__ * DMA_CHANNEL_CONTROL_STRUCT_SIZE)
+
 /* UDMA_STAT Control Bits */
 #define UDMA_STAT_DMACHANS_M                    ((uint32_t)0x001F0000)           /*!< Available uDMA Channels Minus 1 */
 #define UDMA_STAT_STATE_M                       ((uint32_t)0x000000F0)           /*!< Control State Machine Status */
@@ -3659,12 +3817,6 @@ typedef struct {
 /* EUSCI_A_IE[TXCPTIE] Bits */
 #define EUSCI_A_IE_TXCPTIE_OFS                   ( 3)                            /*!< UCTXCPTIE Bit Offset */
 #define EUSCI_A_IE_TXCPTIE                       ((uint16_t)0x0008)              /*!< Transmit complete interrupt enable */
-/* EUSCI_A_UCAxIE_SPI[RXIE] Bits */
-#define EUSCI_A__RXIE_OFS                        ( 0)                            /*!< UCRXIE Bit Offset */
-#define EUSCI_A__RXIE                            ((uint16_t)0x0001)              /*!< Receive interrupt enable */
-/* EUSCI_A_UCAxIE_SPI[TXIE] Bits */
-#define EUSCI_A__TXIE_OFS                        ( 1)                            /*!< UCTXIE Bit Offset */
-#define EUSCI_A__TXIE                            ((uint16_t)0x0002)              /*!< Transmit interrupt enable */
 /* EUSCI_A_IFG[RXIFG] Bits */
 #define EUSCI_A_IFG_RXIFG_OFS                    ( 0)                            /*!< UCRXIFG Bit Offset */
 #define EUSCI_A_IFG_RXIFG                        ((uint16_t)0x0001)              /*!< Receive interrupt flag */
@@ -3677,6 +3829,12 @@ typedef struct {
 /* EUSCI_A_IFG[TXCPTIFG] Bits */
 #define EUSCI_A_IFG_TXCPTIFG_OFS                 ( 3)                            /*!< UCTXCPTIFG Bit Offset */
 #define EUSCI_A_IFG_TXCPTIFG                     ((uint16_t)0x0008)              /*!< Transmit ready interrupt enable */
+
+/* legacy definitions for backward compatibility to version 2100 */
+#define EUSCI_A__RXIE_OFS                        EUSCI_A_IE_RXIE_OFS             /*!< UCRXIE Bit Offset */
+#define EUSCI_A__RXIE                            EUSCI_A_IE_RXIE                 /*!< Receive interrupt enable */
+#define EUSCI_A__TXIE_OFS                        EUSCI_A_IE_TXIE_OFS             /*!< UCTXIE Bit Offset */
+#define EUSCI_A__TXIE                            EUSCI_A_IE_TXIE                 /*!< Transmit interrupt enable */
 
 
 /******************************************************************************
@@ -3916,12 +4074,12 @@ typedef struct {
 /* EUSCI_B_IE[BIT9IE] Bits */
 #define EUSCI_B_IE_BIT9IE_OFS                    (14)                            /*!< UCBIT9IE Bit Offset */
 #define EUSCI_B_IE_BIT9IE                        ((uint16_t)0x4000)              /*!< Bit position 9 interrupt enable */
-/* EUSCI_B_UCBxIE_SPI[RXIE] Bits */
-#define EUSCI_B__RXIE_OFS                        ( 0)                            /*!< UCRXIE Bit Offset */
-#define EUSCI_B__RXIE                            ((uint16_t)0x0001)              /*!< Receive interrupt enable */
-/* EUSCI_B_UCBxIE_SPI[TXIE] Bits */
-#define EUSCI_B__TXIE_OFS                        ( 1)                            /*!< UCTXIE Bit Offset */
-#define EUSCI_B__TXIE                            ((uint16_t)0x0002)              /*!< Transmit interrupt enable */
+/* EUSCI_B_IE[RXIE] Bits */
+#define EUSCI_B_IE_RXIE_OFS                      ( 0)                            /*!< UCRXIE Bit Offset */
+#define EUSCI_B_IE_RXIE                          ((uint16_t)0x0001)              /*!< Receive interrupt enable */
+/* EUSCI_B_IE[TXIE] Bits */
+#define EUSCI_B_IE_TXIE_OFS                      ( 1)                            /*!< UCTXIE Bit Offset */
+#define EUSCI_B_IE_TXIE                          ((uint16_t)0x0002)              /*!< Transmit interrupt enable */
 /* EUSCI_B_IFG[RXIFG0] Bits */
 #define EUSCI_B_IFG_RXIFG0_OFS                   ( 0)                            /*!< UCRXIFG0 Bit Offset */
 #define EUSCI_B_IFG_RXIFG0                       ((uint16_t)0x0001)              /*!< eUSCI_B receive interrupt flag 0 */
@@ -3973,6 +4131,12 @@ typedef struct {
 /* EUSCI_B_IFG[TXIFG] Bits */
 #define EUSCI_B_IFG_TXIFG_OFS                    ( 1)                            /*!< UCTXIFG Bit Offset */
 #define EUSCI_B_IFG_TXIFG                        ((uint16_t)0x0002)              /*!< Transmit interrupt flag */
+
+/* legacy definitions for backward compatibility to version 2100 */
+#define EUSCI_B__RXIE_OFS                        EUSCI_B_IE_RXIE_OFS             /*!< UCRXIE Bit Offset */
+#define EUSCI_B__RXIE                            EUSCI_B_IE_RXIE                 /*!< Receive interrupt enable */
+#define EUSCI_B__TXIE_OFS                        EUSCI_B_IE_TXIE_OFS             /*!< UCTXIE Bit Offset */
+#define EUSCI_B__TXIE                            EUSCI_B_IE_TXIE                 /*!< Transmit interrupt enable */
 
 
 /******************************************************************************
@@ -4665,6 +4829,11 @@ typedef struct {
 /* FLCTL_BURSTPRG_TIMCTL[ACTIVE] Bits */
 #define FLCTL_BURSTPRG_TIMCTL_ACTIVE_OFS         ( 8)                            /*!< ACTIVE Bit Offset */
 #define FLCTL_BURSTPRG_TIMCTL_ACTIVE_MASK        ((uint32_t)0x0FFFFF00)          /*!< ACTIVE Bit Mask */
+
+
+/******************************************************************************
+* FL_BOOTOVER_MAILBOX Bits
+******************************************************************************/
 
 
 /******************************************************************************
@@ -6821,7 +6990,12 @@ typedef struct {
 
 
 /******************************************************************************
-* MAILBOX and device unlock support                                           *
+* Mailbox struct legacy definition                                            *
+******************************************************************************/
+#define FLASH_MAILBOX_Type                    FL_BOOTOVER_MAILBOX_Type
+
+/******************************************************************************
+* Device Unlock Support                                                       *
 ******************************************************************************/
 /* unlock the device by:
  *   Load SYSCTL_SECDATA_UNLOCK register address into R0
@@ -6834,52 +7008,6 @@ typedef struct {
     __asm("  MOVW.W          R1, #0x695A");\
     __asm("  MOVT.W          R1, #0x0000");\
     __asm("  STR             R1, [R0]");
-
-typedef struct {
-   __IO uint32_t  SEC_ZONE_SECEN;                              /*!< IP Protection Zone Enable 0xFFFFFFFF: Disable 0x00000000: Enable */
-   __IO uint32_t  SEC_ZONE_START_ADDR;                         /*!< Start Address <0x0-0x00400000:0x00001000> */
-   __IO uint32_t  SEC_ZONE_LENGTH;                             /*!< Length <0x0-0x00400000:0x00001000> */
-   __IO uint32_t  SEC_ZONE_AESINIT_VECT[4];                    /*!< IP Protection Zone - AES Initialization Vector [0-3] */
-   __IO uint32_t  SEC_ZONE_SECKEYS[8];                         /*!< IP Protection Zone - AES CBC Security Keys [0-7] */
-   __IO uint32_t  SEC_ZONE_UNENC_PWD[4];                       /*!< IP Protection Zone - Password to append to firmware update payload [0-3] */
-   __IO uint32_t  SEC_ZONE_ENCUPDATE_EN;                       /*!< IP Protection Zone - Enable field firmware update 0xFFFFFFFF: Disable 0x00000000: Enable */
-   __IO uint32_t  SEC_ZONE_DATA_EN;                            /*!< IP Protection Zone - Enable data access within protected zone 0xFFFFFFFF: Disable 0x00000000: Enable */
-   __I  uint32_t  ACK;                                         /*!< IP Protection Zone - ACK */
-        uint32_t  RESERVED1[2];                                /*!< Reserved */
-} SEC_ZONE_PARAMS_Type;
-
-typedef struct {
-   __IO uint32_t  SEC_ZONE_PAYLOADADDR;                        /*!< IPP Zone Start Address */
-   __IO uint32_t  SEC_ZONE_PAYLOADLEN;                         /*!< IPP Zone Length */
-   __I  uint32_t  ACK;                                         /*!< IPP Zone Update ACK */
-        uint32_t  RESERVED1;                                   /*!< Reserved */
-} SEC_ZONE_UPDATE_Type;
-
-typedef struct {
-   __IO uint32_t  MB_START;                                    /*!< Flash MailBox start: 0x0115ACF6 */
-   __IO uint32_t  CMD;                                         /*!< General Parameter Command: Acceptable values are one or a combination of the COMMAND_xxxx definitions or COMMAND_NONE */
-   __I  uint32_t  ACK;                                         /*!< Factory Reset ACK */
-        uint32_t  RESERVED1;                                   /*!< Reserved */
-   __IO uint32_t  JTAG_SWD_LOCK_SECEN;                         /*!< JTAG and SWD Lock Enable 0xFFFFFFFF: Disable 0x00000000: Enable */
-   __IO uint32_t  JTAG_SWD_LOCK_AES_INIT_VECT[4];              /*!< JTAG SWD Lock AES Initialization Vector [0-3] */
-   __IO uint32_t  JTAG_SWD_LOCK_AES_SECKEYS[8];                /*!< JTAG SWD Lock AES CBC Security Keys [0-7] */
-   __IO uint32_t  JTAG_SWD_LOCK_UNENC_PWD[4];                  /*!< Password to be appended to the firmware update payload */
-   __I  uint32_t  JTAG_SWD_LOCK_ACK;                           /*!< Factory Reset ACK */
-        uint32_t  RESERVED2[2];                                /*!< Reserved */
-    SEC_ZONE_PARAMS_Type SEC_ZONE_PARAMS[4];                   /*!< SEC_ZONE params */
-   __IO uint32_t  BSL_ENABLE;                                  /*!< BSL Enable 0xFFFFFFFF: Disable 0x00000000: Enable */
-   __IO uint32_t  BSL_START_ADDRESS;                           /*!< BSL Starting address, default pointing to TI BSL at 0x00202000 */
-   __IO uint32_t  BSL_PARAMETERS;                              /*!< BSL Parameter */
-        uint32_t  RESERVED3[2];                                /*!< Reserved */
-   __I  uint32_t  BSL_ACK;                                     /*!< BSL ACK */
-   __IO uint32_t  JTAG_SWD_LOCK_ENCPAYLOADADDR;                /*!< Encrypted Update Start Address */
-   __IO uint32_t  JTAG_SWD_LOCK_ENCPAYLOADLEN;                 /*!< Encrypted Update Length */
-   __IO uint32_t  JTAG_SWD_LOCK_DST_ADDR;                      /*!< Destination address after decryption */
-   __I  uint32_t  ENC_UPDATE_ACK;                              /*!< Encrypted Update ACK */
-        uint32_t  RESERVED4;                                   /*!< Reserved */
-	SEC_ZONE_UPDATE_Type SEC_ZONE_UPDATE[4];
-   __IO uint32_t  MB_END;                                      /*!< Flash MailBox end: 0x0011E11D */
-} FLASH_MAILBOX_Type;
 
 /******************************************************************************
 *
@@ -6905,7 +7033,7 @@ typedef struct {
 /******************************************************************************
 *
 * The following are values that can be used to configure the BSL. Perform a
-* logical OR of these settings to create your BSL paramter.
+* logical OR of these settings to create your BSL parameter.
 *
 ******************************************************************************/
 #define BSL_CONFIG_HW_INVOKE                     ((uint32_t)0x70000000)
