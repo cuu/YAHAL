@@ -2,6 +2,8 @@
 # Platform configuration #
 ##########################
 
+# PLATFORM = esp8266
+
 ifndef PLATFORM
   $(error Error: No platform specified.)
 endif
@@ -13,15 +15,26 @@ else
   $(error Platform file platform/platform-$(PLATFORM).mk not existing!)
 endif
 
-#####################
-## GENERIC SECTION ##
-#####################
+#########################
+# Configuration section #
+#########################
 
 # name of final target
 TARGET = libYAHAL.a
 
 # folder for build artifacts
 BUILD_DIR = build
+
+# all source folders of our project
+SRC_DIRS = src/driver src/util src/platform/$(PLATFORM)
+
+# include dirs, all src dirs are automatically added
+INCLUDES  = -Iinclude/interface
+
+
+#####################
+## GENERIC SECTION ##
+#####################
 
 # OS specific part
 RM    = rm -f
@@ -37,32 +50,39 @@ HIDE := @
 myecho := @echo
 endif
 
-# all source folders of our project
-SRC_DIRS = src/driver src/util ${PLATFORM_SRC_DIR}
 # all source files
 SOURCES  = $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.cpp))
+SOURCES += $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.c  ))
 # all objects files
-OBJECTS  = $(foreach obj, $(SOURCES:.cpp=.o), $(BUILD_DIR)/$(notdir $(obj)))  
+OBJECTS1 = $(SOURCES:.cpp=.o)
+OBJECTS  = $(foreach obj, $(OBJECTS1:.c=.o), $(BUILD_DIR)/$(notdir $(obj)))  
 # all dependency files
 DEPS     = $(OBJECTS:.o=.d)
 
-#OBJECTS   = $(SOURCES:.cpp=.o)
-#OBJECTS   = $(foreach obj, $(SOURCES), $(BUILD_DIR)/$(notdir $(obj)):.cpp=.o)
 
-INCLUDES  = -Iinclude/interface $(foreach dir, $(SRC_DIRS), -I$(dir)) 
+INCLUDES += $(foreach dir, $(SRC_DIRS), -I$(dir)) 
 INCLUDES += $(PLATFORM_INCLUDES)
 
 #####################
 ### RULES section ###
 #####################
 
+# Indicate to make which targets are not files
+.PHONY: all clean directories
+
 all: directories $(TARGET)
 
-# rule for the main target: Link the library
-$(TARGET) : $(OBJECTS)
+# rule for executable targets
+%.out : $(OBJECTS)
+	$(myecho) "LD  $@"
+	$(HIDE) $(LD) $(DEFINES) $(LDFLAGS) -o $@ $^
+
+# rule for library targets
+%.a : $(OBJECTS)
 	$(myecho) "AR  $@"
 	$(HIDE) $(AR) qc  $@ $^
 	$(HIDE) $(RANLIB) $@
+
 
 # compiler rules
 define compileRules
@@ -83,8 +103,20 @@ directories:
 # 'clean up'-rule
 clean:
 	$(myecho) "Cleaning files ..."
-	$(HIDE) $(RM) $(TARGET)
+	$(HIDE) $(RM) $(basename $(TARGET)).*
 	$(HIDE) $(RMDIR) $(BUILD_DIR)
+
+
+################################
+# Rules for specific platform  #
+################################
+ifeq ($(PLATFORM), "msp432")
+DSLITE_DIR = $(HOME)/.ti/TICloudAgent/loaders/ccs_base/DebugServer/bin
+.PHONY: upload
+upload: $(TARGET)
+	$(DSLITE_DIR)/DSLite load -c $(CURDIR)/platforms/MSP432P401R.ccxml -f $^
+endif
+
 
 # include the dependency files
 -include $(DEPS)
