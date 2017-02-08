@@ -19,7 +19,7 @@ void adc_esp8266::adcMode(uint8_t channel, uint16_t mode) {
 
 ICACHE_FLASH_ATTR
 uint16_t adc_esp8266::adcReadRaw(uint8_t channel) {
-//	assert(channel == 0);
+	assert(channel == 0);
 	return system_adc_read();
 }
 

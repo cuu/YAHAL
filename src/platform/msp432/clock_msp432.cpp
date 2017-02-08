@@ -9,6 +9,8 @@
 #include "yahal_assert.h"
 #include <clock_msp432.h>
 
+#if 0
+
 clock_msp432::clock_msp432() {
 	// Initialize calibration factors
 	kalib04  = (768 - TLV->DCOIR_FCAL_RSEL04);
@@ -215,3 +217,4 @@ uint32_t clock_msp432::getDcoFrequency() {
 	return   (uint32_t)(f + 0.5f);
 }
 
+#endif
