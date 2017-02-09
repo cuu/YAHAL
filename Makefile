@@ -2,8 +2,6 @@
 # Platform configuration #
 ##########################
 
-# PLATFORM = esp8266
-
 ifndef PLATFORM
   $(error Error: No platform specified.)
 endif
@@ -110,7 +108,7 @@ clean:
 ################################
 # Rules for specific platform  #
 ################################
-ifeq ($(PLATFORM), "msp432")
+ifeq ("$(PLATFORM)", "msp432")
 DSLITE_DIR = $(HOME)/.ti/TICloudAgent/loaders/ccs_base/DebugServer/bin
 .PHONY: upload
 upload: $(TARGET)
