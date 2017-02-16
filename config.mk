@@ -23,8 +23,7 @@ SRC_DIRS  = src/platform/$(PLATFORM)
 SRC_DIRS += src/driver
 SRC_DIRS += src/util
 
-# include dirs, all src dirs are automatically added
-INC_DIRS  = include/platform/$(PLATFORM)
+# all include folders
 INC_DIRS += include/interface
 INC_DIRS += $(SRC_DIRS)
 
