@@ -1,14 +1,16 @@
 
 #include "gpio_esp8266.h"
 #include "esp8266ex.h"
-#include "assert.h"
+#include "yahal_assert.h"
+
+extern "C" {
 
 #include "ets_sys.h"
-extern "C" {
+
 // Missing defines for ROM code
-void ets_isr_attach(int intr, void (*handler)(gpio_esp8266 *), void *arg);
-void ets_isr_mask(unsigned intr);
-void ets_isr_unmask(unsigned intr);
+//Bextern void ets_isr_attach(int intr, void (*handler)(gpio_esp8266 *), void *arg);
+//extern void ets_isr_mask(unsigned intr);
+//extern void ets_isr_unmask(unsigned intr);
 }
 
 gpio_esp8266 gpio_esp8266::inst;
@@ -30,7 +32,7 @@ gpio_esp8266::~gpio_esp8266() {
 
 ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode) {
-	assert(gpio < 16);
+	yahal_assert(gpio < 16);
 
 	// Select GPIO as pin function
 	ESP_IOMUX(gpio).FUNC = (_IOMUX_::GPIO_TO_IOMUX[gpio] > 11) ? 1 : 4;
@@ -47,7 +49,7 @@ void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode) {
 		ESP_IOMUX(gpio).OE = 1;
 		ESP_GPIO.ENABLE_W1TS = 1 << gpio;
 		ESP_GPIO.PIN[gpio].DRIVER = _GPIO_::DRIVER_OPEN_DRAIN;
-	} else assert(false);
+	} else yahal_assert(false);
 
 	ESP_IOMUX(gpio).PULLUP   = (mode & GPIO::PULLUP)   ? 1:0;
 	ESP_IOMUX(gpio).PULLDOWN = (mode & GPIO::PULLDOWN) ? 1:0;
@@ -61,13 +63,13 @@ void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode) {
 
 ICACHE_FLASH_ATTR
 bool gpio_esp8266::gpioRead(uint16_t gpio) {
-	assert(gpio < 16);
+	yahal_assert(gpio < 16);
 	return (ESP_GPIO.IN.DATA & (1 << gpio));
 }
 
 ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioWrite(uint16_t gpio, bool value) {
-	assert(gpio < 16);
+	yahal_assert(gpio < 16);
 	if (value) {
 		ESP_GPIO.OUT_DATA_W1TS = (1 << gpio);
 	} else {
@@ -78,7 +80,7 @@ void gpio_esp8266::gpioWrite(uint16_t gpio, bool value) {
 ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioAttachIrq(uint16_t gpio, void (*handler)(uint16_t gpio),
                                  uint16_t irq_mode) {
-	assert(gpio < 16);
+	yahal_assert(gpio < 16);
 	intHandler[gpio] = handler;
 	int esp_mode = _GPIO_::INT_DISABLE;
 	switch(irq_mode) {
@@ -88,7 +90,7 @@ void gpio_esp8266::gpioAttachIrq(uint16_t gpio, void (*handler)(uint16_t gpio),
 	     GPIO::FALLING: 	esp_mode = _GPIO_::INT_BOTH_EDGES;   break;
 	case GPIO::LEVEL_HIGH:	esp_mode = _GPIO_::INT_LEVEL_HIGH;   break;
 	case GPIO::LEVEL_LOW:	esp_mode = _GPIO_::INT_LEVEL_LOW;    break;
-	default: assert(false);
+	default: yahal_assert(false);
 	}
 	intMode[gpio] = esp_mode;
 	ESP_GPIO.PIN[gpio].INT_TYPE = esp_mode;
@@ -96,7 +98,7 @@ void gpio_esp8266::gpioAttachIrq(uint16_t gpio, void (*handler)(uint16_t gpio),
 
 ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioDetachIrq(uint16_t gpio) {
-	assert(gpio < 16);
+	yahal_assert(gpio < 16);
 	gpioDisableIrq(gpio);
 	intMode[gpio] = _GPIO_::INT_DISABLE;
 	intHandler[gpio] = 0;
@@ -104,13 +106,13 @@ void gpio_esp8266::gpioDetachIrq(uint16_t gpio) {
 
 ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioEnableIrq(uint16_t gpio) {
-	assert(gpio < 16);
+	yahal_assert(gpio < 16);
 	ESP_GPIO.PIN[gpio].INT_TYPE = intMode[gpio];
 }
 
 ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioDisableIrq(uint16_t gpio) {
-	assert(gpio < 16);
+	yahal_assert(gpio < 16);
 	ESP_GPIO.PIN[gpio].INT_TYPE = _GPIO_::INT_DISABLE;
 }
 
@@ -132,3 +134,21 @@ ICACHE_FLASH_ATTR
 void gpio_irq_handler(gpio_esp8266 * gpio) {
 	gpio->handleInterrupt();
 }
+
+ICACHE_FLASH_ATTR
+void gpio_esp8266::brightnessControl(uint16_t gpio, bool on) {
+	yahal_assert(gpio < 16);
+	if (on) {
+		ESP_GPIO.PIN[gpio].SOURCE = _GPIO_::SOURCE_SIGMA_DELTA;
+	} else {
+		ESP_GPIO.PIN[gpio].SOURCE = _GPIO_::SOURCE_GPIO;
+	}
+}
+
+ICACHE_FLASH_ATTR
+void gpio_esp8266::setBrightness(uint8_t value) {
+	ESP_GPIO.SIGMA_DELTA.ENABLE   = 1;
+	ESP_GPIO.SIGMA_DELTA.PRESCALE = 0x80;
+	ESP_GPIO.SIGMA_DELTA.TARGET   = value;
+}
+

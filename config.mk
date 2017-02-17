@@ -24,6 +24,7 @@ SRC_DIRS += src/driver
 SRC_DIRS += src/util
 
 # all include folders
+INC_DIRS  = include/platform/$(PLATFORM)
 INC_DIRS += include/interface
 INC_DIRS += $(SRC_DIRS)
 
