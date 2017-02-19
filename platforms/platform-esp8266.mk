@@ -41,7 +41,9 @@ LN_SCRIPT_FLASH = eagle.flash.4m.ld
 FLAGS_LD        = -nostdlib -Wl,--no-check-sections -Wl,-static -Wl,--gc-sections 
 FLAGS_LD       += -Wl,-wrap,system_restart_local -Wl,-wrap,register_chipv6_phy -u call_user_start
 FLAGS_LD       += -T$(LN_SCRIPT_FLASH)
-FLAGS_LD       += -Wl,-Map,$(basename $(TARGET)).map -L$(ESP_SDK_DIR)/lib -L$(ESP_SDK_DIR)/ld
+FLAGS_LD       += -Wl,-Map,$(basename $(TARGET)).map
+FLAGS_LD       += -L$(QUOTE)$(ESP_SDK_DIR)/lib$(QUOTE)
+FLAGS_LD       += -L$(QUOTE)$(ESP_SDK_DIR)/ld$(QUOTE)
 
 
 #################################################
@@ -72,9 +74,9 @@ DEFINES += -DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266 -DARDUINO_BOARD=\"ESP8
 
 # Platform includes
 ###################
-PLATFORM_INC_DIRS  = $(QUOTE)$(ESP_SDK_DIR)/include$(QUOTE)
-PLATFORM_INC_DIRS += $(QUOTE)$(ESP_SDK_DIR)/lwip/include$(QUOTE)
-PLATFORM_INC_DIRS += $(QUOTE)$(ESP_VARIANTS_DIR)/generic$(QUOTE)
+PLATFORM_INC_DIRS  = $(ESP_SDK_DIR)/include
+PLATFORM_INC_DIRS += $(ESP_SDK_DIR)/lwip/include
+PLATFORM_INC_DIRS += $(ESP_VARIANTS_DIR)/generic
 
 # Additional rules (e.g. for upload)
 ####################################

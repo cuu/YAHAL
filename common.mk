@@ -70,7 +70,7 @@ else
     RM        =  del /F /Q
     RMDIR     = -rmdir /S /Q 
     MKDIR     = -mkdir
-    MAKE      = "C:/ti/ccsv7/utils/bin/gmake.exe"
+    MAKE      = "../YAHAL/tools/gmake.exe"
     ERRIGNORE = 2>NUL || exit 0
 endif
 
@@ -109,8 +109,8 @@ OBJECTS  = $(foreach obj, $(SOURCES), $(BUILD_DIR)/$(notdir $(obj)).o)
 # all dependency files
 DEPS     = $(OBJECTS:.o=.d)
 # all include flags
-INCLUDES += $(foreach dir, $(INC_DIRS), -I$(dir)) 
-INCLUDES += $(foreach dir, $(PLATFORM_INC_DIRS), -I$(dir))
+INCLUDES += $(foreach dir, $(INC_DIRS), -I$(QUOTE)$(dir)$(QUOTE)) 
+INCLUDES += $(foreach dir, $(PLATFORM_INC_DIRS), -I$(QUOTE)$(dir)$(QUOTE))
 
 #####################
 ### RULES section ###
@@ -136,15 +136,15 @@ all: directories $(TARGET)
 define compileRules
 $(BUILD_DIR)/%.cpp.o : $(1)/%.cpp
 	@echo "C++ $$(notdir $$<)"
-	$(HIDE) $$(CXX) $$(DEFINES) $$(INCLUDES) $$(CXXFLAGS) -c -o $$@ $$< -MMD
+	$(HIDE) $$(CXX) $$(DEFINES) $$(INCLUDES) $$(CXXFLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
 
 $(BUILD_DIR)/%.c.o : $(1)/%.c
 	@echo "C   $$(notdir $$<)"
-	$(HIDE) $$(CC)  $$(DEFINES) $$(INCLUDES) $$(CFLAGS) -c -o $$@ $$< -MMD
+	$(HIDE) $$(CC)  $$(DEFINES) $$(INCLUDES) $$(CFLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
 
 $(BUILD_DIR)/%.S.o : $(1)/%.S
 	@echo "ASM $$(notdir $$<)"
-	$(HIDE) $$(CC)  $$(DEFINES) $$(INCLUDES) $$(ASMFLAGS) -c -o $$@ $$< -MMD
+	$(HIDE) $$(CC)  $$(DEFINES) $$(INCLUDES) $$(ASMFLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
 endef
 $(foreach srcdir, $(SRC_DIRS), $(eval $(call compileRules, $(srcdir))))
 
@@ -152,7 +152,7 @@ $(foreach srcdir, $(SRC_DIRS), $(eval $(call compileRules, $(srcdir))))
 define libraryRule
 $(1):
 	@echo "Building $$(notdir $(1))"
-	$(HIDE) $(MAKE) -C $$(QUOTE)$$(dir $(1))$$(QUOTE) all
+	$(HIDE) $(MAKE) PLATFORM=$(PLATFORM) -C $$(dir $(1)) all
 endef
 $(foreach lib, $(LINK_LIBS), $(eval $(call libraryRule, $(lib))))
 
