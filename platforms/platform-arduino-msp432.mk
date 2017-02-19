@@ -4,27 +4,31 @@
 
 # Root folder of MSP432 package (installed by Energia IDE)
 ifeq ($(FILE_UNIX_STYLE),1)
-CCS_ROOT = /usr/local/ccsv7
+MSP432_PACKAGE  = $(HOME_DIR)/.energia15/packages/energia
 else
-CCS_ROOT = C:/ti/ccsv7
+MSP432_PACKAGE  = $(HOME_DIR)/AppData/Local/Energia15/packages/energia
 endif
 
 # Toolchain helpers
-TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-4_9-2015q3
+TOOLCHAIN_PATH   = $(MSP432_PACKAGE)/tools/arm-none-eabi-gcc/4.8.4-20140725
 TOOLCHAIN_PREFIX = arm-none-eabi
 
 # Various path variables
+MSP_SRC_DIR    = $(MSP432_PACKAGE)/hardware/msp432/3.8.0
+MSP_DSLITE_DIR = $(MSP432_PACKAGE)/tools/dslite/6.2.1.1624
+# We use our own files here ...
 MSP_INC_DIR    = ../YAHAL/platforms/$(PLATFORM)
+#MSP_INC_DIR    = $(MSP_SRC_DIR)/system/inc
 
 # Various MSP tools
-DSLITE = $(CCS_ROOT)/ccs_base/DebugServer/bin/DSLite
+DSLITE = $(MSP_DSLITE_DIR)/DebugServer/bin/DSLite
 
 # Flag helper variables
 FLAGS_F         = -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables
 FLAGS_M         = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs
 FLAGS_DEBUG     = -g -gdwarf-3 -gstrict-dwarf
 FLAGS_WARN      = -Wall -Wextra
-#FLAGS_OPT       = -Os
+FLAGS_OPT       = -Os
 
 FLAGS_CXX       = -fno-threadsafe-statics -fno-rtti -fno-exceptions -std=c++11
 FLAGS_C         =
@@ -52,8 +56,8 @@ CXXFLAGS = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLA
 CFLAGS   = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_C)
 ASMFLAGS = $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_ASM)
 LDFLAGS  = $(CXXFLAGS) $(FLAGS_LD) $(LIBS)
-#LIBS     = -lstdc++ -lgcc -lc -lm -lnosys
-LIBS     = -lstdc++_nano -lgcc -lc_nano -lm -lnosys
+LIBS     = -lstdc++ -lgcc -lc -lm -lnosys
+#LIBS     = -lstdc++_nano -lgcc -lc_nano -lm -lnosys
 
 # Compiler defines
 ##################
@@ -70,5 +74,5 @@ PLATFORM_INC_DIRS += $(QUOTE)$(MSP_INC_DIR)/CMSIS$(QUOTE)
 define PLATFORM_RULES
 .PHONY: upload
 upload: $(TARGET)
-	$(DSLITE) load -c $(MSP_INC_DIR)/MSP432P401R.ccxml -f $$^
+	$(DSLITE) load -c $(MSP_DSLITE_DIR)/MSP_EXP432P401R.ccxml -f $$^
 endef
