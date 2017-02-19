@@ -89,12 +89,6 @@ else
   $(error Platform file platform/platform-$(PLATFORM).mk not existing!)
 endif
 
-#########################
-# Project configuration #
-#########################
-
-include $(CURDIR)/config.mk
-
 #####################
 ## GENERIC SECTION ##
 #####################

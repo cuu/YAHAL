@@ -1,58 +1,86 @@
-#######################################
-# Toolchain configuration for ESP8266 #
-#######################################
+######################################
+# Platform configuration for ESP8266 #
+######################################
 
-# This file has to define:
-# ------------------------
-#
-#  CC                 : full path to gcc cross compiler
-#  CXX                : full path to g++ cross compiler
-#  LD                 : full path to ld  cross linker
-#  AR                 : full path to ar  cross archiver
-#  RANLIB             : full path to ranlib
-#
-#  PLATFORM_INCLUDES  : all specific include flags for this platform
-#
-#  CFLAGS             : all specific C-flags
-#  CXXFLAGS           : all specific C++-flags (including C-flags)!
-#  DEFINES            : all necessary defines
+# Root folder of ESP8266 package (installed by Arduino IDE)
+ifeq ($(FILE_UNIX_STYLE),1)
+ESP8266_PACKAGE  = $(HOME_DIR)/.arduino15/packages/esp8266
+else
+ESP8266_PACKAGE  = $(HOME_DIR)/AppData/Local/Arduino15/packages/esp8266
+endif
 
-
-TOOLCHAIN_PATH   = /home/aterstegge/git/esp-open-sdk/xtensa-lx106-elf
+# Toolchain helpers
+TOOLCHAIN_PATH   = $(ESP8266_PACKAGE)/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2
 TOOLCHAIN_PREFIX = xtensa-lx106-elf
-SDK_PATH         = /home/aterstegge/git/foo/ESP8266_NONOS_SDK_V2.0.0_16_08_10
 
-CC      = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-gcc
-CXX     = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-g++
-LD      = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-g++
-AR      = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-ar
-RANLIB  = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-ranlib
+# Various path variables
+ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/2.3.0
+ESP_CORE_DIR    = $(ESP_SRC_DIR)/cores/esp8266
+ESP_LIB_DIR     = $(ESP_SRC_DIR)/libraries
+ESP_VARIANTS_DIR= $(ESP_SRC_DIR)/variants
+ESP_SDK_DIR     = $(ESP_SRC_DIR)/tools/sdk
 
-PLATFORM_INC_DIR   = include/platform/$(PLATFORM)
-PLATFORM_INCLUDES  = -I$(PLATFORM_INC_DIR)
-PLATFORM_INCLUDES += -I$(SDK_PATH)/include -I$(SDK_PATH)/lwip/include
+# Various ESP tools 
+ESP_TOOL        = $(ESP8266_PACKAGE)/tools/esptool/0.4.9/esptool
+ESP_BOOTLOADER  = $(ESP_SRC_DIR)/bootloaders/eboot/eboot.elf
 
-FLAGS_F        = -fno-exceptions -fno-rtti -falign-functions=4 -ffunction-sections -fdata-sections
-FLAGS_M        = -mlongcalls -mtext-section-literals
-FLAGS_DEBUG    = -g
-FLAGS_WARN     = -Wall -Wextra
-FLAGS_OPT      = -Os
-FLAGS_CXX      = -fno-threadsafe-statics -fno-rtti -fno-exceptions -std=c++11
+# Flag helper variables
+FLAGS_F         = -falign-functions=4 -ffunction-sections -fdata-sections
+FLAGS_M         = -mlongcalls -mtext-section-literals
+FLAGS_DEBUG     = -g
+FLAGS_WARN      = -w
+# -Wall -Wextra
+FLAGS_OPT       = -Os
 
-CFLAGS      = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT)
-CXXFLAGS    = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_CXX)
+FLAGS_CXX       = -fno-exceptions -fno-rtti -std=c++11
+FLAGS_C         = -Wpointer-arith -Wno-implicit-function-declaration 
+FLAGS_C        += -Wl,-EL -fno-inline-functions -nostdlib -std=gnu99
+FLAGS_ASM       = -x assembler-with-cpp
 
-LN_SCRIPT_FLASH = eagle.app.v6.new.1024.app1.ld
-LN_SCRIPT_ROM   = eagle.rom.addr.v6.ld
+LN_SCRIPT_FLASH = eagle.flash.4m.ld
+FLAGS_LD        = -nostdlib -Wl,--no-check-sections -Wl,-static -Wl,--gc-sections 
+FLAGS_LD       += -Wl,-wrap,system_restart_local -Wl,-wrap,register_chipv6_phy -u call_user_start
+FLAGS_LD       += -T$(LN_SCRIPT_FLASH)
+FLAGS_LD       += -Wl,-Map,$(basename $(TARGET)).map -L$(ESP_SDK_DIR)/lib -L$(ESP_SDK_DIR)/ld
 
-FLAGS_LD       = -nostdlib -T$(LN_SCRIPT_FLASH) -T$(LN_SCRIPT_ROM) -L$(SDK_PATH)/lib -L $(SDK_PATH)/ld
-LIBS           = -lmain -lphy -llwip  -lnet80211 -lwpa -lpp -lnet80211 -lgcc -lc $(CURDIR)/platforms/dummy_user_init.o
 
-LDFLAGS        = $(CXXFLAGS) $(FLAGS_LD) $(LIBS)
+#################################################
+# The following variables are used by common.mk #
+#################################################
 
-DEFINES     = -D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ -DF_CPU=80000000L  -DESP8266
-# Taken out because of errors
-# -DLWIP_OPEN_SRC
+# Cross-tools
+#############
+CC      = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-gcc$(QUOTE)
+CXX     = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-g++$(QUOTE)
+LD      = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-g++$(QUOTE)
+AR      = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-ar$(QUOTE)
+RANLIB  = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-ranlib$(QUOTE)
 
-#DEFINES     = $(DEFINES) -DNDEBUG
+# Compiler/Linker flags ans libraries
+#####################################
+CXXFLAGS = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_CXX)
+CFLAGS   = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_C)
+ASMFLAGS = $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_ASM)
+LDFLAGS  = $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_LD)
+LIBS     = -lm -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lcrypto -lmain -lwps -laxtls -lsmartconfig -lmesh -lwpa2 -llwip_gcc -lstdc++
 
+# Compiler defines
+##################
+DEFINES  = -D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ -DF_CPU=80000000L -DLWIP_OPEN_SRC -DARDUINO=10609
+DEFINES += -DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266 -DARDUINO_BOARD=\"ESP8266_ESP01\" -DESP8266 
+#DEFINES += -DNDEBUG
+
+# Platform includes
+###################
+PLATFORM_INC_DIRS  = $(QUOTE)$(ESP_SDK_DIR)/include$(QUOTE)
+PLATFORM_INC_DIRS += $(QUOTE)$(ESP_SDK_DIR)/lwip/include$(QUOTE)
+PLATFORM_INC_DIRS += $(QUOTE)$(ESP_VARIANTS_DIR)/generic$(QUOTE)
+
+# Additional rules (e.g. for upload)
+####################################
+define PLATFORM_RULES
+.PHONY: upload
+upload: $$(TARGET)
+	$(ESP_TOOL) -eo $(ESP_BOOTLOADER) -bo $$(TARGET).bin -bm dio -bf 40 -bz 4M -bs .text -bp 4096 -ec -eo $$(TARGET) -bs .irom0.text -bs .text -bs .data -bs .rodata -bc -ec
+	$(ESP_TOOL) -vv -cd ck -cb 115200 -cp $(ESP_PORT) -ca 0x00000 -cf $$(TARGET).bin
+endef

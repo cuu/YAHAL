@@ -1,52 +1,78 @@
-######################################
-# Toolchain configuration for MSP432 #
-######################################
+#####################################
+# Platform configuration for MSP432 #
+#####################################
 
-# This file has to define:
-# ------------------------
-#
-#  CC                 : full path to gcc cross compiler
-#  CXX                : full path to g++ cross compiler
-#  LD                 : full path to ld  cross linker
-#  AR                 : full path to ar  cross archiver
-#  RANLIB             : full path to ranlib
-#
-#  PLATFORM_INCLUDES  : all specific include flags for this platform
-#
-#  CFLAGS             : all specific C-flags
-#  CXXFLAGS           : all specific C++-flags (including C-flags)!
-#  DEFINES            : all necessary defines
+# Root folder of MSP432 package (installed by Energia IDE)
+ifeq ($(FILE_UNIX_STYLE),1)
+MSP432_PACKAGE  = $(HOME_DIR)/.energia15/packages/energia
+else
+MSP432_PACKAGE  = $(HOME_DIR)/AppData/Local/Energia15/packages/energia
+endif
 
-
-TOOLCHAIN_PATH   = /usr/local/gcc-arm-none-eabi-6_2-2016q4
+# Toolchain helpers
+TOOLCHAIN_PATH   = $(MSP432_PACKAGE)/tools/arm-none-eabi-gcc/4.8.4-20140725
 TOOLCHAIN_PREFIX = arm-none-eabi
 
-CC      = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-gcc
-CXX     = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-g++
-LD      = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-g++
-AR      = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-ar
-RANLIB  = $(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-ranlib
+# Various path variables
+MSP_SRC_DIR    = $(MSP432_PACKAGE)/hardware/msp432/3.8.0
+MSP_DSLITE_DIR = $(MSP432_PACKAGE)/tools/dslite/6.2.1.1624
+# We use our own files here ...
+MSP_INC_DIR    = ../YAHAL/platforms/$(PLATFORM)
+#MSP_INC_DIR    = $(MSP_SRC_DIR)/system/inc
 
-PLATFORM_INC_DIR   = include/platform/$(PLATFORM)
-PLATFORM_INCLUDES  = -I$(PLATFORM_INC_DIR)
-PLATFORM_INCLUDES += -I$(PLATFORM_INC_DIR)/CMSIS
+# Various MSP tools
+DSLITE = $(MSP_DSLITE_DIR)/DebugServer/bin/DSLite
 
-FLAGS_ARCH     = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs
-FLAGS_F        = -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables
-FLAGS_DEBUG    = -g -gdwarf-3 -gstrict-dwarf
-FLAGS_WARN     = -Wall -Wextra
-FLAGS_OPT      = -Os
-FLAGS_CXX      = -fno-threadsafe-statics -fno-rtti -fno-exceptions -std=c++11
+# Flag helper variables
+FLAGS_F         = -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables
+FLAGS_M         = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs
+FLAGS_DEBUG     = -g -gdwarf-3 -gstrict-dwarf
+FLAGS_WARN      = -Wall -Wextra
+FLAGS_OPT       = -Os
 
-CFLAGS         = $(FLAGS_ARCH) $(FLAGS_F) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT)
-CXXFLAGS       = $(FLAGS_ARCH) $(FLAGS_F) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_CXX)
+FLAGS_CXX       = -fno-threadsafe-statics -fno-rtti -fno-exceptions -std=c++11
+FLAGS_C         =
+FLAGS_ASM       =
 
-FLAGS_LD       = -Wl,-Map,$(basename $(TARGET)).map -Wl,-T$(PLATFORM_INC_DIR)/msp432p401r.lds
-LIBS           = -lstdc++_nano -lgcc -lc_nano -lm -lnosys
+LN_SCRIPT_FLASH = msp432p401r.lds
+FLAGS_LD        = -Wl,-T$(MSP_INC_DIR)/$(LN_SCRIPT_FLASH)
+FLAGS_LD       += -Wl,-Map,$(basename $(TARGET)).map
 
-LDFLAGS        = $(CXXFLAGS) $(FLAGS_LD) $(LIBS)
+#################################################
+# The following variables are used by common.mk #
+#################################################
 
-DEFINES        = -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX
-#DEFINES       += -DNDEBUG
+# Cross-tools
+#############
+CC      = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-gcc$(QUOTE)
+CXX     = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-g++$(QUOTE)
+LD      = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-g++$(QUOTE)
+AR      = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-ar$(QUOTE)
+RANLIB  = $(QUOTE)$(TOOLCHAIN_PATH)/bin/$(TOOLCHAIN_PREFIX)-ranlib$(QUOTE)
 
+# Compiler/Linker flags ans libraries
+#####################################
+CXXFLAGS = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_CXX)
+CFLAGS   = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_C)
+ASMFLAGS = $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_ASM)
+LDFLAGS  = $(CXXFLAGS) $(FLAGS_LD) $(LIBS)
+LIBS     = -lstdc++ -lgcc -lc -lm -lnosys
+#LIBS     = -lstdc++_nano -lgcc -lc_nano -lm -lnosys
 
+# Compiler defines
+##################
+DEFINES   = -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX
+#DEFINES += -DNDEBUG
+
+# Platform includes
+###################
+PLATFORM_INC_DIRS  = $(QUOTE)$(MSP_INC_DIR)$(QUOTE)
+PLATFORM_INC_DIRS += $(QUOTE)$(MSP_INC_DIR)/CMSIS$(QUOTE)
+
+# Additional rules (e.g. for upload)
+####################################
+define PLATFORM_RULES
+.PHONY: upload
+upload: $(TARGET)
+	$(DSLITE) load -c $(MSP_DSLITE_DIR)/MSP_EXP432P401R.ccxml -f $$^
+endef
