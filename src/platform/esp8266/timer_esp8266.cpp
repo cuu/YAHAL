@@ -9,15 +9,10 @@
 #include "esp8266ex.h"
 #include "assert.h"
 
-#include "ets_sys.h"
-/*
 extern "C" {
-	// Missing defines for ROM code
-	void ets_isr_attach(int intr, void (*handler)(void *), void * arg);
-	void ets_isr_mask  (unsigned intr);
-	void ets_isr_unmask(unsigned intr);
+#include "ets_sys.h"
 }
-*/
+
 
 ICACHE_FLASH_ATTR
 timer_esp8266::timer_esp8266() {

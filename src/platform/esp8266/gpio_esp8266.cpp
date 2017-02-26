@@ -1,16 +1,9 @@
-
 #include "gpio_esp8266.h"
 #include "esp8266ex.h"
 #include "yahal_assert.h"
 
 extern "C" {
-
 #include "ets_sys.h"
-
-// Missing defines for ROM code
-//Bextern void ets_isr_attach(int intr, void (*handler)(gpio_esp8266 *), void *arg);
-//extern void ets_isr_mask(unsigned intr);
-//extern void ets_isr_unmask(unsigned intr);
 }
 
 gpio_esp8266 gpio_esp8266::inst;
