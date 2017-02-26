@@ -22,6 +22,7 @@ ESP_SDK_DIR     = $(ESP_SRC_DIR)/tools/sdk
 
 # Various ESP tools 
 ESP_TOOL        = $(ESP8266_PACKAGE)/tools/esptool/0.4.9/esptool
+MKSPIFFS        = $(ESP8266_PACKAGE)/tools/mkspiffs/0.1.2/mkspiffs
 ESP_BOOTLOADER  = $(ESP_SRC_DIR)/bootloaders/eboot/eboot.elf
 
 # Flag helper variables
@@ -37,13 +38,16 @@ FLAGS_C         = -Wpointer-arith -Wno-implicit-function-declaration
 FLAGS_C        += -Wl,-EL -fno-inline-functions -nostdlib -std=gnu99
 FLAGS_ASM       = -x assembler-with-cpp
 
-LN_SCRIPT_FLASH = eagle.flash.4m.ld
 FLAGS_LD        = -nostdlib -Wl,--no-check-sections -Wl,-static -Wl,--gc-sections 
 FLAGS_LD       += -Wl,-wrap,system_restart_local -Wl,-wrap,register_chipv6_phy -u call_user_start
-FLAGS_LD       += -T$(LN_SCRIPT_FLASH)
+FLAGS_LD       += -T$(ESP_FLASH_SCRIPT)
 FLAGS_LD       += -Wl,-Map,$(basename $(TARGET)).map
 FLAGS_LD       += -L$(QUOTE)$(ESP_SDK_DIR)/lib$(QUOTE)
 FLAGS_LD       += -L$(QUOTE)$(ESP_SDK_DIR)/ld$(QUOTE)
+
+# spiffs stuff
+SPIFFS_FILES    = $(wildcard $(SPIFFS_DIR)/*)
+SPIFFS_BIN      = $(BUILD_DIR)/spiffs.bin
 
 
 #################################################
@@ -64,7 +68,8 @@ CXXFLAGS = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLA
 CFLAGS   = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_C)
 ASMFLAGS = $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_ASM)
 LDFLAGS  = $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_LD)
-LIBS     = -lm -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lcrypto -lmain -lwps -laxtls -lsmartconfig -lmesh -lwpa2 -llwip_gcc -lstdc++
+LIBS     = -lm -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lcrypto -lmain \
+           -lwps -laxtls -lsmartconfig -lmesh -lwpa2 -llwip_gcc -lstdc++
 
 # Compiler defines
 ##################
@@ -83,6 +88,25 @@ PLATFORM_INC_DIRS += $(ESP_VARIANTS_DIR)/generic
 define PLATFORM_RULES
 .PHONY: upload
 upload: $$(TARGET)
-	$(ESP_TOOL) -eo $(ESP_BOOTLOADER) -bo $$(TARGET).bin -bm dio -bf 40 -bz 4M -bs .text -bp 4096 -ec -eo $$(TARGET) -bs .irom0.text -bs .text -bs .data -bs .rodata -bc -ec
-	$(ESP_TOOL) -vv -cd ck -cb 115200 -cp $(ESP_PORT) -ca 0x00000 -cf $$(TARGET).bin
+	@echo "Uploading program"
+	$(HIDE) $(ESP_TOOL) -eo $(ESP_BOOTLOADER) \
+			    -bo $$(TARGET).bin \
+			    -bm $(ESP_FLASH_MODE) -bf $(ESP_FLASH_FREQ) -bz $(ESP_FLASH_SIZE) \
+			    -bs .text -bp 4096 -ec -eo $$(TARGET) \
+			    -bs .irom0.text -bs .text -bs .data -bs .rodata -bc -ec
+	$(HIDE) $(ESP_TOOL) -v -cd $(ESP_RESET_MODE) -cp $(ESP_PORT) -cb $(ESP_BAUD) \
+			       -ca 0x000000 -cf $$(TARGET).bin
+
+$(SPIFFS_BIN): $(SPIFFS_FILES)
+	@echo "Creating SPIFFS image $(SPIFFS_BIN)"
+	$(HIDE) $(MKDIR) $(BUILD_DIR) $(ERRIGNORE)
+	$(HIDE) $(MKSPIFFS) -c $(SPIFFS_DIR) \
+			    -b $(SPIFFS_BLOCKSIZE) -p $(SPIFFS_PAGESIZE) \
+			    -s $(SPIFFS_SIZE) $(SPIFFS_BIN)
+
+.PHONY: spiffs_upload
+spiffs_upload: $(SPIFFS_BIN)
+	@echo "Uploading SPIFFS image $(SPIFFS_BIN)"
+	$(HIDE) $(ESP_TOOL) -v -cd $(ESP_RESET_MODE) -cp $(ESP_PORT) -cb $(ESP_BAUD) \
+			       -ca $(SPIFFS_START)  -cf $(SPIFFS_BIN)
 endef
