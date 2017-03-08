@@ -28,8 +28,8 @@ class i2c_msp432  {
 
    i2c_msp432(EUSCI_B_Type *i2c,
               uint16_t mode = I2C::SLAVE_7_BIT_ADDR |
-			                   I2C::MASTER_MODE |
-							   I2C::CLK_SMCLK);
+			                  I2C::MASTER_MODE |
+							  I2C::CLK_SMCLK);
 
    virtual ~i2c_msp432();
 
