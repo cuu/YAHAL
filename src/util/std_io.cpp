@@ -5,6 +5,7 @@
  *      Author: Andreas Terstegge
  */
 
+#include <cstdio>
 #include "std_io.h"
 
 std_io std_io::inst;
@@ -29,12 +30,13 @@ int _read  (int fd, void *buf, size_t count) {
 }
 }
 
-void std_io::redirect_stdin(stdin_interface & std_in) {
-	_std_in = &std_in;
+void std_io::redirect_stdin(stdin_interface & std_in, bool echo) {
+    _std_in     = &std_in;
+    _local_echo = echo;
 }
 
 void std_io::redirect_stdout(stdout_interface & std_out) {
-	_std_out= &std_out;
+    _std_out= &std_out;
 }
 
 void std_io::putc(char c) {
@@ -42,6 +44,15 @@ void std_io::putc(char c) {
 }
 
 char std_io::getc() {
-    return _std_in ? _std_in->getc() : 0;
+    if (_std_in) {
+        char c = _std_in->getc();
+        if (_local_echo) {
+            putc(c);
+            fflush(stdout);
+        }
+        return c;
+    }
+    else
+        return 0;
 }
 
