@@ -14,7 +14,7 @@ TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-4_9-2015q3
 TOOLCHAIN_PREFIX = arm-none-eabi
 
 # Various path variables
-MSP_INC_DIR    = ../YAHAL/platforms/$(PLATFORM)
+MSP_INC_DIR    = ../YAHAL/include/$(PLATFORM)
 
 # Various MSP tools
 DSLITE = $(CCS_ROOT)/ccs_base/DebugServer/bin/DSLite
@@ -72,3 +72,4 @@ define PLATFORM_RULES
 upload: $(TARGET)
 	$(DSLITE) load -c $(MSP_INC_DIR)/MSP432P401R.ccxml -f $$^
 endef
+
