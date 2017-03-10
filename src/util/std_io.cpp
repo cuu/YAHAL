@@ -35,12 +35,18 @@ void std_io::redirect_stdin(stdin_interface & std_in, bool echo) {
     _local_echo = echo;
 }
 
-void std_io::redirect_stdout(stdout_interface & std_out) {
-    _std_out= &std_out;
+void std_io::redirect_stdout(stdout_interface & std_out, bool translate) {
+    _std_out      = &std_out;
+    _translate_nl = translate;
 }
 
 void std_io::putc(char c) {
-    if (_std_out) _std_out->putc(c);
+    if (_std_out) {
+        _std_out->putc(c);
+        if (_translate_nl && c=='\n') {
+            _std_out->putc('\r');
+        }
+    }
 }
 
 char std_io::getc() {

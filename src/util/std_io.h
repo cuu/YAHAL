@@ -26,7 +26,7 @@ class std_io : public stdin_interface, public stdout_interface {
     char getc();
 
     void redirect_stdin (stdin_interface  & std_in , bool local_echo=true);
-    void redirect_stdout(stdout_interface & std_out);
+    void redirect_stdout(stdout_interface & std_out, bool translate_nl=true);
 
   private:
     std_io() : _std_in(nullptr), _std_out(nullptr) { }
@@ -34,6 +34,7 @@ class std_io : public stdin_interface, public stdout_interface {
     stdin_interface *  _std_in;
     stdout_interface * _std_out;
     bool               _local_echo;
+    bool               _translate_nl;
 };
 
 #endif // _STDIO_H_
