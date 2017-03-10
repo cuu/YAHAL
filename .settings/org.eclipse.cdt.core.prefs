@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/PATH/delimiter=\:
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/PATH/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/PATH/value=/bin\:/home/andreas/bin\:/home/andreas/.local/bin\:/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/usr/games\:/usr/local/games\:${ccs_install_root}/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/PLATFORM/delimiter=\:
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/PLATFORM/operation=append
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/PLATFORM/value=msp432
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/VERBOSE/delimiter=\:
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/VERBOSE/operation=append
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/VERBOSE/value=1
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/append=true
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1331110918/appendContributed=true
