@@ -32,14 +32,14 @@ class adc_interface {
 };
 
 // This small wrapper class provides ADC
-// functionality for a single channel/pin.
+// functionality for a single channel.
 
-class adc_pin {
+class adc_channel {
   public:
-	adc_pin(adc_interface & interf)
+	adc_channel(adc_interface & interf)
     : _interf(interf), _channel(0) { }
 
-	adc_pin(adc_interface & interf, uint8_t c)
+	adc_channel(adc_interface & interf, uint8_t c)
 	: _interf(interf), _channel(c) { }
 
 	inline void setChannel(uint8_t c) {

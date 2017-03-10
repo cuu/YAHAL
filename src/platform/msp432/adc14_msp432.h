@@ -25,4 +25,19 @@ class adc14_msp432 : public adc_interface {
 	uint16_t _mode;
 };
 
+
+// This small wrapper class provides ADC
+// functionality for a single channel.
+
+class adc14_msp432_channel : public adc_channel {
+  public:
+    adc14_msp432_channel()
+     : adc_channel(adc14_msp432::inst) { }
+
+    adc14_msp432_channel(uint16_t c)
+     : adc_channel(adc14_msp432::inst, c) { }
+
+};
+
 #endif // _ADC14_MSP432_H_
+

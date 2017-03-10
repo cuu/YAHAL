@@ -13,10 +13,10 @@ void callback_helper(void * arg) {
 	sensor->process_state();
 }
 
-gp2y1010au0f_drv::gp2y1010au0f_drv(adc_pin  & adc,
-								   gpio_pin & led,
-								   timer_interface & timer,
-								   float divider)
+gp2y1010au0f_drv::gp2y1010au0f_drv(adc_channel  & adc,
+				   gpio_pin & led,
+				   timer_interface & timer,
+				   float divider)
 : _adc(adc), _ir_led(led), _timer(timer), _voltage_divider(divider) {
 
 	// HW initialization
