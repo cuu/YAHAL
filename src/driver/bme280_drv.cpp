@@ -11,6 +11,10 @@ bme280_drv::bme280_drv(i2c_interface & i2c, uint8_t i2c_addr) : _i2c(i2c), _i2c_
 	get_calibration_data();
 }
 
+void bme280_drv::soft_reset(){
+	writeRegister(BME280::REG_RESET, BME280::RESET);
+}
+
 float bme280_drv::get_temperature(){
     int32_t var1, var2;
     int32_t adc_T = static_cast<int32_t>(read_u24(BME280::REG_TEMP_MSB));

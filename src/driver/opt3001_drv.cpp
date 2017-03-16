@@ -13,7 +13,12 @@ void opt3001_drv::set_conf(uint16_t CONF){
 	writeRegister(OPT3001::REG_CONF, CONF);
 }
 
-void opt3001_drv::start_measure(){
+float opt3001_drv::get_light(){
+	read_measure();
+	return _light;
+}
+
+void opt3001_drv::read_measure(){
 	_raw = readRegister(OPT3001::REG_RESULT);
 	calc_lux();
 }

@@ -14,6 +14,9 @@ namespace BME280 {
 	// SDO connected to GND
 	static const uint8_t ADDRESS 		= 0x76;
 
+	// value softreset
+	static const uint8_t RESET			= 0xB6;
+
 	// V_DDIO connected to GND
 	//static const uint8_t ADDRESS = 0x77;
 	static const uint8_t REG_HUM_LSB 	= 0xFE;
@@ -134,17 +137,19 @@ public:
 
 	uint8_t readRegister(uint8_t reg);
 	void writeRegister(uint8_t reg, uint8_t val);
+	void get_calibration_data();
 
 private:
 	i2c_interface & _i2c;
 	uint8_t _i2c_addr;
 	int32_t t_fine;
 	BME280::CALIBRATION_DATA _calibration_data;
+	void soft_reset();
 	uint32_t read_u24(uint8_t reg);
 	uint16_t read_u16(uint8_t reg);
 	uint16_t read_u16_le(uint8_t reg);
 	uint16_t read_s16_le(uint8_t reg);
-	void get_calibration_data();
+
 
 };
 

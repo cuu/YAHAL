@@ -11,6 +11,8 @@
 #include "i2c_interface.h"
 
 namespace OPT3001 {
+
+	static const uint8_t ADDRESS = 0x44;
 	static const uint8_t REG_RESULT = 0x00;
 	static const uint8_t REG_CONF = 0x01;
 	static const uint8_t REG_LIMIT_LOW = 0x02;
@@ -30,12 +32,9 @@ namespace OPT3001 {
 class opt3001_drv{
 public:
 	opt3001_drv(i2c_interface & i2c, uint8_t _i2c_addr);
-
-	void start_measure();
 	void set_conf(uint16_t CONF);
-	inline float get_light() { return _light; }
+	float get_light();
 	inline uint16_t get_raw() { return _raw; }
-	uint16_t readRegister(uint8_t reg);
 
 private:
 	float _light;
@@ -43,6 +42,8 @@ private:
 	uint16_t _raw;
 	uint8_t _i2c_addr;
 	void calc_lux();
+	void read_measure();
+	uint16_t readRegister(uint8_t reg);
 	void writeRegister(uint8_t reg, uint16_t value);
 
 };
