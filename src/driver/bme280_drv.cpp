@@ -37,6 +37,7 @@ float bme280_drv::get_temperature(){
     return T/100;
 }
 
+/*
 float bme280_drv::get_pressure(){
     int64_t var1, var2, p;
 
@@ -44,6 +45,7 @@ float bme280_drv::get_pressure(){
     if (adc_P == 0x800000){
     	return -1;
     }
+
     // expect 20bit value
     adc_P >>= 4;
 
@@ -66,7 +68,41 @@ float bme280_drv::get_pressure(){
     p = ((p + var1 + var2) >> 8) + (((int64_t)_calibration_data.dig_P7)<<4);
     return (float)p/256;
 }
+*/
 
+
+float bme280_drv::get_pressure(){
+	int32_t var1, var2;
+	int32_t adc_P = read_u24(BME280::REG_PRESS_MSB);
+	uint32_t p;
+
+	// 20bit format
+	adc_P >>= 4;
+
+	var1 = (t_fine >> 1) - 64000;
+	var2 = (((var1 >> 2) * (var1 >> 2)) >> 11) * static_cast<int32_t>(_calibration_data.dig_P6);
+	var2 = var2 + ((var1 * static_cast<int32_t>(_calibration_data.dig_P5)) << 1);
+	var2 = (var2 >> 2) + (static_cast<int32_t>(_calibration_data.dig_P4) << 16);
+	var1 = (((_calibration_data.dig_P3 * (((var1 >> 2) * (var1 >> 2)) >> 13)) >> 3) + (((static_cast<int32_t>(_calibration_data.dig_P2)) * var1) >> 1)) >> 18;
+	var1 = ((((32768 + var1)) * (static_cast<int32_t>(_calibration_data.dig_P1))) >> 15);
+	if(var1 == 0){
+		return 0;
+	}
+	p = ((static_cast<uint32_t>(((int32_t)1048576) - adc_P) - (var2 >> 12))) * 3125;
+	if(p < 0x80000000){
+		p = (p << 1) / static_cast<uint32_t>(var1);
+	}else{
+		p = (p / static_cast<uint32_t>(var1)) * 2;
+	}
+
+	var1 = (static_cast<int32_t>(_calibration_data.dig_P9) * static_cast<int32_t>(((p >> 3) * (p >> 3)) >> 13)) >> 12;
+	var2 = (static_cast<int32_t>(p >> 2) * static_cast<int32_t>(_calibration_data.dig_P8)) >> 13;
+	p = static_cast<uint32_t>(static_cast<int32_t>(p) + ((var1 + var2 + _calibration_data.dig_P7) >> 4));
+	return p/100.0;
+}
+
+
+//from offical driver bme280.c
 float bme280_drv::get_humidity(){
     int32_t adc_H = read_u16(BME280::REG_HUM_MSB);
     if (adc_H == 0x8000){
@@ -91,6 +127,7 @@ float bme280_drv::get_humidity(){
     float h = (v_x1_u32r>>12);
     return h / 1024.0;
 }
+
 
 void bme280_drv::set_sampling(BME280::MODE m,
 				  BME280::FILTER f,
