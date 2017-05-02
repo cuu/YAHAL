@@ -34,6 +34,7 @@ public:
 	opt3001_drv(i2c_interface & i2c, uint8_t _i2c_addr);
 	void set_conf(uint16_t CONF);
 	float get_light();
+	uint16_t readRegister(uint8_t reg);
 	inline uint16_t get_raw() { return _raw; }
 
 private:
@@ -43,7 +44,6 @@ private:
 	uint8_t _i2c_addr;
 	void calc_lux();
 	void read_measure();
-	uint16_t readRegister(uint8_t reg);
 	void writeRegister(uint8_t reg, uint16_t value);
 
 };
