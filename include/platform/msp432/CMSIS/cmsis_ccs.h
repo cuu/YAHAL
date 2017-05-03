@@ -41,14 +41,14 @@
 // CMSIS-compatible instruction calls
 //*****************************************************************************
 
+__attribute__( ( always_inline ) ) static inline void __NOP(void)
+{
+    __asm("  nop");
+}
+
 #ifndef __cplusplus
 // No Operation
 __attribute__( ( always_inline ) ) static inline void __nop(void)
-{
-	__asm("  nop");
-}
-
-__attribute__( ( always_inline ) ) static inline void __NOP(void)
 {
 	__asm("  nop");
 }
