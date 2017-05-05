@@ -29,7 +29,8 @@ class std_io : public stdin_interface, public stdout_interface {
     void redirect_stdout(stdout_interface & std_out, bool translate_nl=true);
 
   private:
-    std_io() : _std_in(nullptr), _std_out(nullptr) { }
+    std_io() : _std_in(nullptr),   _std_out(nullptr),
+               _local_echo(false), _translate_nl(false) { }
 
     stdin_interface *  _std_in;
     stdout_interface * _std_out;
