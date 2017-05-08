@@ -70,7 +70,7 @@ else
     RM        =  del /F /Q
     RMDIR     = -rmdir /S /Q 
     MKDIR     = -mkdir
-    MAKE      = "../YAHAL/tools/gmake.exe"
+    MAKE      = "$(YAHAL_DIR)/tools/gmake.exe"
     ERRIGNORE = 2>NUL || exit 0
 endif
 
@@ -82,7 +82,7 @@ ifndef PLATFORM
   $(error Error: No platform specified.)
 endif
 
-PLATFORM_FILE = ../YAHAL/platforms/platform-$(PLATFORM).mk
+PLATFORM_FILE = $(YAHAL_DIR)/platforms/platform-$(PLATFORM).mk
 ifneq ("$(wildcard $(PLATFORM_FILE))","")
   include $(PLATFORM_FILE)
 else
