@@ -14,7 +14,7 @@ TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-4_9-2015q3
 TOOLCHAIN_PREFIX = arm-none-eabi
 
 # Various path variables
-MSP_INC_DIR    = ../YAHAL/include/platform/$(PLATFORM)
+MSP_INC_DIR    = $(YAHAL_DIR)/include/platform/$(PLATFORM)
 
 # Various MSP tools
 DSLITE = $(CCS_ROOT)/ccs_base/DebugServer/bin/DSLite

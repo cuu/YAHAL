@@ -17,7 +17,7 @@ TOOLCHAIN_PREFIX = arm-none-eabi
 MSP_SRC_DIR    = $(MSP432_PACKAGE)/hardware/msp432/3.8.0
 MSP_DSLITE_DIR = $(MSP432_PACKAGE)/tools/dslite/6.2.1.1624
 # We use our own files here ...
-MSP_INC_DIR    = ../YAHAL/platforms/$(PLATFORM)
+MSP_INC_DIR    = $(YAHAL_DIR)/platforms/$(PLATFORM)
 #MSP_INC_DIR    = $(MSP_SRC_DIR)/system/inc
 
 # Various MSP tools
