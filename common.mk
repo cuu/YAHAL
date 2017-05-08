@@ -70,7 +70,7 @@ else
     RM        =  del /F /Q
     RMDIR     = -rmdir /S /Q 
     MKDIR     = -mkdir
-    MAKE      = "$(YAHAL_DIR)/tools/gmake.exe"
+    MAKE      = "$(YAHAL_DIR)/tools/make.exe"
     ERRIGNORE = 2>NUL || exit 0
 endif
 
