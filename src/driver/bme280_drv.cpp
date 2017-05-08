@@ -162,7 +162,7 @@ void bme280_drv::get_calibration_data(){
 	_calibration_data.dig_H1 = readRegister(BME280::REG_DIG_H1);
 	_calibration_data.dig_H2 = read_s16_le(BME280::REG_DIG_H2);
 	_calibration_data.dig_H3 = readRegister(BME280::REG_DIG_H3);
-	_calibration_data.dig_H4 = readRegister(BME280::REG_DIG_H4) << 4 | readRegister(BME280::REG_DIG_H4+1) & 0b00001111;
+	_calibration_data.dig_H4 = readRegister(BME280::REG_DIG_H4) << 4 | (readRegister(BME280::REG_DIG_H4+1) & 0b00001111);
 	_calibration_data.dig_H5 = readRegister(BME280::REG_DIG_H5+1) << 4 | readRegister(BME280::REG_DIG_H5) >> 4;
 	_calibration_data.dig_H6 = static_cast<int8_t>(readRegister(BME280::REG_DIG_H6));
 }
