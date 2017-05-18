@@ -124,6 +124,22 @@ void gpio_esp8266::handleInterrupt() {
 }
 
 ICACHE_FLASH_ATTR
+void gpio_esp8266::gpioModeSleep(uint16_t gpio, uint16_t mode) {
+	yahal_assert(gpio < 16);
+
+	// Configure basic GPIO modes
+	if (mode & GPIO::INPUT) {
+		ESP_IOMUX(gpio).SLEEP_OE = 0;
+	} else if ((mode & GPIO::OUTPUT) ||
+			   (mode & GPIO::OUTPUT_OPEN_DRAIN)) {
+		ESP_IOMUX(gpio).SLEEP_OE = 1;
+	} else yahal_assert(false);
+
+	ESP_IOMUX(gpio).SLEEP_PULLUP   = (mode & GPIO::PULLUP)   ? 1:0;
+	ESP_IOMUX(gpio).SLEEP_PULLDOWN = (mode & GPIO::PULLDOWN) ? 1:0;
+}
+
+ICACHE_FLASH_ATTR
 void gpio_irq_handler(gpio_esp8266 * gpio) {
 	gpio->handleInterrupt();
 }

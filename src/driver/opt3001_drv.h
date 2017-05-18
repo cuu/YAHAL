@@ -11,43 +11,32 @@
 #include "i2c_interface.h"
 
 namespace OPT3001 {
+static const uint8_t I2C_ADDR_GND = 0x44;
+static const uint8_t I2C_ADDR_VDD = 0x45;
+static const uint8_t I2C_ADDR_SDA = 0x46;
+static const uint8_t I2C_ADDR_SCL = 0x47;
 
-	static const uint8_t ADDRESS = 0x44;
-	static const uint8_t REG_RESULT = 0x00;
-	static const uint8_t REG_CONF = 0x01;
-	static const uint8_t REG_LIMIT_LOW = 0x02;
-	static const uint8_t REG_LIMIT_HIGH = 0x03;
-	static const uint8_t REG_MAN_ID = 0x7E;
-	static const uint8_t REG_DEV_ID = 0x7F;
-
-	static const uint16_t CONF_800MS_CONT = 0b1100110000010000;
-	static const uint16_t CONF_100MS_CONT = 0b1100010000010000;
-	static const uint16_t CONF_800MS_SINGLE = 0b1100101000010000;
-	static const uint16_t CONF_100MS_SINGLE = 0b1100001000010000;
-
-	static const uint16_t MASK_RESULT_EXP = 0xF000;
-	static const uint16_t MAST_RESULT_MAT = 0x0FFF;
+static const uint16_t CONF_800MS_CONT   = 0b1100110000010000;
+static const uint16_t CONF_100MS_CONT   = 0b1100010000010000;
+static const uint16_t CONF_800MS_SINGLE = 0b1100101000010000;
+static const uint16_t CONF_100MS_SINGLE = 0b1100001000010000;
 }
 
-class opt3001_drv{
+
+class opt3001_drv {
 public:
-	opt3001_drv(i2c_interface & i2c, uint8_t _i2c_addr);
-	void set_conf(uint16_t CONF);
+	opt3001_drv(i2c_interface & i2c, uint8_t i2c_addr);
+	void  start_measure(uint16_t conf);
+	bool  measure_ready();
 	float get_light();
-	uint16_t readRegister(uint8_t reg);
-	inline uint16_t get_raw() { return _raw; }
+	bool  detect_sensor();
 
 private:
-	float _light;
 	i2c_interface & _i2c;
-	uint16_t _raw;
-	uint8_t _i2c_addr;
-	void calc_lux();
-	void read_measure();
-	void writeRegister(uint8_t reg, uint16_t value);
+	uint8_t         _i2c_addr;
 
+	uint16_t readRegister(uint8_t reg);
+	void     writeRegister(uint8_t reg, uint16_t value);
 };
-
-
 
 #endif /* SRC_DRIVER_OPT3001_DRV_H_ */

@@ -43,5 +43,5 @@ class soft_i2c_master : public i2c_interface {
     bool _pullup;
 };
 
-#endif /* SRC_DRIVER_SOFT_I2C_MASTER_H_ */
+#endif /* _SOFT_I2C_MASTER_H_ */
 
