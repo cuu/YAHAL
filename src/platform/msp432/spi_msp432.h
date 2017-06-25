@@ -22,17 +22,21 @@ namespace SPI {
 	const uint16_t _7_BIT      = 0x1000;
 	const uint16_t CLK_ACLK    = 0x0040;
 	const uint16_t CLK_SMCLK   = 0x0080;
+
+	// Verbose constants for SPI role
+	const bool MASTER = true;
+	const bool CLIENT = false;
 }
 
 class spi_msp432 : public spi_interface {
 
   public:
 
-    spi_msp432(EUSCI_A_SPI_Type *spi_a, gpio_pin & cs_pin,
+    spi_msp432(EUSCI_A_SPI_Type *spi_a, gpio_pin & cs_pin, const bool spi_master = SPI::MASTER,
     		   uint16_t mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::MSB_FIRST |
 			                   SPI::_8_BIT | SPI::CLK_SMCLK);
 
-    spi_msp432(EUSCI_B_SPI_Type *spi_b, gpio_pin & cs_pin,
+    spi_msp432(EUSCI_B_SPI_Type *spi_b, gpio_pin & cs_pin, const bool spi_master = SPI::MASTER,
     		   uint16_t mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::MSB_FIRST |
 			   	   	   	       SPI::_8_BIT | SPI::CLK_SMCLK);
 
@@ -43,6 +47,8 @@ class spi_msp432 : public spi_interface {
   private:
 
     void spi_init();
+
+    bool _master;
 
     volatile uint16_t & _EUSCI_CTLW0;
     volatile uint16_t & _EUSCI_BRW;
@@ -59,8 +65,8 @@ class spi_msp432 : public spi_interface {
 	gpio_msp432_pin	_mosi;
 
     uint16_t _mode;
-
     gpio_pin & _cs;
+    IRQn_Type _irq;
 };
 
 #endif // _SPI_MSP432_H_
