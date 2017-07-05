@@ -24,7 +24,7 @@ FLAGS_F         = -ffunction-sections -fdata-sections -fno-unwind-tables -fno-as
 FLAGS_M         = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs
 FLAGS_DEBUG     = -g -gdwarf-3 -gstrict-dwarf
 FLAGS_WARN      = -Wall -Wextra
-FLAGS_OPT       = -Os
+FLAGS_OPT       = # -Os
 
 FLAGS_CXX       = -fno-threadsafe-statics -fno-rtti -fno-exceptions -std=c++11
 FLAGS_C         =

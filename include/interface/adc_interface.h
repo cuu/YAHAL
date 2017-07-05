@@ -28,7 +28,7 @@ class adc_interface {
     virtual void     adcMode(uint8_t channel, uint16_t mode) = 0;
     virtual uint16_t adcReadRaw(uint8_t channel) = 0;
     virtual float    adcReadVoltage(uint8_t channel) = 0;
-    virtual float	 rawToVoltage(uint16_t raw) = 0;
+    virtual float	 rawToVoltage(uint8_t channel, uint16_t raw) = 0;
 };
 
 // This small wrapper class provides ADC
@@ -55,7 +55,7 @@ class adc_channel {
 		return _interf.adcReadVoltage(_channel);
 	}
 	inline float rawToVoltage(uint16_t raw) {
-		return _interf.rawToVoltage(raw);
+		return _interf.rawToVoltage(_channel, raw);
 	}
   protected:
 	adc_interface & _interf;
