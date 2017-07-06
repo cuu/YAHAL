@@ -4,7 +4,7 @@
 
 # Root folder of MSP432 package (installed by Energia IDE)
 ifeq ($(FILE_UNIX_STYLE),1)
-CCS_ROOT = /usr/local/ccsv7
+CCS_ROOT = /opt/ti/ccsv7
 else
 CCS_ROOT = C:/ti/ccsv7
 endif

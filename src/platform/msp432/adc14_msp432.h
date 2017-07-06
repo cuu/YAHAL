@@ -26,15 +26,15 @@ class adc14_msp432 : public adc_interface {
 	static adc14_msp432 inst;
 
     // Basic ADC functions
-    virtual void     adcMode(uint8_t channel, uint16_t mode);
-    virtual uint16_t adcReadRaw(uint8_t channel);
+    virtual void     adcMode       (uint8_t channel, uint16_t mode);
+    virtual uint16_t adcReadRaw    (uint8_t channel);
     virtual float    adcReadVoltage(uint8_t channel);
-    virtual float    rawToVoltage(uint8_t channel, uint16_t raw);
+    virtual float    rawToVoltage  (uint8_t channel, uint16_t raw);
 
     // Additional ADC methods for ADC14
     void adcSetupScan (uint16_t res);
     void attachScanIrq(uint8_t channel,
-                       void (*handler)(uint16_t chan, uint16_t val) );
+                       void (*handler)(uint16_t chan, uint16_t value) );
     void adcStartScan (uint8_t start_channel, uint8_t end_channel);
     void adcStopScan  ();
     uint16_t adcReadScan(uint8_t channel);
@@ -42,9 +42,9 @@ class adc14_msp432 : public adc_interface {
     // The following method must only be used with ONE channel!
     // After calling the handler, the irq is disabled!
     void attachWinIrq (uint8_t channel,
-                      void (*handler)(uint16_t val, uint16_t mode),
+                      void (*handler)(uint16_t val, uint16_t irq_mode),
                       uint16_t low, uint16_t high,
-                      uint16_t mode);
+                      uint16_t irq_mode);
 
     // IRQ handlers are our best friends
     friend void ADC14_IRQHandler(void);
@@ -52,7 +52,8 @@ class adc14_msp432 : public adc_interface {
   private:
 
     adc14_msp432();
-    void set_resolution (uint16_t mode);
+
+    void set_resolution (uint16_t res);
 
     void handleIrq(uint32_t iv);
 
@@ -61,7 +62,8 @@ class adc14_msp432 : public adc_interface {
     uint16_t _irqWinMode;
     uint8_t  _irqWinChannel;
 
-    uint16_t _resolution [24];
+    uint16_t _modes[24];
+    uint16_t _current_mode;
 };
 
 
@@ -76,6 +78,17 @@ class adc14_msp432_channel : public adc_channel {
     adc14_msp432_channel(uint16_t c)
      : adc_channel(adc14_msp432::inst, c) { }
 
+    void attachScanIrq(void (*handler)(uint16_t chan, uint16_t value)) {
+        adc14_msp432::inst.attachScanIrq(_channel, handler);
+    }
+    uint16_t adcReadScan() {
+        return adc14_msp432::inst.adcReadScan(_channel);
+    }
+    void attachWinIrq(void (*handler)(uint16_t val, uint16_t irq_mode),
+                      uint16_t low, uint16_t high,
+                      uint16_t irq_mode) {
+        adc14_msp432::inst.attachWinIrq(_channel, handler, low, high, irq_mode);
+    }
 };
 
 #endif // _ADC14_MSP432_H_

@@ -20,6 +20,9 @@ adc14_msp432::adc14_msp432() {
         ADC14->MCTL[channel]  = channel;
         ADC14->MCTL[channel] |= ADC14_MCTLN_VRSEL_0;
     }
+    // Initialize resolution
+    _current_mode = 0;
+
     // set up control register 0
 	uint32_t ctl0 = 0;
     ctl0 |= ADC14_CTL0_ON;          // switch on ADC module
@@ -39,9 +42,9 @@ adc14_msp432::adc14_msp432() {
 	NVIC_EnableIRQ(ADC14_IRQn);
 }
 
-void adc14_msp432::adcMode(uint8_t channel, uint16_t res) {
+void adc14_msp432::adcMode(uint8_t channel, uint16_t mode) {
     yahal_assert(channel < 24);
-    _resolution[channel] = res;
+    _modes[channel] = mode;
     uint16_t port_pin = (5 << 3) + 5; // A0 is on P5.5
     if (channel > 13)
         port_pin = (6 << 3) + 1 + 14; // A14 is on P6.1
@@ -58,10 +61,13 @@ void adc14_msp432::adcMode(uint8_t channel, uint16_t res) {
 }
 
 uint16_t adc14_msp432::adcReadRaw(uint8_t channel) {
-    // wait until active conversion is done
-	while (BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_BUSY_OFS));
-	// set resolution will set ENC to low!
-	set_resolution(_resolution[channel]);
+    yahal_assert(channel < 24);
+	// set resolution
+	if (_current_mode !=_modes[channel]) {
+	    set_resolution( _modes[channel] );
+	} else {
+	    adcStopScan();
+	}
     // set up start channel
     ADC14->CTL1 &= ~ADC14_CTL1_CSTARTADD_MASK;
     ADC14->CTL1 |= (channel << ADC14_CTL1_CSTARTADD_OFS);
@@ -81,19 +87,21 @@ float adc14_msp432::adcReadVoltage(uint8_t channel) {
 
 float adc14_msp432::rawToVoltage(uint8_t channel, uint16_t raw) {
     float voltage = 3.3f * (float)raw;
-    switch(adc14_msp432::_resolution[channel]) {
-        case ADC::ADC_8_BIT:  voltage /= 255.0f;   break;
+    switch(_modes[channel]) {
+        case ADC::ADC_8_BIT : voltage /= 255.0f;   break;
         case ADC::ADC_10_BIT: voltage /= 1023.0f;  break;
         case ADC::ADC_12_BIT: voltage /= 4095.0f;  break;
         case ADC::ADC_14_BIT: voltage /= 16383.0f; break;
+        default: yahal_assert(false);
     }
     return voltage;
 }
 
-
-void adc14_msp432::adcSetupScan(uint16_t res) {
+void adc14_msp432::adcSetupScan(uint16_t mode) {
     adcStopScan();
-    set_resolution(res);
+    if (_current_mode != mode) {
+        set_resolution(mode);
+    }
 }
 
 void adc14_msp432::adcStartScan(uint8_t  start, uint8_t end) {
@@ -114,12 +122,14 @@ void adc14_msp432::adcStartScan(uint8_t  start, uint8_t end) {
 
 void adc14_msp432::adcStopScan() {
     // disable conversions
-    BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_ENC_OFS) = 0;
-    // make sure the ENC low pulse has a minimum duration
-    for (int i = 0; i < 1000; ++i) ;
+    if (BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_ENC_OFS)) {
+        BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_ENC_OFS) = 0;
+        // make sure the ENC low pulse has a minimum duration
+        for (int i = 0; i < 1000; ++i) ;
+    }
 }
 
-uint16_t adcReadScan(uint8_t channel) {
+uint16_t adc14_msp432::adcReadScan(uint8_t channel) {
     yahal_assert(channel < 24);
     return ADC14->MEM[channel];
 }
@@ -128,6 +138,7 @@ void adc14_msp432::attachScanIrq(uint8_t channel,
                                  void (*handler)(uint16_t chan, uint16_t val) ) {
     yahal_assert(channel < 24);
     adcStopScan();
+    // store handler function
     _irqHandlers[channel] = handler;
     // enable the channel irq
     ADC14->IER0 |= (1 << channel);
@@ -138,10 +149,15 @@ void adc14_msp432::attachWinIrq(uint8_t channel,
                                 uint16_t low, uint16_t high,
                                 uint16_t mode) {
     yahal_assert(channel < 24);
+    // Window irqs are only allowed on ONE channel!
+    yahal_assert(!(ADC14->IER1 & (ADC14_IER1_HIIE |
+                                  ADC14_IER1_LOIE |
+                                  ADC14_IER1_INIE) ));
+
     adcStopScan();
     _irqWinHandler = handler;
     _irqWinMode    = mode;
-    _irqWinChannel    = channel;
+    _irqWinChannel = channel;
     // set and enable window
     ADC14->LO0 = low;
     ADC14->HI0 = high;
@@ -158,17 +174,22 @@ void adc14_msp432::set_resolution(uint16_t mode) {
     switch(mode) {
         case ADC::ADC_8_BIT:
             ADC14->CTL1 |= ADC14_CTL1_RES__8BIT;
+            _current_mode = ADC::ADC_8_BIT;
             break;
         case ADC::ADC_10_BIT:
             ADC14->CTL1 |= ADC14_CTL1_RES__10BIT;
+            _current_mode = ADC::ADC_10_BIT;
             break;
         case ADC::ADC_12_BIT:
             ADC14->CTL1 |= ADC14_CTL1_RES__12BIT;
+            _current_mode = ADC::ADC_12_BIT;
             break;
         case ADC::ADC_14_BIT:
-        default:
             ADC14->CTL1 |= ADC14_CTL1_RES__14BIT;
+            _current_mode = ADC::ADC_14_BIT;
             break;
+        default:
+            yahal_assert(false);
     }
 }
 
@@ -176,7 +197,7 @@ void adc14_msp432::handleIrq(uint32_t iv) {
     if (iv < 0x000c) {
         // A window interrupt has occurred
         //////////////////////////////////
-        uint16_t mode;
+        uint16_t mode = 0;
         adcStopScan();
         ADC14->MCTL[_irqWinChannel] &= ~ADC14_MCTLN_WINC;
         ADC14->IER1     &= ~(ADC14_IER1_HIIE |
