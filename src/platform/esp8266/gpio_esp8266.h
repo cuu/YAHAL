@@ -23,6 +23,7 @@ class gpio_esp8266 : public gpio_interface {
     void handleInterrupt();
 
     // Special functions of ESP8266
+    void gpioModeSleep    (uint16_t gpio, uint16_t mode);
     void brightnessControl(uint16_t gpio, bool);
     void setBrightness    (uint8_t);
 
@@ -45,7 +46,9 @@ class gpio_esp8266_pin : public gpio_pin {
 	gpio_esp8266_pin(uint16_t gpio) : gpio_pin(gpio_esp8266::inst) {
 		setGpio(gpio);
 	}
-
+	inline void gpioModeSleep(uint16_t mode) {
+		gpio_esp8266::inst.gpioModeSleep(_gpio, mode);
+    }
 	inline void brightnessControl(bool on) {
 		gpio_esp8266::inst.brightnessControl(_gpio, on);
     }

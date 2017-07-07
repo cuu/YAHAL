@@ -17,7 +17,7 @@ soft_i2c_master::~soft_i2c_master() {
 }
 
 void soft_i2c_master::init() {
-    uint16_t    mode =  GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
+    uint16_t     mode =  GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
     if (_pullup) mode |= GPIO::PULLUP;
     // Initialize HW pins
     _sda.gpioMode(mode);
@@ -40,12 +40,12 @@ void soft_i2c_master::twice(uint8_t addr,
            I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) {
     if (!_init) init();
     switch(m1) {
-	case I2C::READ:	 read (addr, buf1, len1, false);
-	case I2C::WRITE: write(addr, buf1, len1, false);
+	case I2C::READ:	 read (addr, buf1, len1, false); break;
+	case I2C::WRITE: write(addr, buf1, len1, false); break;
 	}
 	switch(m2) {
-	case I2C::READ:	 read (addr, buf2, len2, true);
-	case I2C::WRITE: write(addr, buf2, len2, true);
+	case I2C::READ:	 read (addr, buf2, len2, true); break;
+	case I2C::WRITE: write(addr, buf2, len2, true); break;
 	}
 }
 
