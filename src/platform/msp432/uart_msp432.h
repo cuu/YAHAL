@@ -1,3 +1,5 @@
+#ifndef _UART_MSP432_H_
+#define _UART_MSP432_H_
 
 #include <stdint.h>
 #include "stdin_interface.h"
@@ -55,3 +57,4 @@ private:
 	uint8_t         _tx_pin;
 };
 
+#endif // _UART_MSP432_H_

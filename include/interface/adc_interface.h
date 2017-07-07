@@ -14,10 +14,10 @@
 
 namespace ADC {
   // ADC modes
-  const uint16_t  ADC_8_BIT          = 0x0001;
-  const uint16_t  ADC_10_BIT         = 0x0002;
-  const uint16_t  ADC_12_BIT         = 0x0004;
-  const uint16_t  ADC_14_BIT         = 0x0008;
+  const uint16_t  ADC_8_BIT   = 0x0001;
+  const uint16_t  ADC_10_BIT  = 0x0002;
+  const uint16_t  ADC_12_BIT  = 0x0004;
+  const uint16_t  ADC_14_BIT  = 0x0008;
 }
 
 class adc_interface {
@@ -25,10 +25,21 @@ class adc_interface {
   public:
 	virtual ~adc_interface() { }
 
-    virtual void     adcMode(uint8_t channel, uint16_t mode) = 0;
-    virtual uint16_t adcReadRaw(uint8_t channel) = 0;
-    virtual float    adcReadVoltage(uint8_t channel) = 0;
-    virtual float	 rawToVoltage(uint16_t raw) = 0;
+	// Prepare a ADC channel for reading. On many
+	// systems, the mode of a single pin needs to
+	// be configured by setting the pin mode.
+	// The second parameter specifies the mode
+	// (currently the ADC resolution).
+	virtual void adcMode(uint8_t channel, uint16_t mode) = 0;
+
+	// Read a single raw (binary) ADC value.
+	virtual uint16_t adcReadRaw(uint8_t channel) = 0;
+
+    // Read a single volatage ADC value.
+	virtual float adcReadVoltage(uint8_t channel) = 0;
+
+	// Convert a raw value to a voltage value.
+	virtual float rawToVoltage(uint8_t channel, uint16_t raw) = 0;
 };
 
 // This small wrapper class provides ADC
@@ -55,7 +66,7 @@ class adc_channel {
 		return _interf.adcReadVoltage(_channel);
 	}
 	inline float rawToVoltage(uint16_t raw) {
-		return _interf.rawToVoltage(raw);
+		return _interf.rawToVoltage(_channel, raw);
 	}
   protected:
 	adc_interface & _interf;
