@@ -1,9 +1,0 @@
-eclipse.preferences.version=1
-environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1136808877/PLATFORM/delimiter=\:
-environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1136808877/PLATFORM/operation=append
-environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1136808877/PLATFORM/value=msp432
-environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1136808877/YAHAL_DIR/delimiter=\:
-environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1136808877/YAHAL_DIR/operation=replace
-environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1136808877/YAHAL_DIR/value=.
-environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1136808877/append=true
-environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1136808877/appendContributed=true
