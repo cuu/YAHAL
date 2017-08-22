@@ -26,7 +26,7 @@ FLAGS_DEBUG     = -g -gdwarf-3 -gstrict-dwarf
 FLAGS_WARN      = -Wall -Wextra
 FLAGS_OPT       = # -Os
 
-FLAGS_CXX       = -fno-threadsafe-statics -fno-rtti -fno-exceptions -std=c++11
+FLAGS_CXX       = -fno-threadsafe-statics -fno-exceptions -std=c++11
 FLAGS_C         =
 FLAGS_ASM       =
 

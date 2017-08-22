@@ -7,6 +7,7 @@
 
 #include "spi_msp432.h"
 #include "yahal_assert.h"
+#include "irq_dispatcher.h"
 
 //void cs_handler(uint16_t pin) {
 //
@@ -20,7 +21,11 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs, const bool spi_mast
 	_EUSCI_TXBUF(mod->TXBUF), _EUSCI_IE(mod->IE),
     _EUSCI_IFG(mod->IFG),     _EUSCI_IV(mod->IV),
 	_mode(mode), _cs(cs) {
-	// Configure hardware characteristics of the 4 A-type modules
+    // Link in IRQ handlers
+    ///////////////////////
+    irq_dispatcher::link_in();
+
+    // Configure hardware characteristics of the 4 A-type modules
 	/////////////////////////////////////////////////////////////
 	if (mod==EUSCI_A0_SPI) {
 		_ste.setGpio (PORT_PIN(1, 0));
@@ -186,37 +191,29 @@ int16_t spi_msp432::transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) {
 }
 
 extern "C" {
-#ifdef USE_EUSCI_A0_IRQ
-void EUSCIA0_IRQHandler(void) {
-}
-#endif
-#ifdef USE_EUSCI_A1_IRQ
-void EUSCIA1_IRQHandler(void) {
-}
-#endif
-#ifdef USE_EUSCI_A2_IRQ
-void EUSCIA2_IRQHandler(void) {
-}
-#endif
-#ifdef USE_EUSCI_A3_IRQ
-void EUSCIA3_IRQHandler(void) {
-}
-#endif
-#ifdef USE_EUSCI_B0_IRQ
-void EUSCIB0_IRQHandler(void) {
-}
-#endif
-#ifdef USE_EUSCI_B1_IRQ
-void EUSCIB1_IRQHandler(void) {
-}
-#endif
-#ifdef USE_EUSCI_B2_IRQ
-void EUSCIB2_IRQHandler(void) {
-}
-#endif
-#ifdef USE_EUSCI_B3_IRQ
-void EUSCIB3_IRQHandler(void) {
-}
-#endif
+
+    void EUSCIA0_SPI_IRQHandler(void) {
+    }
+
+    void EUSCIA1_SPI_IRQHandler(void) {
+    }
+
+    void EUSCIA2_SPI_IRQHandler(void) {
+    }
+
+    void EUSCIA3_SPI_IRQHandler(void) {
+    }
+
+    void EUSCIB0_SPI_IRQHandler(void) {
+    }
+
+    void EUSCIB1_SPI_IRQHandler(void) {
+    }
+
+    void EUSCIB2_SPI_IRQHandler(void) {
+    }
+
+    void EUSCIB3_SPI_IRQHandler(void) {
+    }
 
 } // extern "C"
