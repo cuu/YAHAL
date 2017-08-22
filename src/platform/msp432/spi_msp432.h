@@ -11,6 +11,17 @@
 #include "gpio_msp432.h"
 #include "msp.h"
 
+extern "C" {
+    void EUSCIA0_SPI_IRQHandler(void);
+    void EUSCIA1_SPI_IRQHandler(void);
+    void EUSCIA2_SPI_IRQHandler(void);
+    void EUSCIA3_SPI_IRQHandler(void);
+    void EUSCIB0_SPI_IRQHandler(void);
+    void EUSCIB1_SPI_IRQHandler(void);
+    void EUSCIB2_SPI_IRQHandler(void);
+    void EUSCIB3_SPI_IRQHandler(void);
+}
+
 namespace SPI {
 	const uint16_t CPHA_0      = 0x8000;
 	const uint16_t CPHA_1      = 0x0000;
@@ -43,6 +54,17 @@ class spi_msp432 : public spi_interface {
    ~spi_msp432();
 
     int16_t transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len);
+
+    // IRQ handlers are our best friends
+    ////////////////////////////////////
+    friend void EUSCIA0_SPI_IRQHandler(void);
+    friend void EUSCIA1_SPI_IRQHandler(void);
+    friend void EUSCIA2_SPI_IRQHandler(void);
+    friend void EUSCIA3_SPI_IRQHandler(void);
+    friend void EUSCIB0_SPI_IRQHandler(void);
+    friend void EUSCIB1_SPI_IRQHandler(void);
+    friend void EUSCIB2_SPI_IRQHandler(void);
+    friend void EUSCIB3_SPI_IRQHandler(void);
 
   private:
 
