@@ -4,7 +4,7 @@
 
 # Root folder of MSP432 package (installed by Energia IDE)
 ifeq ($(FILE_UNIX_STYLE),1)
-CCS_ROOT = /usr/local/ccsv7
+CCS_ROOT = /opt/ti/ccsv7
 else
 CCS_ROOT = C:/ti/ccsv7
 endif
@@ -24,9 +24,9 @@ FLAGS_F         = -ffunction-sections -fdata-sections -fno-unwind-tables -fno-as
 FLAGS_M         = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs
 FLAGS_DEBUG     = -g -gdwarf-3 -gstrict-dwarf
 FLAGS_WARN      = -Wall -Wextra
-FLAGS_OPT       = -Os
+FLAGS_OPT       = # -Os
 
-FLAGS_CXX       = -fno-threadsafe-statics -fno-rtti -fno-exceptions -std=c++11
+FLAGS_CXX       = -fno-threadsafe-statics -fno-exceptions -std=c++11
 FLAGS_C         =
 FLAGS_ASM       =
 

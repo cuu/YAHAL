@@ -2,6 +2,7 @@
 #include "uart_msp432.h"
 #include "gpio_msp432.h"
 #include "yahal_assert.h"
+#include "irq_dispatcher.h"
 
 #include <string.h>
 #include "msp.h"
@@ -14,7 +15,9 @@ uart_msp432::uart_msp432(EUSCI_A_Type * mod,
 		   uint32_t    baud, UART_BITS bits,
 		   UART_PARITY par,  UART_STOP stop)
 : _init(false), _EUSCI(mod), _baud(baud), _bits(bits),
-  _par(par), _stop(stop), _port(0), _rx_pin(0), _tx_pin(0) { }
+  _par(par), _stop(stop), _port(0), _rx_pin(0), _tx_pin(0) {
+    irq_dispatcher::link_in();
+}
 
 
 void uart_msp432::init() {
@@ -153,16 +156,16 @@ void uart_msp432::handleIrq(EUSCI_A_Type * uart) {
 // Interrupt handler for EUSCIA0..4
 ///////////////////////////////////
 extern "C" {
-void EUSCIA0_IRQHandler(void) {
+void EUSCIA0_UART_IRQHandler(void) {
     uart_msp432::handleIrq(EUSCI_A0);
 }
-void EUSCIA1_IRQHandler(void) {
+void EUSCIA1_UART_IRQHandler(void) {
     uart_msp432::handleIrq(EUSCI_A1);
 }
-void EUSCIA2_IRQHandler(void) {
+void EUSCIA2_UART_IRQHandler(void) {
     uart_msp432::handleIrq(EUSCI_A2);
 }
-void EUSCIA3_IRQHandler(void) {
+void EUSCIA3_UART_IRQHandler(void) {
     uart_msp432::handleIrq(EUSCI_A3);
 }
 } // extern "C"

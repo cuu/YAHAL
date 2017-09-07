@@ -18,9 +18,9 @@ class gp2y1010au0f_drv {
 public:
 
 	gp2y1010au0f_drv(adc_channel  & adc,
-					 gpio_pin & led,
-					 timer_interface & timer,
-					 float voltage_factor = 1.0);
+			 gpio_pin & led,
+			 timer_interface & timer,
+			 float voltage_factor = 1.0);
 
 	~gp2y1010au0f_drv();
 
@@ -45,7 +45,7 @@ private:
 	float voltage_to_dust(float VO);
 
 	// HW members: ADC, LED and timer references
-	adc_channel &		_adc;
+	adc_channel &			_adc;
 	gpio_pin &			_ir_led;
 	timer_interface &	_timer;
 

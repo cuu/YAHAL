@@ -17,6 +17,7 @@ class byte_bitstream : public bitstream_interface {
 	byte_bitstream(uint8_t bitsPerRequest,
 				   const uint8_t * data,
 				   uint8_t bitsPerByte);
+	virtual ~byte_bitstream() { }
 
 	uint16_t getNext(uint8_t bits=0);
 

@@ -29,7 +29,7 @@ timer_msp432::timer_msp432(Timer32_Type * timer)
     _period_us   = 0;
     _period_load = 0;
     // enable IRQ in NVIC
-    NVIC_EnableIRQ( (IRQn_Type) ((timer==TIMER32_1) ? 25 : 26) );
+    NVIC_EnableIRQ( (timer==TIMER32_1) ? T32_INT1_IRQn : T32_INT2_IRQn );
 }
 
 timer_msp432::~timer_msp432() {

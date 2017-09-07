@@ -86,7 +86,7 @@ PLATFORM_FILE = $(YAHAL_DIR)/platforms/platform-$(PLATFORM).mk
 ifneq ("$(wildcard $(PLATFORM_FILE))","")
   include $(PLATFORM_FILE)
 else
-  $(error Platform file $(YAHAL_DIR)/platforms/platform-$(PLATFORM).mk not existing!)
+  $(error Platform file platform/platform-$(PLATFORM).mk not existing!)
 endif
 
 #####################

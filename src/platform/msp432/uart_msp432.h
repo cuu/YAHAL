@@ -1,3 +1,5 @@
+#ifndef _UART_MSP432_H_
+#define _UART_MSP432_H_
 
 #include <stdint.h>
 #include "stdin_interface.h"
@@ -5,10 +7,10 @@
 #include "msp.h"
 
 extern "C" {
-void EUSCIA0_IRQHandler(void);
-void EUSCIA1_IRQHandler(void);
-void EUSCIA2_IRQHandler(void);
-void EUSCIA3_IRQHandler(void);
+void EUSCIA0_UART_IRQHandler(void);
+void EUSCIA1_UART_IRQHandler(void);
+void EUSCIA2_UART_IRQHandler(void);
+void EUSCIA3_UART_IRQHandler(void);
 }
 
 enum UART_BITS   { _7_BITS, _8_BITS };
@@ -33,10 +35,10 @@ public:
 
 	void attachRxIrq( void (*)(char) );
 
-	friend void EUSCIA0_IRQHandler(void);
-	friend void EUSCIA1_IRQHandler(void);
-	friend void EUSCIA2_IRQHandler(void);
-	friend void EUSCIA3_IRQHandler(void);
+	friend void EUSCIA0_UART_IRQHandler(void);
+	friend void EUSCIA1_UART_IRQHandler(void);
+	friend void EUSCIA2_UART_IRQHandler(void);
+	friend void EUSCIA3_UART_IRQHandler(void);
 
 private:
     bool _init;
@@ -55,3 +57,4 @@ private:
 	uint8_t         _tx_pin;
 };
 
+#endif // _UART_MSP432_H_
