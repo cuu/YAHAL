@@ -2,6 +2,11 @@
 #define _ADC_ESP8266_H_
 #include "adc_interface.h"
 
+namespace ADC {
+  // additional ADC modes
+  const uint16_t  FAST = 0x1000;
+}
+
 class adc_esp8266 : public adc_interface {
   public:
 	static adc_esp8266 inst;
@@ -14,6 +19,8 @@ class adc_esp8266 : public adc_interface {
 
   private:
     adc_esp8266();
+
+    uint16_t	_mode;
 };
 
 #endif // _GPIO_ESP8266_H_

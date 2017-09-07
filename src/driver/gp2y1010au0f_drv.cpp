@@ -16,8 +16,8 @@ void callback_helper(void * arg) {
 gp2y1010au0f_drv::gp2y1010au0f_drv(adc_channel  & adc,
 				   gpio_pin & led,
 				   timer_interface & timer,
-				   float divider)
-: _adc(adc), _ir_led(led), _timer(timer), _voltage_divider(divider) {
+				   float factor)
+: _adc(adc), _ir_led(led), _timer(timer), _voltage_factor(factor) {
 
 	// HW initialization
 	_ir_led.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
@@ -87,8 +87,7 @@ void gp2y1010au0f_drv::process_state() {
 			// 1. mean raw ADC value
 			_raw_sum  /= _measurements;
 			// 2. calculate voltage
-			_volt  = _adc.rawToVoltage(_raw_sum);
-			_volt /= _voltage_divider;
+			_volt  = _adc.rawToVoltage(_raw_sum) * _voltage_factor;
 			// 3. evaluate max/min values
 			if (_volt < _volt_min) _volt_min = _volt;
 			if (_volt > _volt_max) _volt_max = _volt;
@@ -96,6 +95,9 @@ void gp2y1010au0f_drv::process_state() {
 			_dust = voltage_to_dust(_volt);
 			// Use callback to write value
 			_callback(this);
+
+			//if (_volt_min < 0.6) _volt_min += 0.01;
+			//if (_volt_max > 3.0) _volt_max -= 0.01;
 			break;
 		}
 	}
