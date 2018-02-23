@@ -14,11 +14,11 @@
 
 #include <cstring>
 
-inline void task_base::enable_irq()             { __enable_irq();      }
-inline void task_base::disable_irq()            { __disable_irq();     }
-inline void task_base::yield()                  { sys_call(SYS_YIELD); }
-inline void task_base::cpu_sleep()              { __WFE();             }
-inline void task_base::trigger_context_switch() { SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk; }
+void task_base::enable_irq()             { __enable_irq();      }
+void task_base::disable_irq()            { __disable_irq();     }
+void task_base::yield()                  { sys_call(SYS_YIELD); }
+void task_base::cpu_sleep()              { __WFE();             }
+void task_base::trigger_context_switch() { SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk; }
 
 //////////////////////////////////////////
 // The following structure defines a stack
