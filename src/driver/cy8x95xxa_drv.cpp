@@ -8,9 +8,6 @@
 #include "cy8c95xxa_drv.h"
 #include "yahal_assert.h"
 
-#include <iostream>
-using namespace std;
-
 namespace CY8C95XXA {
 // Chip register addresses
 static const uint8_t INPUT_REG   = 0x00;
@@ -34,7 +31,8 @@ static const uint8_t ENABLE_REG  = 0x2d;
 static const uint8_t DEV_ID_REG  = 0x2e;
 static const uint8_t COMMAND_REG = 0x30;
 
-int8_t gpio_to_pwm[8][8] = {  7,  5,  3,  1,  7,  5,  3,  1,
+int8_t gpio_to_pwm[8][8] = {
+        7,  5,  3,  1,  7,  5,  3,  1,
 		6,  4,  2,  0,  6,  4,  2,  0,
 		14, 12,  8, 11, -1, -1, -1, -1,
 		7,  5,  3,  1, 15, 13, 11,  9,
@@ -54,13 +52,17 @@ cy8c95xxa_drv::cy8c95xxa_drv(i2c_interface & hw, uint8_t addr)
 	case 0x60: _pwm_mask = 0x0f; break;
 	default: yahal_assert(false);
 	}
+
+	// Reset the chip
+	sendCommand(CY8C95XXA::CMD_RESET);
+
 	// read current output values
 	for (uint8_t port = 0; port < 8; ++port) {
 		_output[port] = readRegister( CY8C95XXA::OUTPUT_REG + port );
 	}
 }
 
-void cy8c95xxa_drv::pinMode(uint16_t gpio, uint16_t mode) {
+void cy8c95xxa_drv::gpioMode(uint16_t gpio, uint16_t mode) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
@@ -73,13 +75,13 @@ void cy8c95xxa_drv::pinMode(uint16_t gpio, uint16_t mode) {
 			break;
 		}
 		case GPIO::INPUT | GPIO::PULLUP: {
-			digitalWrite(gpio, true);
+			gpioWrite(gpio, true);
 			writeRegister(CY8C95XXA::PIN_DIR_REG, 0xff, mask);
 			writeRegister(CY8C95XXA::PULLUP_REG,  0xff, mask);
 			break;
 		}
 		case GPIO::INPUT | GPIO::PULLDOWN: {
-			digitalWrite(gpio, false);
+			gpioWrite(gpio, false);
 			writeRegister(CY8C95XXA::PIN_DIR_REG, 0xff, mask);
 			writeRegister(CY8C95XXA::PULLDN_REG,  0xff, mask);
 			break;
@@ -118,18 +120,18 @@ void cy8c95xxa_drv::pinMode(uint16_t gpio, uint16_t mode) {
 			yahal_assert(false);
 		}
 	}
-	if (mode & GPIO::INIT_HIGH) digitalWrite(gpio, true);
-	if (mode & GPIO::INIT_LOW)  digitalWrite(gpio, false);
+	if (mode & GPIO::INIT_HIGH) gpioWrite(gpio, true);
+	if (mode & GPIO::INIT_LOW)  gpioWrite(gpio, false);
 }
 
-bool cy8c95xxa_drv::digitalRead(uint16_t gpio) {
+bool cy8c95xxa_drv::gpioRead(uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
 	return (readRegister(CY8C95XXA::INPUT_REG + port) & mask);
 }
 
-void cy8c95xxa_drv::digitalWrite(uint16_t gpio, bool value) {
+void cy8c95xxa_drv::gpioWrite(uint16_t gpio, bool value) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
@@ -143,26 +145,26 @@ void cy8c95xxa_drv::digitalWrite(uint16_t gpio, bool value) {
 
 // Interrupt handling
 /////////////////////
-void cy8c95xxa_drv::attachInterrupt (uint16_t gpio,
-                                     void (*handler)(uint16_t gpio),
-                                     uint16_t mode) {
+void cy8c95xxa_drv::gpioAttachIrq(uint16_t gpio,
+                                  void (*handler)(uint16_t gpio),
+                                  uint16_t mode) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	yahal_assert(!(mode & ~GPIO::RISING & ~GPIO::FALLING));
 	intHandler[port][pin] = handler;
 	intMode   [port][pin] = mode;
-	enableInterrupt(gpio);
+	gpioEnableIrq(gpio);
 }
 
-void cy8c95xxa_drv::detachInterrupt (uint16_t gpio) {
+void cy8c95xxa_drv::gpioDetachIrq(uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
-	disableInterrupt(gpio);
+	gpioDisableIrq(gpio);
 	intHandler[port][pin] = 0;
 	intMode   [port][pin] = 0;
 }
 
-void cy8c95xxa_drv::enableInterrupt (uint16_t gpio) {
+void cy8c95xxa_drv::gpioEnableIrq(uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
@@ -170,7 +172,7 @@ void cy8c95xxa_drv::enableInterrupt (uint16_t gpio) {
 	writeRegister(CY8C95XXA::INT_MSK_REG, 0x00, mask);
 }
 
-void cy8c95xxa_drv::disableInterrupt(uint16_t gpio) {
+void cy8c95xxa_drv::gpioDisableIrq(uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	uint8_t mask = (1 << pin);
