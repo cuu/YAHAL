@@ -15,7 +15,7 @@
 // Definition of static members
 ///////////////////////////////
 
-uint64_t task_base::_up_ticks  = 0;
+uint64_t      task_base::_up_ticks  = 0;
 task_base *   task_base::_run_ptr   = nullptr;
 task_base *   task_base::_run_next  = nullptr;
 
@@ -133,7 +133,7 @@ void task_base::run_scheduler(void) {
 
     for(uint16_t i=0; i < _size; ++i) {
         register task_base::state_t & state = cur_ptr->_state;
-        register uint16_t        prio  = cur_ptr->_priority;
+        register uint16_t             prio  = cur_ptr->_priority;
 
         // Handle sleeping Tasks
         if (state == task_base::state_t::SLEEPING) {

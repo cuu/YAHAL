@@ -55,17 +55,17 @@ class cy8c95xxa_drv : public gpio_interface {
     cy8c95xxa_drv(i2c_interface & hw, uint8_t addr);
 
     /* Basic GPIO handling */
-    void pinMode      (uint16_t gpio, uint16_t mode);
-    bool digitalRead  (uint16_t gpio);
-    void digitalWrite (uint16_t gpio, bool value);
+    void gpioMode (uint16_t gpio, uint16_t mode) override;
+    bool gpioRead (uint16_t gpio) override;
+    void gpioWrite(uint16_t gpio, bool value) override;
 
     /* Interrupt handling */
-    void attachInterrupt (uint16_t gpio,
-    					  void (*)(uint16_t gpio),
-                          uint16_t mode);
-    void detachInterrupt (uint16_t gpio);
-    void enableInterrupt (uint16_t gpio);
-    void disableInterrupt(uint16_t gpio);
+    void gpioAttachIrq (uint16_t gpio,
+    					void (*)(uint16_t gpio),
+                        uint16_t mode) override;
+    void gpioDetachIrq (uint16_t gpio) override;
+    void gpioEnableIrq (uint16_t gpio) override;
+    void gpioDisableIrq(uint16_t gpio) override;
     void handleInterrupt();
 
     // PWM stuff

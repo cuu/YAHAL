@@ -11,7 +11,7 @@
 #include <cstdio>
 #include "std_io.h"
 
-#define MONITOR_WAIT 1000
+#define MONITOR_WAIT 10000
 
 #define CLEAR_SCREEN "%c[H%c[J",27,27
 #define VT100_COLOR  "%c[%dm",27
@@ -55,7 +55,7 @@ class task_monitor : public task_timer<T>
                    _this->state_to_str(p->_state),
                    _this->used_stack  (p->_stack_base, p->_stack_size) * sizeof(uint32_t),
                                                        p->_stack_size  * sizeof(uint32_t),
-                   t,
+                    (t * 1000) / MONITOR_WAIT,
                     (t * 100 ) / MONITOR_WAIT,
                    ((t * 1000) / MONITOR_WAIT) % 10
             );

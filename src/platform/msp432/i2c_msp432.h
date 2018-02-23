@@ -10,6 +10,7 @@
 
 #include "msp.h"
 #include "gpio_msp432.h"
+#include "i2c_interface.h"
 
 namespace I2C {
 	const uint16_t OWN_7_BIT_ADDR    = 0x0000;
@@ -22,7 +23,7 @@ namespace I2C {
 	const uint16_t CLK_SMCLK         = EUSCI_B_CTLW0_SSEL__SMCLK;
 }
 
-class i2c_msp432  {
+class i2c_msp432 : public i2c_interface {
 
   public:
 
@@ -33,11 +34,12 @@ class i2c_msp432  {
 
    virtual ~i2c_msp432();
 
-   int16_t write(uint16_t addr, uint8_t *txbuf, uint8_t len);
-   int16_t read (uint16_t addr, uint8_t *rxbuf, uint8_t len);
+   int16_t write(uint16_t addr, uint8_t *txbuf, uint8_t len) override;
+   int16_t read (uint16_t addr, uint8_t *rxbuf, uint8_t len) override;
 
-   void twice(uint16_t addr, uint8_t *txbuf, uint8_t txlen,
-                             uint8_t *rxbuf, uint8_t rxlen);
+   virtual void twice(uint16_t addr,
+                 I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
+                 I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) override;
 
   private:
 
