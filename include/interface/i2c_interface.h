@@ -24,15 +24,15 @@ class i2c_interface {
     // Write len bytes from txbuf to I2C interface.
     // The number of bytes written is returned,
     // otherwise -1 in case of errors
-    virtual int16_t write(uint8_t addr, uint8_t *txbuf, uint8_t len) = 0;
+    virtual int16_t write(uint16_t addr, uint8_t *txbuf, uint8_t len) = 0;
 
     // Read max. len bytes from I2C interface
     // The number of bytes read is returned,
     // otherwise -1 in case of errors
-    virtual int16_t read (uint8_t addr, uint8_t *rxbuf, uint8_t len) = 0;
+    virtual int16_t read (uint16_t addr, uint8_t *rxbuf, uint8_t len) = 0;
 
     // Perform 2 I2C opertions with only one 'stop'
-    virtual void twice(uint8_t addr,
+    virtual void twice(uint16_t addr,
                        I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
                        I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) = 0;
 
