@@ -30,7 +30,7 @@ task_base::task_base(const char * n, uint16_t stack_size)
     _name[15] = '\0';
 
     _priority    = 0;
-    _state       = task_base::state_t::SUSPENDED;
+    _state       = state_t::SUSPENDED;
     _stack_ptr   = nullptr;
     _ticks       = 0;
     _last_ticks  = 0;
@@ -59,7 +59,7 @@ void task_base::start(uint16_t priority, bool priv) {
 
     // Set remaining Task data members
     _priority    = priority;
-    _state       = task_base::state_t::READY;
+    _state       = state_t::READY;
     _ticks       = 0;
     _last_ticks  = 0;
     _sleep_until = 0;
@@ -82,22 +82,22 @@ void task_base::end() {
 }
 
 void task_base::sleep(uint32_t ms) {
-    _sleep_until  = task_base::_up_ticks;
+    _sleep_until  = _up_ticks;
     _sleep_until += millis2ticks(ms);
-    _state = task_base::state_t::SLEEPING;
+    _state = state_t::SLEEPING;
     yield();
 }
 
 void task_base::suspend() {
-    if (_state != task_base::state_t::SUSPENDED) {
-        _state  = task_base::state_t::SUSPENDED;
+    if (_state != state_t::SUSPENDED) {
+        _state  = state_t::SUSPENDED;
         yield();
     }
 }
 
 void task_base::resume() {
-    if (_state != task_base::state_t::READY) {
-        _state  = task_base::state_t::READY;
+    if (_state != state_t::READY) {
+        _state  = state_t::READY;
     }
 }
 
@@ -105,10 +105,10 @@ void task_base::join() {
     while ( linkedIn() ) yield();
 }
 
-//void Task::setPriority(uint16_t p) {
-//    yahal_assert(p > 0);
-//    _priority = p;
-//}
+void task_base::setPriority(uint16_t p) {
+    yahal_assert(p > 0);
+    _priority = p;
+}
 
 uint32_t task_base::getDeltaTicks() {
     uint32_t now = _ticks;
@@ -127,22 +127,22 @@ void task_base::_run(void) {
 }
 
 void task_base::run_scheduler(void) {
-    register task_base *   cur_ptr  = task_base::_run_ptr->_next;
+    register task_base *   cur_ptr  = _run_ptr->_next;
     register task_base *   next_ptr = nullptr;
     register uint16_t max_prio = 0;
 
     for(uint16_t i=0; i < _size; ++i) {
-        register task_base::state_t & state = cur_ptr->_state;
-        register uint16_t             prio  = cur_ptr->_priority;
+        register state_t & state = cur_ptr->_state;
+        register uint16_t  prio  = cur_ptr->_priority;
 
         // Handle sleeping Tasks
-        if (state == task_base::state_t::SLEEPING) {
-            if (task_base::_up_ticks >= cur_ptr->_sleep_until) {
-                state = task_base::state_t::READY;
+        if (state == state_t::SLEEPING) {
+            if (_up_ticks >= cur_ptr->_sleep_until) {
+                state = state_t::READY;
             }
         }
         // Look for potential new Tasks to run
-        if ((state == task_base::state_t::READY) && (prio > max_prio)) {
+        if ((state == state_t::READY) && (prio > max_prio)) {
             max_prio = prio;
             next_ptr = cur_ptr;
             #ifdef SIMPLE_ROUND_ROBIN
@@ -155,17 +155,17 @@ void task_base::run_scheduler(void) {
     yahal_assert(next_ptr);
 
     // Check if we need a context switch
-    if (next_ptr != task_base::_run_ptr) {
-        task_base::_run_next = next_ptr;
+    if (next_ptr != _run_ptr) {
+        _run_next = next_ptr;
         trigger_context_switch();
     }
 }
 
 void task_base::tick_handler() {
-    // Increment the global millisecond timer
+    // Increment the global millisecond timer ...
+    ++(_up_ticks);
     // and the millisecond ticks of the running Task
-    ++(task_base::_up_ticks);
-    ++(task_base::_run_ptr->_ticks);
-    task_base::run_scheduler();
+    ++(_run_ptr->_ticks);
+    run_scheduler();
 }
 

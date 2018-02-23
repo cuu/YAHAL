@@ -60,6 +60,7 @@ class task_base : public circular_list<task_base> {
     void suspend();
     void resume();
     void join();
+    void setPriority(uint16_t p);
 
     // This method contains the Task code
     /////////////////////////////////////
@@ -102,9 +103,9 @@ class task_base : public circular_list<task_base> {
 
     // class members
     ////////////////
-    static uint64_t      _up_ticks;    // global tick count from start
-    static task_base *   _run_ptr;     // Pointer to running Task
-    static task_base *   _run_next;    // Pointer to next running Task
+    static uint64_t    _up_ticks; // global tick count from start
+    static task_base * _run_ptr;  // Pointer to running Task
+    static task_base * _run_next; // Pointer to next running Task
 
     ////////////////////////////////////////////
     // CPU-specific interface, which needs to be
@@ -115,6 +116,7 @@ class task_base : public circular_list<task_base> {
     virtual bool isUsingFloat() const    = 0;
     virtual void setup_stack (bool priv) = 0;
 
+    // do not use virtual tables for these functions
     static void enable_irq();
     static void disable_irq();
     static void yield();
