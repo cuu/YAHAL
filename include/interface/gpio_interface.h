@@ -1,12 +1,11 @@
 // ---------------------------------------------
 //           This file is part of
-//     _  _   __    _   _    __    __      _  _____  ___
-//    ( \/ ) /__\  ( )_( )  /__\  (  )    / )(  _  )/ __)
-//     \  / /(__)\  ) _ (  /(__)\  )(__  / /  )(_)(
-//     (__)(__)(__)(_) (_)(__)(__)(____)(_/  (_____)(___/
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
 //
-//  YAHAL/OS,  Another HW Abstraction Library/Operating System
-//
+//    YAHAL,  Another HW Abstraction Library
 //     Copyright (C) 2016 Andreas Terstegge
 //     BSD Licensed (see file LICENSE)
 //
@@ -18,10 +17,7 @@
 //  on smaller microcontrollers might not perform
 //  any error handling at all or only use assert()
 //  in error cases, while an advanced platform like
-//  a linux-based board might throw exceptions.
-//  Since error handling is mostly important during
-//  development, this might not influence SW portability
-//  between platforms too bad.
+//  a linux-based board might throw exceptions...
 
 #ifndef _GPIO_INTERFACE_H_
 #define _GPIO_INTERFACE_H_
