@@ -17,12 +17,12 @@ class soft_i2c_master : public i2c_interface {
 	soft_i2c_master(gpio_pin & sda, gpio_pin & scl, void (*delay)(), bool pullup = false);
 	virtual ~soft_i2c_master();
 
-    int16_t write(uint8_t addr, uint8_t *txbuf, uint8_t len);
-    int16_t read (uint8_t addr, uint8_t *rxbuf, uint8_t len);
+    int16_t write(uint16_t addr, uint8_t *txbuf, uint8_t len) override;
+    int16_t read (uint16_t addr, uint8_t *rxbuf, uint8_t len) override;
 
-    void twice(uint8_t addr,
+    void twice(uint16_t addr,
                I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
-               I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2);
+               I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) override;
   private:
 
     bool   i2c_start();

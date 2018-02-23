@@ -25,17 +25,17 @@ void soft_i2c_master::init() {
     _init = true;
 }
 
-int16_t soft_i2c_master::write(uint8_t addr, uint8_t *txbuf, uint8_t len) {
+int16_t soft_i2c_master::write(uint16_t addr, uint8_t *txbuf, uint8_t len) {
     if (!_init) init();
     return write(addr, txbuf, len, true);
 }
 
-int16_t soft_i2c_master::read (uint8_t addr, uint8_t *rxbuf, uint8_t len) {
+int16_t soft_i2c_master::read (uint16_t addr, uint8_t *rxbuf, uint8_t len) {
     if (!_init) init();
     return read(addr, rxbuf, len, true);
 }
 
-void soft_i2c_master::twice(uint8_t addr,
+void soft_i2c_master::twice(uint16_t addr,
            I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
            I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) {
     if (!_init) init();
