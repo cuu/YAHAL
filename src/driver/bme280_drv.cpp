@@ -167,6 +167,10 @@ void bme280_drv::get_calibration_data(){
 	_calibration_data.dig_H6 = static_cast<int8_t>(readRegister(BME280::REG_DIG_H6));
 }
 
+bool bme280_drv::detect_sensor() {
+	return (readRegister(BME280::REG_ID) == 0x60);
+}
+
 void bme280_drv::writeRegister(uint8_t reg, uint8_t value){
 	uint8_t txbuf[2];
 	txbuf[0] = reg;

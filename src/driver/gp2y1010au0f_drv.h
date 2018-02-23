@@ -49,7 +49,7 @@ private:
 	gpio_pin &			_ir_led;
 	timer_interface &	_timer;
 
-	float				_voltage_divider;	// factor of voltage divider
+	float				_voltage_factor;	// factor of voltage divider
 	uint32_t			_raw_sum;			// sum of all raw adc values
 	uint16_t			_measurements;		// Number of measurements to perform
 	uint16_t			_counter;	   		// Measurement counter

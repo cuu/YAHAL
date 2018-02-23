@@ -135,9 +135,8 @@ public:
 					  BME280::SAMPLING s_press,
 					  BME280::SAMPLING s_hum);
 
-	uint8_t readRegister(uint8_t reg);
-	void writeRegister(uint8_t reg, uint8_t val);
 	void get_calibration_data();
+	bool detect_sensor();
 
 private:
 	i2c_interface & _i2c;
@@ -145,14 +144,13 @@ private:
 	int32_t t_fine;
 	BME280::CALIBRATION_DATA _calibration_data;
 	void soft_reset();
+
+	void writeRegister(uint8_t reg, uint8_t val);
+	uint8_t readRegister(uint8_t reg);
 	uint32_t read_u24(uint8_t reg);
 	uint16_t read_u16(uint8_t reg);
 	uint16_t read_u16_le(uint8_t reg);
 	uint16_t read_s16_le(uint8_t reg);
-
-
 };
-
-
 
 #endif /* SRC_DRIVER_BME280_DRV_H_ */
