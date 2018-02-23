@@ -207,7 +207,7 @@ extern "C" {
                 task_msp432::_exc_ret = 0xfffffffd;
 
                 // Only restore regiters r0-PSR, because these
-                // will be retored on return of the SVC-handler
+                // will be restored on return of the SVC-handler
                 set_PSP(task_msp432::_run_ptr->_stack_ptr + 9);
 
                 // Set control register

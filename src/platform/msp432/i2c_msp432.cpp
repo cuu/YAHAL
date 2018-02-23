@@ -43,7 +43,7 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 
 	// Set i2c clock
 	////////////////
-	_EUSCI->BRW = 48000000 / 100000; // 100 kHz
+	_EUSCI->BRW = SystemCoreClock / 10000; // 100 kHz
 
 	// Disable interrupts
 	/////////////////////
@@ -116,38 +116,70 @@ int16_t i2c_msp432::read (uint16_t addr, uint8_t *rxbuf, uint8_t len) {
 			return i;
 		}
 	}
-//	send_STOP();
+	send_STOP();
 	return i;
 }
 
 void i2c_msp432::twice(uint16_t addr,
-		               uint8_t *txbuf, uint8_t txlen,
-                       uint8_t *rxbuf, uint8_t rxlen) {
+              I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
+              I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) {
 	// set the slave address
+    _EUSCI->IFG   = 0;
 	_EUSCI->I2CSA = addr;
-	set_transmitter();
-	send_START();
-	int16_t i = 0;
-	for (i=0; i < txlen;  ++i) {
-		while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
-		if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-			send_STOP();
-			yahal_assert(false);
-		}
-		_EUSCI->TXBUF = txbuf[i];
-	}
-	while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
+    int16_t i = 0;
 
-	set_receiver();
-	send_START();
-	for (i=0; i < rxlen;  ++i) {
-		while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
-		if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-			send_STOP();
-			yahal_assert(false);
-		}
-		rxbuf[i] = _EUSCI->RXBUF;
+	if (m1 == I2C::READ) {
+	    set_receiver();
+	    send_START();
+	    for (i=0; i < len1;  ++i) {
+	        while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
+	        if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
+	            send_STOP();
+	            yahal_assert(false);
+	        }
+	        buf1[i] = _EUSCI->RXBUF;
+	    }
+	} else {
+	    set_transmitter();
+	    send_START();
+	    for (i=0; i < len1;  ++i) {
+	        while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
+	        if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
+	            send_STOP();
+	            yahal_assert(false);
+	        }
+	        _EUSCI->TXBUF = buf1[i];
+	    }
+	    while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
 	}
+
+    if (m2 == I2C::READ) {
+        set_receiver();
+        send_START();
+        for (i=0; i < len2;  ++i) {
+//            if ((i+1) == len2) {
+//                send_STOP();
+//            }
+            while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
+            if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
+                send_STOP();
+                yahal_assert(false);
+            }
+            buf2[i] = _EUSCI->RXBUF;
+        }
+    } else {
+        set_transmitter();
+        send_START();
+        for (i=0; i < len2;  ++i) {
+            while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
+            if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
+                send_STOP();
+                yahal_assert(false);
+            }
+            _EUSCI->TXBUF = buf2[i];
+        }
+        while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
+    }
 	send_STOP();
 	return;
 }
