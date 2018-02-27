@@ -45,7 +45,7 @@ struct task_msp432::Stack_Frame {
     // The following 8 registers are automatically
     // saved when handling an exception (caller-saved registers)
 
-    task_base *      r0;     // register R0 (the 'this' pointer in C++ calls)
+    task_base * r0;     // register R0 (the 'this' pointer in C++ calls)
     uint32_t    r1;     // .
     uint32_t    r2;     // . to ...
     uint32_t    r3;     // .

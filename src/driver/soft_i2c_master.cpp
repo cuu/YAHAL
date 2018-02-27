@@ -16,6 +16,52 @@ soft_i2c_master::~soft_i2c_master() {
 	_scl.gpioMode(GPIO::INPUT);
 }
 
+int16_t soft_i2c_master::i2cRead (uint8_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
+    if (!_init) init();
+    if (!i2c_start()) return -1;
+    addr <<= 1;
+    addr  |= 1;
+    addr  &= 0xff;
+    if (!i2c_write_byte(addr)) {
+         if (sendStop) i2c_stop();
+         return -2;
+    }
+    for (uint8_t i=0; i < (len-1); ++i) {
+        rxbuf[i] = i2c_read_byte(false);
+    }
+    rxbuf[len-1] = i2c_read_byte(true);
+    if (sendStop) i2c_stop();
+    for (uint8_t i=0; (_sda.gpioRead()==LOW) && (i < 10); ++i) {
+        _scl.gpioWrite(LOW);  _delay();
+        _scl.gpioWrite(HIGH); _delay();
+    }
+    return len;
+}
+
+int16_t soft_i2c_master::i2cWrite(uint8_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
+    if (!_init) init();
+    if (!i2c_start()) return -1;
+    addr <<= 1;
+    addr  &= 0xff;
+    if (!i2c_write_byte(addr)) {
+         if (sendStop) i2c_stop();
+         return -2;
+    }
+    for (uint8_t i=0; i < len; ++i) {
+        if (!i2c_write_byte(txbuf[i])) {
+            if (sendStop) i2c_stop();
+            return -3;
+        }
+    }
+    if (sendStop) i2c_stop();
+    for (uint8_t i=0; (_sda.gpioRead()==LOW) && (i < 10); ++i) {
+        _scl.gpioWrite(LOW);  _delay();
+        _scl.gpioWrite(HIGH); _delay();
+    }
+    return len;
+}
+
+
 void soft_i2c_master::init() {
     uint16_t    mode =  GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
     if (_pullup) mode |= GPIO::PULLUP;
@@ -23,30 +69,6 @@ void soft_i2c_master::init() {
     _sda.gpioMode(mode);
     _scl.gpioMode(mode);
     _init = true;
-}
-
-int16_t soft_i2c_master::write(uint16_t addr, uint8_t *txbuf, uint8_t len) {
-    if (!_init) init();
-    return write(addr, txbuf, len, true);
-}
-
-int16_t soft_i2c_master::read (uint16_t addr, uint8_t *rxbuf, uint8_t len) {
-    if (!_init) init();
-    return read(addr, rxbuf, len, true);
-}
-
-void soft_i2c_master::twice(uint16_t addr,
-           I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
-           I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) {
-    if (!_init) init();
-    switch(m1) {
-	case I2C::READ:	 read (addr, buf1, len1, false);
-	case I2C::WRITE: write(addr, buf1, len1, false);
-	}
-	switch(m2) {
-	case I2C::READ:	 read (addr, buf2, len2, true);
-	case I2C::WRITE: write(addr, buf2, len2, true);
-	}
 }
 
 bool soft_i2c_master::i2c_start() {
@@ -112,45 +134,3 @@ int8_t soft_i2c_master::i2c_read_byte(bool nack) {
 	return byte;
 }
 
-int16_t soft_i2c_master::write(uint8_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
-	if (!i2c_start()) return -1;
-	addr <<= 1;
-	addr  &= 0xff;
-	if (!i2c_write_byte(addr)) {
-		 if (sendStop) i2c_stop();
-		 return -2;
-	}
-	for (uint8_t i=0; i < len; ++i) {
-		if (!i2c_write_byte(txbuf[i])) {
-			if (sendStop) i2c_stop();
-			return -3;
-		}
-	}
-	if (sendStop) i2c_stop();
-	for (uint8_t i=0; (_sda.gpioRead()==LOW) && (i < 10); ++i) {
-		_scl.gpioWrite(LOW);  _delay();
-		_scl.gpioWrite(HIGH); _delay();
-	}
-	return len;
-}
-
-int16_t soft_i2c_master::read (uint8_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
-	if (!i2c_start()) return -1;
-	addr <<= 1;
-	addr  |= 1;
-	addr  &= 0xff;
-	if (!i2c_write_byte(addr)) {
-		 if (sendStop) i2c_stop();
-		 return -2;
-	}
-	for (uint8_t i=0; i < (len-1); ++i) {
-		rxbuf[i] = i2c_read_byte(false);
-	}
-	rxbuf[len-1] = i2c_read_byte(true);
-	if (sendStop) i2c_stop();
-	for (uint8_t i=0; (_sda.gpioRead()==LOW) && (i < 10); ++i) {
-		_scl.gpioWrite(LOW);  _delay();
-		_scl.gpioWrite(HIGH); _delay();
-	}
-	return len;
-}

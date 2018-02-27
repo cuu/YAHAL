@@ -9,7 +9,7 @@
 #include "yahal_assert.h"
 
 i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
-: _EUSCI(mod), _mode(mode)
+: _EUSCI(mod)
 {
 	// Configure hardware characteristics
 	/////////////////////////////////////
@@ -35,15 +35,12 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 
 	// Configure I2C port
 	/////////////////////
-	_mode |= EUSCI_B_CTLW0_MODE_3 |
-			 EUSCI_B_CTLW0_SYNC;
-
-	_EUSCI->CTLW0 |= _mode;
+	_EUSCI->CTLW0 |= (mode | EUSCI_B_CTLW0_MODE_3);
 	_EUSCI->CTLW1  = 0;
 
-	// Set i2c clock
-	////////////////
-	_EUSCI->BRW = SystemCoreClock / 10000; // 100 kHz
+	// Set i2c clock to default 100 kHz
+	///////////////////////////////////
+	_EUSCI->BRW = SystemCoreClock / 100000;
 
 	// Disable interrupts
 	/////////////////////
@@ -51,8 +48,8 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 
 	// Configure the digital RX/TX lines
 	////////////////////////////////////
-	_sda.setMode(GPIO::OUTPUT); _sda.setSEL(1);
-	_scl.setMode(GPIO::OUTPUT); _scl.setSEL(1);
+	_sda.setMode(GPIO::INPUT | GPIO::PULLUP); _sda.setSEL(1);
+	_scl.setMode(GPIO::INPUT | GPIO::PULLUP); _scl.setSEL(1);
 
 	// Finally enable EUSCI module
 	//////////////////////////////
@@ -63,7 +60,7 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 i2c_msp432::~i2c_msp432() {
 	// Wait for pending operations
 	//////////////////////////////
-	while (_EUSCI->STATW & EUSCI_B_STATW_BUSY);
+	while (_EUSCI->STATW & EUSCI_B_STATW_BBUSY);
 
 	// Reset CTLW0 register to default values
 	// (EUSCI_B is in reset state)
@@ -76,123 +73,67 @@ i2c_msp432::~i2c_msp432() {
 	_scl.setSEL(0); _scl.setMode(GPIO::INPUT);
 }
 
-
-int16_t i2c_msp432::write(uint16_t addr, uint8_t *txbuf, uint8_t len) {
-	// set the slave address
+int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
+    // set the slave address
+    _EUSCI->IFG   = 0;
+    _EUSCI->I2CSA = addr;
+    set_receiver();
+    send_START();
+    int16_t i = 0;
+    for (i=0; i < len;  ++i) {
+        // check for stop
+        if ((i+1) == len) {
+            if (sendStop) send_STOP();
+        }
+        // Wait until data available
+        while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
+        // read the data
+        rxbuf[i] = _EUSCI->RXBUF;
+        // check for NAK
+        if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
+            if (sendStop) send_STOP();
+            return i;
+        }
+    }
+    return i;
+}
+int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
+    // set the slave address
 	_EUSCI->IFG   = 0;
 	_EUSCI->I2CSA = addr;
 	set_transmitter();
 	send_START();
 	int16_t i = 0;
 	for (i=0; i < len;  ++i) {
-		while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
-		if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-			send_STOP();
-			return i;
-		}
-		_EUSCI->TXBUF = txbuf[i];
-	}
-	while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
-	send_STOP();
-	return i;
-}
-
-
-int16_t i2c_msp432::read (uint16_t addr, uint8_t *rxbuf, uint8_t len) {
-	// set the slave address
-	_EUSCI->IFG   = 0;
-	_EUSCI->I2CSA = addr;
-	set_receiver();
-	send_START();
-	int16_t i = 0;
-	for (i=0; i < len;  ++i) {
-		if ((i+1) == len) {
-			send_STOP();
-		}
-		while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
-		rxbuf[i] = _EUSCI->RXBUF;
-		if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-			send_STOP();
-			return i;
-		}
-	}
-	send_STOP();
-	return i;
-}
-
-void i2c_msp432::twice(uint16_t addr,
-              I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
-              I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) {
-	// set the slave address
-    _EUSCI->IFG   = 0;
-	_EUSCI->I2CSA = addr;
-    int16_t i = 0;
-
-	if (m1 == I2C::READ) {
-	    set_receiver();
-	    send_START();
-	    for (i=0; i < len1;  ++i) {
-	        while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
-	        if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-	            send_STOP();
-	            yahal_assert(false);
-	        }
-	        buf1[i] = _EUSCI->RXBUF;
-	    }
-	} else {
-	    set_transmitter();
-	    send_START();
-	    for (i=0; i < len1;  ++i) {
-	        while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
-	        if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-	            send_STOP();
-	            yahal_assert(false);
-	        }
-	        _EUSCI->TXBUF = buf1[i];
-	    }
+        // Place character in buffer
+	    _EUSCI->TXBUF = txbuf[i];
+	    // Wait until transmission begins
 	    while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
+	    // Send a stop during the transmission
+	    // of the last byte
+	    if ((i+1) == len) {
+            if (sendStop) send_STOP();
+	    }
+	    // Check NAK condition
+	    if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
+            if (sendStop) send_STOP();
+	        return i;
+		}
 	}
-
-    if (m2 == I2C::READ) {
-        set_receiver();
-        send_START();
-        for (i=0; i < len2;  ++i) {
-//            if ((i+1) == len2) {
-//                send_STOP();
-//            }
-            while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
-            if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-                send_STOP();
-                yahal_assert(false);
-            }
-            buf2[i] = _EUSCI->RXBUF;
-        }
-    } else {
-        set_transmitter();
-        send_START();
-        for (i=0; i < len2;  ++i) {
-            while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
-            if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-                send_STOP();
-                yahal_assert(false);
-            }
-            _EUSCI->TXBUF = buf2[i];
-        }
-        while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
-    }
-	send_STOP();
-	return;
+	return i;
 }
 
-
-
-void i2c_msp432::send_ADR_ACK() {
-	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXACK;
+void i2c_msp432::setSpeed(uint32_t baud) {
+    _EUSCI->BRW = SystemCoreClock / baud;
 }
 
-void i2c_msp432::send_ADR_NACK() {
-	_EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_TXACK;
-}
+//void i2c_msp432::send_ADR_ACK() {
+//	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXACK;
+//}
+//
+//void i2c_msp432::send_ADR_NACK() {
+//	_EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_TXACK;
+//}
 
 void i2c_msp432::set_receiver() {
 	_EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_TR;
@@ -202,19 +143,23 @@ void i2c_msp432::set_transmitter() {
 	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TR;
 }
 
-void i2c_msp432::send_ACK() {
-	_EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_TXNACK;
-}
+//void i2c_msp432::send_ACK() {
+//	_EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_TXNACK;
+//}
+//
+//void i2c_msp432::send_NACK() {
+//	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXNACK;
+//}
 
-void i2c_msp432::send_NACK() {
-	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXNACK;
+void i2c_msp432::send_START() {
+    _EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXSTT;
+    // Wait until the START condition has been sent
+    while(_EUSCI->CTLW0 & EUSCI_B_CTLW0_TXSTT) ;
 }
 
 void i2c_msp432::send_STOP() {
 	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
-}
-
-void i2c_msp432::send_START() {
-	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXSTT;
+	// Wait until the STOP condition has been sent
+	while (_EUSCI->CTLW0 & EUSCI_B_CTLW0_TXSTP);
 }
 

@@ -186,9 +186,11 @@ void cy8c95xxa_drv::handleInterrupt() {
 	uint8_t irqStatus[8];
 	uint8_t irqValue [8];
 	txbuf[0] = CY8C95XXA::INT_STATUS;
-	_i2c.twice(_i2c_addr, I2C::WRITE, txbuf, 1, I2C::READ, irqStatus, 8);
+    _i2c.i2cWrite(_i2c_addr, txbuf,     1, false);
+    _i2c.i2cRead (_i2c_addr, irqStatus, 8);
 	txbuf[0] = CY8C95XXA::INPUT_REG;
-	_i2c.twice(_i2c_addr, I2C::WRITE, txbuf, 1, I2C::READ, irqValue, 8);
+    _i2c.i2cWrite(_i2c_addr, txbuf,    1, false);
+    _i2c.i2cRead (_i2c_addr, irqValue, 8);
 	// Loop over all gpios
 	for (uint8_t i=0; i < 64; ++i) {
 		uint8_t port = i >> 3;
@@ -232,7 +234,7 @@ bool cy8c95xxa_drv::configPWM (uint8_t port, uint8_t pin,
 	buf[2] = clk;
 	buf[3] = period;
 	buf[4] = width;
-	return _i2c.write(_i2c_addr, buf, 5);
+	return _i2c.i2cWrite(_i2c_addr, buf, 5);
 }
 
 void cy8c95xxa_drv::setDivider(uint8_t div) {
@@ -261,7 +263,7 @@ void cy8c95xxa_drv::sendCommand(CY8C95XXA::gpio_cmd cmd) {
 	uint8_t txbuf[2];
 	txbuf[0] = CY8C95XXA::COMMAND_REG;
 	txbuf[1] = cmd;
-	_i2c.write(_i2c_addr, txbuf, 2);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 2);
 }
 
 void cy8c95xxa_drv::setEnableReg(CY8C95XXA::gpio_en en) {
@@ -271,7 +273,7 @@ void cy8c95xxa_drv::setEnableReg(CY8C95XXA::gpio_en en) {
 	txbuf[2] = 'M';
 	txbuf[3] = 'S';
 	txbuf[4] = en;
-	_i2c.write(_i2c_addr, txbuf, 5);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 5);
 }
 
 // private methods
@@ -281,7 +283,8 @@ uint8_t cy8c95xxa_drv::readRegister(uint8_t reg) {
 	unsigned char txbuf[1];
 	unsigned char rxbuf[1];
 	txbuf[0] = reg;
-	_i2c.twice(_i2c_addr, I2C::WRITE, txbuf, 1, I2C::READ, rxbuf, 1);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 1, false);
+	_i2c.i2cRead (_i2c_addr, rxbuf, 1);
 	return rxbuf[0];
 }
 
@@ -290,12 +293,13 @@ bool cy8c95xxa_drv::writeRegister(uint8_t reg, uint8_t value, uint8_t mask) {
 	txbuf[0] = reg;
 
 	if (mask != 0xff) {
-		_i2c.twice(_i2c_addr, I2C::WRITE, txbuf, 1, I2C::READ, txbuf+1, 1);
+	    _i2c.i2cWrite(_i2c_addr, txbuf,   1, false);
+	    _i2c.i2cRead (_i2c_addr, txbuf+1, 1);
 		txbuf[1] &= ~mask; // Reset mask bits
 		txbuf[1] |=  value & mask;
 	} else {
 		txbuf[1] = value;
 	}
-	return _i2c.write(_i2c_addr, txbuf, 2);
+	return _i2c.i2cWrite(_i2c_addr, txbuf, 2);
 }
 

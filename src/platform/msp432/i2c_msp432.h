@@ -27,37 +27,35 @@ class i2c_msp432 : public i2c_interface {
 
   public:
 
-   i2c_msp432(EUSCI_B_Type *i2c,
+    i2c_msp432(EUSCI_B_Type *i2c,
               uint16_t mode = I2C::SLAVE_7_BIT_ADDR |
 			                  I2C::MASTER_MODE |
 							  I2C::CLK_SMCLK);
 
-   virtual ~i2c_msp432();
+    virtual ~i2c_msp432();
 
-   int16_t write(uint16_t addr, uint8_t *txbuf, uint8_t len) override;
-   int16_t read (uint16_t addr, uint8_t *rxbuf, uint8_t len) override;
+    int16_t i2cRead (uint16_t addr, uint8_t *rxbuf,
+                     uint8_t len, bool sendStop=true) override;
+    int16_t i2cWrite(uint16_t addr, uint8_t *txbuf,
+                     uint8_t len, bool sendStop=true) override;
 
-   virtual void twice(uint16_t addr,
-                 I2C::i2c_mode m1, uint8_t *buf1, uint8_t len1,
-                 I2C::i2c_mode m2, uint8_t *buf2, uint8_t len2) override;
+    void setSpeed(uint32_t) override;
 
   private:
 
-    void send_ADR_ACK();
-    void send_ADR_NACK();
+//    void send_ADR_ACK();
+//    void send_ADR_NACK();
     void set_receiver();
     void set_transmitter();
-    void send_ACK();
-    void send_NACK();
-    void send_STOP();
+//    void send_ACK();
+//    void send_NACK();
     void send_START();
-
+    void send_STOP();
 
 	gpio_msp432_pin	_sda;
     gpio_msp432_pin	_scl;
 
 	EUSCI_B_Type * _EUSCI;
-	uint16_t       _mode;
 
 };
 

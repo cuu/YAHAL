@@ -52,7 +52,7 @@ void opt3001_drv::writeRegister(uint8_t reg, uint16_t value){
 	txbuf[0] = reg;
 	txbuf[1] = value >> 8;
 	txbuf[2] = value & 0x00FF;
-	_i2c.write(_i2c_addr, txbuf, 3);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 3);
 }
 
 uint16_t opt3001_drv::readRegister(uint8_t reg){
@@ -60,8 +60,8 @@ uint16_t opt3001_drv::readRegister(uint8_t reg){
 	uint8_t rxbuf[2];
 	uint16_t val;
 	txbuf[0] = reg;
-	_i2c.write(_i2c_addr, txbuf, 1);
-	_i2c.read(_i2c_addr, rxbuf, 2);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
+	_i2c.i2cRead(_i2c_addr, rxbuf, 2);
 	val = (rxbuf[0] << 8) | rxbuf[1];
 	return val;
 }

@@ -127,9 +127,9 @@ void task_base::_run(void) {
 }
 
 void task_base::run_scheduler(void) {
-    register task_base *   cur_ptr  = _run_ptr->_next;
-    register task_base *   next_ptr = nullptr;
-    register uint16_t max_prio = 0;
+    register task_base * cur_ptr  = _run_ptr->_next;
+    register task_base * next_ptr = nullptr;
+    register uint16_t    max_prio = 0;
 
     for(uint16_t i=0; i < _size; ++i) {
         register state_t & state = cur_ptr->_state;
