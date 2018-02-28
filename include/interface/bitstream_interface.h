@@ -16,7 +16,6 @@
 // functionality is e.g. used in drivers for
 // graphic displays, when displaying characters
 // from a specific font.
-//
 
 #ifndef _BITSTREAM_INTERFACE_H_
 #define _BITSTREAM_INTERFACE_H_

@@ -13,7 +13,6 @@
 #define TASK_TIMER_H
 
 #include "timer_interface.h"
-#include "task_base.h"
 #include <yahal_assert.h>
 
 template<typename TASK>

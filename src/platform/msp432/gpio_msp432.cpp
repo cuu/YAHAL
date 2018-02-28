@@ -74,7 +74,7 @@ void gpio_msp432::gpioWrite(uint16_t gpio, bool value) {
                 DIO_BIT(port, pin, PORT_OUT_OFS) = LOW;
             }
         } else {
-            // Open source without pulldown
+            // Open source without pull down
             DIO_BIT(port, pin, PORT_DIR_OFS) = value;
         }
     } else {

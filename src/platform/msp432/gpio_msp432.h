@@ -20,27 +20,27 @@ void PORT6_IRQHandler(void);
 }
 
 class gpio_msp432 : public gpio_interface {
-  public:
+public:
     virtual ~gpio_msp432() { }
     static gpio_msp432 inst;
 
     // Generic GPIO methods
     ///////////////////////
-    void gpioMode (uint16_t gpio, uint16_t mode);
-    bool gpioRead (uint16_t gpio);
-    void gpioWrite(uint16_t gpio, bool value);
+    void gpioMode (gpio_pin_t gpio, gpio_mode_t mode);
+    bool gpioRead (gpio_pin_t gpio);
+    void gpioWrite(gpio_pin_t gpio, bool value);
 
     // Interrupt handling
-    void gpioAttachIrq (uint16_t gpio,
-    		   void (*)(uint16_t gpio), uint16_t mode);
-    void gpioDetachIrq (uint16_t gpio);
-    void gpioEnableIrq (uint16_t gpio);
-    void gpioDisableIrq(uint16_t gpio);
+    void gpioAttachIrq (gpio_pin_t gpio,
+                        void (*)(gpio_pin_t gpio), gpio_mode_t mode);
+    void gpioDetachIrq (gpio_pin_t gpio);
+    void gpioEnableIrq (gpio_pin_t gpio);
+    void gpioDisableIrq(gpio_pin_t gpio);
 
     // MSP432 specific methods
     //////////////////////////
-    void setSEL (uint16_t gpio, uint8_t  sel);
-    void setMode(uint16_t gpio, uint16_t mode);
+    void setSEL (gpio_pin_t gpio, uint8_t  sel);
+    void setMode(gpio_pin_t gpio, gpio_mode_t mode);
 
     // IRQ handlers are our best friends
     ////////////////////////////////////
@@ -51,11 +51,11 @@ class gpio_msp432 : public gpio_interface {
     friend void PORT5_IRQHandler(void);
     friend void PORT6_IRQHandler(void);
 
-  private:
+private:
     gpio_msp432() { }
 
     void handleIrq(uint8_t port, uint8_t pin);
-//    volatile int8_t * _port_base[10];
+    //    volatile int8_t * _port_base[10];
     void (*_intHandler[6][8])(uint16_t gpio);
 
     uint8_t _open_source[10];
@@ -69,18 +69,17 @@ class gpio_msp432 : public gpio_interface {
 // functionality for a single GPIO pin.
 
 class gpio_msp432_pin : public gpio_pin {
-  public:
-	gpio_msp432_pin() : gpio_pin(gpio_msp432::inst) { }
+public:
+    gpio_msp432_pin()
+    : gpio_pin(gpio_msp432::inst) { }
+    gpio_msp432_pin(gpio_pin_t gpio)
+    : gpio_pin(gpio_msp432::inst, gpio) { }
 
-	gpio_msp432_pin(uint16_t gpio) : gpio_pin(gpio_msp432::inst) {
-		setGpio(gpio);
-	}
-
-	inline void setSEL (uint8_t sel) {
-		gpio_msp432::inst.setSEL(_gpio, sel);
+    inline void setSEL (uint8_t sel) {
+        gpio_msp432::inst.setSEL(_gpio, sel);
     }
-    inline void setMode(uint16_t mode) {
-    	gpio_msp432::inst.setMode(_gpio, mode);
+    inline void setMode(gpio_mode_t mode) {
+        gpio_msp432::inst.setMode(_gpio, mode);
     }
 };
 

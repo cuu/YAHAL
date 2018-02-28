@@ -105,11 +105,6 @@ void task_base::join() {
     while ( linkedIn() ) yield();
 }
 
-void task_base::setPriority(uint16_t p) {
-    yahal_assert(p > 0);
-    _priority = p;
-}
-
 uint32_t task_base::getDeltaTicks() {
     uint32_t now = _ticks;
     uint32_t ret = now - _last_ticks;

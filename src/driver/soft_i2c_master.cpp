@@ -16,7 +16,7 @@ soft_i2c_master::~soft_i2c_master() {
 	_scl.gpioMode(GPIO::INPUT);
 }
 
-int16_t soft_i2c_master::i2cRead (uint8_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
+int16_t soft_i2c_master::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
     if (!_init) init();
     if (!i2c_start()) return -1;
     addr <<= 1;
@@ -38,7 +38,7 @@ int16_t soft_i2c_master::i2cRead (uint8_t addr, uint8_t *rxbuf, uint8_t len, boo
     return len;
 }
 
-int16_t soft_i2c_master::i2cWrite(uint8_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
+int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
     if (!_init) init();
     if (!i2c_start()) return -1;
     addr <<= 1;

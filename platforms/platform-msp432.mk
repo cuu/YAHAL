@@ -1,21 +1,37 @@
-#####################################
-# Platform configuration for MSP432 #
-#####################################
+# ---------------------------------------------
+#           This file is part of
+#      _  _   __    _   _    __    __
+#     ( \/ ) /__\  ( )_( )  /__\  (  )
+#      \  / /(__)\  ) _ (  /(__)\  )(__
+#      (__)(__)(__)(_) (_)(__)(__)(____)
+#
+#     Yet Another HW Abstraction Library
+#      Copyright (C) Andreas Terstegge
+#      BSD Licensed (see file LICENSE)
+#
+# ---------------------------------------------
+#
+# Platform configuration file for MSP432
+#
+# This file depends on a gcc-arm-none-eabi C/C++
+# compiler intallation. Currently the toolchain 
+# from the Code Composer Studio is used, but it
+# can be replaced by any another version. 
 
-# Root folder of MSP432 package (installed by Energia IDE)
+# Root folder CCS installation
 ifeq ($(FILE_UNIX_STYLE),1)
 CCS_ROOT = /opt/ti/ccsv7
 else
 CCS_ROOT = C:/ti/ccsv7
 endif
 
-# Toolchain helpers
+# Toolchain location
 # TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-4_9-2015q3
 TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-6-2017-q1-update
 TOOLCHAIN_PREFIX = arm-none-eabi
 
 # Various path variables
-MSP_INC_DIR    = $(YAHAL_DIR)/include/platform/$(PLATFORM)
+MSP_INC_DIR = $(YAHAL_DIR)/include/platform/$(PLATFORM)
 
 # Various MSP tools
 DSLITE = $(CCS_ROOT)/ccs_base/DebugServer/bin/DSLite

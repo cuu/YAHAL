@@ -143,12 +143,12 @@ extern "C" {
         asm volatile("stmdb     r0!, {r3-r11} ");
 
         register uint32_t * psp asm("r0");
-        task_base::_run_ptr->_stack_ptr = psp;
+        task_base::_run_ptr->setStackPtr(psp);
         #ifdef CHECK_STACK_OVERFLOW
         yahal_assert((psp - task_base::_run_ptr->_stack_base) > 10);
         #endif
         task_base::_run_ptr = task_msp432::_run_next;
-        psp = task_base::_run_ptr->_stack_ptr;
+        psp = task_base::_run_ptr->getStackPtr();
 
         asm volatile("ldmia     r0!, {r3-r11} ");
         asm volatile("mvn       lr, #2        "); // ~2 = 0xfffffffd
@@ -208,10 +208,10 @@ extern "C" {
 
                 // Only restore regiters r0-PSR, because these
                 // will be restored on return of the SVC-handler
-                set_PSP(task_msp432::_run_ptr->_stack_ptr + 9);
+                set_PSP(task_msp432::_run_ptr->getStackPtr() + 9);
 
                 // Set control register
-                __set_CONTROL(task_msp432::_run_ptr->_stack_ptr[0]);
+                __set_CONTROL(task_msp432::_run_ptr->getStackPtr()[0]);
                 __ISB();
                 break;
             }

@@ -68,11 +68,6 @@ public:
     adc_channel(adc_interface & interf, uint8_t c)
     : _interf(interf), _channel(c) { }
 
-    adc_channel(adc_interface & interf, uint8_t c, adc_mode_t mode)
-    : _interf(interf), _channel(c) {
-        _interf.adcMode(_channel, mode);
-    }
-
     inline void setChannel(uint8_t c) {
         _channel = c;
     }

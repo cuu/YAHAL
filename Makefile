@@ -5,12 +5,11 @@
 #      \  / /(__)\  ) _ (  /(__)\  )(__
 #      (__)(__)(__)(_) (_)(__)(__)(____)
 #
-#    YAHAL,  Another HW Abstraction Library
-#     Copyright (C) 2017 Andreas Terstegge
-#     BSD Licensed (see file LICENSE)
+#     Yet Another HW Abstraction Library
+#      Copyright (C) Andreas Terstegge
+#      BSD Licensed (see file LICENSE)
 #
 # ---------------------------------------------
-#
 
 # name of final target
 TARGET = libYAHAL_$(PLATFORM).a

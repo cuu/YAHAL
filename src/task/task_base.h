@@ -37,22 +37,25 @@
 //#define SIMPLE_ROUND_ROBIN
 
 class task_base : public circular_list<task_base> {
-  public:
+protected:
+    // CTOR/DTOR is protected (this is a abstract class!)
+    task_base(const char * n, uint16_t stack_size);
+    virtual ~task_base();
 
+    // enum type for the different task states.
+    // A task can be READY, SLEEPING or SUSPENDED
     enum state_t : uint8_t { READY=0, SLEEPING=1, SUSPENDED=2 };
 
+    // helper method to convert a state to a string
     inline const char * state_to_str(state_t state) {
         static const char * names[] = { "READY", "SLEEPING", "SUSPENDED"};
         return names[state];
     }
 
-    task_base(const char * n, uint16_t stack_size);
-    virtual ~task_base();
-
-    // No copy, no assignment
-    task_base             (const task_base &) = delete;
-    task_base & operator= (const task_base &) = delete;
-
+public:
+    //////////////////////
+    // public interface //
+    //////////////////////
     void start(uint16_t priority = DEFAULT_PRIORITY, bool priv = false);
     void end();
 
@@ -60,16 +63,37 @@ class task_base : public circular_list<task_base> {
     void suspend();
     void resume();
     void join();
-    void setPriority(uint16_t p);
 
-    // This method contains the Task code
-    /////////////////////////////////////
-    virtual void run(void) = 0;
+    // getters for various attributes
+    inline const char * getName()      { return _name;       }
+    inline uint16_t     getPriority()  { return _priority;   }
+    inline state_t      getState()     { return _state;      }
+    inline uint32_t *   getStackBase() { return _stack_base; }
+    inline uint16_t     getStackSize() { return _stack_size; }
+    inline uint32_t *   getStackPtr()  { return _stack_ptr;  }
+
+    // setter
+    inline void setPriority(uint16_t p) {
+        yahal_assert(p > 0);
+        _priority = p;
+    }
+    inline void setStackPtr(uint32_t * s) {
+        _stack_ptr = s;
+    }
 
     // Special getter to get the ticks of this
     // task since the last call to this method
     //////////////////////////////////////////
     uint32_t getDeltaTicks();
+
+    virtual bool isPrivileged() const = 0;
+    virtual bool isUsingFloat() const = 0;
+
+protected:
+
+    // No copy, no assignment
+    task_base             (const task_base &) = delete;
+    task_base & operator= (const task_base &) = delete;
 
     // Conversion methods ticks <-> millis
     //////////////////////////////////////
@@ -79,6 +103,10 @@ class task_base : public circular_list<task_base> {
     static inline uint64_t millis2ticks(uint64_t millis) {
         return (millis * TICK_FREQUENCY) / 1000;
     }
+
+    // This method contains the Task code
+    /////////////////////////////////////
+    virtual void run(void) = 0;
 
     // Helper method to execute the pure virtual run() method
     void _run(void);
@@ -111,9 +139,6 @@ class task_base : public circular_list<task_base> {
     // CPU-specific interface, which needs to be
     // implemented by all different CPU cores.
     ////////////////////////////////////////////
-
-    virtual bool isPrivileged() const    = 0;
-    virtual bool isUsingFloat() const    = 0;
     virtual void setup_stack (bool priv) = 0;
 
     // do not use virtual tables for these functions
