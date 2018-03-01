@@ -30,7 +30,7 @@ public:
     virtual uint16_t getNext(uint8_t n = 0) = 0;
 
 protected:
-    virtual ~bitstream_interface() { }
+    virtual ~bitstream_interface() = default;
 };
 
 #endif // _BITSTREAM_INTERFACE_H_

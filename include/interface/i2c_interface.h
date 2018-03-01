@@ -44,7 +44,7 @@ public:
     virtual void setSpeed(uint32_t Hz) = 0;
 
 protected:
-    virtual ~i2c_interface() { }
+    virtual ~i2c_interface() = default;
 };
 
 #endif // _I2C_INTERFACE_H_

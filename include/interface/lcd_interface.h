@@ -41,7 +41,7 @@ struct lcd_config {
 
 class lcd_interface {
   public:
-    virtual ~lcd_interface() { }
+    virtual ~lcd_interface() = default;
 
 	virtual uint16_t getSizeX() = 0;
 	virtual uint16_t getSizeY() = 0;

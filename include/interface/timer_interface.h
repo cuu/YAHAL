@@ -52,7 +52,7 @@ class timer_interface {
 	virtual void	 resetCounter() = 0;
 
   protected:
-	virtual ~timer_interface() { };
+	virtual ~timer_interface() = default;
 
 };
 

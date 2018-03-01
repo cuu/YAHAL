@@ -37,7 +37,7 @@ class task_timer : public TASK, public timer_interface
         _callback_arg = nullptr;
     }
 
-    virtual ~task_timer() { }
+    virtual ~task_timer() = default;
 
     // No copy, no assignment
     task_timer             (const task_timer &) = delete;
@@ -76,21 +76,21 @@ class task_timer : public TASK, public timer_interface
 
     uint32_t getCounter() override {
         if (_running) {
-            return TASK::ticks2millis(TASK::_up_ticks) - _start_ms;
+            return TASK::ticks2millis(TASK::getUpTicks()) - _start_ms;
         } else {
             return 0;
         }
     }
 
     void resetCounter() override {
-        uint64_t now = TASK::ticks2millis(TASK::_up_ticks);
+        uint64_t now = TASK::ticks2millis(TASK::getUpTicks());
         _start_ms = now;
         _next_ms  = now + _delta_ms;
     }
 
     void run(void) override {
         while(true) {
-            uint64_t now = TASK::ticks2millis(TASK::_up_ticks);
+            uint64_t now = TASK::ticks2millis(TASK::getUpTicks());
             if (now < _next_ms) {
                 int64_t diff = _next_ms - now;
                 TASK::sleep(diff);

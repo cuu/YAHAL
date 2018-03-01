@@ -11,7 +11,7 @@
 #include <cstdio>
 #include "task_timer.h"
 
-#define MONITOR_WAIT 1000
+#define MONITOR_WAIT 5000
 
 #define CLEAR_SCREEN "%c[H%c[J",27,27
 #define VT100_COLOR  "%c[%dm",27
@@ -42,8 +42,8 @@ public:
     static void callback(void * data) {
         task_monitor<T> * _this = (task_monitor<T> *)data;
 
-        task_base * p = _this->getHead();
-        uint32_t millis  = task_base::ticks2millis( _this->_up_ticks );
+        task_base * p = _this->getListHead();
+        uint32_t millis  = task_base::ticks2millis( _this->getUpTicks() );
         printf(CLEAR_SCREEN);
         printf(VT100_COLOR, BLUE);
         printf("\n             ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%lds) >--- \n\n",
@@ -62,14 +62,14 @@ public:
                    p->isPrivileged() ? 'P' : 'U', p->isUsingFloat() ? 'F' : 'I',
                            p->getPriority(),
                            _this->state_to_str(p->getState()),
-                           _this->used_stack  (p->getStackBase(), p->getStackSize() * sizeof(uint32_t)),
-                           p->getStackSize() * sizeof(uint32_t),
+                           _this->used_stack  (p->_stack_base, p->_stack_size * sizeof(uint32_t)),
+                           p->_stack_size * sizeof(uint32_t),
                            (t * 1000) / MONITOR_WAIT,
                            (t * 100 ) / MONITOR_WAIT,
                            ((t * 1000) / MONITOR_WAIT) % 10
             );
             p = p->getNext();
-        } while(p != _this->getHead());
+        } while(p != _this->getListHead());
         printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
     }
 

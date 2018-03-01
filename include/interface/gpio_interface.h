@@ -93,7 +93,7 @@ public:
     virtual void gpioDisableIrq(gpio_pin_t gpio) = 0;
 
 protected:
-    virtual ~gpio_interface() { }
+    virtual ~gpio_interface() = default;
 };
 
 // This small wrapper class provides GPIO

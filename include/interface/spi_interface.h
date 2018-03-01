@@ -30,7 +30,7 @@ public:
     virtual int16_t transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) = 0;
 
 protected:
-    virtual ~spi_interface() { }
+    virtual ~spi_interface() = default;
 };
 
 #endif // _SPI_INTERFACE_H_

@@ -14,10 +14,10 @@
 ///////////////////////////////
 // Definition of static members
 ///////////////////////////////
-
-uint64_t      task_base::_up_ticks  = 0;
 task_base *   task_base::_run_ptr   = nullptr;
 task_base *   task_base::_run_next  = nullptr;
+circular_list<task_base> task_base::_list;
+uint64_t      task_base::_up_ticks  = 0;
 
 ////////////////
 // CTOR and DTOR
@@ -25,21 +25,25 @@ task_base *   task_base::_run_next  = nullptr;
 
 task_base::task_base(const char * n, uint16_t stack_size)
 {
-    // Set the Task name
-    strncpy(_name, n, 15);
-    _name[15] = '\0';
-
-    _priority    = 0;
-    _state       = state_t::SUSPENDED;
-    _stack_ptr   = nullptr;
-    _ticks       = 0;
-    _last_ticks  = 0;
-    _sleep_until = 0;
-
-    // Allocate stack
+    // Initialize stack
     _stack_size = stack_size / sizeof(uint32_t);
     _stack_base = new uint32_t[_stack_size];
     yahal_assert(_stack_base);
+    _stack_ptr   = nullptr;
+
+    // Initialize list stuff
+    _linked_in   = false;
+    _next        = nullptr;
+    _prev        = nullptr;
+
+    // Initialize task attributes
+    strncpy(_name, n, 15);
+    _name[15] = '\0';
+    _priority    = 0;
+    _state       = state_t::SUSPENDED;
+    _ticks       = 0;
+    _last_ticks  = 0;
+    _sleep_until = 0;
 }
 
 task_base::~task_base() {
@@ -48,7 +52,7 @@ task_base::~task_base() {
 }
 
 void task_base::start(uint16_t priority, bool priv) {
-    yahal_assert((priority > 0) && !linkedIn());
+    yahal_assert((priority > 0) && !_linked_in);
 
     // Initialize the stack with a magic number
     for(register uint16_t i=0; i < _stack_size; ++i) {
@@ -66,16 +70,16 @@ void task_base::start(uint16_t priority, bool priv) {
 
     // Finally link in the Task
     disable_irq();
-    push_back(this);
+    _list.push_back(this);
     enable_irq();
 }
 
 void task_base::end() {
-    yahal_assert(linkedIn());
+    yahal_assert(_linked_in);
     // Link out the Task, so it will not
     // consume any further runtime ...
     disable_irq();
-    remove(this);
+    _list.remove(this);
     enable_irq();
     // and switch to another task
     yield();
@@ -102,7 +106,7 @@ void task_base::resume() {
 }
 
 void task_base::join() {
-    while ( linkedIn() ) yield();
+    while ( _linked_in ) yield();
 }
 
 uint32_t task_base::getDeltaTicks() {
@@ -126,7 +130,7 @@ void task_base::run_scheduler(void) {
     register task_base * next_ptr = nullptr;
     register uint16_t    max_prio = 0;
 
-    for(uint16_t i=0; i < _size; ++i) {
+    for(uint16_t i=0; i < _list.getSize(); ++i) {
         register state_t & state = cur_ptr->_state;
         register uint16_t  prio  = cur_ptr->_priority;
 

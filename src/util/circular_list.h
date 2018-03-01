@@ -1,21 +1,43 @@
-/*
- * circular_list.h
- *
- *  Created on: 27.07.2017
- *      Author: andreas
- */
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+//  This is a simple generic implementation of
+//  a circular double-linked list. The type T
+//  is expected to have the following attributes:
+//
+//  T *  _prev;      pointer to the previous element
+//  T *  _next;      pointer to the next element
+//  bool _linked_in; flag to signal if the instance
+//                   is member of the list
+//
+//  If there are access problems to the attributes
+//  above, a C++ friendship to this class might be
+//  declared.
+//  Main usage of this class in YAHAL is the multitasking
+//  kernel, which organizes task_base instances as a
+//  circular list.
 
-#ifndef CIRCULAR_LIST_H_
-#define CIRCULAR_LIST_H_
+#ifndef _CIRCULAR_LIST_H_
+#define _CIRCULAR_LIST_H_
 
 template<typename T>
 class circular_list {
 public:
 
     circular_list() {
-        _linked_in = false;
-        _next      = nullptr;
-        _prev      = nullptr;
+        _head      = nullptr;
+        _tail      = nullptr;
+        _size      = 0;
     }
 
     void push_back(T * elem) {
@@ -32,7 +54,7 @@ public:
             elem->_prev = elem;
             _head=_tail = elem;
         }
-        _linked_in = true;
+        elem->_linked_in = true;
         ++_size;
     }
 
@@ -48,34 +70,19 @@ public:
             if (_head == elem) _head = elem->_next;
             if (_tail == elem) _tail = elem->_prev;
         }
-        _linked_in = false;
+        elem->_linked_in = false;
         --_size;
     }
 
-    inline bool linkedIn() const { return _linked_in; }
-    inline T *  getNext()  const { return _next; }
-    inline T *  getPrev()  const { return _prev; }
-    inline T *  getHead()  const { return _head; }
-    inline T *  getTail()  const { return _tail; }
-    inline int  getSize()  const { return _size; }
+    inline T * getHead() const { return _head; }
+    inline T * getTail() const { return _tail; }
+    inline int getSize() const { return _size; }
 
-protected:
+private:
 
-    bool        _linked_in;
-    T *         _next;
-    T *         _prev;
-    static T *  _head;
-    static T *  _tail;
-    static int  _size;
+    T *  _head;
+    T *  _tail;
+    int  _size;
 };
 
-template<typename T>
-T * circular_list<T>::_head = nullptr;
-
-template<typename T>
-T * circular_list<T>::_tail = nullptr;
-
-template<typename T>
-int circular_list<T>::_size = 0;
-
-#endif /* CIRCULAR_LIST_H_ */
+#endif /* _CIRCULAR_LIST_H_ */

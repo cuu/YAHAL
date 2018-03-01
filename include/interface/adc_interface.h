@@ -54,7 +54,7 @@ public:
     virtual float rawToVoltage(uint8_t channel, uint16_t raw) = 0;
 
 protected:
-    virtual ~adc_interface() { }
+    virtual ~adc_interface() = default;
 };
 
 // This small wrapper class provides ADC

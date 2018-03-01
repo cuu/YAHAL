@@ -54,7 +54,7 @@ public:
     virtual void uartDisableIrq() = 0;
 
 protected:
-    virtual ~uart_interface() { };
+    virtual ~uart_interface() = default;
 };
 
 #endif /* _UART_INTERFACE_H_ */
