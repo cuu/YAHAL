@@ -12,15 +12,15 @@
 
 // GPIO bitband macros
 
-#define IN_OFS   0x00
-#define OUT_OFS  0x02
-#define DIR_OFS  0x04
-#define REN_OFS  0x06
-#define SEL0_OFS 0x0a
-#define SEL1_OFS 0x0c
-#define IES_OFS  0x18
-#define IE_OFS   0x1a
-#define IFG_OFS  0x1c
+#define PORT_IN_OFS   0x00
+#define PORT_OUT_OFS  0x02
+#define PORT_DIR_OFS  0x04
+#define PORT_REN_OFS  0x06
+#define PORT_SEL0_OFS 0x0a
+#define PORT_SEL1_OFS 0x0c
+#define PORT_IES_OFS  0x18
+#define PORT_IE_OFS   0x1a
+#define PORT_IFG_OFS  0x1c
 
 #define PORT_BASE(p) ( BITBAND_PERI_BASE + (0x4c00 << 5) +  \
                        (                                    \
@@ -44,7 +44,7 @@ bool gpio_msp432::gpioRead (uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	yahal_assert((port > 0) && (port < 11) && (pin < 8));
-	return DIO_BIT(port, pin, IN_OFS);
+	return DIO_BIT(port, pin, PORT_IN_OFS);
 }
 
 void gpio_msp432::gpioWrite(uint16_t gpio, bool value) {
@@ -54,32 +54,32 @@ void gpio_msp432::gpioWrite(uint16_t gpio, bool value) {
 	if (_open_drain[port-1] & (1 << gpio)) {
 	    if (_pull_up[port-1] & (1<< gpio)) {
 	        if (value) {
-	            DIO_BIT(port, pin, DIR_OFS) = LOW;
-                DIO_BIT(port, pin, OUT_OFS) = HIGH;
+	            DIO_BIT(port, pin, PORT_DIR_OFS) = LOW;
+                DIO_BIT(port, pin, PORT_OUT_OFS) = HIGH;
 	        } else {
-                DIO_BIT(port, pin, OUT_OFS) = LOW;
-                DIO_BIT(port, pin, DIR_OFS) = HIGH;
+                DIO_BIT(port, pin, PORT_OUT_OFS) = LOW;
+                DIO_BIT(port, pin, PORT_DIR_OFS) = HIGH;
 	        }
 	    } else {
 	        // Open drain without pullup
-	        DIO_BIT(port, pin, DIR_OFS) = !value;
+	        DIO_BIT(port, pin, PORT_DIR_OFS) = !value;
 	    }
 	} else if (_open_source[port-1] & (1 << gpio)) {
         if (_pull_down[port-1] & (1<< gpio)) {
             if (value) {
-                DIO_BIT(port, pin, OUT_OFS) = HIGH;
-                DIO_BIT(port, pin, DIR_OFS) = HIGH;
+                DIO_BIT(port, pin, PORT_OUT_OFS) = HIGH;
+                DIO_BIT(port, pin, PORT_DIR_OFS) = HIGH;
             } else {
-                DIO_BIT(port, pin, DIR_OFS) = LOW;
-                DIO_BIT(port, pin, OUT_OFS) = LOW;
+                DIO_BIT(port, pin, PORT_DIR_OFS) = LOW;
+                DIO_BIT(port, pin, PORT_OUT_OFS) = LOW;
             }
         } else {
-            // Open source without pulldown
-            DIO_BIT(port, pin, DIR_OFS) = value;
+            // Open source without pull down
+            DIO_BIT(port, pin, PORT_DIR_OFS) = value;
         }
     } else {
         // No open drain/source
-        DIO_BIT(port, pin, OUT_OFS) = value;
+        DIO_BIT(port, pin, PORT_OUT_OFS) = value;
     }
 }
 
@@ -91,11 +91,11 @@ void gpio_msp432::gpioAttachIrq (uint16_t gpio,
 	yahal_assert((port > 0) && (port < 7) && (pin < 8));
 	switch(mode) {
 	case GPIO::RISING: {
-		DIO_BIT(port, pin, IES_OFS) = 0;
+		DIO_BIT(port, pin, PORT_IES_OFS) = 0;
 		break;
 	}
 	case GPIO::FALLING: {
-		DIO_BIT(port, pin, IES_OFS) = 1;
+		DIO_BIT(port, pin, PORT_IES_OFS) = 1;
 		break;
 	}
 	default:
@@ -105,7 +105,7 @@ void gpio_msp432::gpioAttachIrq (uint16_t gpio,
 	_intHandler[port-1][pin] = handler;
 	// Reset all pending IRQs
 	for (uint32_t i=0; i < 8; ++i) {
-		DIO_BIT(port, i, IFG_OFS) = 0;
+		DIO_BIT(port, i, PORT_IFG_OFS) = 0;
 	}
 	gpioEnableIrq(gpio);
 }
@@ -122,7 +122,7 @@ void gpio_msp432::gpioEnableIrq(uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	yahal_assert((port > 0) && (port < 7) && (pin < 8));
-	DIO_BIT(port, pin, IE_OFS) = HIGH;
+	DIO_BIT(port, pin, PORT_IE_OFS) = HIGH;
 	NVIC_EnableIRQ((IRQn_Type)(34 + port));
 }
 
@@ -130,7 +130,7 @@ void gpio_msp432::gpioDisableIrq(uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	yahal_assert((port > 0) && (port < 7) && (pin < 8));
-	DIO_BIT(port, pin, IE_OFS) = LOW;
+	DIO_BIT(port, pin, PORT_IE_OFS) = LOW;
 }
 
 void gpio_msp432::handleIrq(uint8_t port, uint8_t pin) {
@@ -141,8 +141,8 @@ void gpio_msp432::setSEL(uint16_t gpio, uint8_t mode) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
     yahal_assert((port > 0) && (port < 11) && (pin < 8));
-    DIO_BIT(port, pin, SEL0_OFS) =  mode       & 0x01;
-    DIO_BIT(port, pin, SEL1_OFS) = (mode >> 1) & 0x01;
+    DIO_BIT(port, pin, PORT_SEL0_OFS) =  mode       & 0x01;
+    DIO_BIT(port, pin, PORT_SEL1_OFS) = (mode >> 1) & 0x01;
 }
 
 void gpio_msp432::setMode(uint16_t gpio, uint16_t mode) {
@@ -155,31 +155,31 @@ void gpio_msp432::setMode(uint16_t gpio, uint16_t mode) {
     _open_source[port-1] &= ~(1 << gpio);
     _pull_up    [port-1] &= ~(1 << gpio);
     _pull_down  [port-1] &= ~(1 << gpio);
-    DIO_BIT(port, pin, DIR_OFS) = LOW;
-    DIO_BIT(port, pin, REN_OFS) = LOW;
-    DIO_BIT(port, pin, OUT_OFS) = LOW;
+    DIO_BIT(port, pin, PORT_DIR_OFS) = LOW;
+    DIO_BIT(port, pin, PORT_REN_OFS) = LOW;
+    DIO_BIT(port, pin, PORT_OUT_OFS) = LOW;
 
 	if (mode & GPIO::INPUT) {
 	    // Default is okay
 	}
     if (mode & GPIO::OUTPUT) {
-        DIO_BIT(port, pin, DIR_OFS) = HIGH;
+        DIO_BIT(port, pin, PORT_DIR_OFS) = HIGH;
     }
     if (mode & GPIO::OUTPUT_OPEN_DRAIN) {
         _open_drain[port-1] |= (1 << gpio);
     }
     if (mode & GPIO::OUTPUT_OPEN_SOURCE) {
         _open_source[port-1] |= (1 << gpio);
-        DIO_BIT(port, pin, OUT_OFS) = HIGH;
+        DIO_BIT(port, pin, PORT_OUT_OFS) = HIGH;
     }
     if (mode & GPIO::PULLUP) {
         _pull_up[port-1] |= (1 << gpio);
-        DIO_BIT(port, pin, REN_OFS) = HIGH;
-        DIO_BIT(port, pin, OUT_OFS) = HIGH;
+        DIO_BIT(port, pin, PORT_REN_OFS) = HIGH;
+        DIO_BIT(port, pin, PORT_OUT_OFS) = HIGH;
     }
     if (mode & GPIO::PULLDOWN) {
         _pull_down[port-1] |= (1 << gpio);
-        DIO_BIT(port, pin, REN_OFS) = HIGH;
+        DIO_BIT(port, pin, PORT_REN_OFS) = HIGH;
     }
     if (mode & (GPIO::SLOW | GPIO::FAST)) {
         yahal_assert(false);

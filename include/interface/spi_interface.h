@@ -1,28 +1,36 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
 //
-// spi_interface.h
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
 //
-//  Created on: 28.02.2016
-//      Author: Andreas Terstegge
+// ---------------------------------------------
 //
+//  This file defines a generic and abstract C++
+//  interface for a simple SPI interface.
+//  Currently only 8-bit transfers are supported.
 
 #ifndef _SPI_INTERFACE_H_
 #define _SPI_INTERFACE_H_
 
 #include <stdint.h>
 
-// generic interface for SPI communication
-
 class spi_interface {
-  public:
-    virtual ~spi_interface() { }
-
-	// Perform a combines read/write operation.
+public:
+    // Perform a combines read/write operation.
     // len bytes from txbuf are sent via SPI, and at
     // the same time rxbuf is filled with len bytes.
     // The number of bytes read/written is returned,
     // otherwise -1 in case of errors
     virtual int16_t transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) = 0;
 
+protected:
+    virtual ~spi_interface() = default;
 };
 
 #endif // _SPI_INTERFACE_H_

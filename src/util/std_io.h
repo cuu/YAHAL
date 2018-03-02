@@ -8,8 +8,7 @@
 #ifndef _STD_IO_H_
 #define _STD_IO_H_
 
-#include "stdin_interface.h"
-#include "stdout_interface.h"
+#include "uart_interface.h"
 #include <stddef.h>
 
 // These methods in libc need to be overwritten
@@ -18,24 +17,35 @@ int _write (int fd, const void *buf, size_t count);
 int _read  (int fd,       void *buf, size_t count);
 }
 
-class std_io : public stdin_interface, public stdout_interface {
-  public:
+class std_io : public uart_interface {
+public:
     static std_io inst;
 
-    void putc(char c);
-    char getc();
+    char getc() override;
+    void putc(char c) override;
 
-    void redirect_stdin (stdin_interface  & std_in , bool local_echo=true);
-    void redirect_stdout(stdout_interface & std_out, bool translate_nl=true);
+    bool available() override { return false; }
+    void uartMode(uart_mode_t) override {}
+    void setBaudrate(uint32_t) override {}
 
-  private:
-    std_io() : _std_in(nullptr),   _std_out(nullptr),
-               _local_echo(false), _translate_nl(false) { }
+    // Interrupt handling
+    void uartAttachIrq (void (*)(char)) override {};
+    void uartDetachIrq () override {};
+    void uartEnableIrq () override {};
+    void uartDisableIrq() override {};
 
-    stdin_interface *  _std_in;
-    stdout_interface * _std_out;
-    bool               _local_echo;
-    bool               _translate_nl;
+    void redirect_stdin (uart_interface & uart_in , bool local_echo=true);
+    void redirect_stdout(uart_interface & uart_out, bool translate_nl=true);
+
+private:
+    std_io()
+    : _uart_in(nullptr),  _uart_out(nullptr),
+      _local_echo(false), _translate_nl(false) { }
+
+    uart_interface *  _uart_in;
+    uart_interface *  _uart_out;
+    bool              _local_echo;
+    bool              _translate_nl;
 };
 
 #endif // _STDIO_H_

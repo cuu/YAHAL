@@ -30,28 +30,28 @@ int _read  (int fd, void *buf, size_t count) {
 }
 }
 
-void std_io::redirect_stdin(stdin_interface & std_in, bool echo) {
-    _std_in     = &std_in;
+void std_io::redirect_stdin(uart_interface & uart_in, bool echo) {
+    _uart_in    = &uart_in;
     _local_echo = echo;
 }
 
-void std_io::redirect_stdout(stdout_interface & std_out, bool translate) {
-    _std_out      = &std_out;
+void std_io::redirect_stdout(uart_interface & uart_out, bool translate) {
+    _uart_out     = &uart_out;
     _translate_nl = translate;
 }
 
 void std_io::putc(char c) {
-    if (_std_out) {
-        _std_out->putc(c);
+    if (_uart_out) {
+        _uart_out->putc(c);
         if (_translate_nl && c=='\n') {
-            _std_out->putc('\r');
+            _uart_out->putc('\r');
         }
     }
 }
 
 char std_io::getc() {
-    if (_std_in) {
-        char c = _std_in->getc();
+    if (_uart_in) {
+        char c = _uart_in->getc();
         if (_local_echo) {
             putc(c);
             fflush(stdout);

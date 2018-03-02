@@ -175,15 +175,15 @@ void bme280_drv::writeRegister(uint8_t reg, uint8_t value){
 	uint8_t txbuf[2];
 	txbuf[0] = reg;
 	txbuf[1] = value;
-	_i2c.write(_i2c_addr, txbuf, 2);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 2);
 }
 
 uint8_t bme280_drv::readRegister(uint8_t reg){
 	uint8_t txbuf[1];
 	uint8_t rxbuf[1];
 	txbuf[0] = reg;
-	_i2c.write(_i2c_addr, txbuf, 1);
-	_i2c.read(_i2c_addr, rxbuf, 1);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
+	_i2c.i2cRead (_i2c_addr, rxbuf, 1);
 	return rxbuf[0];
 }
 
@@ -192,8 +192,8 @@ uint32_t bme280_drv::read_u24(uint8_t reg){
 	uint8_t rxbuf[3];
 	txbuf[0] = reg;
 	uint32_t val = 0;
-	_i2c.write(_i2c_addr, txbuf, 1);
-	_i2c.read(_i2c_addr, rxbuf, 3);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
+	_i2c.i2cRead (_i2c_addr, rxbuf, 3);
 	val = rxbuf[0] << 16 | rxbuf[1] << 8 | rxbuf[2];
 	return val;
 }
@@ -203,8 +203,8 @@ uint16_t bme280_drv::read_u16_le(uint8_t reg){
 	uint8_t rxbuf[2];
 	txbuf[0] = reg;
 	uint16_t val;
-	_i2c.write(_i2c_addr, txbuf, 1);
-	_i2c.read(_i2c_addr, rxbuf, 2);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
+	_i2c.i2cRead (_i2c_addr, rxbuf, 2);
 	val = (rxbuf[1] << 8) | rxbuf[0];
 	return val;
 }
@@ -214,8 +214,8 @@ uint16_t bme280_drv::read_u16(uint8_t reg){
 	uint8_t rxbuf[2];
 	txbuf[0] = reg;
 	uint16_t val;
-	_i2c.write(_i2c_addr, txbuf, 1);
-	_i2c.read(_i2c_addr, rxbuf, 2);
+	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
+	_i2c.i2cRead (_i2c_addr, rxbuf, 2);
 	val = (rxbuf[0] << 8) | rxbuf[1];
 	return val;
 }

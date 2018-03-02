@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* Copyright (C) 2012 - 2016 Texas Instruments Incorporated - http://www.ti.com/ 
+* Copyright (C) 2012 - 2017 Texas Instruments Incorporated - http://www.ti.com/ 
 *
 * Redistribution and use in source and binary forms, with or without 
 * modification, are permitted provided that the following conditions 
@@ -32,7 +32,7 @@
 *
 * MSP432 Family Generic Include File
 *
-* File creation date: 2016-05-09
+* File creation date: 10/13/17
 *
 ******************************************************************************/
 
@@ -44,8 +44,34 @@
 ******************************************************************************/
 #if defined (__MSP432P401R__)
 #include "msp432p401r.h"
+
 #elif defined (__MSP432P401M__)
 #include "msp432p401m.h"
+
+#elif defined (__MSP432P401Y__)
+#include "msp432p401y.h"
+
+#elif defined (__MSP432P401V__)
+#include "msp432p401v.h"
+
+#elif defined (__MSP432P411V__)
+#include "msp432p411v.h"
+
+#elif defined (__MSP432P4011__)
+#include "msp432p4011.h"
+
+#elif defined (__MSP432P4111__)
+#include "msp432p4111.h"
+
+#elif defined (__MSP432P411Y__)
+#include "msp432p411y.h"
+
+#elif defined (__MSP432E411Y__)
+#include "msp432e411y.h"
+
+#elif defined (__MSP432E401Y__)
+#include "msp432e401y.h"
+
 /******************************************************************************
 * Failed to match a default include file                                      *
 ******************************************************************************/

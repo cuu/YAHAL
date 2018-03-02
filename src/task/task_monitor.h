@@ -9,12 +9,13 @@
 #define TASKMONITOR_H
 
 #include <cstdio>
-#include "std_io.h"
+#include "task_timer.h"
 
-#define MONITOR_WAIT 10000
+#define MONITOR_WAIT 5  // in seconds !!
 
 #define CLEAR_SCREEN "%c[H%c[J",27,27
 #define VT100_COLOR  "%c[%dm",27
+#define BLACK 30
 #define RED 31
 #define GREEN 32
 #define YELLOW 33
@@ -23,74 +24,66 @@
 #define CYAN 36
 #define WHITE 37
 
-#include "task_base.h"       // Task::state_t
-#include "task_timer.h"
-
 template<typename T>
 class task_monitor : public task_timer<T>
 {
-  private:
-
-    static void callback(void * data) {
-        task_monitor<T> * _this = (task_monitor<T> *)data;
-
-        task_base * p = _this->getHead();
-        uint32_t millis  = task_base::ticks2millis( _this->_up_ticks );
-        printf(CLEAR_SCREEN);
-    //    printf(VT100_COLOR, BLUE);
-        printf("\n             ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%lds) >--- \n\n",
-                millis/3600000,
-               (millis/60000) % 60,
-               (millis/1000)  % 60,
-                millis % 1000  );
-        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
-        printf("| Task Name        | Flg | Prio |   State   | Stack usage | Ticks/s |  CPU %% |\n");
-        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
-        do {
-            register uint32_t t = p->getDeltaTicks();
-            printf("| %-16s | %c/%c | %4d | %-9s | %4d / %-4d | %7ld | %2ld.%1ld %% |\n",
-                   p->_name,
-                   p->isPrivileged() ? 'P' : 'U', p->isUsingFloat() ? 'F' : 'I',
-                   p->_priority,
-                   _this->state_to_str(p->_state),
-                   _this->used_stack  (p->_stack_base, p->_stack_size) * sizeof(uint32_t),
-                                                       p->_stack_size  * sizeof(uint32_t),
-                    (t * 1000) / MONITOR_WAIT,
-                    (t * 100 ) / MONITOR_WAIT,
-                   ((t * 1000) / MONITOR_WAIT) % 10
-            );
-            p = p->getNext();
-        } while(p != _this->getHead());
-        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
-    }
-
-  public:
-
+public:
     task_monitor() : task_timer<T>("Monitor", 600, 5) {
-
-        task_timer<T>::setPeriod(MONITOR_WAIT * 1000, TIMER::PERIODIC);
+        task_timer<T>::setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
         task_timer<T>::setCallback(callback, this);
-        task_timer<T>::start();
     }
 
     virtual ~task_monitor() = default;
 
     // No copy, no assignment
     task_monitor             (const task_monitor &) = delete;
-    task_monitor & operator= (const task_monitor &) = delete;
+    task_monitor & operator= (const task_monitor &) = delete;  private:
+
+    static void callback(void * data) {
+        task_monitor<T> * _this = (task_monitor<T> *)data;
+
+        task_base * p = _this->getListHead();
+        uint32_t millis  = task_base::ticks2millis( _this->getUpTicks() );
+        printf(CLEAR_SCREEN);
+        printf(VT100_COLOR, BLUE);
+        printf("\n             ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%lds) >--- \n\n",
+                millis/3600000,
+               (millis/60000) % 60,
+               (millis/1000)  % 60,
+                millis%1000);
+        printf(VT100_COLOR, BLACK);
+        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
+        printf("| Task Name        | Flg | Prio | State     | Stack usage | Ticks/s |  CPU %% |\n");
+        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
+        do {
+            register uint32_t t = p->getDeltaTicks();
+            printf("| %-16s | %c/%c | %4d | %-9s | %4d / %-4d | %7ld | %2ld.%1ld %% |\n",
+                   p->getName(),
+                   p->isPrivileged() ? 'P' : 'U', p->isUsingFloat() ? 'F' : 'I',
+                           p->getPriority(),
+                           _this->state_to_str(p->getState()),
+                           _this->used_stack  (p->_stack_base, p->_stack_size),
+                           p->_stack_size,
+                            t        / MONITOR_WAIT,
+                            t * 100  / MONITOR_WAIT / TICK_FREQUENCY,
+                           (t * 1000 / MONITOR_WAIT / TICK_FREQUENCY) % 10
+            );
+            p = p->getNext();
+        } while(p != _this->getListHead());
+        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
+    }
 
     friend void callback(void * data);
 
-  private:
+private:
 
     uint16_t used_stack  (const uint32_t * stack_base, uint16_t stack_size) {
         const uint32_t * p = 0;
         for (p = stack_base; p < (stack_base + stack_size); ++p) {
             if (*p != STACK_MAGIC) break;
         }
-        return (stack_base + stack_size - p);
+        return ((uint32_t)stack_base + (uint32_t)stack_size - (uint32_t)p);
     }
-
 };
 
 #endif /* TASKMONITOR_H */
