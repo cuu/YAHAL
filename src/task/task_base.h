@@ -26,7 +26,7 @@
 #endif
 
 #ifndef DEFAULT_PRIORITY
-#define DEFAULT_PRIORITY 100
+#define DEFAULT_PRIORITY 100 // 1..N, 1 lowest
 #endif
 
 #ifndef STACK_MAGIC
@@ -74,7 +74,6 @@ public:
 
     // setters
     inline void setPriority(uint16_t p)   { yahal_assert(p > 0); _priority = p; }
-//    inline void setStackPtr(uint32_t * s) { _stack_ptr = s; }
 
     // Special getter to get the ticks of this
     // task since the last call to this method

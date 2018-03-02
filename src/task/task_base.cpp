@@ -26,8 +26,8 @@ uint64_t      task_base::_up_ticks  = 0;
 task_base::task_base(const char * n, uint16_t stack_size)
 {
     // Initialize stack
-    _stack_size = stack_size / sizeof(uint32_t);
-    _stack_base = new uint32_t[_stack_size];
+    _stack_size = stack_size & ~0x3;
+    _stack_base = new uint32_t[_stack_size/4];
     yahal_assert(_stack_base);
     _stack_ptr   = nullptr;
 
@@ -55,7 +55,7 @@ void task_base::start(uint16_t priority, bool priv) {
     yahal_assert((priority > 0) && !_linked_in);
 
     // Initialize the stack with a magic number
-    for(register uint16_t i=0; i < _stack_size; ++i) {
+    for(register uint16_t i=0; i < _stack_size/4; ++i) {
         _stack_base[i] = STACK_MAGIC;
     }
 

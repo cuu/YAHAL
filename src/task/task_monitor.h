@@ -11,7 +11,7 @@
 #include <cstdio>
 #include "task_timer.h"
 
-#define MONITOR_WAIT 5000
+#define MONITOR_WAIT 5  // in seconds !!
 
 #define CLEAR_SCREEN "%c[H%c[J",27,27
 #define VT100_COLOR  "%c[%dm",27
@@ -29,7 +29,7 @@ class task_monitor : public task_timer<T>
 {
 public:
     task_monitor() : task_timer<T>("Monitor", 600, 5) {
-        task_timer<T>::setPeriod(MONITOR_WAIT * 1000, TIMER::PERIODIC);
+        task_timer<T>::setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
         task_timer<T>::setCallback(callback, this);
     }
 
@@ -47,13 +47,13 @@ public:
         printf(CLEAR_SCREEN);
         printf(VT100_COLOR, BLUE);
         printf("\n             ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%lds) >--- \n\n",
-               millis/3600000,
+                millis/3600000,
                (millis/60000) % 60,
                (millis/1000)  % 60,
-               millis % 1000  );
+                millis%1000);
         printf(VT100_COLOR, BLACK);
         printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
-        printf("| Task Name        | Flg | Prio |   State   | Stack usage | Ticks/s |  CPU %% |\n");
+        printf("| Task Name        | Flg | Prio | State     | Stack usage | Ticks/s |  CPU %% |\n");
         printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
         do {
             register uint32_t t = p->getDeltaTicks();
@@ -62,11 +62,11 @@ public:
                    p->isPrivileged() ? 'P' : 'U', p->isUsingFloat() ? 'F' : 'I',
                            p->getPriority(),
                            _this->state_to_str(p->getState()),
-                           _this->used_stack  (p->_stack_base, p->_stack_size * sizeof(uint32_t)),
-                           p->_stack_size * sizeof(uint32_t),
-                           (t * 1000) / MONITOR_WAIT,
-                           (t * 100 ) / MONITOR_WAIT,
-                           ((t * 1000) / MONITOR_WAIT) % 10
+                           _this->used_stack  (p->_stack_base, p->_stack_size),
+                           p->_stack_size,
+                            t        / MONITOR_WAIT,
+                            t * 100  / MONITOR_WAIT / TICK_FREQUENCY,
+                           (t * 1000 / MONITOR_WAIT / TICK_FREQUENCY) % 10
             );
             p = p->getNext();
         } while(p != _this->getListHead());
@@ -82,7 +82,7 @@ private:
         for (p = stack_base; p < (stack_base + stack_size); ++p) {
             if (*p != STACK_MAGIC) break;
         }
-        return (stack_base + stack_size - p);
+        return ((uint32_t)stack_base + (uint32_t)stack_size - (uint32_t)p);
     }
 };
 

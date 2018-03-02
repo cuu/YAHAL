@@ -107,10 +107,9 @@ bool task_msp432::isUsingFloat() const {
 }
 
 void task_msp432::setup_stack(bool priv) {
-    uint16_t frame_size = sizeof(Stack_Frame) / sizeof(uint32_t);
-    yahal_assert(_stack_size > frame_size);
+    yahal_assert(_stack_size > sizeof(Stack_Frame));
 
-    _stack_ptr = _stack_base + _stack_size - frame_size;
+    _stack_ptr = _stack_base + (_stack_size - sizeof(Stack_Frame))/4;
 
     Stack_Frame *frame = (Stack_Frame *)_stack_ptr;
     frame->psr  = 0x01000000;   // Set the Thumb-Bit
@@ -181,10 +180,10 @@ void SVC_Handler_C(uint32_t * args) {
     uint16_t * pc = (uint16_t *)args[6];
     uint16_t   svc_arg = pc[-1] & 0xff;
 
-    //        uint32_t p0 = args[0];
-    //        uint32_t p1 = args[1];
-    //        uint32_t p2 = args[2];
-    //        uint32_t p3 = args[3];
+    // uint32_t p0 = args[0];
+    // uint32_t p1 = args[1];
+    // uint32_t p2 = args[2];
+    // uint32_t p3 = args[3];
 
     switch(svc_arg) {
         /////////////////////////
