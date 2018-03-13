@@ -55,8 +55,26 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693.1803420333" name="/" resourcePath="src/uGUI">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.1633582845" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.796215692.1632596498" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.796215692"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.1735633647.2080883868" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path.1735633647"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.423642833" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler.885615721">
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.264111950" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1455713443" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler.517441019">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.113749872" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.879275725" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker.1388130053"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.108907107" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker.1076289505"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.717553147" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver.733983293"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.409424015" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler.908044714">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1386935249" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/uGUI|uGUI" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="uGUI" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -167,6 +185,12 @@
 	<storageModule moduleId="cpuFamily"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1029134693;cdt.managedbuild.toolchain.gnu.cross.base.1029134693.1009521;cdt.managedbuild.tool.gnu.cross.cpp.compiler.517441019;cdt.managedbuild.tool.gnu.cpp.compiler.input.1134475121">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1029134693;cdt.managedbuild.toolchain.gnu.cross.base.1029134693.1009521;cdt.managedbuild.tool.gnu.cross.c.compiler.885615721;cdt.managedbuild.tool.gnu.c.compiler.input.216035533">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1136808877;cdt.managedbuild.toolchain.gnu.cross.base.1136808877.1544723603;cdt.managedbuild.tool.gnu.cross.c.compiler.1969265942;cdt.managedbuild.tool.gnu.c.compiler.input.1475289686">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
