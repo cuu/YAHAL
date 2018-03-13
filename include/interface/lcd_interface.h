@@ -11,59 +11,81 @@
 //
 // ---------------------------------------------
 //
-//  This file ...
+//  This file defines a generic interface for
+//  LCD drivers.
 
 #ifndef _LCD_INTERFACE_H_
 #define _LCD_INTERFACE_H_
 
 #include <stdint.h>
-#include <bitstream_interface.h>
+#include "yahal_assert.h"
 
-typedef uint16_t color_t;
+// Colors use a 32-bit integer. The upper 8 bits
+// define the concrete color type.
+typedef uint32_t color_t;
+#define COLOR_TYPE(c) (c & 0xff000000)
 
 namespace LCD {
-  enum Orientation { UP, DOWN, LEFT, RIGHT };
-
-  const uint8_t	RGB_COLOR_FILTER = 0x00;
-  const uint8_t BGR_COLOR_FILTER = 0x01;
+const uint32_t COLORTYPE_RGB888 = 0x00000000;
+const uint32_t COLORTYPE_RGB565 = 0x01000000;
+const uint32_t COLORTYPE_RGB555 = 0x02000000;
 }
 
-struct lcd_config {
-	uint16_t	sizeX;
-	uint16_t	sizeY;
-	uint16_t	sizeRamX;
-	uint16_t	sizeRamY;
-	uint8_t		offsetX;
-	uint8_t		offsetY;
-	uint8_t		flags;
+// Small interface for a pixel data stream
+class pixel_stream {
+public:
+    virtual color_t  getColorType() = 0;
+    virtual color_t  getNext() = 0;
+    virtual void     reset() = 0;
+
+protected:
+    ~pixel_stream() = default;
 };
 
 
 class lcd_interface {
-  public:
+public:
+
+    // Getters for screen dimensions
+    virtual uint16_t getSizeX() = 0;
+    virtual uint16_t getSizeY() = 0;
+
+    // Basic graphic methods
+    // x and y range from 0 to getX/YSize() - 1
+    // It is assumed that xs < xe and ys < ye !!
+    virtual void drawPixel(uint16_t xs, uint16_t ys, color_t color) = 0;
+    virtual void drawHLine(uint16_t xs, uint16_t ys, uint16_t xe, color_t c) = 0;
+    virtual void drawVLine(uint16_t xs, uint16_t ys, uint16_t ye, color_t c) = 0;
+
+    // Fill rectangle with data coming from a pixel stream
+    virtual void drawArea (uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye,
+                           pixel_stream & ps) = 0;
+
+    // Fill rectangle with a specific color
+    virtual void fillArea (uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye,
+                           color_t c) = 0;
+
+    // Translate from one color_t to another
+    color_t convertColor(color_t c, color_t return_type ) {
+        color_t in_type = COLOR_TYPE(c);
+
+        // Do nothing if color types match
+        if (in_type == return_type) return c;
+
+        // RGB888 -> RGB565
+        if (in_type     == LCD::COLORTYPE_RGB888 &&
+            return_type == LCD::COLORTYPE_RGB565) {
+            return( ((c & 0x00f80000) >> 8) |
+                    ((c & 0x0000fc00) >> 5) |
+                    ((c & 0x000000f8) >> 3) |
+                    LCD::COLORTYPE_RGB565 );
+        }
+        yahal_assert(0);
+        return 0;
+    }
+
+protected:
     virtual ~lcd_interface() = default;
-
-	virtual uint16_t getSizeX() = 0;
-	virtual uint16_t getSizeY() = 0;
-
-	virtual void setOrientation(LCD::Orientation o) = 0;
-
-	// Translate from 24bit RGB to our color_t
-	virtual color_t rgb24toColor(uint32_t rgb24) = 0;
-
-	// x and y range from 0 to getX/YSize() - 1
-	virtual void drawPixel(uint16_t x,  uint16_t y,  color_t color) = 0;
-	virtual void drawHLine(uint16_t xs, uint16_t y,  uint16_t xe, color_t c) = 0;
-	virtual void drawVLine(uint16_t x,  uint16_t ys, uint16_t ye, color_t c) = 0;
-
-	virtual void drawArea (uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye,
-						   bitstream_interface & bs, const color_t * colors) = 0;
-	virtual void fillArea (uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye,
-						   color_t c) = 0;
-
-	// lines > 0 -> scroll up, lines < 0 -> scroll down
-	virtual void scroll(int16_t lines)  = 0;
-	virtual void clearScreen(color_t c) = 0;
 };
 
 #endif // _LCD_INTERFACE_H_

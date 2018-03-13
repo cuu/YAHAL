@@ -108,8 +108,6 @@ protected:
     static task_base * _run_ptr;  // Pointer to running Task
     static task_base * _run_next; // Pointer to next running Task
 
-//    static inline task_base * getRunPtr() { return _run_ptr;  }
-//    static inline void switchToNext() { _run_ptr = _run_next; }
     static inline void switchToHead() { _run_ptr = _list.getHead(); }
 
     // Conversion methods ticks <-> millis

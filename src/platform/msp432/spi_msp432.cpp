@@ -190,6 +190,10 @@ int16_t spi_msp432::transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) {
 	return len;
 }
 
+void spi_msp432::setSpeed(uint32_t baud) {
+    _EUSCI_BRW = SystemCoreClock / baud;
+}
+
 extern "C" {
 
     void EUSCIA0_SPI_IRQHandler(void) {

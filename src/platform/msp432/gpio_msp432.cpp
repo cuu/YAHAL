@@ -10,8 +10,7 @@
 #include "gpio_msp432.h"
 #include "yahal_assert.h"
 
-// GPIO bitband macros
-
+// GPIO register offsets
 #define PORT_IN_OFS   0x00
 #define PORT_OUT_OFS  0x02
 #define PORT_DIR_OFS  0x04
@@ -22,15 +21,21 @@
 #define PORT_IE_OFS   0x1a
 #define PORT_IFG_OFS  0x1c
 
-#define PORT_BASE(p) ( BITBAND_PERI_BASE + (0x4c00 << 5) +  \
-                       (                                    \
-                          ( (  (p)     & 0x01) +            \
-                            ( ((p)>>1) * 0x20)              \
-                          ) << 5                            \
-                       )                                    \
-                     )
+// Bit-Band base addresses of the 10 GPIO ports
+volatile uint8_t * port_base[10] = {
+    &BITBAND_PERI( P1->IN, 0),
+    &BITBAND_PERI( P2->IN, 0),
+    &BITBAND_PERI( P3->IN, 0),
+    &BITBAND_PERI( P4->IN, 0),
+    &BITBAND_PERI( P5->IN, 0),
+    &BITBAND_PERI( P6->IN, 0),
+    &BITBAND_PERI( P7->IN, 0),
+    &BITBAND_PERI( P8->IN, 0),
+    &BITBAND_PERI( P9->IN, 0),
+    &BITBAND_PERI(P10->IN, 0)
+};
 
-#define DIO_BIT(p, bit, off) (*((__IO uint8_t *) (PORT_BASE(p-1) + (bit<<2) + (off<<5))))
+#define DIO_BIT(p, bit, off) (*((__IO uint8_t *) (port_base[p-1] + (bit<<2) + (off<<5))))
 
 
 gpio_msp432 gpio_msp432::inst;
@@ -81,6 +86,13 @@ void gpio_msp432::gpioWrite(uint16_t gpio, bool value) {
         // No open drain/source
         DIO_BIT(port, pin, PORT_OUT_OFS) = value;
     }
+}
+
+void gpio_msp432::gpioToggle(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+    yahal_assert((port > 0) && (port < 11) && (pin < 8));
+    gpioWrite(gpio, !DIO_BIT(port, pin, PORT_IN_OFS));
 }
 
 void gpio_msp432::gpioAttachIrq (uint16_t gpio,

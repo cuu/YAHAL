@@ -53,7 +53,9 @@ class spi_msp432 : public spi_interface {
 
    ~spi_msp432();
 
-    int16_t transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len);
+    int16_t transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) override;
+
+    void setSpeed(uint32_t) override;
 
     // IRQ handlers are our best friends
     ////////////////////////////////////

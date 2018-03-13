@@ -23,7 +23,7 @@
 
  (c) 2015 A. Terstegge
 
-********************************************************/
+ ********************************************************/
 
 #ifndef _CY8C95XXA_DRV_H_
 #define _CY8C95XXA_DRV_H_
@@ -33,35 +33,39 @@
 
 namespace CY8C95XXA {
 
-enum pwm_clk  { CLK_32KHZ        = 0x00, CLK_24MHZ    = 0x01,
-                CLK_1_5MHZ       = 0x02, CLK_93_75KHZ = 0x03,
-                CLK_93_75KHZ_DIV = 0x04, CLK_PRE_PWM  = 0x05 };
+enum pwm_clk  {
+    CLK_32KHZ        = 0x00, CLK_24MHZ    = 0x01,
+    CLK_1_5MHZ       = 0x02, CLK_93_75KHZ = 0x03,
+    CLK_93_75KHZ_DIV = 0x04, CLK_PRE_PWM  = 0x05 };
 
-enum gpio_cmd { CMD_STORE_CONFIG = 0x01,
-                CMD_RESTORE_FD   = 0x02,
-                CMD_RESET        = 0x07 };
+enum gpio_cmd {
+    CMD_STORE_CONFIG = 0x01,
+    CMD_RESTORE_FD   = 0x02,
+    CMD_RESET        = 0x07 };
 
-enum gpio_en  { ENABLE_RO        = 0x04,
-                ENABLE_EEPROM    = 0x02,
-                ENABLE_WD_PIN    = 0x01 };
+enum gpio_en  {
+    ENABLE_RO        = 0x04,
+    ENABLE_EEPROM    = 0x02,
+    ENABLE_WD_PIN    = 0x01 };
 
 }
 
 class cy8c95xxa_drv : public gpio_interface {
 
-  public:
+public:
     // User interface
     /////////////////
     cy8c95xxa_drv(i2c_interface & hw, uint8_t addr);
 
     /* Basic GPIO handling */
-    void gpioMode (uint16_t gpio, uint16_t mode) override;
-    bool gpioRead (uint16_t gpio) override;
-    void gpioWrite(uint16_t gpio, bool value) override;
+    void gpioMode  (uint16_t gpio, uint16_t mode) override;
+    bool gpioRead  (uint16_t gpio) override;
+    void gpioWrite (uint16_t gpio, bool value) override;
+    void gpioToggle(uint16_t gpio) override;
 
     /* Interrupt handling */
     void gpioAttachIrq (uint16_t gpio,
-    					void (*)(uint16_t gpio),
+                        void (*)(uint16_t gpio),
                         uint16_t mode) override;
     void gpioDetachIrq (uint16_t gpio) override;
     void gpioEnableIrq (uint16_t gpio) override;
@@ -81,7 +85,7 @@ class cy8c95xxa_drv : public gpio_interface {
 
     virtual ~cy8c95xxa_drv() { }
 
-  private:
+private:
     // Reference to HW interface
     i2c_interface & _i2c;
     // Storage for current output state

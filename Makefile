@@ -22,6 +22,8 @@ SRC_DIRS  = src/platform/$(PLATFORM)
 SRC_DIRS += src/driver
 SRC_DIRS += src/task
 SRC_DIRS += src/util
+SRC_DIRS += uGUI
+SRC_DIRS += uGUI/fonts
 
 # all include folders
 INC_DIRS  = include/platform/$(PLATFORM)
