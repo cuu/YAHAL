@@ -57,7 +57,6 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="src/uGUI|uGUI" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/uGUI"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -149,7 +148,6 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="src/uGUI|uGUI" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/uGUI"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
