@@ -39,8 +39,8 @@
 /* -- TYPEDEFS                                                                   -- */
 /* -------------------------------------------------------------------------------- */
 
-typedef int8_t                                        UG_RESULT;
-typedef uint32_t                                      UG_COLOR;
+typedef int8_t UG_RESULT;
+typedef uint32_t UG_COLOR;
 
 /* -------------------------------------------------------------------------------- */
 /* -- DEFINES                                                                    -- */
@@ -92,18 +92,8 @@ typedef uint32_t                                      UG_COLOR;
 #define UG_RESULT_OK                                  0
 
 /* -------------------------------------------------------------------------------- */
-/* -- UNIVERSAL STRUCTURES                                                       -- */
-/* -------------------------------------------------------------------------------- */
-/* Area structure */
-
-
-/* Text structure */
-
-
-/* -------------------------------------------------------------------------------- */
 /* -- BITMAP                                                                     -- */
 /* -------------------------------------------------------------------------------- */
-
 
 #define BMP_BPP_1                                     (1<<0)
 #define BMP_BPP_2                                     (1<<1)
@@ -118,8 +108,6 @@ typedef uint32_t                                      UG_COLOR;
 /* -------------------------------------------------------------------------------- */
 /* -- MESSAGE                                                                    -- */
 /* -------------------------------------------------------------------------------- */
-/* Message structure */
-
 
 /* Message types */
 #define MSG_TYPE_NONE                                 0
@@ -131,15 +119,12 @@ typedef uint32_t                                      UG_COLOR;
 /* -------------------------------------------------------------------------------- */
 /* Touch structure */
 
-
-
 #define TOUCH_STATE_PRESSED                           1
 #define TOUCH_STATE_RELEASED                          0
 
 /* -------------------------------------------------------------------------------- */
 /* -- OBJECTS                                                                    -- */
 /* -------------------------------------------------------------------------------- */
-
 
 /* Currently supported objects */
 #define OBJ_TYPE_NONE                                 0
@@ -177,7 +162,6 @@ typedef uint32_t                                      UG_COLOR;
 /* -- WINDOW                                                                     -- */
 /* -------------------------------------------------------------------------------- */
 
-
 /* Window states */
 #define WND_STATE_FREE                                (1<<0)
 #define WND_STATE_VALID                               (1<<1)
@@ -196,7 +180,6 @@ typedef uint32_t                                      UG_COLOR;
 /* -------------------------------------------------------------------------------- */
 /* -- BUTTON OBJECT                                                              -- */
 /* -------------------------------------------------------------------------------- */
-
 
 /* Default button IDs */
 #define BTN_ID_0                                      OBJ_ID_0
@@ -238,7 +221,6 @@ typedef uint32_t                                      UG_COLOR;
 /* -- TEXTBOX OBJECT                                                             -- */
 /* -------------------------------------------------------------------------------- */
 
-
 /* Default textbox IDs */
 #define TXB_ID_0                                      OBJ_ID_0
 #define TXB_ID_1                                      OBJ_ID_1
@@ -264,7 +246,6 @@ typedef uint32_t                                      UG_COLOR;
 /* -------------------------------------------------------------------------------- */
 /* -- IMAGE OBJECT                                                               -- */
 /* -------------------------------------------------------------------------------- */
-
 
 /* Default image IDs */
 #define IMG_ID_0                                      OBJ_ID_0
@@ -293,12 +274,15 @@ typedef uint32_t                                      UG_COLOR;
 
 #define UG_SATUS_WAIT_FOR_UPDATE                      (1<<0)
 
-class uGUI {
+class uGUI
+{
 public:
 
     struct WINDOW;
 
-    struct AREA {
+    /* Area structure */
+    struct AREA
+    {
         int16_t xs;
         int16_t ys;
         int16_t xe;
@@ -310,22 +294,25 @@ public:
     {
         uint8_t state;                              /* object state                               */
         uint8_t touch_state;                        /* object touch state                         */
-        void (*update) (uGUI *, WINDOW *,OBJECT*);   /* pointer to object-specific update function */
-        AREA a_abs;                            /* absolute area of the object                */
-        AREA a_rel;                            /* relative area of the object                */
+        void (*update)(uGUI *, WINDOW *, OBJECT*);  /* pointer to object-specific update function */
+        AREA a_abs;                                 /* absolute area of the object                */
+        AREA a_rel;                                 /* relative area of the object                */
         uint8_t type;                               /* object type                                */
         uint8_t id;                                 /* object ID                                  */
         uint8_t event;                              /* object-specific events                     */
-        void* data;                               /* pointer to object-specific data            */
+        void* data;                                 /* pointer to object-specific data            */
     };
 
-    struct FONT {
+    struct FONT
+    {
         unsigned char* p;
         int16_t char_width;
         int16_t char_height;
     };
 
-    struct UG_TEXT {
+    /* Text structure */
+    struct TEXT
+    {
         char* str;
         const FONT* font;
         AREA a;
@@ -336,15 +323,18 @@ public:
         int16_t v_space;
     };
 
-    struct BMP {
-        const void*  p;
+    struct BMP
+    {
+        const void* p;
         uint16_t width;
         uint16_t height;
-        uint8_t  bpp;
-        uint8_t  colors;
+        uint8_t bpp;
+        uint8_t colors;
     };
 
-    struct MESSAGE {
+    /* Message structure */
+    struct MESSAGE
+    {
         uint8_t type;
         uint8_t id;
         uint8_t sub_id;
@@ -353,7 +343,8 @@ public:
     };
 
     /* Button structure */
-    struct BUTTON {
+    struct BUTTON
+    {
         uint8_t state;
         uint8_t style;
         UG_COLOR fc;
@@ -378,7 +369,8 @@ public:
     };
 
     /* Title structure */
-    struct TITLE {
+    struct TITLE
+    {
         char* str;
         const FONT* font;
         int8_t h_space;
@@ -392,7 +384,8 @@ public:
     };
 
     /* Window structure */
-    struct WINDOW {
+    struct WINDOW
+    {
         uint8_t objcnt;
         OBJECT* objlst;
         uint8_t state;
@@ -404,166 +397,178 @@ public:
         int16_t ye;
         uint8_t style;
         TITLE title;
-        void (*cb)( MESSAGE* );
+        void (*cb)(MESSAGE*);
     };
 
     /* Image structure */
-    struct IMAGE {
+    struct IMAGE
+    {
         void* img;
         uint8_t type;
     };
 
     uGUI(lcd_interface & lcd);
-    ~uGUI() = default;
+
     /* -------------------------------------------------------------------------------- */
     /* -- PROTOTYPES                                                                 -- */
     /* -------------------------------------------------------------------------------- */
     /* Classic functions */
-    void        FontSelect( const FONT* font );
-    void        FillScreen( UG_COLOR c );
-    void        FillFrame( int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c );
-    void        FillRoundFrame( int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t r, UG_COLOR c );
-    void        DrawMesh( int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c );
-    void        DrawFrame( int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c );
-    void        DrawRoundFrame( int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t r, UG_COLOR c );
-    void        DrawPixel( int16_t x0, int16_t y0, UG_COLOR c );
-    void        DrawCircle( int16_t x0, int16_t y0, int16_t r, UG_COLOR c );
-    void        FillCircle( int16_t x0, int16_t y0, int16_t r, UG_COLOR c );
-    void        DrawArc( int16_t x0, int16_t y0, int16_t r, uint8_t s, UG_COLOR c );
-    void        DrawLine( int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c );
-    void        PutString( int16_t x, int16_t y, char* str );
-    void        PutChar( char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc );
-    void        ConsolePutString( char* str );
-    void        ConsoleSetArea( int16_t xs, int16_t ys, int16_t xe, int16_t ye );
-    void        ConsoleSetForecolor( UG_COLOR c );
-    void        ConsoleSetBackcolor( UG_COLOR c );
-    void        SetForecolor( UG_COLOR c );
-    void        SetBackcolor( UG_COLOR c );
-    int16_t     GetXDim( void );
-    int16_t     GetYDim( void );
-    void        FontSetHSpace( uint16_t s );
-    void        FontSetVSpace( uint16_t s );
+    void    FontSelect(const FONT* font);
+    void    FillScreen(UG_COLOR c);
+    void    FillFrame(int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c);
+    void    FillRoundFrame(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
+                        int16_t r, UG_COLOR c);
+    void    DrawMesh(int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c);
+    void    DrawFrame(int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c);
+    void    DrawRoundFrame(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
+                        int16_t r, UG_COLOR c);
+    void    DrawPixel(int16_t x0, int16_t y0, UG_COLOR c);
+    void    DrawCircle(int16_t x0, int16_t y0, int16_t r, UG_COLOR c);
+    void    FillCircle(int16_t x0, int16_t y0, int16_t r, UG_COLOR c);
+    void    DrawArc(int16_t x0, int16_t y0, int16_t r, uint8_t s, UG_COLOR c);
+    void    DrawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c);
+    void    PutString(int16_t x, int16_t y, char* str);
+    void    PutChar(char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc);
+    void    ConsolePutString(char* str);
+    void    ConsoleSetArea(int16_t xs, int16_t ys, int16_t xe, int16_t ye);
+    void    ConsoleSetForecolor(UG_COLOR c);
+    void    ConsoleSetBackcolor(UG_COLOR c);
+    void    SetForecolor(UG_COLOR c);
+    void    SetBackcolor(UG_COLOR c);
+    int16_t GetXDim(void);
+    int16_t GetYDim(void);
+    void    FontSetHSpace(uint16_t s);
+    void    FontSetVSpace(uint16_t s);
 
     /* Miscellaneous functions */
-    void        WaitForUpdate( void );
-    void        Update( void );
-    void        DrawBMP( int16_t xp, int16_t yp, BMP* bmp );
-    void        TouchUpdate( int16_t xp, int16_t yp, uint8_t state );
+    void    WaitForUpdate(void);
+    void    Update(void);
+    void    DrawBMP(int16_t xp, int16_t yp, BMP* bmp);
+    void    TouchUpdate(int16_t xp, int16_t yp, uint8_t state);
 
     /* Window functions */
-    UG_RESULT   WindowCreate( WINDOW* wnd, OBJECT* objlst, uint8_t objcnt, void (*cb)( MESSAGE* ) );
-    UG_RESULT   WindowDelete( WINDOW* wnd );
-    UG_RESULT   WindowShow( WINDOW* wnd );
-    UG_RESULT   WindowHide( WINDOW* wnd );
-    UG_RESULT   WindowResize( WINDOW* wnd, int16_t xs, int16_t ys, int16_t xe, int16_t ye );
-    UG_RESULT   WindowAlert( WINDOW* wnd );
-    UG_RESULT   WindowSetForeColor( WINDOW* wnd, UG_COLOR fc );
-    UG_RESULT   WindowSetBackColor( WINDOW* wnd, UG_COLOR bc );
-    UG_RESULT   WindowSetTitleTextColor( WINDOW* wnd, UG_COLOR c );
-    UG_RESULT   WindowSetTitleColor( WINDOW* wnd, UG_COLOR c );
-    UG_RESULT   WindowSetTitleInactiveTextColor( WINDOW* wnd, UG_COLOR c );
-    UG_RESULT   WindowSetTitleInactiveColor( WINDOW* wnd, UG_COLOR c );
-    UG_RESULT   WindowSetTitleText( WINDOW* wnd, char* str );
-    UG_RESULT   WindowSetTitleTextFont( WINDOW* wnd, const FONT* font );
-    UG_RESULT   WindowSetTitleTextHSpace( WINDOW* wnd, int8_t hs );
-    UG_RESULT   WindowSetTitleTextVSpace( WINDOW* wnd, int8_t vs );
-    UG_RESULT   WindowSetTitleTextAlignment( WINDOW* wnd, uint8_t align );
-    UG_RESULT   WindowSetTitleHeight( WINDOW* wnd, uint8_t height );
-    UG_RESULT   WindowSetXStart( WINDOW* wnd, int16_t xs );
-    UG_RESULT   WindowSetYStart( WINDOW* wnd, int16_t ys );
-    UG_RESULT   WindowSetXEnd( WINDOW* wnd, int16_t xe );
-    UG_RESULT   WindowSetYEnd( WINDOW* wnd, int16_t ye );
-    UG_RESULT   WindowSetStyle( WINDOW* wnd, uint8_t style );
-    UG_COLOR    WindowGetForeColor( WINDOW* wnd );
-    UG_COLOR    WindowGetBackColor( WINDOW* wnd );
-    UG_COLOR    WindowGetTitleTextColor( WINDOW* wnd );
-    UG_COLOR    WindowGetTitleColor( WINDOW* wnd );
-    UG_COLOR    WindowGetTitleInactiveTextColor( WINDOW* wnd );
-    UG_COLOR    WindowGetTitleInactiveColor( WINDOW* wnd );
-    char*       WindowGetTitleText( WINDOW* wnd );
-    FONT*    WindowGetTitleTextFont( WINDOW* wnd );
-    int8_t      WindowGetTitleTextHSpace( WINDOW* wnd );
-    int8_t      WindowGetTitleTextVSpace( WINDOW* wnd );
-    uint8_t     WindowGetTitleTextAlignment( WINDOW* wnd );
-    uint8_t     WindowGetTitleHeight( WINDOW* wnd );
-    int16_t     WindowGetXStart( WINDOW* wnd );
-    int16_t     WindowGetYStart( WINDOW* wnd );
-    int16_t     WindowGetXEnd( WINDOW* wnd );
-    int16_t     WindowGetYEnd( WINDOW* wnd );
-    uint8_t     WindowGetStyle( WINDOW* wnd );
-    UG_RESULT   WindowGetArea( WINDOW* wnd, AREA* a );
-    int16_t     WindowGetInnerWidth( WINDOW* wnd );
-    int16_t     WindowGetOuterWidth( WINDOW* wnd );
-    int16_t     WindowGetInnerHeight( WINDOW* wnd );
-    int16_t     WindowGetOuterHeight( WINDOW* wnd );
+    UG_RESULT   WindowCreate(WINDOW* wnd, OBJECT* objlst, uint8_t objcnt,
+                           void (*cb)(MESSAGE*));
+    UG_RESULT   WindowDelete(WINDOW* wnd);
+    UG_RESULT   WindowShow(WINDOW* wnd);
+    UG_RESULT   WindowHide(WINDOW* wnd);
+    UG_RESULT   WindowResize(WINDOW* wnd, int16_t xs, int16_t ys, int16_t xe,
+                           int16_t ye);
+    UG_RESULT   WindowAlert(WINDOW* wnd);
+    UG_RESULT   WindowSetForeColor(WINDOW* wnd, UG_COLOR fc);
+    UG_RESULT   WindowSetBackColor(WINDOW* wnd, UG_COLOR bc);
+    UG_RESULT   WindowSetTitleTextColor(WINDOW* wnd, UG_COLOR c);
+    UG_RESULT   WindowSetTitleColor(WINDOW* wnd, UG_COLOR c);
+    UG_RESULT   WindowSetTitleInactiveTextColor(WINDOW* wnd, UG_COLOR c);
+    UG_RESULT   WindowSetTitleInactiveColor(WINDOW* wnd, UG_COLOR c);
+    UG_RESULT   WindowSetTitleText(WINDOW* wnd, char* str);
+    UG_RESULT   WindowSetTitleTextFont(WINDOW* wnd, const FONT* font);
+    UG_RESULT   WindowSetTitleTextHSpace(WINDOW* wnd, int8_t hs);
+    UG_RESULT   WindowSetTitleTextVSpace(WINDOW* wnd, int8_t vs);
+    UG_RESULT   WindowSetTitleTextAlignment(WINDOW* wnd, uint8_t align);
+    UG_RESULT   WindowSetTitleHeight(WINDOW* wnd, uint8_t height);
+    UG_RESULT   WindowSetXStart(WINDOW* wnd, int16_t xs);
+    UG_RESULT   WindowSetYStart(WINDOW* wnd, int16_t ys);
+    UG_RESULT   WindowSetXEnd(WINDOW* wnd, int16_t xe);
+    UG_RESULT   WindowSetYEnd(WINDOW* wnd, int16_t ye);
+    UG_RESULT   WindowSetStyle(WINDOW* wnd, uint8_t style);
+    UG_COLOR    WindowGetForeColor(WINDOW* wnd);
+    UG_COLOR    WindowGetBackColor(WINDOW* wnd);
+    UG_COLOR    WindowGetTitleTextColor(WINDOW* wnd);
+    UG_COLOR    WindowGetTitleColor(WINDOW* wnd);
+    UG_COLOR    WindowGetTitleInactiveTextColor(WINDOW* wnd);
+    UG_COLOR    WindowGetTitleInactiveColor(WINDOW* wnd);
+    char *      WindowGetTitleText(WINDOW* wnd);
+    FONT *      WindowGetTitleTextFont(WINDOW* wnd);
+    int8_t      WindowGetTitleTextHSpace(WINDOW* wnd);
+    int8_t      WindowGetTitleTextVSpace(WINDOW* wnd);
+    uint8_t     WindowGetTitleTextAlignment(WINDOW* wnd);
+    uint8_t     WindowGetTitleHeight(WINDOW* wnd);
+    int16_t     WindowGetXStart(WINDOW* wnd);
+    int16_t     WindowGetYStart(WINDOW* wnd);
+    int16_t     WindowGetXEnd(WINDOW* wnd);
+    int16_t     WindowGetYEnd(WINDOW* wnd);
+    uint8_t     WindowGetStyle(WINDOW* wnd);
+    UG_RESULT   WindowGetArea(WINDOW* wnd, AREA* a);
+    int16_t     WindowGetInnerWidth(WINDOW* wnd);
+    int16_t     WindowGetOuterWidth(WINDOW* wnd);
+    int16_t     WindowGetInnerHeight(WINDOW* wnd);
+    int16_t     WindowGetOuterHeight(WINDOW* wnd);
 
     /* Button functions */
-    UG_RESULT   ButtonCreate( WINDOW* wnd, BUTTON* btn, uint8_t id, int16_t xs, int16_t ys, int16_t xe, int16_t ye );
-    UG_RESULT   ButtonDelete( WINDOW* wnd, uint8_t id );
-    UG_RESULT   ButtonShow( WINDOW* wnd, uint8_t id );
-    UG_RESULT   ButtonHide( WINDOW* wnd, uint8_t id );
-    UG_RESULT   ButtonSetForeColor( WINDOW* wnd, uint8_t id, UG_COLOR fc );
-    UG_RESULT   ButtonSetBackColor( WINDOW* wnd, uint8_t id, UG_COLOR bc );
-    UG_RESULT   ButtonSetAlternateForeColor( WINDOW* wnd, uint8_t id, UG_COLOR afc );
-    UG_RESULT   ButtonSetAlternateBackColor( WINDOW* wnd, uint8_t id, UG_COLOR abc );
-    UG_RESULT   ButtonSetText( WINDOW* wnd, uint8_t id, char* str );
-    UG_RESULT   ButtonSetFont( WINDOW* wnd, uint8_t id, const FONT* font );
-    UG_RESULT   ButtonSetStyle( WINDOW* wnd, uint8_t id, uint8_t style );
-    UG_COLOR    ButtonGetForeColor( WINDOW* wnd, uint8_t id );
-    UG_COLOR    ButtonGetBackColor( WINDOW* wnd, uint8_t id );
-    UG_COLOR    ButtonGetAlternateForeColor( WINDOW* wnd, uint8_t id );
-    UG_COLOR    ButtonGetAlternateBackColor( WINDOW* wnd, uint8_t id );
-    char*       ButtonGetText( WINDOW* wnd, uint8_t id );
-    FONT*    ButtonGetFont( WINDOW* wnd, uint8_t id );
-    uint8_t     ButtonGetStyle( WINDOW* wnd, uint8_t id );
+    UG_RESULT   ButtonCreate(WINDOW* wnd, BUTTON* btn, uint8_t id, int16_t xs,
+                           int16_t ys, int16_t xe, int16_t ye);
+    UG_RESULT   ButtonDelete(WINDOW* wnd, uint8_t id);
+    UG_RESULT   ButtonShow(WINDOW* wnd, uint8_t id);
+    UG_RESULT   ButtonHide(WINDOW* wnd, uint8_t id);
+    UG_RESULT   ButtonSetForeColor(WINDOW* wnd, uint8_t id, UG_COLOR fc);
+    UG_RESULT   ButtonSetBackColor(WINDOW* wnd, uint8_t id, UG_COLOR bc);
+    UG_RESULT   ButtonSetAlternateForeColor(WINDOW* wnd, uint8_t id,
+                                          UG_COLOR afc);
+    UG_RESULT   ButtonSetAlternateBackColor(WINDOW* wnd, uint8_t id,
+                                          UG_COLOR abc);
+    UG_RESULT   ButtonSetText(WINDOW* wnd, uint8_t id, char* str);
+    UG_RESULT   ButtonSetFont(WINDOW* wnd, uint8_t id, const FONT* font);
+    UG_RESULT   ButtonSetStyle(WINDOW* wnd, uint8_t id, uint8_t style);
+    UG_COLOR    ButtonGetForeColor(WINDOW* wnd, uint8_t id);
+    UG_COLOR    ButtonGetBackColor(WINDOW* wnd, uint8_t id);
+    UG_COLOR    ButtonGetAlternateForeColor(WINDOW* wnd, uint8_t id);
+    UG_COLOR    ButtonGetAlternateBackColor(WINDOW* wnd, uint8_t id);
+    char *      ButtonGetText(WINDOW* wnd, uint8_t id);
+    FONT *      ButtonGetFont(WINDOW* wnd, uint8_t id);
+    uint8_t     ButtonGetStyle(WINDOW* wnd, uint8_t id);
 
     /* Textbox functions */
-    UG_RESULT   TextboxCreate( WINDOW* wnd, TEXTBOX* txb, uint8_t id, int16_t xs, int16_t ys, int16_t xe, int16_t ye );
-    UG_RESULT   TextboxDelete( WINDOW* wnd, uint8_t id );
-    UG_RESULT   TextboxShow( WINDOW* wnd, uint8_t id );
-    UG_RESULT   TextboxHide( WINDOW* wnd, uint8_t id );
-    UG_RESULT   TextboxSetForeColor( WINDOW* wnd, uint8_t id, UG_COLOR fc );
-    UG_RESULT   TextboxSetBackColor( WINDOW* wnd, uint8_t id, UG_COLOR bc );
-    UG_RESULT   TextboxSetText( WINDOW* wnd, uint8_t id, char* str );
-    UG_RESULT   TextboxSetFont( WINDOW* wnd, uint8_t id, const FONT* font );
-    UG_RESULT   TextboxSetHSpace( WINDOW* wnd, uint8_t id, int8_t hs );
-    UG_RESULT   TextboxSetVSpace( WINDOW* wnd, uint8_t id, int8_t vs );
-    UG_RESULT   TextboxSetAlignment( WINDOW* wnd, uint8_t id, uint8_t align );
-    UG_COLOR    TextboxGetForeColor( WINDOW* wnd, uint8_t id );
-    UG_COLOR    TextboxGetBackColor( WINDOW* wnd, uint8_t id );
-    char*       TextboxGetText( WINDOW* wnd, uint8_t id );
-    FONT*    TextboxGetFont( WINDOW* wnd, uint8_t id );
-    int8_t      TextboxGetHSpace( WINDOW* wnd, uint8_t id );
-    int8_t      TextboxGetVSpace( WINDOW* wnd, uint8_t id );
-    uint8_t     TextboxGetAlignment( WINDOW* wnd, uint8_t id );
+    UG_RESULT   TextboxCreate(WINDOW* wnd, TEXTBOX* txb, uint8_t id, int16_t xs,
+                            int16_t ys, int16_t xe, int16_t ye);
+    UG_RESULT   TextboxDelete(WINDOW* wnd, uint8_t id);
+    UG_RESULT   TextboxShow(WINDOW* wnd, uint8_t id);
+    UG_RESULT   TextboxHide(WINDOW* wnd, uint8_t id);
+    UG_RESULT   TextboxSetForeColor(WINDOW* wnd, uint8_t id, UG_COLOR fc);
+    UG_RESULT   TextboxSetBackColor(WINDOW* wnd, uint8_t id, UG_COLOR bc);
+    UG_RESULT   TextboxSetText(WINDOW* wnd, uint8_t id, char* str);
+    UG_RESULT   TextboxSetFont(WINDOW* wnd, uint8_t id, const FONT* font);
+    UG_RESULT   TextboxSetHSpace(WINDOW* wnd, uint8_t id, int8_t hs);
+    UG_RESULT   TextboxSetVSpace(WINDOW* wnd, uint8_t id, int8_t vs);
+    UG_RESULT   TextboxSetAlignment(WINDOW* wnd, uint8_t id, uint8_t align);
+    UG_COLOR    TextboxGetForeColor(WINDOW* wnd, uint8_t id);
+    UG_COLOR    TextboxGetBackColor(WINDOW* wnd, uint8_t id);
+    char *      TextboxGetText(WINDOW* wnd, uint8_t id);
+    FONT *      TextboxGetFont(WINDOW* wnd, uint8_t id);
+    int8_t      TextboxGetHSpace(WINDOW* wnd, uint8_t id);
+    int8_t      TextboxGetVSpace(WINDOW* wnd, uint8_t id);
+    uint8_t     TextboxGetAlignment(WINDOW* wnd, uint8_t id);
 
     /* Image functions */
-    UG_RESULT   ImageCreate( WINDOW* wnd, IMAGE* img, uint8_t id, int16_t xs, int16_t ys, int16_t xe, int16_t ye );
-    UG_RESULT   ImageDelete( WINDOW* wnd, uint8_t id );
-    UG_RESULT   ImageShow( WINDOW* wnd, uint8_t id );
-    UG_RESULT   ImageHide( WINDOW* wnd, uint8_t id );
-    UG_RESULT   ImageSetBMP( WINDOW* wnd, uint8_t id, const BMP* bmp );
+    UG_RESULT   ImageCreate(WINDOW* wnd, IMAGE* img, uint8_t id, int16_t xs,
+                          int16_t ys, int16_t xe, int16_t ye);
+    UG_RESULT   ImageDelete(WINDOW* wnd, uint8_t id);
+    UG_RESULT   ImageShow(WINDOW* wnd, uint8_t id);
+    UG_RESULT   ImageHide(WINDOW* wnd, uint8_t id);
+    UG_RESULT   ImageSetBMP(WINDOW* wnd, uint8_t id, const BMP* bmp);
 
 private:
 
-    UG_RESULT   _WindowDrawTitle( WINDOW* wnd );
-    void        _WindowUpdate( WINDOW* wnd );
-    UG_RESULT   _WindowClear( WINDOW* wnd );
+    UG_RESULT   _WindowDrawTitle(WINDOW* wnd);
+    void        _WindowUpdate(WINDOW* wnd);
+    UG_RESULT   _WindowClear(WINDOW* wnd);
 
-    static void        _TextboxUpdate(uGUI *gui, uGUI::WINDOW* wnd, uGUI::OBJECT* obj);
-    static void        _ButtonUpdate(uGUI *gui, uGUI::WINDOW* wnd, uGUI::OBJECT* obj);
-    static void        _ImageUpdate(uGUI *gui, uGUI::WINDOW* wnd, uGUI::OBJECT* obj);
+    static void _TextboxUpdate(uGUI *gui, uGUI::WINDOW* wnd, uGUI::OBJECT* obj);
+    static void _ButtonUpdate(uGUI *gui, uGUI::WINDOW* wnd, uGUI::OBJECT* obj);
+    static void _ImageUpdate(uGUI *gui, uGUI::WINDOW* wnd, uGUI::OBJECT* obj);
 
-    void        _HandleEvents( WINDOW* wnd );
-    void        _DrawObjectFrame( int16_t xs, int16_t ys, int16_t xe, int16_t ye, UG_COLOR* p );
-    void        _UpdateObjects( WINDOW* wnd );
-    void        _ProcessTouchData( WINDOW* wnd );
-    UG_RESULT   _DeleteObject( WINDOW* wnd, uint8_t type, uint8_t id );
-    OBJECT*  _SearchObject( WINDOW* wnd, uint8_t type, uint8_t id );
-    OBJECT*  _GetFreeObject( WINDOW* wnd );
-    void        _PutText(UG_TEXT* txt);
+    void        _HandleEvents(WINDOW* wnd);
+    void        _DrawObjectFrame(int16_t xs, int16_t ys, int16_t xe, int16_t ye,
+                          UG_COLOR* p);
+    void        _UpdateObjects(WINDOW* wnd);
+    void        _ProcessTouchData(WINDOW* wnd);
+    UG_RESULT   _DeleteObject(WINDOW* wnd, uint8_t type, uint8_t id);
+    OBJECT *    _SearchObject(WINDOW* wnd, uint8_t type, uint8_t id);
+    OBJECT *    _GetFreeObject(WINDOW* wnd);
+    void        _PutText(TEXT* txt);
 
-    struct _CONSOLE {
+    struct _CONSOLE
+    {
         int16_t x_pos;
         int16_t y_pos;
         int16_t x_start;
@@ -574,7 +579,8 @@ private:
         UG_COLOR back_color;
     };
 
-    struct _FONT {
+    struct _FONT
+    {
         unsigned char* p;
         int16_t char_width;
         int16_t char_height;
@@ -582,26 +588,26 @@ private:
         int8_t char_v_space;
     };
 
-    struct _TOUCH {
+    struct _TOUCH
+    {
         uint8_t state;
         int16_t xp;
         int16_t yp;
     };
 
     lcd_interface & _lcd;
-    int16_t         x_dim;
-    int16_t         y_dim;
-    _TOUCH        touch;
-    WINDOW *     next_window;
-    WINDOW *     active_window;
-    WINDOW *     last_window;
-    _CONSOLE         console;
-    _FONT           font;
-    UG_COLOR        fore_color;
-    UG_COLOR        back_color;
-    UG_COLOR        desktop_color;
-    uint8_t         state;
+    int16_t _x_dim;
+    int16_t _y_dim;
+    _TOUCH _touch;
+    WINDOW * _next_window;
+    WINDOW * _active_window;
+    WINDOW * _last_window;
+    _CONSOLE _console;
+    _FONT _font;
+    UG_COLOR _fore_color;
+    UG_COLOR _back_color;
+    UG_COLOR _desktop_color;
+    uint8_t _state;
 };
-
 
 #endif
