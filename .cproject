@@ -10,8 +10,8 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/task"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/util"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/uGUI"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/uGUI/fonts"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI/fonts"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/YAHAL"/>
 						<entry flags="NONE" kind="libraryFile" name="YAHAL_msp432" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
