@@ -35,15 +35,15 @@ void std_io::redirect_stdin(uart_interface & uart_in, bool echo) {
     _local_echo = echo;
 }
 
-void std_io::redirect_stdout(uart_interface & uart_out, bool translate) {
-    _uart_out     = &uart_out;
-    _translate_nl = translate;
+void std_io::redirect_stdout(uart_interface & uart_out, bool add_CR) {
+    _uart_out = &uart_out;
+    _add_CR   = add_CR;
 }
 
 void std_io::putc(char c) {
     if (_uart_out) {
         _uart_out->putc(c);
-        if (_translate_nl && c=='\n') {
+        if (_add_CR && c=='\n') {
             _uart_out->putc('\r');
         }
     }

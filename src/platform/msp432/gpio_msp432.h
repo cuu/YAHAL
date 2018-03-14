@@ -26,9 +26,10 @@ public:
 
     // Generic GPIO methods
     ///////////////////////
-    void gpioMode (gpio_pin_t gpio, gpio_mode_t mode);
-    bool gpioRead (gpio_pin_t gpio);
-    void gpioWrite(gpio_pin_t gpio, bool value);
+    void gpioMode  (gpio_pin_t gpio, gpio_mode_t mode);
+    bool gpioRead  (gpio_pin_t gpio);
+    void gpioWrite (gpio_pin_t gpio, bool value);
+    void gpioToggle(gpio_pin_t gpio);
 
     // Interrupt handling
     void gpioAttachIrq (gpio_pin_t gpio,

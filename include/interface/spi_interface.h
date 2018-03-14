@@ -29,6 +29,10 @@ public:
     // otherwise -1 in case of errors
     virtual int16_t transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) = 0;
 
+    // Set the speed in Hz. Typical value is
+    //  1000000 (1 MHz)
+    virtual void setSpeed(uint32_t Hz) = 0;
+
 protected:
     virtual ~spi_interface() = default;
 };

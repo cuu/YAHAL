@@ -109,7 +109,8 @@ bool task_msp432::isUsingFloat() const {
 void task_msp432::setup_stack(bool priv) {
     yahal_assert(_stack_size > sizeof(Stack_Frame));
 
-    _stack_ptr = _stack_base + (_stack_size - sizeof(Stack_Frame))/4;
+    _stack_ptr = _stack_base +
+                (_stack_size - sizeof(Stack_Frame))/sizeof(uint32_t);
 
     Stack_Frame *frame = (Stack_Frame *)_stack_ptr;
     frame->psr  = 0x01000000;   // Set the Thumb-Bit

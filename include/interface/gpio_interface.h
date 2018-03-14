@@ -80,9 +80,10 @@ const gpio_irq_t  LEVEL_LOW           = 0x0008;
 class gpio_interface {
 public:
     // Basic GPIO handling
-    virtual void gpioMode (gpio_pin_t gpio, gpio_mode_t mode) = 0;
-    virtual bool gpioRead (gpio_pin_t gpio) = 0;
-    virtual void gpioWrite(gpio_pin_t gpio, bool value) = 0;
+    virtual void gpioMode  (gpio_pin_t gpio, gpio_mode_t mode) = 0;
+    virtual bool gpioRead  (gpio_pin_t gpio) = 0;
+    virtual void gpioWrite (gpio_pin_t gpio, bool value) = 0;
+    virtual void gpioToggle(gpio_pin_t gpio) = 0;
 
     // Interrupt handling
     virtual void gpioAttachIrq (gpio_pin_t gpio,
@@ -118,6 +119,9 @@ public:
     }
     inline void gpioWrite(bool val) {
         _interf.gpioWrite(_gpio, val);
+    }
+    inline void gpioToggle() {
+        _interf.gpioToggle(_gpio);
     }
     inline void gpioAttachIrq (void (*handler)(gpio_pin_t gpio),
                                uint16_t irq_mode)  {

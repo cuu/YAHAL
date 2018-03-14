@@ -35,17 +35,17 @@ public:
     void uartDisableIrq() override {};
 
     void redirect_stdin (uart_interface & uart_in , bool local_echo=true);
-    void redirect_stdout(uart_interface & uart_out, bool translate_nl=true);
+    void redirect_stdout(uart_interface & uart_out, bool add_CR=true);
 
 private:
     std_io()
     : _uart_in(nullptr),  _uart_out(nullptr),
-      _local_echo(false), _translate_nl(false) { }
+      _local_echo(false), _add_CR(false) { }
 
     uart_interface *  _uart_in;
     uart_interface *  _uart_out;
     bool              _local_echo;
-    bool              _translate_nl;
+    bool              _add_CR;
 };
 
 #endif // _STDIO_H_
