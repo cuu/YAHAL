@@ -12,6 +12,7 @@ class gpio_esp8266 : public gpio_interface {
     void gpioMode  (uint16_t gpio, uint16_t mode);
     bool gpioRead  (uint16_t gpio);
     void gpioWrite (uint16_t gpio, bool value);
+    void gpioToggle(uint16_t gpio);
 
     // Interrupt handling
     void gpioAttachIrq (uint16_t gpio,

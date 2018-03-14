@@ -18,6 +18,8 @@
 #ifndef _UART_INTERFACE_H_
 #define _UART_INTERFACE_H_
 
+#include <cstdint>
+
 typedef uint16_t uart_mode_t;
 
 namespace UART {

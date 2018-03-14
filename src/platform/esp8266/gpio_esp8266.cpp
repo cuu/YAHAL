@@ -71,6 +71,12 @@ void gpio_esp8266::gpioWrite(uint16_t gpio, bool value) {
 }
 
 ICACHE_FLASH_ATTR
+void gpio_esp8266::gpioToggle(uint16_t gpio) {
+	yahal_assert(gpio < 16);
+	ESP_GPIO.OUT ^= (1 << gpio);
+}
+
+ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioAttachIrq(uint16_t gpio, void (*handler)(uint16_t gpio),
                                  uint16_t irq_mode) {
 	yahal_assert(gpio < 16);
