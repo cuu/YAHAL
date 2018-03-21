@@ -82,11 +82,11 @@ ifndef PLATFORM
   $(error Error: No platform specified.)
 endif
 
-PLATFORM_FILE = $(YAHAL_DIR)/platforms/platform-$(PLATFORM).mk
+PLATFORM_FILE = $(YAHAL_DIR)/makefiles/platform-$(PLATFORM).mk
 ifneq ("$(wildcard $(PLATFORM_FILE))","")
   include $(PLATFORM_FILE)
 else
-  $(error Platform file platform/platform-$(PLATFORM).mk not existing!)
+  $(error Platform file makefiles/platform-$(PLATFORM).mk not existing!)
 endif
 
 #####################

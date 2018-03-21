@@ -301,9 +301,9 @@ void st7735s_drv::setFrame(uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye)
         break;
     case RIGHT:
         xs += _lcd.offsetY;
-        ys += (_lcd.sizeRamX - _lcd.sizeX - _lcd.offsetY);
+        ys += (_lcd.sizeRamX - _lcd.sizeX - _lcd.offsetX);
         xe += _lcd.offsetY;
-        ye += (_lcd.sizeRamX - _lcd.sizeX - _lcd.offsetY);
+        ye += (_lcd.sizeRamX - _lcd.sizeX - _lcd.offsetX);
         break;
     }
     writeCommand(CMD_CASET);

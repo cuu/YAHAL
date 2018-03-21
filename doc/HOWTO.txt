@@ -1,0 +1,34 @@
+1. How to create a new Code Composer Project and integrate the YAHAL library?
+=============================================================================
+
+The following steps are necessary to create a new project with YAHAL-support:
+
+    - create a new CCS project as usual. Make sure you select the 'MSP 432 Family'
+      and the MSP432P401R processor. Make also sure that you select a GNU C++
+      compiler for the project (currently GNU v6.3.1. Linaro).
+      
+    - CCS itself does not support the creation of a C++ project, so after the
+      step above some modifications have to be done manually:
+      
+           * Rename 'main.c' to 'main.cpp'
+           
+           * Pressing ALT+ENTER when the new project is selected, navigate to
+             'Build->GNU Linker->Libraries'. Here you see a box where runtime
+             libraries can be configured. The default are the 'gcc', 'nosys'
+             and 'c' libraries. Edit the 'c' entry and rename it to 'c_nano'.
+             Add a new library and call it 'supc++_nano'.
+             
+    - For the YAHAL support, press again ALT+ENTER on the selected project,
+      and navigate to the 'Build' entry. On the right, you see a tab called
+      'Dependencies'. Select this tab, and press the 'Add' button. Select the
+      'YAHAL' entry in list and press 'OK' (and 'OK' again :)
+      
+After that you can use all the YAHAL libraries in your project!
+
+Some special hint when you use the multitasking kernel of YAHAL: When you see
+strange (red) error messages like 'semihosting not supported', you can get rid
+of these messages by right-klicking on the project and navigating to
+'Debug As'->'Debug Configurations'. Select the 'Target' tab, and disable the
+'Enable Semihosting' entry.
+
+      
