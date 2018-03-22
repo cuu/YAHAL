@@ -21,7 +21,7 @@ The following steps are necessary to create a new project with YAHAL-support:
     - For the YAHAL support, press again ALT+ENTER on the selected project,
       and navigate to the 'Build' entry. On the right, you see a tab called
       'Dependencies'. Select this tab, and press the 'Add' button. Select the
-      'YAHAL' entry in list and press 'OK' (and 'OK' again :)
+      'YAHAL' entry in the list and press 'OK' (and 'OK' again :)
       
 After that you can use all the YAHAL libraries in your project!
 
