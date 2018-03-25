@@ -85,11 +85,12 @@ void delay(int t) {
     for (int i=0; i < t*1000; ++i) j++;
 }
 
-st7735s_drv::st7735s_drv(spi_interface  & spi,
-                         gpio_pin       & rst_pin,
-                         gpio_pin       & dc_pin,
-                         config         & lcd)
-: _spi(spi), _rst_pin(rst_pin), _dc_pin (dc_pin), _lcd(lcd) {
+st7735s_drv::st7735s_drv(spi_interface   & spi,
+                         gpio_pin        & rst_pin,
+                         gpio_pin        & dc_pin,
+                         config          & lcd,
+                         mutex_interface * mutex)
+: _spi(spi), _rst_pin(rst_pin), _dc_pin (dc_pin), _lcd(lcd), _mutex(mutex) {
 
     // Initialize Reset & D/C pins
     _rst_pin.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
@@ -100,6 +101,8 @@ st7735s_drv::st7735s_drv(spi_interface  & spi,
     delay(200);
     _rst_pin.gpioWrite(HIGH);
     delay(200);
+
+//    if (_mutex) _mutex->lock();
 
     writeCommand(CMD_SLPOUT);	// Wake up ...
     delay(200);
@@ -120,6 +123,8 @@ st7735s_drv::st7735s_drv(spi_interface  & spi,
     scroll(0);
 
     writeCommand(CMD_DISPON);
+
+//    if (_mutex) _mutex->unlock();
 }
 
 st7735s_drv::~st7735s_drv() { }
@@ -144,6 +149,7 @@ void st7735s_drv::setOrientation(Orientation o)
 {
     _orientation = o;
     uint8_t madctl = (_lcd.flags & BGR_COLOR_FILTER) ? 0x8 : 0;
+    if (_mutex) _mutex->lock();
     writeCommand(CMD_MADCTL);
     switch (o) {
     case UP:
@@ -159,15 +165,18 @@ void st7735s_drv::setOrientation(Orientation o)
         writeData(madctl | 0x60);
         break;
     }
+    if (_mutex) _mutex->unlock();
 }
 
 void st7735s_drv::drawPixel(uint16_t x, uint16_t y, color_t c) {
     color_t color = convertColor(c, LCD::COLORTYPE_RGB565);
     change(x, y);
+    if (_mutex) _mutex->lock();
     setFrame(x, y, x, y);
     writeCommand(CMD_RAMWR);
     writeData(color  >>  8);
     writeData(color & 0xff);
+    if (_mutex) _mutex->unlock();
 }
 
 void st7735s_drv::drawHLine(uint16_t xs, uint16_t y,
@@ -176,12 +185,14 @@ void st7735s_drv::drawHLine(uint16_t xs, uint16_t y,
     uint16_t dummy;
     change(xs, y);
     change(xe, dummy);
+    if (_mutex) _mutex->lock();
     setFrame(xs, y, xe, y);
     writeCommand(CMD_RAMWR);
     for (int i = xs; i <= xe; ++i) {
         writeData(color  >>  8);
         writeData(color & 0xff);
     }
+    if (_mutex) _mutex->unlock();
 }
 
 void st7735s_drv::drawVLine(uint16_t x,  uint16_t ys,
@@ -190,13 +201,14 @@ void st7735s_drv::drawVLine(uint16_t x,  uint16_t ys,
     uint16_t dummy;
     change(x, ys);
     change(dummy, ye);
-
+    if (_mutex) _mutex->lock();
     setFrame(x, ys, x, ye);
     writeCommand(CMD_RAMWR);
     for (int i = ys; i <= ye; ++i) {
         writeData(color  >>  8);
         writeData(color & 0xff);
     }
+    if (_mutex) _mutex->unlock();
 }
 
 void st7735s_drv::drawArea(uint16_t xs, uint16_t ys,
@@ -207,6 +219,7 @@ void st7735s_drv::drawArea(uint16_t xs, uint16_t ys,
     ps.reset();
     change(xs,ys);
     change(xe,ye);
+    if (_mutex) _mutex->lock();
     setFrame(xs, ys, xe, ye);
     int16_t pixels = (xe - xs + 1) * (ye - ys + 1);
     writeCommand(CMD_RAMWR);
@@ -218,6 +231,7 @@ void st7735s_drv::drawArea(uint16_t xs, uint16_t ys,
         writeData(color  >>  8);
         writeData(color & 0xff);
     }
+    if (_mutex) _mutex->unlock();
 }
 
 void st7735s_drv::fillArea(uint16_t xs, uint16_t ys,
@@ -233,15 +247,17 @@ void st7735s_drv::scroll(int16_t rows) {
         _first_row += _lcd.sizeY;
     else if (_first_row >= _lcd.sizeY)
         _first_row -= _lcd.sizeY;
-
+    if (_mutex) _mutex->lock();
     writeCommand(CMD_VSCSAD);
     writeData(0);
     writeData(_lcd.offsetY + _first_row);
+    if (_mutex) _mutex->unlock();
 }
 
 void st7735s_drv::clearScreen(color_t c) {
     color_t color = convertColor(c, LCD::COLORTYPE_RGB565);
     scroll(-_first_row); // Reset scrolling
+    if (_mutex) _mutex->lock();
     setFrame(0,  0,  _lcd.sizeX-1,_lcd.sizeY-1);
     int16_t pixels = _lcd.sizeX * _lcd.sizeY;
     writeCommand(CMD_RAMWR);
@@ -251,11 +267,14 @@ void st7735s_drv::clearScreen(color_t c) {
         writeData(msb);
         writeData(lsb);
     }
+    if (_mutex) _mutex->unlock();
 }
 
 void st7735s_drv::inverseColors(bool b) {
+    if (_mutex) _mutex->lock();
     if (b) writeCommand(CMD_INVON);
     else   writeCommand(CMD_INVOFF);
+    if (_mutex) _mutex->unlock();
 }
 
 void st7735s_drv::change(uint16_t & x, uint16_t & y) {

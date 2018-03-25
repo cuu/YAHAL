@@ -1,9 +1,20 @@
-/*
- * spi_msp432.h
- *
- *  Created on: 28.02.2016
- *      Author: Andreas Terstegge
- */
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// SPI driver for MSP432. It support master
+// and client mode. Interrupts are not yet
+// supported.
+//
 
 #ifndef _SPI_MSP432_H_
 #define _SPI_MSP432_H_

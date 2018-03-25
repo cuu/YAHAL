@@ -14,11 +14,11 @@
 
 #include <cstring>
 
-void task_base::enable_irq()             { __enable_irq();      }
-void task_base::disable_irq()            { __disable_irq();     }
-void task_base::yield()                  { sys_call(SYS_YIELD); }
-void task_base::cpu_sleep()              { __WFE();             }
-void task_base::trigger_context_switch() { SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk; }
+void task_base::_enable_irq()             { __enable_irq();      }
+void task_base::_disable_irq()            { __disable_irq();     }
+void task_base::yield()                   { sys_call(SYS_YIELD); }
+void task_base::_cpu_sleep()              { __WFE();             }
+void task_base::_trigger_context_switch() { SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk; }
 
 //////////////////////////////////////////
 // The following structure defines a stack
@@ -106,7 +106,7 @@ bool task_msp432::isUsingFloat() const {
     }
 }
 
-void task_msp432::setup_stack(bool priv) {
+void task_msp432::_setup_stack(bool priv) {
     yahal_assert(_stack_size > sizeof(Stack_Frame));
 
     _stack_ptr = _stack_base +

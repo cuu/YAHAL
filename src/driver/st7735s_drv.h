@@ -19,6 +19,7 @@
 #include "spi_interface.h"
 #include "gpio_interface.h"
 #include "lcd_interface.h"
+#include "mutex_interface.h"
 
 class st7735s_drv : public lcd_interface {
 public:
@@ -50,10 +51,11 @@ public:
 public:
     // User interface
     /////////////////
-    st7735s_drv(spi_interface  & spi,
-                gpio_pin       & rst_pin,
-                gpio_pin       & dc_pin,
-                config         & lcd);
+    st7735s_drv(spi_interface   & spi,
+                gpio_pin        & rst_pin,
+                gpio_pin        & dc_pin,
+                config          & lcd,
+                mutex_interface * mutex = nullptr);
 
     virtual ~st7735s_drv();
 
@@ -92,6 +94,8 @@ private:
 
     Orientation _orientation;
     int8_t      _first_row; // Vertical scroll start address
+
+    mutex_interface * _mutex;
 };
 
 #endif // _ST7735S_H_

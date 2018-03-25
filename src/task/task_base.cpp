@@ -59,7 +59,7 @@ void task_base::start(uint16_t priority, bool priv) {
         _stack_base[i] = STACK_MAGIC;
     }
 
-    setup_stack(priv);
+    _setup_stack(priv);
 
     // Set remaining Task data members
     _priority    = priority;
@@ -69,18 +69,18 @@ void task_base::start(uint16_t priority, bool priv) {
     _sleep_until = 0;
 
     // Finally link in the Task
-    disable_irq();
+    _disable_irq();
     _list.push_back(this);
-    enable_irq();
+    _enable_irq();
 }
 
 void task_base::end() {
     yahal_assert(_linked_in);
     // Link out the Task, so it will not
     // consume any further runtime ...
-    disable_irq();
+    _disable_irq();
     _list.remove(this);
-    enable_irq();
+    _enable_irq();
     // and switch to another task
     yield();
 }
@@ -156,7 +156,7 @@ void task_base::run_scheduler(void) {
     // Check if we need a context switch
     if (next_ptr != _run_ptr) {
         _run_next = next_ptr;
-        trigger_context_switch();
+        _trigger_context_switch();
     }
 }
 
