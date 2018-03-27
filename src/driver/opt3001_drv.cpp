@@ -10,7 +10,6 @@
 //      BSD Licensed (see file LICENSE)
 //
 // ---------------------------------------------
-//
 
 #include "opt3001_drv.h"
 
@@ -68,7 +67,7 @@ uint16_t opt3001_drv::readRegister(uint8_t reg){
 	uint16_t val;
 	txbuf[0] = reg;
 	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
-	_i2c.i2cRead(_i2c_addr, rxbuf, 2);
+	_i2c.i2cRead (_i2c_addr, rxbuf, 2);
 	val = (rxbuf[0] << 8) | rxbuf[1];
 	return val;
 }
