@@ -1,8 +1,8 @@
 // A simple mutex implementation. It implements
 // a active wait loop if the mutex is locked.
 
-#ifndef _MUTEX_MSP432_H_
-#define _MUTEX_MSP432_H_
+#ifndef _SIMPLE_MUTEX_H_
+#define _SIMPLE_MUTEX_H_
 
 #include "mutex_interface.h"
 #include "yahal_assert.h"
@@ -36,4 +36,4 @@ private:
     bool _lock;
 };
 
-#endif // _MUTEX_MSP432_H_
+#endif // _SIMPLE_MUTEX_H_
