@@ -28,7 +28,7 @@ static const uint16_t MASK_RESULT_MAT = 0x0FFF;
 }
 
 opt3001_drv::opt3001_drv(i2c_interface & i2c, uint8_t i2c_addr)
-: _i2c(i2c),  _i2c_addr(i2c_addr)  {} // _raw(0), light(0)
+: _i2c(i2c),  _i2c_addr(i2c_addr) { }
 
 void opt3001_drv::start_measure(uint16_t CONF){
     writeRegister(OPT3001::REG_CONF, CONF);
@@ -39,11 +39,11 @@ bool opt3001_drv::measure_ready() {
     return val & 0x0080;
 }
 
-float opt3001_drv::get_light(){
-    uint16_t raw  = readRegister(OPT3001::REG_RESULT);
+uint32_t opt3001_drv::get_light(){
+    uint32_t raw  = readRegister(OPT3001::REG_RESULT);
     uint16_t exp  = raw >> 12;
-    uint16_t mant = raw & OPT3001::MASK_RESULT_MAT;
-    return (float)(mant << exp) * 0.01;
+    raw &= OPT3001::MASK_RESULT_MAT;
+    return (raw << exp) / 100;
 }
 
 bool opt3001_drv::detect_sensor() {
