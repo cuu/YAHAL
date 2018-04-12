@@ -22,7 +22,7 @@ class task_idle : public TASK
     inline void run(void) override {
         // Do nothing but sleep ...
         ///////////////////////////
-        while(true) task_base::cpu_sleep();
+        while(true) task_base::_cpu_sleep();
     }
 };
 

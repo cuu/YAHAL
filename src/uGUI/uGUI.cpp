@@ -419,38 +419,7 @@ void uGUI::DrawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c)
     }
 }
 
-void uGUI::PutString(int16_t x, int16_t y, char* str)
-{
-    int16_t xp, yp;
-    char chr;
-
-    xp = x;
-    yp = y;
-
-    while (*str != 0)
-    {
-        chr = *str;
-        if (chr == '\n')
-        {
-            xp = _x_dim;
-            str++;
-            continue;
-        }
-
-        if (xp + _font.char_width > _x_dim - 1)
-        {
-            xp = x;
-            yp += _font.char_height + _font.char_v_space;
-        }
-
-        PutChar(chr, xp, yp, _fore_color, _back_color);
-
-        xp += _font.char_width + _font.char_h_space;
-        str++;
-    }
-}
-
-void uGUI::PutChar(char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc)
+void uGUI::PutChar(const char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc, bool opaque)
 {
     uint16_t i, j, k, xo, yo, c, bn;
     uint8_t b, bt;
@@ -460,22 +429,22 @@ void uGUI::PutChar(char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc)
 
     switch (bt)
     {
-    case 0xF6:
+    case 0xB6:
         bt = 0x94;
         break; // ö
-    case 0xD6:
+    case 0x96:
         bt = 0x99;
         break; // Ö
-    case 0xFC:
+    case 0xBC:
         bt = 0x81;
         break; // ü
-    case 0xDC:
+    case 0x9C:
         bt = 0x9A;
         break; // Ü
-    case 0xE4:
+    case 0xA4:
         bt = 0x84;
         break; // ä
-    case 0xC4:
+    case 0x84:
         bt = 0x8E;
         break; // Ä
     case 0xB5:
@@ -511,7 +480,7 @@ void uGUI::PutChar(char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc)
                 }
                 else
                 {
-                    _lcd.drawPixel(xo, yo, bc);
+                    if (opaque) _lcd.drawPixel(xo, yo, bc);
                 }
                 b >>= 1;
                 xo++;
@@ -519,6 +488,43 @@ void uGUI::PutChar(char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc)
             }
         }
         yo++;
+    }
+}
+
+void uGUI::PutString(int16_t x, int16_t y, const char* str, bool opaque)
+{
+    int16_t xp, yp;
+    char chr;
+
+    xp = x;
+    yp = y;
+
+    while (*str != 0)
+    {
+        chr = *str;
+        if (chr == '\n')
+        {
+            xp = _x_dim;
+            str++;
+            continue;
+        }
+        // skip UTF8 prefix chars
+        if ((chr == 0xC2) || (chr == 0xC3))
+        {
+            str++;
+            continue;
+        }
+
+        if (xp + _font.char_width > _x_dim - 1)
+        {
+            xp = x;
+            yp += _font.char_height + _font.char_v_space;
+        }
+
+        PutChar(chr, xp, yp, _fore_color, _back_color, opaque);
+
+        xp += _font.char_width + _font.char_h_space;
+        str++;
     }
 }
 
@@ -725,30 +731,30 @@ void uGUI::_PutText(TEXT* txt)
             bt = (uint8_t) *str;
             switch (bt)
             {
-            case 0xF6:
-                bt = 0x94;
-                break; // �
-            case 0xD6:
-                bt = 0x99;
-                break; // �
-            case 0xFC:
-                bt = 0x81;
-                break; // �
-            case 0xDC:
-                bt = 0x9A;
-                break; // �
-            case 0xE4:
-                bt = 0x84;
-                break; // �
-            case 0xC4:
-                bt = 0x8E;
-                break; // �
-            case 0xB5:
-                bt = 0xE6;
-                break; // �
-            case 0xB0:
-                bt = 0xF8;
-                break; // �
+                case 0xB6:
+                    bt = 0x94;
+                    break; // ö
+                case 0x96:
+                    bt = 0x99;
+                    break; // Ö
+                case 0xBC:
+                    bt = 0x81;
+                    break; // ü
+                case 0x9C:
+                    bt = 0x9A;
+                    break; // Ü
+                case 0xA4:
+                    bt = 0x84;
+                    break; // ä
+                case 0x84:
+                    bt = 0x8E;
+                    break; // Ä
+                case 0xB5:
+                    bt = 0xE6;
+                    break; // µ
+                case 0xB0:
+                    bt = 0xF8;
+                    break; // °
             }
             yo = yp;
             bn = char_width;

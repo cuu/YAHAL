@@ -130,12 +130,13 @@ protected:
 
     // CPU-specific interface, which needs to be
     // implemented by all different CPU cores.
-    virtual void setup_stack (bool priv) = 0;
-    static  void enable_irq();
-    static  void disable_irq();
+    virtual void _setup_stack (bool priv) = 0;
+    static  void _enable_irq();
+    static  void _disable_irq();
+    static  void _cpu_sleep();
+    static  void _trigger_context_switch();
+public:
     static  void yield();
-    static  void cpu_sleep();
-    static  void trigger_context_switch();
 
 private:
     // Instances of task_base are organized as a circular list

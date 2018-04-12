@@ -9,6 +9,7 @@
 #define TASKMONITOR_H
 
 #include <cstdio>
+#include "task_base.h"
 #include "task_timer.h"
 
 #define MONITOR_WAIT 5  // in seconds !!

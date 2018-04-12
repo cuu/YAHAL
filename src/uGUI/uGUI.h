@@ -43,6 +43,13 @@ typedef int8_t UG_RESULT;
 typedef uint32_t UG_COLOR;
 
 /* -------------------------------------------------------------------------------- */
+/* -- FUNCTION RESULTS                                                           -- */
+/* -------------------------------------------------------------------------------- */
+#define UG_RESULT_FAIL                               -1
+#define UG_RESULT_OK                                  0
+
+
+/* -------------------------------------------------------------------------------- */
 /* -- DEFINES                                                                    -- */
 /* -------------------------------------------------------------------------------- */
 
@@ -84,12 +91,6 @@ typedef uint32_t UG_COLOR;
 #define OBJ_ID_17                                     17
 #define OBJ_ID_18                                     18
 #define OBJ_ID_19                                     19
-
-/* -------------------------------------------------------------------------------- */
-/* -- FUNCTION RESULTS                                                           -- */
-/* -------------------------------------------------------------------------------- */
-#define UG_RESULT_FAIL                               -1
-#define UG_RESULT_OK                                  0
 
 /* -------------------------------------------------------------------------------- */
 /* -- BITMAP                                                                     -- */
@@ -427,8 +428,8 @@ public:
     void    FillCircle(int16_t x0, int16_t y0, int16_t r, UG_COLOR c);
     void    DrawArc(int16_t x0, int16_t y0, int16_t r, uint8_t s, UG_COLOR c);
     void    DrawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c);
-    void    PutString(int16_t x, int16_t y, char* str);
-    void    PutChar(char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc);
+    void    PutChar(const char chr, int16_t x, int16_t y, UG_COLOR fc, UG_COLOR bc, bool opaque=true);
+    void    PutString(int16_t x, int16_t y, const char* str, bool opaque = true);
     void    ConsolePutString(char* str);
     void    ConsoleSetArea(int16_t xs, int16_t ys, int16_t xe, int16_t ye);
     void    ConsoleSetForecolor(UG_COLOR c);

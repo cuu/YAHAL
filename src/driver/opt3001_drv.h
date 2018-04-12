@@ -1,9 +1,18 @@
-/*
- * opt3001_drv.h
- *
- *  Created on: Mar 12, 2017
- *      Author: Dennis Hoffmann
- */
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Driver for OPT3001 light sensor made by TI.
+// This sensor is accessed by a I2C interface.
 
 #ifndef SRC_DRIVER_OPT3001_DRV_H_
 #define SRC_DRIVER_OPT3001_DRV_H_
@@ -22,14 +31,13 @@ static const uint16_t CONF_800MS_SINGLE = 0b1100101000010000;
 static const uint16_t CONF_100MS_SINGLE = 0b1100001000010000;
 }
 
-
 class opt3001_drv {
 public:
 	opt3001_drv(i2c_interface & i2c, uint8_t i2c_addr);
-	void  start_measure(uint16_t conf);
-	bool  measure_ready();
-	float get_light();
-	bool  detect_sensor();
+	void     start_measure(uint16_t conf);
+	bool     measure_ready();
+	uint32_t get_light();
+	bool     detect_sensor();
 
 private:
 	i2c_interface & _i2c;

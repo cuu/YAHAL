@@ -63,7 +63,7 @@ private:
     using task_base::_stack_size;
     using task_base::_stack_ptr;
 
-    void setup_stack(bool priv) override;
+    void _setup_stack(bool priv) override;
 
     // The stack frame as a struct
     struct Stack_Frame;

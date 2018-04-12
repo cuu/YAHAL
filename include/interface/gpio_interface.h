@@ -105,13 +105,13 @@ public:
     gpio_pin(gpio_interface & interf)
     : _interf(interf), _gpio(0) { }
 
-    gpio_pin(gpio_interface & interf, uint16_t gpio)
+    gpio_pin(gpio_interface & interf, gpio_pin_t gpio)
     : _interf(interf), _gpio(gpio) { }
 
-    inline void setGpio(uint16_t gpio) {
+    inline void setGpio(gpio_pin_t gpio) {
         _gpio = gpio;
     }
-    inline void gpioMode(uint16_t mode) {
+    inline void gpioMode(gpio_mode_t mode) {
         _interf.gpioMode(_gpio, mode);
     }
     inline bool gpioRead() {

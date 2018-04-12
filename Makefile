@@ -30,5 +30,5 @@ INC_DIRS  = include/platform/$(PLATFORM)
 INC_DIRS += include/interface
 INC_DIRS += $(SRC_DIRS)
 
-include common.mk
+include makefiles/common.mk
 
