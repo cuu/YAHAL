@@ -26,9 +26,13 @@ SRC_DIRS += src/uGUI
 SRC_DIRS += src/uGUI/fonts
 
 # all include folders
-INC_DIRS  = include/platform/$(PLATFORM)
-INC_DIRS += include/interface
-INC_DIRS += $(SRC_DIRS)
+INC_DIRS  = include/interface
+INC_DIRS += src/platform/$(PLATFORM)
+INC_DIRS += src/driver
+INC_DIRS += src/task
+INC_DIRS += src/util
+INC_DIRS += src/uGUI
+INC_DIRS += src/uGUI/fonts
 
 include makefiles/common.mk
 

@@ -12,6 +12,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/util"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI/fonts"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432/DSP/Include"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/YAHAL"/>
 						<entry flags="NONE" kind="libraryFile" name="YAHAL_msp432" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
@@ -40,11 +41,14 @@
 								<option id="gnu.cpp.compiler.option.preprocessor.def.405101785" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__MSP432P401R__"/>
 									<listOptionValue builtIn="false" value="__ARM_ARCH_7EM__=1"/>
+									<listOptionValue builtIn="false" value="ARM_MATH_CM4"/>
+									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.835728100" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include/CMSIS"/>
-									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include/platform/msp432}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include/platform/msp432/CMSIS}&quot;"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.dialect.std.1351950353" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1134475121" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1388130053" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
@@ -98,6 +102,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/util"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/uGUI"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/uGUI/fonts"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432/DSP_Lib/Include"/>
 						<entry flags="NONE" kind="macro" name="__ARM_ARCH_7EM__" value="1"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/YAHAL"/>
 						<entry flags="NONE" kind="libraryFile" name="YAHAL_msp432" srcPrefixMapping="" srcRootPath=""/>
@@ -148,6 +153,7 @@
 									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include/CMSIS"/>
 									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/tools/compiler/gcc-arm-none-eabi-6-2017-q1-update/arm-none-eabi/include"/>
 									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432/DSP_Lib/Include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.125148932" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -206,4 +212,5 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>
