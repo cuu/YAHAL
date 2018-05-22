@@ -13,24 +13,24 @@
 #include "i2c_interface.h"
 
 namespace I2C {
-	const uint16_t OWN_7_BIT_ADDR    = 0x0000;
-	const uint16_t OWN_10_BIT_ADDR   = EUSCI_B_CTLW0_A10;
-	const uint16_t SLAVE_7_BIT_ADDR  = 0x0000;
-	const uint16_t SLAVE_10_BIT_ADDR = EUSCI_B_CTLW0_SLA10;
-	const uint16_t MASTER_MODE       = EUSCI_B_CTLW0_MST;
-	const uint16_t SLAVE_MODE        = 0x0000;
-	const uint16_t CLK_ACLK          = EUSCI_B_CTLW0_SSEL__ACLK;
-	const uint16_t CLK_SMCLK         = EUSCI_B_CTLW0_SSEL__SMCLK;
+const uint16_t OWN_7_BIT_ADDR    = 0x0000;
+const uint16_t OWN_10_BIT_ADDR   = EUSCI_B_CTLW0_A10;
+const uint16_t SLAVE_7_BIT_ADDR  = 0x0000;
+const uint16_t SLAVE_10_BIT_ADDR = EUSCI_B_CTLW0_SLA10;
+const uint16_t MASTER_MODE       = EUSCI_B_CTLW0_MST;
+const uint16_t SLAVE_MODE        = 0x0000;
+const uint16_t CLK_ACLK          = EUSCI_B_CTLW0_SSEL__ACLK;
+const uint16_t CLK_SMCLK         = EUSCI_B_CTLW0_SSEL__SMCLK;
 }
 
 class i2c_msp432 : public i2c_interface {
 
-  public:
+public:
 
     i2c_msp432(EUSCI_B_Type *i2c,
-              uint16_t mode = I2C::SLAVE_7_BIT_ADDR |
-			                  I2C::MASTER_MODE |
-							  I2C::CLK_SMCLK);
+               uint16_t mode = I2C::SLAVE_7_BIT_ADDR |
+                               I2C::MASTER_MODE |
+                               I2C::CLK_SMCLK);
 
     virtual ~i2c_msp432();
 
@@ -41,21 +41,21 @@ class i2c_msp432 : public i2c_interface {
 
     void setSpeed(uint32_t) override;
 
-  private:
+private:
 
-//    void send_ADR_ACK();
-//    void send_ADR_NACK();
+    //    void send_ADR_ACK();
+    //    void send_ADR_NACK();
     void set_receiver();
     void set_transmitter();
-//    void send_ACK();
-//    void send_NACK();
+    //    void send_ACK();
+    //    void send_NACK();
     void send_START();
     void send_STOP();
 
-	gpio_msp432_pin	_sda;
+    gpio_msp432_pin	_sda;
     gpio_msp432_pin	_scl;
 
-	EUSCI_B_Type * _EUSCI;
+    EUSCI_B_Type * _EUSCI;
 
 };
 

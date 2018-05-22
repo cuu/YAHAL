@@ -11,66 +11,66 @@
 i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 : _EUSCI(mod)
 {
-	// Configure hardware characteristics
-	/////////////////////////////////////
-	if (mod==EUSCI_B0) {
-		_sda.setGpio (PORT_PIN(1, 6));
-		_scl.setGpio (PORT_PIN(1, 7));
-	} else if (mod==EUSCI_B1) {
-		_sda.setGpio (PORT_PIN(6, 4));
-		_scl.setGpio (PORT_PIN(6, 5));
-	} else if (mod==EUSCI_B2) {
-		_sda.setGpio (PORT_PIN(3, 6));
-		_scl.setGpio (PORT_PIN(3, 7));
-	} else if (mod==EUSCI_B3) {
-		_sda.setGpio (PORT_PIN(10, 2));
-		_scl.setGpio (PORT_PIN(10, 3));
-	}
-	else yahal_assert(false);
+    // Configure hardware characteristics
+    /////////////////////////////////////
+    if (mod==EUSCI_B0) {
+        _sda.setGpio (PORT_PIN(1, 6));
+        _scl.setGpio (PORT_PIN(1, 7));
+    } else if (mod==EUSCI_B1) {
+        _sda.setGpio (PORT_PIN(6, 4));
+        _scl.setGpio (PORT_PIN(6, 5));
+    } else if (mod==EUSCI_B2) {
+        _sda.setGpio (PORT_PIN(3, 6));
+        _scl.setGpio (PORT_PIN(3, 7));
+    } else if (mod==EUSCI_B3) {
+        _sda.setGpio (PORT_PIN(10, 2));
+        _scl.setGpio (PORT_PIN(10, 3));
+    }
+    else yahal_assert(false);
 
-	// Reset CTLW0 register to default values
-	// (EUSCI is in reset state)
-	/////////////////////////////////////////
-	_EUSCI->CTLW0 = EUSCI_B_CTLW0_SWRST;
+    // Reset CTLW0 register to default values
+    // (EUSCI is in reset state)
+    /////////////////////////////////////////
+    _EUSCI->CTLW0 = EUSCI_B_CTLW0_SWRST;
 
-	// Configure I2C port
-	/////////////////////
-	_EUSCI->CTLW0 |= (mode | EUSCI_B_CTLW0_MODE_3);
-	_EUSCI->CTLW1  = 0;
+    // Configure I2C port
+    /////////////////////
+    _EUSCI->CTLW0 |= (mode | EUSCI_B_CTLW0_MODE_3);
+    _EUSCI->CTLW1  = 0;
 
-	// Set i2c clock to default 100 kHz
-	///////////////////////////////////
-	_EUSCI->BRW = SystemCoreClock / 100000;
+    // Set i2c clock to default 100 kHz
+    ///////////////////////////////////
+    _EUSCI->BRW = SystemCoreClock / 100000;
 
-	// Disable interrupts
-	/////////////////////
-	_EUSCI->IE = 0;
+    // Disable interrupts
+    /////////////////////
+    _EUSCI->IE = 0;
 
-	// Configure the digital RX/TX lines
-	////////////////////////////////////
-	_sda.setMode(GPIO::INPUT | GPIO::PULLUP); _sda.setSEL(1);
-	_scl.setMode(GPIO::INPUT | GPIO::PULLUP); _scl.setSEL(1);
+    // Configure the digital RX/TX lines
+    ////////////////////////////////////
+    _sda.setMode(GPIO::INPUT | GPIO::PULLUP); _sda.setSEL(1);
+    _scl.setMode(GPIO::INPUT | GPIO::PULLUP); _scl.setSEL(1);
 
-	// Finally enable EUSCI module
-	//////////////////////////////
-	_EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_SWRST;
+    // Finally enable EUSCI module
+    //////////////////////////////
+    _EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_SWRST;
 }
 
 
 i2c_msp432::~i2c_msp432() {
-	// Wait for pending operations
-	//////////////////////////////
-	while (_EUSCI->STATW & EUSCI_B_STATW_BBUSY);
+    // Wait for pending operations
+    //////////////////////////////
+    while (_EUSCI->STATW & EUSCI_B_STATW_BBUSY);
 
-	// Reset CTLW0 register to default values
-	// (EUSCI_B is in reset state)
-	/////////////////////////////////////////
-	_EUSCI->CTLW0 = EUSCI_B_CTLW0_SWRST;
+    // Reset CTLW0 register to default values
+    // (EUSCI_B is in reset state)
+    /////////////////////////////////////////
+    _EUSCI->CTLW0 = EUSCI_B_CTLW0_SWRST;
 
-	// De-configure the digital lines
-	/////////////////////////////////
-	_sda.setSEL(0); _sda.setMode(GPIO::INPUT);
-	_scl.setSEL(0); _scl.setMode(GPIO::INPUT);
+    // De-configure the digital lines
+    /////////////////////////////////
+    _sda.setSEL(0); _sda.setMode(GPIO::INPUT);
+    _scl.setSEL(0); _scl.setMode(GPIO::INPUT);
 }
 
 int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
@@ -99,28 +99,28 @@ int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool se
 }
 int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
     // set the slave address
-	_EUSCI->IFG   = 0;
-	_EUSCI->I2CSA = addr;
-	set_transmitter();
-	send_START();
-	int16_t i = 0;
-	for (i=0; i < len;  ++i) {
+    _EUSCI->IFG   = 0;
+    _EUSCI->I2CSA = addr;
+    set_transmitter();
+    send_START();
+    int16_t i = 0;
+    for (i=0; i < len;  ++i) {
         // Place character in buffer
-	    _EUSCI->TXBUF = txbuf[i];
-	    // Wait until transmission begins
-	    while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
-	    // Send a stop during the transmission
-	    // of the last byte
-	    if ((i+1) == len) {
+        _EUSCI->TXBUF = txbuf[i];
+        // Wait until transmission begins
+        while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
+        // Send a stop during the transmission
+        // of the last byte
+        if ((i+1) == len) {
             if (sendStop) send_STOP();
-	    }
-	    // Check NAK condition
-	    if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
+        }
+        // Check NAK condition
+        if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
             if (sendStop) send_STOP();
-	        return i;
-		}
-	}
-	return i;
+            return i;
+        }
+    }
+    return i;
 }
 
 void i2c_msp432::setSpeed(uint32_t baud) {
@@ -136,11 +136,11 @@ void i2c_msp432::setSpeed(uint32_t baud) {
 //}
 
 void i2c_msp432::set_receiver() {
-	_EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_TR;
+    _EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_TR;
 }
 
 void i2c_msp432::set_transmitter() {
-	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TR;
+    _EUSCI->CTLW0 |= EUSCI_B_CTLW0_TR;
 }
 
 //void i2c_msp432::send_ACK() {
@@ -158,8 +158,8 @@ void i2c_msp432::send_START() {
 }
 
 void i2c_msp432::send_STOP() {
-	_EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
-	// Wait until the STOP condition has been sent
-	while (_EUSCI->CTLW0 & EUSCI_B_CTLW0_TXSTP);
+    _EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
+    // Wait until the STOP condition has been sent
+    while (_EUSCI->CTLW0 & EUSCI_B_CTLW0_TXSTP);
 }
 
