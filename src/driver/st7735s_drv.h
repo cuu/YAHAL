@@ -21,6 +21,8 @@
 #include "lcd_interface.h"
 #include "mutex_interface.h"
 
+const int BUF_LEN = 256;
+
 class st7735s_drv : public lcd_interface {
 public:
     // Flags and struct to define the HW details
@@ -84,9 +86,12 @@ private:
     void change  (uint16_t & x, uint16_t & y);
     void setFrame(uint16_t   xs, uint16_t  ys, uint16_t xe, uint16_t ye);
 
-    void writeData   (uint8_t data);
+    void writeData(uint8_t data);
+    void writeDataBuffer(int len);
     void writeCommand(uint8_t cmd);
 
+    uint8_t          _tx_buffer[BUF_LEN];
+    uint8_t          _rx_buffer[BUF_LEN];
     spi_interface  & _spi;
     gpio_pin       & _rst_pin;
     gpio_pin       & _dc_pin;

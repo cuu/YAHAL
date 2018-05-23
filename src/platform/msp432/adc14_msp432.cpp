@@ -31,8 +31,8 @@ adc14_msp432::adc14_msp432() {
     ctl0 |= ADC14_CTL0_PDIV__4;     // clock pre-divider is 4
     ctl0 |= ADC14_CTL0_SHS_0;       // use ADC14SC bit as sample/hold trigger
     ctl0 |= ADC14_CTL0_SHP;         // use sample/hold counter
-    ctl0 |= ADC14_CTL0_SHT0__64;    // 32 clocks for sample/hold
-    ctl0 |= ADC14_CTL0_SHT1__64;    // 32 clocks for sample/hold
+    ctl0 |= ADC14_CTL0_SHT0__64;    // 64 clocks for sample/hold
+    ctl0 |= ADC14_CTL0_SHT1__64;    // 64 clocks for sample/hold
     ADC14->CTL0 = ctl0;
     // set up control register 1
     ADC14->CTL1 |= ADC14_CTL1_PWRMD_0;
