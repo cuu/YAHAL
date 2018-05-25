@@ -34,6 +34,21 @@ INC_DIRS += src/util
 INC_DIRS += src/uGUI
 INC_DIRS += src/uGUI/fonts
 
-include makefiles/common.mk
+# msp432 has the additional CMSIS DSP library
+ifeq ($(PLATFORM), msp432)
+DSP_LIB_DIR = $(YAHAL_DIR)/src/platform/$(PLATFORM)/DSP
+SRC_DIRS += $(DSP_LIB_DIR)/Source/BasicMathFunctions
+SRC_DIRS += $(DSP_LIB_DIR)/Source/CommonTables
+SRC_DIRS += $(DSP_LIB_DIR)/Source/ComplexMathFunctions
+SRC_DIRS += $(DSP_LIB_DIR)/Source/ControllerFunctions
+SRC_DIRS += $(DSP_LIB_DIR)/Source/FastMathFunctions
+SRC_DIRS += $(DSP_LIB_DIR)/Source/FilteringFunctions
+SRC_DIRS += $(DSP_LIB_DIR)/Source/MatrixFunctions
+SRC_DIRS += $(DSP_LIB_DIR)/Source/StatisticsFunctions
+SRC_DIRS += $(DSP_LIB_DIR)/Source/SupportFunctions
+SRC_DIRS += $(DSP_LIB_DIR)/Source/TransformFunctions
+INC_DIRS += $(DSP_LIB_DIR)/Include
+endif
 
+include makefiles/common.mk
 

@@ -25,21 +25,6 @@ else
 CCS_ROOT = C:/ti/ccsv7
 endif
 
-DSP_LIB_DIR = $(YAHAL_DIR)/src/platform/$(PLATFORM)/DSP
-# DSP source folders
-SRC_DIRS += $(DSP_LIB_DIR)/Source/BasicMathFunctions
-SRC_DIRS += $(DSP_LIB_DIR)/Source/CommonTables
-SRC_DIRS += $(DSP_LIB_DIR)/Source/ComplexMathFunctions
-SRC_DIRS += $(DSP_LIB_DIR)/Source/ControllerFunctions
-SRC_DIRS += $(DSP_LIB_DIR)/Source/FastMathFunctions
-SRC_DIRS += $(DSP_LIB_DIR)/Source/FilteringFunctions
-SRC_DIRS += $(DSP_LIB_DIR)/Source/MatrixFunctions
-SRC_DIRS += $(DSP_LIB_DIR)/Source/StatisticsFunctions
-SRC_DIRS += $(DSP_LIB_DIR)/Source/SupportFunctions
-SRC_DIRS += $(DSP_LIB_DIR)/Source/TransformFunctions
-# DSP include folders
-INC_DIRS += $(DSP_LIB_DIR)/Include
-
 # Toolchain location
 # TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-4_9-2015q3
 TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-6-2017-q1-update
