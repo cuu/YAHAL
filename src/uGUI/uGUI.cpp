@@ -350,28 +350,30 @@ void uGUI::DrawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2, UG_COLOR c)
 {
     int16_t n, dx, dy, sgndx, sgndy, dxabs, dyabs, x, y, drawx, drawy;
 
-    /* swap coordinates if necessary */
-    if (x2 < x1)
-    {
-        n = x2;
-        x2 = x1;
-        x1 = n;
-    }
-    if (y2 < y1)
-    {
-        n = y2;
-        y2 = y1;
-        y1 = n;
-    }
-
-    /* check if vertical/horizontal lines have to be drawn */
+    /* check if horizontal line has to be drawn */
     if (y1 == y2)
     {
+        /* swap coordinates if necessary */
+        if (x2 < x1)
+        {
+            n = x2;
+            x2 = x1;
+            x1 = n;
+        }
         _lcd.drawHLine(x1, y1, x2, c);
         return;
     }
+
+    /* check if vertical line has to be drawn */
     if (x1 == x2)
     {
+        /* swap coordinates if necessary */
+        if (y2 < y1)
+        {
+            n = y2;
+            y2 = y1;
+            y1 = n;
+        }
         _lcd.drawVLine(x1, y1, y2, c);
         return;
     }
