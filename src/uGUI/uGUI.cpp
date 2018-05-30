@@ -617,37 +617,55 @@ void uGUI::FontSetVSpace(uint16_t s)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const UG_COLOR pal_window[] = {
-/* Frame 0 */
-0x646464,
-                                0x646464, 0x646464, 0x646464,
-                                /* Frame 1 */
-                                0xFFFFFF,
-                                0xFFFFFF, 0x696969, 0x696969,
-                                /* Frame 2 */
-                                0xE3E3E3,
-                                0xE3E3E3, 0xA0A0A0, 0xA0A0A0, };
+    /* Frame 0 */
+    0x646464,
+    0x646464,
+    0x646464,
+    0x646464,
+    /* Frame 1 */
+    0xFFFFFF,
+    0xFFFFFF,
+    0x696969,
+    0x696969,
+    /* Frame 2 */
+    0xE3E3E3,
+    0xE3E3E3,
+    0xA0A0A0,
+    0xA0A0A0, };
 
 const UG_COLOR pal_button_pressed[] = {
-/* Frame 0 */
-0x646464,
-                                        0x646464, 0x646464, 0x646464,
-                                        /* Frame 1 */
-                                        0xA0A0A0,
-                                        0xA0A0A0, 0xA0A0A0, 0xA0A0A0,
-                                        /* Frame 2 */
-                                        0xF0F0F0,
-                                        0xF0F0F0, 0xF0F0F0, 0xF0F0F0, };
+    /* Frame 0 */
+    0x646464,
+    0x646464,
+    0x646464,
+    0x646464,
+    /* Frame 1 */
+    0xA0A0A0,
+    0xA0A0A0,
+    0xA0A0A0,
+    0xA0A0A0,
+    /* Frame 2 */
+    0xF0F0F0,
+    0xF0F0F0,
+    0xF0F0F0,
+    0xF0F0F0, };
 
 const UG_COLOR pal_button_released[] = {
-/* Frame 0 */
-0x646464,
-                                         0x646464, 0x646464, 0x646464,
-                                         /* Frame 1 */
-                                         0xFFFFFF,
-                                         0xFFFFFF, 0x696969, 0x696969,
-                                         /* Frame 2 */
-                                         0xE3E3E3,
-                                         0xE3E3E3, 0xA0A0A0, 0xA0A0A0, };
+    /* Frame 0 */
+    0x646464,
+    0x646464,
+    0x646464,
+    0x646464,
+    /* Frame 1 */
+    0xFFFFFF,
+    0xFFFFFF,
+    0x696969,
+    0x696969,
+    /* Frame 2 */
+    0xE3E3E3,
+    0xE3E3E3,
+    0xA0A0A0,
+    0xA0A0A0, };
 /* -------------------------------------------------------------------------------- */
 /* -- INTERNAL FUNCTIONS                                                         -- */
 /* -------------------------------------------------------------------------------- */
