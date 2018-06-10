@@ -24,6 +24,7 @@ SRC_DIRS += src/task
 SRC_DIRS += src/util
 SRC_DIRS += src/uGUI
 SRC_DIRS += src/uGUI/fonts
+SRC_DIRS += src/libmad
 
 # all include folders
 INC_DIRS  = include/interface
@@ -33,6 +34,7 @@ INC_DIRS += src/task
 INC_DIRS += src/util
 INC_DIRS += src/uGUI
 INC_DIRS += src/uGUI/fonts
+INC_DIRS += src/libmad
 
 # msp432 has the additional CMSIS DSP library
 ifeq ($(PLATFORM), msp432)
