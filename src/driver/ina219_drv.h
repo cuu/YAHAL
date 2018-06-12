@@ -78,7 +78,7 @@ public:
 	ina219_drv(i2c_interface & i2c, uint8_t _i2c_addr = INA219::ADDRESS);
 
 	void setConfig(bool reset, INA219::BG busgain, INA219::PG powergain, INA219::ADC busadc, INA219::ADC shuntadc, INA219::MODE mode);
-	void setCalibration(uint16_t maxCurrent, float shuntR);
+	void setCalibration(uint16_t maxCurrent = 3200, float shuntR = 0.1);
 	float getShuntVoltage();    // mV
 	float getBusVoltage();      // V
 	float getCurrent();         // ma

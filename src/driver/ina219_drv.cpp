@@ -34,7 +34,7 @@ void ina219_drv::setConfig(bool reset, INA219::BG busgain, INA219::PG powergain,
 *  Sets INA219 calibration register based on the maximum expected
 *  current in mA an the installed shunt resistor value in Ohm.
 \****************************************************************/
-void ina219_drv::setCalibration(uint16_t maxCurrent = 3200, float shuntR = 0.1) {
+void ina219_drv::setCalibration(uint16_t maxCurrent, float shuntR) {
     currentLSB = maxCurrent / 32768000.;
     calibration = 0.04096 / (currentLSB * shuntR);  // see datasheet
     writeRegister(INA219::REG_CAL, calibration);
