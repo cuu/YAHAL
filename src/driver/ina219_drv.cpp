@@ -10,97 +10,84 @@
 ina219_drv::ina219_drv(i2c_interface & i2c, uint8_t i2c_addr) : _i2c(i2c), _i2c_addr(i2c_addr){
 }
 
-float ina219_drv::get_shunt_voltage(){
-    uint16_t raw = read_u16(INA219::REG_SHUNT_V);
-    bool sign = raw >> 15;      // true = negative
+/****************************************************************\
+*  Sets INA219 config register & resets the chip if desired.
+\****************************************************************/
+void ina219_drv::setConfig(bool reset, INA219::BG busgain, INA219::PG powergain, INA219::ADC busadc, INA219::ADC shuntadc, INA219::MODE mode) {
+    uint16_t conf = 0;
+    conf |= reset << 15;
+    conf |= busgain << 13;
+    conf |= powergain << 11;
+    conf |= busadc << 7;
+    conf |= shuntadc << 3;
+    conf |= mode;
+    writeRegister(INA219::REG_CONF, conf);
 
-    uint8_t shift = 1;
-    switch (shuntgain) {
-    case INA219::PG::X1:
-        shift = 4;
-        break;
-    case INA219::PG::X2:
-        shift = 3;
-        break;
-    case INA219::PG::X4:
-        shift = 2;
-        break;
-    default:
-        shift = 1;
-        break;
-    }
-
-    // eliminate sign
-    raw = raw << shift;
-    raw = raw >> shift;
-
-    float result = raw / 100.;
-    if (sign)
-        result *= -1;
-    return result;
+    this->busgain = busgain;
+    this->shuntgain = shuntgain;
+    this->busadc = busadc;
+    this->shuntadc = shuntadc;
+    this->mode = mode;
 }
 
-float ina219_drv::get_bus_voltage(){
-    uint16_t raw = read_u16(INA219::REG_BUS_V);
+/****************************************************************\
+*  Sets INA219 calibration register based on the maximum expected
+*  current in mA an the installed shunt resistor value in Ohm.
+\****************************************************************/
+void ina219_drv::setCalibration(uint16_t maxCurrent = 3200, float shuntR = 0.1) {
+    currentLSB = maxCurrent / 32768000.;
+    calibration = 0.04096 / (currentLSB * shuntR);  // see datasheet
+    writeRegister(INA219::REG_CAL, calibration);
+}
+
+/****************************************************************\
+*  Returns current shunt voltage in mV.
+\****************************************************************/
+float ina219_drv::getShuntVoltage(){
+    int16_t raw = (int16_t)readRegister(INA219::REG_SHUNT_V);
+    return (raw * 0.01);
+}
+
+/****************************************************************\
+*  Returns current bus voltage in V or INA219::OVERFLOW
+*  on math overflow.
+\****************************************************************/
+float ina219_drv::getBusVoltage(){
+    uint16_t raw = readRegister(INA219::REG_BUS_V);
     bool ovf = raw & 0b1;       // overflow flag
     //bool cnvr = raw & 0b10;     // conversion ready flag
 
     if (ovf)
-        return 0;   // return 0 if overflow occured
+        return INA219::OVERFLOW;   // return magicnumber if overflow occured
 
     // eliminate flags
-    float result = raw >> 3;
-    result /= (1000. / 250);    // LSB = 4 mV
+    float result = (int16_t)((raw >> 3) * 4);   // LSB = 4 mV
+    result *= 0.001;                            // mV -> V
     return result;
 }
-void ina219_drv::writeRegister16(uint8_t reg, uint16_t value){
+
+/****************************************************************\
+*  Returns current in mA.
+*  Warning: setCalibration() has to be called first.
+\****************************************************************/
+float ina219_drv::getCurrent() {
+    int16_t raw = (int16_t)readRegister(INA219::REG_CURRENT);
+    return raw * currentLSB;
+}
+
+void ina219_drv::writeRegister(uint8_t reg, uint16_t value){
     uint8_t txbuf[3];
     txbuf[0] = reg;
-    txbuf[1] = value >> 8;  // MSB
-    txbuf[2] = value & 255; // LSB
+    txbuf[1] = value >> 8;      // MSB
+    txbuf[2] = value & 0xFF;    // LSB
     _i2c.i2cWrite(_i2c_addr, txbuf, 3);
 }
 
-void ina219_drv::writeRegister(uint8_t reg, uint8_t value){
-	uint8_t txbuf[2];
-	txbuf[0] = reg;
-	txbuf[1] = value;
-	_i2c.i2cWrite(_i2c_addr, txbuf, 2);
-}
-
-uint8_t ina219_drv::readRegister(uint8_t reg){
-	uint8_t txbuf[1];
-	uint8_t rxbuf[1];
-	txbuf[0] = reg;
-	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
-	_i2c.i2cRead (_i2c_addr, rxbuf, 1);
-	return rxbuf[0];
-}
-
-uint16_t ina219_drv::read_u16_le(uint8_t reg){
-	uint8_t txbuf[1];
+uint16_t ina219_drv::readRegister(uint8_t reg){
+	uint8_t txbuf[] = { reg };
 	uint8_t rxbuf[2];
-	txbuf[0] = reg;
-	uint16_t val;
 	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
 	_i2c.i2cRead (_i2c_addr, rxbuf, 2);
-	val = (rxbuf[1] << 8) | rxbuf[0];
-	return val;
-}
-
-uint16_t ina219_drv::read_u16(uint8_t reg){
-	uint8_t txbuf[1];
-	uint8_t rxbuf[2];
-	txbuf[0] = reg;
-	uint16_t val;
-	_i2c.i2cWrite(_i2c_addr, txbuf, 1);
-	_i2c.i2cRead (_i2c_addr, rxbuf, 2);
-	val = (rxbuf[0] << 8) | rxbuf[1];
-	return val;
-}
-
-uint16_t ina219_drv::read_s16_le(uint8_t reg){
-	uint16_t val = read_u16_le(reg);
-	return static_cast<int16_t>(val);
+	return ((rxbuf[0] << 8) | rxbuf[1]);
 }
 
