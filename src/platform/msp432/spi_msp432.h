@@ -64,10 +64,15 @@ public:
 
     ~spi_msp432();
 
-    int16_t transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) override;
+    int16_t spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) override;
+    int16_t spiTx  (const uint8_t *txbuf, uint16_t len) override ;
+    int16_t spiRx  (uint8_t txbyte, uint8_t *rxbuf, uint16_t len) override;
 
     void setSpeed(uint32_t) override;
-    void useCS(bool val);
+    void useHwCS(bool val) override;
+    void setCS(bool val) override;
+
+    void spiAttachRxIrq(void (*)(uint8_t data));
 
     // IRQ handlers are our best friends
     ////////////////////////////////////
@@ -82,6 +87,7 @@ public:
 
 private:
 
+    bool _init;
     void spi_init();
 
     bool _master;
@@ -104,6 +110,8 @@ private:
     uint16_t _mode;
     gpio_pin & _cs;
     IRQn_Type _irq;
+
+    static void (*_intHandler[8])(uint8_t);
 };
 
 #endif // _SPI_MSP432_H_

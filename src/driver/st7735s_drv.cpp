@@ -399,20 +399,19 @@ void st7735s_drv::setFrame(uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye)
 
 void st7735s_drv::writeData(uint8_t data)
 {
-    uint8_t rcv_data;
-    _spi.transfer(&data, &rcv_data, 1);
+    _spi.spiTx(&data, 1);
 }
 
 void st7735s_drv::writeDataBuffer(int len)
 {
-    _spi.transfer(_tx_buffer, _rx_buffer, len);
+    _spi.spiTx(_tx_buffer, len);
 }
 
 void st7735s_drv::writeCommand(uint8_t cmd)
 {
     _dc_pin.gpioWrite(LOW);
     uint8_t rcv_data;
-    _spi.transfer(&cmd, &rcv_data, 1);
+    _spi.spiTxRx(&cmd, &rcv_data, 1);
     _dc_pin.gpioWrite(HIGH);
 }
 

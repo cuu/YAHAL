@@ -16,17 +16,15 @@
 #include "yahal_assert.h"
 #include "irq_dispatcher.h"
 
-//void cs_handler(uint16_t pin) {
-//
-//}
+void (*spi_msp432::_intHandler[8])(uint8_t);
 
 spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
                        const bool spi_master, uint16_t mode) :
-        _master(spi_master), _use_CS(true),
+        _init(false), _master(spi_master), _use_CS(true),
         _EUSCI_CTLW0(mod->CTLW0), _EUSCI_BRW  (mod->BRW),
         _EUSCI_STATW(mod->STATW), _EUSCI_RXBUF(mod->RXBUF),
         _EUSCI_TXBUF(mod->TXBUF), _EUSCI_IE   (mod->IE),
-        _EUSCI_IFG  (mod->IFG),  _EUSCI_IV    (mod->IV),
+        _EUSCI_IFG  (mod->IFG),   _EUSCI_IV   (mod->IV),
         _mode(mode), _cs(cs)
 {
     // Link in IRQ handlers
@@ -101,7 +99,6 @@ spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin & cs,
         _irq = EUSCIB3_IRQn;
     }
     else yahal_assert(false);
-    spi_init();
 }
 
 spi_msp432::~spi_msp432() {
@@ -158,17 +155,20 @@ void spi_msp432::spi_init() {
     // Enable the EUSCI irq and NVIC irq,
     // we only need RX interrupt
     /////////////////////////////////////
-    //_EUSCI_IE = EUSCI_A_IE_RXIE;
     _EUSCI_IE = 0;
-    //NVIC_EnableIRQ(_irq);
 
     // Finally enable EUSCI module
     //////////////////////////////
     _EUSCI_CTLW0 &= ~EUSCI_A_CTLW0_SWRST;
+
+    // Set 'initialized' flag
+    /////////////////////////
+    _init = true;
 }
 
-int16_t spi_msp432::transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
+int16_t spi_msp432::spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
 {
+    if (!_init) spi_init();
     if (_use_CS) {
         if (_master) {
             // Activate CS line
@@ -206,52 +206,159 @@ int16_t spi_msp432::transfer(uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
     return len;
 }
 
+int16_t spi_msp432::spiTx(const uint8_t *txbuf, uint16_t len) {
+    if (!_init) spi_init();
+    if (_use_CS) {
+        if (_master) {
+            // Activate CS line
+            _cs.gpioWrite(LOW);
+        } else {
+            // Wait for CS to be LOW
+            while(_cs.gpioRead()) ;
+        }
+    }
+
+    _EUSCI_IFG = 0;
+    _EUSCI_STATW = 0; // TODO: Works only in Reset mode ...
+    uint8_t rx_byte = _EUSCI_RXBUF;
+    (void)rx_byte; // Remove warning
+
+    for (int i = 0; i < len; ++i)
+    {
+        // Transfer single char to TX buffer
+        _EUSCI_TXBUF = (uint16_t) (txbuf[i]);
+        // Receive single char from RX buffer
+        while( !(_EUSCI_IFG & EUSCI_A_IFG_RXIFG));
+        rx_byte = (uint8_t)(_EUSCI_RXBUF);
+        // Wait until last data was sent
+        while (!(_EUSCI_IFG & EUSCI_A_IFG_TXIFG));
+    }
+
+    if (_use_CS) {
+        if (_master) {
+            // De-activate CS line
+            _cs.gpioWrite(HIGH);
+        } else {
+            // Wait for CS to be HIGH
+            while(!_cs.gpioRead()) ;
+        }
+    }
+    return len;
+}
+
+int16_t spi_msp432::spiRx(uint8_t tx_byte, uint8_t *rxbuf, uint16_t len) {
+    if (!_init) spi_init();
+    if (_use_CS) {
+        if (_master) {
+            // Activate CS line
+            _cs.gpioWrite(LOW);
+        } else {
+            // Wait for CS to be LOW
+            while(_cs.gpioRead()) ;
+        }
+    }
+
+    _EUSCI_IFG = 0;
+    _EUSCI_STATW = 0; // TODO: Works only in Reset mode ...
+    rxbuf[0] = _EUSCI_RXBUF;
+
+    for (int i = 0; i < len; ++i)
+    {
+        // Transfer single char to TX buffer
+        _EUSCI_TXBUF = (uint16_t) (tx_byte);
+        // Receive single char from RX buffer
+        while( !(_EUSCI_IFG & EUSCI_A_IFG_RXIFG));
+        rxbuf[i] = (uint8_t)(_EUSCI_RXBUF);
+        // Wait until last data was sent
+        while (!(_EUSCI_IFG & EUSCI_A_IFG_TXIFG));
+    }
+
+    if (_use_CS) {
+        if (_master) {
+            // De-activate CS line
+            _cs.gpioWrite(HIGH);
+        } else {
+            // Wait for CS to be HIGH
+            while(!_cs.gpioRead()) ;
+        }
+    }
+    return len;
+}
+
+
 void spi_msp432::setSpeed(uint32_t baud)
 {
     _EUSCI_BRW = SystemCoreClock / baud;
 }
 
-void spi_msp432::useCS(bool val)
+void spi_msp432::useHwCS(bool val)
 {
     _use_CS = val;
+    // If the HW CS line is not used, we
+    // might only have one connected device,
+    // which could be selected all the time.
+    // So the CS line to LOW.
     if (!val) {
         _cs.gpioWrite(LOW);
     }
 }
+
+void spi_msp432::setCS(bool val) {
+    _cs.gpioWrite(val);
+}
+
+void spi_msp432::spiAttachRxIrq(void (*handler)(uint8_t)) {
+    if (!_init) spi_init();
+    // Register handler
+    _intHandler[_irq-16] = handler;
+    // Enable receive IRQ
+    _EUSCI_IE = EUSCI_A_IE_RXIE;
+    // Enable IRQ in NVIC
+    NVIC_EnableIRQ(_irq);
+}
+
 
 extern "C"
 {
 
 void EUSCIA0_SPI_IRQHandler(void)
 {
+    spi_msp432::_intHandler[0]( EUSCI_A0->RXBUF );
 }
 
 void EUSCIA1_SPI_IRQHandler(void)
 {
+    spi_msp432::_intHandler[1]( EUSCI_A1->RXBUF );
 }
 
 void EUSCIA2_SPI_IRQHandler(void)
 {
+    spi_msp432::_intHandler[2]( EUSCI_A2->RXBUF );
 }
 
 void EUSCIA3_SPI_IRQHandler(void)
 {
+    spi_msp432::_intHandler[3]( EUSCI_A3->RXBUF );
 }
 
 void EUSCIB0_SPI_IRQHandler(void)
 {
+    spi_msp432::_intHandler[4]( EUSCI_B0->RXBUF );
 }
 
 void EUSCIB1_SPI_IRQHandler(void)
 {
+    spi_msp432::_intHandler[5]( EUSCI_B1->RXBUF );
 }
 
 void EUSCIB2_SPI_IRQHandler(void)
 {
+    spi_msp432::_intHandler[6]( EUSCI_B2->RXBUF );
 }
 
 void EUSCIB3_SPI_IRQHandler(void)
 {
+    spi_msp432::_intHandler[7]( EUSCI_B3->RXBUF );
 }
 
 } // extern "C"

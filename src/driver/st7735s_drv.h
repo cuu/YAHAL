@@ -91,7 +91,7 @@ private:
     void writeCommand(uint8_t cmd);
 
     uint8_t          _tx_buffer[BUF_LEN];
-    uint8_t          _rx_buffer[BUF_LEN];
+//    uint8_t          _rx_buffer[BUF_LEN];
     spi_interface  & _spi;
     gpio_pin       & _rst_pin;
     gpio_pin       & _dc_pin;
