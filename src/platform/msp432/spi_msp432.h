@@ -72,7 +72,7 @@ public:
     void useHwCS(bool val) override;
     void setCS(bool val) override;
 
-    void spiAttachRxIrq(void (*)(uint8_t data));
+    void spiAttachRxIrq(void (*)(uint8_t data)) override;
 
     // IRQ handlers are our best friends
     ////////////////////////////////////

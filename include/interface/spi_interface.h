@@ -33,26 +33,26 @@ public:
     // send via SPI, and the received bytes are discarded.
     // The number of bytes written is returned, otherwise
     // -1 in case of errors
-    virtual int16_t spiTx(const uint8_t *txbuf, uint16_t len);
+    virtual int16_t spiTx(const uint8_t *txbuf, uint16_t len) = 0;
 
     // Perform a read operation. len bytes with value txbyte
     // are sent, and the received values are stored in rxbuf.
     // The number of bytes read is returned, otherwise -1 in
     // case of errors
-    virtual int16_t spiRx(uint8_t txbyte, uint8_t *rxbuf, uint16_t len);
+    virtual int16_t spiRx(uint8_t txbyte, uint8_t *rxbuf, uint16_t len) = 0;
 
     // Set the speed in Hz. Typical value is 1000000 (1 MHz)
     virtual void setSpeed(uint32_t Hz) = 0;
 
     // Enable/Disable hardware control of the CS line.
-    virtual void useHwCS(bool val);
+    virtual void useHwCS(bool val) = 0;
 
     // Control the CS line in case HwCs is set to false.
-    virtual void setCS(bool val);
+    virtual void setCS(bool val) = 0;
 
     // In SPI client mode, attach a RX handler which
     // is called for every received byte.
-    void spiAttachRxIrq(void (*)(uint8_t data));
+    virtual void spiAttachRxIrq(void (*)(uint8_t data)) = 0;
 
 protected:
     virtual ~spi_interface() = default;

@@ -64,7 +64,7 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
 
 spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin & cs,
                        const bool spi_master, uint16_t mode) :
-        _master(spi_master), _use_CS(true),
+        _init(false), _master(spi_master), _use_CS(true),
         _EUSCI_CTLW0(mod->CTLW0), _EUSCI_BRW  (mod->BRW),
         _EUSCI_STATW(mod->STATW), _EUSCI_RXBUF(mod->RXBUF),
         _EUSCI_TXBUF(mod->TXBUF), _EUSCI_IE   (mod->IE),
