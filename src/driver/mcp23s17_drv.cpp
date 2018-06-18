@@ -227,7 +227,7 @@ uint16_t mcp23s17_drv::readRegister(uint8_t reg) {
 	txbuf[2] = 0; // dummy
 	txbuf[3] = 0; // dummy
 
-	_spi.transfer(txbuf, rxbuf, 4);
+	_spi.spiTxRx(txbuf, rxbuf, 4);
 	return (rxbuf[3] << 8) | rxbuf[2];
 }
 
@@ -240,6 +240,6 @@ void mcp23s17_drv::writeRegister(uint8_t reg, uint16_t value) {
 	txbuf[2] = value & 0xff;
 	txbuf[3] = value >> 8;
 
-	_spi.transfer(txbuf, rxbuf, 4);
+	_spi.spiTxRx(txbuf, rxbuf, 4);
 }
 
