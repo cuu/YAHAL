@@ -23,7 +23,6 @@
 typedef uint8_t blockio_result_t;
 typedef uint8_t blockio_status_t;
 
-namespace BLOCKIO {
 const blockio_result_t RES_OK     = 0;  // 0: Successful
 const blockio_result_t RES_ERROR  = 1;  // 1: R/W Error
 const blockio_result_t RES_WRPRT  = 2;  // 2: Write Protected
@@ -33,18 +32,22 @@ const blockio_result_t RES_PARERR = 4;  // 4: Invalid Parameter
 const blockio_status_t STA_NOINIT  = 0x01; // Drive not initialized
 const blockio_status_t STA_NODISK  = 0x02; // No medium in the drive
 const blockio_status_t STA_PROTECT = 0x04; // Write protected
+
+
+namespace BLOCKIO {
 }
 
 class block_io_interface {
 public:
 
+    virtual blockio_status_t initialize() = 0;
     virtual blockio_status_t status    () = 0;
+
     virtual blockio_result_t readBlock (uint8_t* buff, uint32_t block, uint16_t count) = 0;
     virtual blockio_result_t writeBlock(const uint8_t* buff, uint32_t block, uint16_t count) = 0;
 
-    virtual int32_t getBlockCount() = 0;
-    virtual void    sync() = 0;
-
+    virtual uint32_t         getBlockCount() = 0;
+    virtual blockio_result_t sync() = 0;
 
 protected:
     virtual ~block_io_interface() = default;

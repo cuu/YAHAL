@@ -19,19 +19,19 @@ public:
     uint32_t getBlockCount() override;
 
     // We do not use buffers, so there is nothing to sync...
-    inline void sync() override { }
+    blockio_result_t sync() override { return RES_OK; }
 
 private:
 
     spi_interface & _spi;
-    bool            _initialized;
-    bool            _isV200;
-    bool            _isSDHC;
-    uint32_t        _blockCount;
+    bool     _initialized;
+    bool     _isV200;
+    bool     _isSDHC;
+    uint32_t _blockCount;
 
-    uint16_t        _sd_status;
-    uint8_t         _cid[16];
-    uint8_t         _csd[16];
+    uint16_t _sd_status;
+    uint8_t  _cid[16];
+    uint8_t  _csd[16];
 
     int sd_init();
     int sd_read_status();
