@@ -19,8 +19,8 @@
  * $Id: huffman.h,v 1.11 2004/01/23 09:41:32 rob Exp $
  */
 
-# ifndef LIBMAD_HUFFMAN_H
-# define LIBMAD_HUFFMAN_H
+#ifndef LIBMAD_HUFFMAN_H
+#define LIBMAD_HUFFMAN_H
 
 union huffquad {
   struct {

@@ -19,13 +19,13 @@
  * $Id: stream.h,v 1.20 2004/02/05 09:02:39 rob Exp $
  */
 
-# ifndef LIBMAD_STREAM_H
-# define LIBMAD_STREAM_H
+#ifndef LIBMAD_STREAM_H
+#define LIBMAD_STREAM_H
 
-# include "bit.h"
+#include "bit.h"
 
-# define MAD_BUFFER_GUARD	8
-# define MAD_BUFFER_MDLEN	(511 + 2048 + MAD_BUFFER_GUARD)
+#define MAD_BUFFER_GUARD	8
+#define MAD_BUFFER_MDLEN	(511 + 2048 + MAD_BUFFER_GUARD)
 
 enum mad_error {
   MAD_ERROR_NONE	   = 0x0000,	/* no error */
@@ -56,7 +56,7 @@ enum mad_error {
   MAD_ERROR_BADSTEREO	   = 0x0239	/* incompatible block_type for JS */
 };
 
-# define MAD_RECOVERABLE(error)	((error) & 0xff00)
+#define MAD_RECOVERABLE(error)	((error) & 0xff00)
 
 struct mad_stream {
   unsigned char const *buffer;		/* input bitstream buffer */
@@ -84,17 +84,17 @@ struct mad_stream {
 enum {
   MAD_OPTION_IGNORECRC      = 0x0001,	/* ignore CRC errors */
   MAD_OPTION_HALFSAMPLERATE = 0x0002	/* generate PCM at 1/2 sample rate */
-# if 0  /* not yet implemented */
+#if 0  /* not yet implemented */
   MAD_OPTION_LEFTCHANNEL    = 0x0010,	/* decode left channel only */
   MAD_OPTION_RIGHTCHANNEL   = 0x0020,	/* decode right channel only */
   MAD_OPTION_SINGLECHANNEL  = 0x0030	/* combine channels */
-# endif
+#endif
 };
 
 void mad_stream_init(struct mad_stream *);
 void mad_stream_finish(struct mad_stream *);
 
-# define mad_stream_options(stream, opts)  \
+#define mad_stream_options(stream, opts)  \
     ((void) ((stream)->options = (opts)))
 
 void mad_stream_buffer(struct mad_stream *,
@@ -105,4 +105,4 @@ int mad_stream_sync(struct mad_stream *);
 
 char const *mad_stream_errorstr(struct mad_stream const *);
 
-# endif
+#endif

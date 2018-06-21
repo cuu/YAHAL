@@ -19,31 +19,28 @@
  * $Id: layer3.c,v 1.43 2004/01/23 09:41:32 rob Exp $
  */
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
+#include "madconfig.h"
+#include "global.h"
 
-# include "global.h"
+#include <stdlib.h>
+#include <string.h>
 
-# include <stdlib.h>
-# include <string.h>
-
-# ifdef HAVE_ASSERT_H
+#ifdef HAVE_ASSERT_H
 #  include <assert.h>
-# endif
+#endif
 
-# ifdef HAVE_LIMITS_H
+#ifdef HAVE_LIMITS_H
 #  include <limits.h>
-# else
+#else
 #  define CHAR_BIT  8
-# endif
+#endif
 
-# include "fixed.h"
-# include "bit.h"
-# include "stream.h"
-# include "frame.h"
-# include "huffman.h"
-# include "layer3.h"
+#include "fixed.h"
+#include "bit.h"
+#include "stream.h"
+#include "frame.h"
+#include "huffman.h"
+#include "layer3.h"
 
 /* --- Layer III ----------------------------------------------------------- */
 
@@ -894,7 +891,7 @@ mad_fixed_t III_requantize(unsigned int value, signed int exp)
   exp += power->exponent;
 
   if (exp < 0) {
-    if (-exp >= sizeof(mad_fixed_t) * CHAR_BIT) {
+    if (-exp >= (signed int)(sizeof(mad_fixed_t) * CHAR_BIT)) {
       /* underflow */
       requantized = 0;
     }
@@ -1053,7 +1050,7 @@ enum mad_error III_huffdecode(struct mad_bitptr *ptr, mad_fixed_t xr[576],
 	  break;
 
 	case 15:
-	  if (cachesz < linbits + 2) {
+	  if (cachesz < (signed int)(linbits + 2)) {
 	    bitcache   = (bitcache << 16) | mad_bit_read(&peek, 16);
 	    cachesz   += 16;
 	    bits_left -= 16;
@@ -1088,7 +1085,7 @@ enum mad_error III_huffdecode(struct mad_bitptr *ptr, mad_fixed_t xr[576],
 	  break;
 
 	case 15:
-	  if (cachesz < linbits + 1) {
+	  if (cachesz < (signed int)(linbits + 1)) {
 	    bitcache   = (bitcache << 16) | mad_bit_read(&peek, 16);
 	    cachesz   += 16;
 	    bits_left -= 16;

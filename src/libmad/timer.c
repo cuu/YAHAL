@@ -19,19 +19,16 @@
  * $Id: timer.c,v 1.18 2004/01/23 09:41:33 rob Exp $
  */
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
+#include "madconfig.h"
+#include "global.h"
 
-# include "global.h"
+#include <stdio.h>
 
-# include <stdio.h>
+#ifdef HAVE_ASSERT_H
+#include <assert.h>
+#endif
 
-# ifdef HAVE_ASSERT_H
-#  include <assert.h>
-# endif
-
-# include "timer.h"
+#include "timer.h"
 
 mad_timer_t const mad_timer_zero = { 0, 0 };
 
@@ -455,8 +452,7 @@ void mad_timer_string(mad_timer_t timer,
       /* not yet implemented */
       sub = 0;
     }
-
-    /* fall through */
+    //no break
 
   case MAD_UNITS_DECISECONDS:
   case MAD_UNITS_CENTISECONDS:

@@ -19,23 +19,20 @@
  * $Id: layer12.c,v 1.17 2004/02/05 09:02:39 rob Exp $
  */
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
+#include "madconfig.h"
+#include "global.h"
 
-# include "global.h"
-
-# ifdef HAVE_LIMITS_H
+#ifdef HAVE_LIMITS_H
 #  include <limits.h>
-# else
+#else
 #  define CHAR_BIT  8
-# endif
+#endif
 
-# include "fixed.h"
-# include "bit.h"
-# include "stream.h"
-# include "frame.h"
-# include "layer12.h"
+#include "fixed.h"
+#include "bit.h"
+#include "stream.h"
+#include "frame.h"
+#include "layer12.h"
 
 /*
  * scalefactor table
@@ -452,7 +449,7 @@ int mad_layer_II(struct mad_stream *stream, struct mad_frame *frame)
 
 	case 0:
 	  scalefactor[ch][sb][1] = mad_bit_read(&stream->ptr, 6);
-	  /* fall through */
+	  //no break
 
 	case 1:
 	case 3:

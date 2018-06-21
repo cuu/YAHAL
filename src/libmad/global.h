@@ -19,8 +19,8 @@
  * $Id: global.h,v 1.11 2004/01/23 09:41:32 rob Exp $
  */
 
-# ifndef LIBMAD_GLOBAL_H
-# define LIBMAD_GLOBAL_H
+#ifndef LIBMAD_GLOBAL_H
+#define LIBMAD_GLOBAL_H
 
 /* conditional debugging */
 

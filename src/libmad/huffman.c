@@ -19,13 +19,9 @@
  * $Id: huffman.c,v 1.10 2004/01/23 09:41:32 rob Exp $
  */
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
-
-# include "global.h"
-
-# include "huffman.h"
+#include "madconfig.h"
+#include "global.h"
+#include "huffman.h"
 
 /*
  * These are the Huffman code words for Layer III.

@@ -204,6 +204,9 @@
     .text
     .align
 
+    .thumb
+    .syntax unified
+
     .global III_imdct_l
     .global _III_imdct_l
 
@@ -239,7 +242,8 @@ _III_imdct_l:
     ldr     r7, [r0, #X10]              @ r7 = X10
 
     rsbs    r10, r10, #0
-    rsc     lr, lr, #0                  @ r10..lr  = -ct00
+    rsb     lr, lr, #0
+    sbc     lr, lr, #0                  @ r10..lr  = -ct00
 
     smlal   r2, r3, r5, r7              @ r2..r3  += (X10 *  K09) = ct06
 
@@ -353,7 +357,8 @@ _III_imdct_l:
     @ lr     =  K15
 
     rsbs    r2, r2, #0
-    rsc     r3, r3, #0                  @ r2..r3 = -ct06
+    rsb     r3, r3, #0
+    sbc     r3, r3, #0                  @ r2..r3 = -ct06
 
     smlal   r2, r3, r12, r7             @ r2..r3  = -ct06 + (ct14 * -K14)
     smlal   r2, r3, r10, r8             @ r2..r3 += (ct16 * -K03)
@@ -388,7 +393,8 @@ _III_imdct_l:
     ldr     r7, [r0, #X16]
 
     rsbs    r2, r2, #0
-    rsc     r3, r3, #0                  @ r2..r3 = -ct01
+    rsb     r3, r3, #0
+    sbc     r3, r3, #0                  @ r2..r3 = -ct01
 
     mov     r4, r2
     mov     r5, r3                      @ r4..r5 = -ct01
@@ -422,7 +428,8 @@ _III_imdct_l:
     stmdb   sp!, { r2, r3, r4, r5 }     @ stack ct05_h, ct05_l, ct03_h, ct03_l
 
     rsbs    r4, r4, #0
-    rsc     r5, r5, #0                  @ r4..r5 = -ct05
+    rsb     r5, r5, #0
+    sbc     r5, r5, #0                  @ r4..r5 = -ct05
 
     stmdb   sp!, { r4, r5 }             @ stack -ct05_h, -ct05_l
 
@@ -432,7 +439,8 @@ _III_imdct_l:
     rsb     r10, r10, #0                @ r10 = K03
 
     rsbs    r4, r2, #0
-    rsc     r5, r3, #0                  @ r4..r5 = -ct00
+    rsb     r5, r3, #0
+    sbc     r5, r5, #0                  @ r4..r5 = -ct00
 
     @ r2..r3 =  ct00
     @ r4..r5 = -ct00
@@ -461,14 +469,15 @@ _III_imdct_l:
     smlal   r2, r3,  lr, r7             @ r2..r3 += (X16 * -K15) = ct02
 
     rsbs    r6, r4, #0
-    rsc     r7, r5, #0                  @ r6..r7 = -ct07
+    rsb     r7, r5, #0
+    sbc     r7, r7, #0                  @ r6..r7 = -ct07
 
     stmdb   sp!, { r2 - r7 }            @ stack -ct07_h, -ct07_l, ct07_h, ct07_l, ct02_h, ct02_l
 
 
     @----
 
-    add     r2, pc, #(imdct36_long_karray-.-8)  @ r2 = base address of Knn array (PIC safe ?)
+    adr     r2, imdct36_long_karray     @ r2 = base address of Knn array (PIC safe ?)
 
 
 loop:
@@ -514,7 +523,11 @@ loop:
     movs    r3, r3, lsr #28
     adc     r3, r3, r4, lsl #4          @ r3 = bits[59..28] of r3..r4
 
-    str     r3, [r1, r8, lsr #24]       @ push completion flag off the bottom end
+    push    {r1}
+    add     r1, r1, r8
+    lsr     r1, r1, #24
+    str     r3, [r1]                    @ push completion flag off the bottom end
+    pop     {r1}
 
     movs    r8, r8, lsl #8              @ push result location index off the top end
     beq     loop                        @ loop back if completion flag not set

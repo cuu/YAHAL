@@ -19,8 +19,8 @@
  * $Id: fixed.h,v 1.38 2004/02/17 02:02:03 rob Exp $
  */
 
-# ifndef LIBMAD_FIXED_H
-# define LIBMAD_FIXED_H
+#ifndef LIBMAD_FIXED_H
+#define LIBMAD_FIXED_H
 
 # if SIZEOF_INT >= 4
 typedef   signed int mad_fixed_t;
@@ -275,12 +275,16 @@ mad_fixed_t mad_f_mul_inline(mad_fixed_t x, mad_fixed_t y)
 	 : "+r" (lo), "+r" (hi)  \
 	 : "%r" (x), "r" (y))
 
-#  define MAD_F_MLN(hi, lo)  \
-    asm ("rsbs	%0, %2, #0\n\t"  \
-	 "rsc	%1, %3, #0"  \
-	 : "=r" (lo), "=r" (hi)  \
-	 : "0" (lo), "1" (hi)  \
-	 : "cc")
+#ifdef __thumb__
+#   define MAD_F_MLN(hi, lo)      \
+    asm ("rsbs   %0, %2, #0\n\t"  \
+	     "rsb    %1, %3, #0\n\t"  \
+	     "sbc    %1, %3, #0\n"    : "=&r" (lo), "=&r" (hi) : "0" (lo), "1" (hi) : "cc")
+#else /* ! __thumb__ */
+#   define MAD_F_MLN(hi, lo)      \
+    asm ("rsbs   %0, %2, #0\n\t"  \
+	     "rsc    %1, %3, #0\n"    : "=&r" (lo), "=r" (hi) : "0" (lo), "1" (hi) : "cc")
+#endif /* __thumb__ */
 
 #  define mad_f_scale64(hi, lo)  \
     ({ mad_fixed_t __result;  \

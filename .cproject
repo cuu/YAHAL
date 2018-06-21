@@ -13,6 +13,8 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI/fonts"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432/DSP/Include"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/FatFs"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/libmad"/>
 						<entry flags="NONE" kind="macro" name="ARM_MATH_CM4" value=""/>
 						<entry flags="NONE" kind="macro" name="__FPU_PRESENT" value="1"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/YAHAL"/>
@@ -105,6 +107,8 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/uGUI"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/uGUI/fonts"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432/DSP_Lib/Include"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/FatFs"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/libmad"/>
 						<entry flags="NONE" kind="macro" name="__ARM_ARCH_7EM__" value="1"/>
 						<entry flags="NONE" kind="macro" name="ARM_MATH_CM4" value=""/>
 						<entry flags="NONE" kind="macro" name="__FPU_PRESENT" value="1"/>

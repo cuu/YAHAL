@@ -19,20 +19,17 @@
  * $Id: frame.c,v 1.29 2004/02/04 22:59:19 rob Exp $
  */
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
+#include "madconfig.h"
+#include "global.h"
 
-# include "global.h"
+#include <stdlib.h>
 
-# include <stdlib.h>
-
-# include "bit.h"
-# include "stream.h"
-# include "frame.h"
-# include "timer.h"
-# include "layer12.h"
-# include "layer3.h"
+#include "bit.h"
+#include "stream.h"
+#include "frame.h"
+#include "timer.h"
+#include "layer12.h"
+#include "layer3.h"
 
 static
 unsigned long const bitrate_table[5][15] = {
@@ -315,7 +312,7 @@ int mad_header_decode(struct mad_header *header, struct mad_stream *stream)
     if (!stream->sync)
       ptr = stream->this_frame;
 
-    if (end - ptr < stream->skiplen) {
+    if ((unsigned long)(end - ptr) < stream->skiplen) {
       stream->skiplen   -= end - ptr;
       stream->next_frame = end;
 
@@ -400,7 +397,7 @@ int mad_header_decode(struct mad_header *header, struct mad_stream *stream)
   }
 
   /* verify there is enough data left in buffer to decode this frame */
-  if (N + MAD_BUFFER_GUARD > end - stream->this_frame) {
+  if ((N + MAD_BUFFER_GUARD) > (unsigned int)(end - stream->this_frame)) {
     stream->next_frame = stream->this_frame;
 
     stream->error = MAD_ERROR_BUFLEN;

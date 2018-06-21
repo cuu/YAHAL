@@ -24,17 +24,18 @@ SRC_DIRS += src/task
 SRC_DIRS += src/util
 SRC_DIRS += src/uGUI
 SRC_DIRS += src/uGUI/fonts
-SRC_DIRS += src/libmad
+SRC_DIRS += src/FatFs
 
 # all include folders
-INC_DIRS  = include/interface
+INC_DIRS  = include/platform/$(PLATFORM)
+INC_DIRS += include/interface
 INC_DIRS += src/platform/$(PLATFORM)
 INC_DIRS += src/driver
 INC_DIRS += src/task
 INC_DIRS += src/util
 INC_DIRS += src/uGUI
 INC_DIRS += src/uGUI/fonts
-INC_DIRS += src/libmad
+INC_DIRS += src/FatFs
 
 # msp432 has the additional CMSIS DSP library
 ifeq ($(PLATFORM), msp432)
@@ -50,6 +51,12 @@ SRC_DIRS += $(DSP_LIB_DIR)/Source/StatisticsFunctions
 SRC_DIRS += $(DSP_LIB_DIR)/Source/SupportFunctions
 SRC_DIRS += $(DSP_LIB_DIR)/Source/TransformFunctions
 INC_DIRS += $(DSP_LIB_DIR)/Include
+endif
+
+# msp432 has the additional libmad library
+ifeq ($(PLATFORM), msp432)
+INC_DIRS += src/libmad
+SRC_DIRS += src/libmad
 endif
 
 include makefiles/common.mk

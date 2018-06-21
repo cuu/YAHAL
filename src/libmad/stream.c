@@ -19,16 +19,13 @@
  * $Id: stream.c,v 1.12 2004/02/05 09:02:39 rob Exp $
  */
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
+#include "madconfig.h"
+#include "global.h"
 
-# include "global.h"
+#include <stdlib.h>
 
-# include <stdlib.h>
-
-# include "bit.h"
-# include "stream.h"
+#include "bit.h"
+#include "stream.h"
 
 /*
  * NAME:	stream->init()

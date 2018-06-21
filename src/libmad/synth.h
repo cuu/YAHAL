@@ -19,11 +19,11 @@
  * $Id: synth.h,v 1.15 2004/01/23 09:41:33 rob Exp $
  */
 
-# ifndef LIBMAD_SYNTH_H
-# define LIBMAD_SYNTH_H
+#ifndef LIBMAD_SYNTH_H
+#define LIBMAD_SYNTH_H
 
-# include "fixed.h"
-# include "frame.h"
+#include "fixed.h"
+#include "frame.h"
 
 struct mad_pcm {
   unsigned int samplerate;		/* sampling frequency (Hz) */

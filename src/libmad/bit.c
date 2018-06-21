@@ -19,9 +19,7 @@
  * $Id: bit.c,v 1.12 2004/01/23 09:41:32 rob Exp $
  */
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
+#include "madconfig.h"
 
 # include "global.h"
 
@@ -79,7 +77,7 @@ unsigned short const crc_table[256] = {
   0x8213, 0x0216, 0x021c, 0x8219, 0x0208, 0x820d, 0x8207, 0x0202
 };
 
-# define CRC_POLY  0x8005
+#define CRC_POLY  0x8005
 
 /*
  * NAME:	bit->init()
@@ -97,10 +95,10 @@ void mad_bit_init(struct mad_bitptr *bitptr, unsigned char const *byte)
  * DESCRIPTION:	return number of bits between start and end points
  */
 unsigned int mad_bit_length(struct mad_bitptr const *begin,
-			    struct mad_bitptr const *end)
+                            struct mad_bitptr const *end)
 {
   return begin->left +
-    CHAR_BIT * (end->byte - (begin->byte + 1)) + (CHAR_BIT - end->left);
+         CHAR_BIT * (end->byte - (begin->byte + 1)) + (CHAR_BIT - end->left);
 }
 
 /*
@@ -142,8 +140,7 @@ unsigned long mad_bit_read(struct mad_bitptr *bitptr, unsigned int len)
     bitptr->cache = *bitptr->byte;
 
   if (len < bitptr->left) {
-    value = (bitptr->cache & ((1 << bitptr->left) - 1)) >>
-      (bitptr->left - len);
+    value = (bitptr->cache & ((1 << bitptr->left) - 1)) >> (bitptr->left - len);
     bitptr->left -= len;
 
     return value;
@@ -180,7 +177,7 @@ unsigned long mad_bit_read(struct mad_bitptr *bitptr, unsigned int len)
  * DESCRIPTION:	write an arbitrary number of bits
  */
 void mad_bit_write(struct mad_bitptr *bitptr, unsigned int len,
-		   unsigned long value)
+                   unsigned long value)
 {
   unsigned char *ptr;
 
@@ -195,7 +192,7 @@ void mad_bit_write(struct mad_bitptr *bitptr, unsigned int len,
  * DESCRIPTION:	compute CRC-check word
  */
 unsigned short mad_bit_crc(struct mad_bitptr bitptr, unsigned int len,
-			   unsigned short init)
+                           unsigned short init)
 {
   register unsigned int crc;
 
@@ -212,14 +209,15 @@ unsigned short mad_bit_crc(struct mad_bitptr bitptr, unsigned int len,
 
   switch (len / 8) {
   case 3: crc = (crc << 8) ^
-	    crc_table[((crc >> 8) ^ mad_bit_read(&bitptr, 8)) & 0xff];
+          crc_table[((crc >> 8) ^ mad_bit_read(&bitptr, 8)) & 0xff];
+          //no break
   case 2: crc = (crc << 8) ^
-	    crc_table[((crc >> 8) ^ mad_bit_read(&bitptr, 8)) & 0xff];
+          crc_table[((crc >> 8) ^ mad_bit_read(&bitptr, 8)) & 0xff];
+          //no break
   case 1: crc = (crc << 8) ^
-	    crc_table[((crc >> 8) ^ mad_bit_read(&bitptr, 8)) & 0xff];
-
-  len %= 8;
-
+          crc_table[((crc >> 8) ^ mad_bit_read(&bitptr, 8)) & 0xff];
+          len %= 8;
+          // no break
   case 0: break;
   }
 

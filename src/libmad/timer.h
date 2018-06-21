@@ -19,8 +19,8 @@
  * $Id: timer.h,v 1.16 2004/01/23 09:41:33 rob Exp $
  */
 
-# ifndef LIBMAD_TIMER_H
-# define LIBMAD_TIMER_H
+#ifndef LIBMAD_TIMER_H
+#define LIBMAD_TIMER_H
 
 typedef struct {
   signed long seconds;		/* whole seconds */
@@ -29,7 +29,7 @@ typedef struct {
 
 extern mad_timer_t const mad_timer_zero;
 
-# define MAD_TIMER_RESOLUTION	352800000UL
+#define MAD_TIMER_RESOLUTION	352800000UL
 
 enum mad_units {
   MAD_UNITS_HOURS	 =    -2,
@@ -97,4 +97,4 @@ unsigned long mad_timer_fraction(mad_timer_t, unsigned long);
 void mad_timer_string(mad_timer_t, char *, char const *,
 		      enum mad_units, enum mad_units, unsigned long);
 
-# endif
+#endif
