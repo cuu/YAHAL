@@ -12,8 +12,8 @@
 // ---------------------------------------------
 //
 // SPI driver for MSP432. It support master
-// and client mode. Interrupts are not yet
-// supported.
+// and client mode. Interrupts are supported
+// for client mode (RX interrupts).
 //
 
 #ifndef _SPI_MSP432_H_
@@ -54,13 +54,15 @@ class spi_msp432 : public spi_interface {
 
 public:
 
-    spi_msp432(EUSCI_A_SPI_Type *spi_a, gpio_pin & cs_pin, const bool spi_master = SPI::MASTER,
+    spi_msp432(EUSCI_A_SPI_Type *spi_a, gpio_pin * cs_pin = nullptr,
+               const bool spi_master = SPI::MASTER,
                uint16_t mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::MSB_FIRST |
-               SPI::_8_BIT | SPI::CLK_SMCLK);
+                               SPI::_8_BIT | SPI::CLK_SMCLK);
 
-    spi_msp432(EUSCI_B_SPI_Type *spi_b, gpio_pin & cs_pin, const bool spi_master = SPI::MASTER,
+    spi_msp432(EUSCI_B_SPI_Type *spi_b, gpio_pin * cs_pin = nullptr,
+               const bool spi_master = SPI::MASTER,
                uint16_t mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::MSB_FIRST |
-               SPI::_8_BIT | SPI::CLK_SMCLK);
+                               SPI::_8_BIT | SPI::CLK_SMCLK);
 
     ~spi_msp432();
 
@@ -87,11 +89,11 @@ public:
 
 private:
 
-    bool _init;
-    void spi_init();
+    bool _initialized;
+    void initialize();
 
     bool _master;
-    bool _use_CS;
+    bool _use_hw_CS;
 
     volatile uint16_t & _EUSCI_CTLW0;
     volatile uint16_t & _EUSCI_BRW;
@@ -102,13 +104,13 @@ private:
     volatile uint16_t & _EUSCI_IFG;
     volatile uint16_t & _EUSCI_IV;
 
-    gpio_msp432_pin _ste;
+    gpio_msp432_pin _ste; // hardware CS pin
     gpio_msp432_pin _clk;
     gpio_msp432_pin _miso;
     gpio_msp432_pin _mosi;
 
     uint16_t _mode;
-    gpio_pin & _cs;
+    gpio_pin * _cs; // pointer to currently selected CS pin
     IRQn_Type _irq;
 
     static void (*_intHandler[8])(uint8_t);

@@ -18,9 +18,9 @@
 
 void (*spi_msp432::_intHandler[8])(uint8_t);
 
-spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
+spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin * cs,
                        const bool spi_master, uint16_t mode) :
-        _init(false), _master(spi_master), _use_CS(true),
+        _initialized(false), _master(spi_master), _use_hw_CS(true),
         _EUSCI_CTLW0(mod->CTLW0), _EUSCI_BRW  (mod->BRW),
         _EUSCI_STATW(mod->STATW), _EUSCI_RXBUF(mod->RXBUF),
         _EUSCI_TXBUF(mod->TXBUF), _EUSCI_IE   (mod->IE),
@@ -59,12 +59,11 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
         _irq = EUSCIA3_IRQn;
     }
     else yahal_assert(false);
-    spi_init();
 }
 
-spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin & cs,
+spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin * cs,
                        const bool spi_master, uint16_t mode) :
-        _init(false), _master(spi_master), _use_CS(true),
+        _initialized(false), _master(spi_master), _use_hw_CS(true),
         _EUSCI_CTLW0(mod->CTLW0), _EUSCI_BRW  (mod->BRW),
         _EUSCI_STATW(mod->STATW), _EUSCI_RXBUF(mod->RXBUF),
         _EUSCI_TXBUF(mod->TXBUF), _EUSCI_IE   (mod->IE),
@@ -110,17 +109,31 @@ spi_msp432::~spi_msp432() {
     // (EUSCI_A is in reset state)
     /////////////////////////////////////////
     _EUSCI_CTLW0 = EUSCI_A_CTLW0_SWRST;
-
-    // Unconfigure the digital lines
-    ////////////////////////////////
-    _ste.setSEL(0);  _ste.setMode(GPIO::INPUT);
-    _clk.setSEL(0);  _clk.setMode(GPIO::INPUT);
-    _miso.setSEL(0); _miso.setMode(GPIO::INPUT);
-    _mosi.setSEL(0); _mosi.setMode(GPIO::INPUT);
-    _cs.gpioMode(GPIO::INPUT);
 }
 
-void spi_msp432::spi_init() {
+void spi_msp432::initialize() {
+
+    // Configure the digital CLK, MISO and MOSI pins
+    ////////////////////////////////////////////////
+    _clk.setSEL(1);
+    _clk.setMode (_master ? GPIO::OUTPUT : GPIO::INPUT);
+    _miso.setSEL(1);
+    _miso.setMode(_master ? GPIO::INPUT  : GPIO::OUTPUT);
+    _mosi.setSEL(1);
+    _mosi.setMode(_master ? GPIO::OUTPUT : GPIO::INPUT);
+
+    // Configure CS pin
+    ///////////////////
+    if(_cs) {
+        // Use specific gpio pin
+        _use_hw_CS = false;
+        _cs->gpioMode(_master ? GPIO::OUTPUT | GPIO::INIT_HIGH : GPIO::INPUT);
+    } else {
+        _ste.setSEL(1);
+        _ste.setMode (_master ? GPIO::OUTPUT : GPIO::INPUT);
+        // Use default (internal) CS pin
+        _cs = &_ste;
+    }
 
     // Reset CTLW0 register to default values
     // (EUSCI is in reset state)
@@ -137,21 +150,6 @@ void spi_msp432::spi_init() {
     // always 3 wire mode!
     _EUSCI_CTLW0 |= _mode;
 
-    // Configure the digital RX/TX lines
-    ////////////////////////////////////
-    _clk.setSEL(1);  _clk.setMode (_master ? GPIO::OUTPUT : GPIO::INPUT);
-    _miso.setSEL(1); _miso.setMode(_master ? GPIO::INPUT  : GPIO::OUTPUT);
-    _mosi.setSEL(1); _mosi.setMode(_master ? GPIO::OUTPUT : GPIO::INPUT);
-
-    // Configure CS line
-    ////////////////////
-    if (_master) {
-        _cs.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
-    } else {
-        _cs.gpioMode(GPIO::INPUT);
-        //	    _cs.gpioAttachIrq(cs_handler, GPIO::FALLING);
-    }
-
     // Enable the EUSCI irq and NVIC irq,
     // we only need RX interrupt
     /////////////////////////////////////
@@ -163,20 +161,18 @@ void spi_msp432::spi_init() {
 
     // Set 'initialized' flag
     /////////////////////////
-    _init = true;
+    _initialized = true;
 }
 
 int16_t spi_msp432::spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
 {
-    if (!_init) spi_init();
-    if (_use_CS) {
-        if (_master) {
-            // Activate CS line
-            _cs.gpioWrite(LOW);
-        } else {
-            // Wait for CS to be LOW
-            while(_cs.gpioRead()) ;
-        }
+    if (!_initialized) initialize();
+    if (_master) {
+        // Activate CS line
+        if (!_use_hw_CS) _cs->gpioWrite(LOW);
+    } else {
+        // Wait for CS to be LOW
+        while(_cs->gpioRead()) ;
     }
 
     _EUSCI_IFG = 0;
@@ -194,28 +190,24 @@ int16_t spi_msp432::spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
         while (!(_EUSCI_IFG & EUSCI_A_IFG_TXIFG));
     }
 
-    if (_use_CS) {
-        if (_master) {
-            // De-activate CS line
-            _cs.gpioWrite(HIGH);
-        } else {
-            // Wait for CS to be HIGH
-            while(!_cs.gpioRead()) ;
-        }
+    if (_master) {
+        // De-activate CS line
+        if (!_use_hw_CS) _cs->gpioWrite(HIGH);
+    } else {
+        // Wait for CS to be HIGH
+        while(!_cs->gpioRead()) ;
     }
     return len;
 }
 
 int16_t spi_msp432::spiTx(const uint8_t *txbuf, uint16_t len) {
-    if (!_init) spi_init();
-    if (_use_CS) {
-        if (_master) {
-            // Activate CS line
-            _cs.gpioWrite(LOW);
-        } else {
-            // Wait for CS to be LOW
-            while(_cs.gpioRead()) ;
-        }
+    if (!_initialized) initialize();
+    if (_master) {
+        // Activate CS line
+        if (!_use_hw_CS) _cs->gpioWrite(LOW);
+    } else {
+        // Wait for CS to be LOW
+        while(_cs->gpioRead()) ;
     }
 
     _EUSCI_IFG = 0;
@@ -234,28 +226,24 @@ int16_t spi_msp432::spiTx(const uint8_t *txbuf, uint16_t len) {
         while (!(_EUSCI_IFG & EUSCI_A_IFG_TXIFG));
     }
 
-    if (_use_CS) {
-        if (_master) {
-            // De-activate CS line
-            _cs.gpioWrite(HIGH);
-        } else {
-            // Wait for CS to be HIGH
-            while(!_cs.gpioRead()) ;
-        }
+    if (_master) {
+        // De-activate CS line
+        if (!_use_hw_CS) _cs->gpioWrite(HIGH);
+    } else {
+        // Wait for CS to be HIGH
+        while(!_cs->gpioRead()) ;
     }
     return len;
 }
 
 int16_t spi_msp432::spiRx(uint8_t tx_byte, uint8_t *rxbuf, uint16_t len) {
-    if (!_init) spi_init();
-    if (_use_CS) {
-        if (_master) {
-            // Activate CS line
-            _cs.gpioWrite(LOW);
-        } else {
-            // Wait for CS to be LOW
-            while(_cs.gpioRead()) ;
-        }
+    if (!_initialized) initialize();
+    if (_master) {
+        // Activate CS line
+        if (!_use_hw_CS) _cs->gpioWrite(LOW);
+    } else {
+        // Wait for CS to be LOW
+        while(_cs->gpioRead()) ;
     }
 
     _EUSCI_IFG = 0;
@@ -273,14 +261,12 @@ int16_t spi_msp432::spiRx(uint8_t tx_byte, uint8_t *rxbuf, uint16_t len) {
         while (!(_EUSCI_IFG & EUSCI_A_IFG_TXIFG));
     }
 
-    if (_use_CS) {
-        if (_master) {
-            // De-activate CS line
-            _cs.gpioWrite(HIGH);
-        } else {
-            // Wait for CS to be HIGH
-            while(!_cs.gpioRead()) ;
-        }
+    if (_master) {
+        // De-activate CS line
+        if (!_use_hw_CS) _cs->gpioWrite(HIGH);
+    } else {
+        // Wait for CS to be HIGH
+        while(!_cs->gpioRead()) ;
     }
     return len;
 }
@@ -293,22 +279,19 @@ void spi_msp432::setSpeed(uint32_t baud)
 
 void spi_msp432::useHwCS(bool val)
 {
-    _use_CS = val;
-    // If the HW CS line is not used, we
-    // might only have one connected device,
-    // which could be selected all the time.
-    // So the CS line to LOW.
-    if (!val) {
-        _cs.gpioWrite(LOW);
-    }
+    if (!_initialized) initialize();
+    // This only has effect when the
+    // internal CS pin is used!
+    _use_hw_CS = val;
+    _ste.setSEL(val ? 1 : 0);
 }
 
 void spi_msp432::setCS(bool val) {
-    _cs.gpioWrite(val);
+    if (!_initialized) initialize();
+    _cs->gpioWrite(val);
 }
 
 void spi_msp432::spiAttachRxIrq(void (*handler)(uint8_t)) {
-    if (!_init) spi_init();
     // Register handler
     _intHandler[_irq-16] = handler;
     // Enable receive IRQ
