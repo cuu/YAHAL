@@ -24,6 +24,7 @@
 // define the concrete color type.
 typedef uint32_t color_t;
 #define COLOR_TYPE(c) (c & 0xff000000)
+#define COLOR_RGB(c)  (c & 0x00ffffff)
 
 namespace LCD {
 const uint32_t COLORTYPE_RGB888 = 0x00000000;
