@@ -20,12 +20,15 @@
 //  bool _linked_in; flag to signal if the instance
 //                   is member of the list
 //
+//  This class only holds pointers to the elements,
+//  and does not do any kind of memory management.
+//  It only 'organizes' existing elements.
 //  If there are access problems to the attributes
 //  above, a C++ friendship to this class might be
 //  declared.
 //  Main usage of this class in YAHAL is the multitasking
 //  kernel, which organizes task_base instances as a
-//  circular list.
+//  circular list. It is also used for the condition_variable.
 
 #ifndef _CIRCULAR_LIST_H_
 #define _CIRCULAR_LIST_H_
@@ -35,9 +38,9 @@ class circular_list {
 public:
 
     circular_list() {
-        _head      = nullptr;
-        _tail      = nullptr;
-        _size      = 0;
+        _head = nullptr;
+        _tail = nullptr;
+        _size = 0;
     }
 
     void push_back(T * elem) {
