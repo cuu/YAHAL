@@ -75,7 +75,7 @@ int sd_spi_drv::sd_init()
     uint32_t r3, r7;
 
     // Set up SPI interface
-    _spi.useHwCS(false);
+    _spi.generateCS(false);
     _spi.setCS(HIGH);
 
     // Start with a slow SPI clock

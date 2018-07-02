@@ -44,10 +44,10 @@ public:
     // Set the speed in Hz. Typical value is 1000000 (1 MHz)
     virtual void setSpeed(uint32_t Hz) = 0;
 
-    // Enable/Disable hardware control of the CS line.
-    virtual void useHwCS(bool val) = 0;
+    // Enable/Disable automatic setting of the CS line.
+    virtual void generateCS(bool val) = 0;
 
-    // Control the CS line in case HwCs is set to false.
+    // Control the CS line in case of generateCS(false).
     virtual void setCS(bool val) = 0;
 
     // In SPI client mode, attach a RX handler which

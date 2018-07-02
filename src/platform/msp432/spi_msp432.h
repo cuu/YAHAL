@@ -54,12 +54,12 @@ class spi_msp432 : public spi_interface {
 
 public:
 
-    spi_msp432(EUSCI_A_SPI_Type *spi_a, gpio_pin * cs_pin = nullptr,
+    spi_msp432(EUSCI_A_SPI_Type *spi_a, gpio_pin & cs_pin,
                const bool spi_master = SPI::MASTER,
                uint16_t mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::MSB_FIRST |
                                SPI::_8_BIT | SPI::CLK_SMCLK);
 
-    spi_msp432(EUSCI_B_SPI_Type *spi_b, gpio_pin * cs_pin = nullptr,
+    spi_msp432(EUSCI_B_SPI_Type *spi_b, gpio_pin & cs_pin,
                const bool spi_master = SPI::MASTER,
                uint16_t mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::MSB_FIRST |
                                SPI::_8_BIT | SPI::CLK_SMCLK);
@@ -71,7 +71,7 @@ public:
     int16_t spiRx  (uint8_t txbyte, uint8_t *rxbuf, uint16_t len) override;
 
     void setSpeed(uint32_t) override;
-    void useHwCS(bool val) override;
+    void generateCS(bool val) override;
     void setCS(bool val) override;
 
     void spiAttachRxIrq(void (*)(uint8_t data)) override;
@@ -93,7 +93,7 @@ private:
     void initialize();
 
     bool _master;
-    bool _use_hw_CS;
+    bool _generate_CS;
 
     volatile uint16_t & _EUSCI_CTLW0;
     volatile uint16_t & _EUSCI_BRW;
@@ -104,14 +104,13 @@ private:
     volatile uint16_t & _EUSCI_IFG;
     volatile uint16_t & _EUSCI_IV;
 
-    gpio_msp432_pin _ste; // hardware CS pin
     gpio_msp432_pin _clk;
     gpio_msp432_pin _miso;
     gpio_msp432_pin _mosi;
 
-    uint16_t _mode;
-    gpio_pin * _cs; // pointer to currently selected CS pin
-    IRQn_Type _irq;
+    uint16_t   _mode;
+    gpio_pin & _cs; // pointer to currently selected CS pin
+    IRQn_Type  _irq;
 
     static void (*_intHandler[8])(uint8_t);
 };

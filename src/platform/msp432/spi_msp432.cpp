@@ -11,6 +11,11 @@
 //
 // ---------------------------------------------
 //
+// The STE line is never used in HW mode, because
+// STE is deactivated after every byte, which is
+// not appropriate for most applications. We always
+// pass in a CS gpio pin, which might be used by
+// higher layers or automatically in this driver.
 
 #include "spi_msp432.h"
 #include "yahal_assert.h"
@@ -18,9 +23,9 @@
 
 void (*spi_msp432::_intHandler[8])(uint8_t);
 
-spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin * cs,
+spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
                        const bool spi_master, uint16_t mode) :
-        _initialized(false), _master(spi_master), _use_hw_CS(true),
+        _initialized(false), _master(spi_master), _generate_CS(true),
         _EUSCI_CTLW0(mod->CTLW0), _EUSCI_BRW  (mod->BRW),
         _EUSCI_STATW(mod->STATW), _EUSCI_RXBUF(mod->RXBUF),
         _EUSCI_TXBUF(mod->TXBUF), _EUSCI_IE   (mod->IE),
@@ -34,25 +39,21 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin * cs,
     // Configure hardware characteristics of the 4 A-type modules
     /////////////////////////////////////////////////////////////
     if (mod == EUSCI_A0_SPI) {
-        _ste.setGpio (PORT_PIN(1, 0));
         _clk.setGpio (PORT_PIN(1, 1));
         _miso.setGpio(PORT_PIN(1, 2));
         _mosi.setGpio(PORT_PIN(1, 3));
         _irq = EUSCIA0_IRQn;
     } else if (mod == EUSCI_A1_SPI) {
-        _ste.setGpio (PORT_PIN(2, 0));
         _clk.setGpio (PORT_PIN(2, 1));
         _miso.setGpio(PORT_PIN(2, 2));
         _mosi.setGpio(PORT_PIN(2, 3));
         _irq = EUSCIA1_IRQn;
     } else if (mod == EUSCI_A2_SPI) {
-        _ste.setGpio (PORT_PIN(3, 0));
         _clk.setGpio (PORT_PIN(3, 1));
         _miso.setGpio(PORT_PIN(3, 2));
         _mosi.setGpio(PORT_PIN(3, 3));
         _irq = EUSCIA2_IRQn;
     } else if (mod == EUSCI_A3_SPI) {
-        _ste.setGpio (PORT_PIN(9, 4));
         _clk.setGpio (PORT_PIN(9, 5));
         _miso.setGpio(PORT_PIN(9, 6));
         _mosi.setGpio(PORT_PIN(9, 7));
@@ -61,9 +62,9 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin * cs,
     else yahal_assert(false);
 }
 
-spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin * cs,
+spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin & cs,
                        const bool spi_master, uint16_t mode) :
-        _initialized(false), _master(spi_master), _use_hw_CS(true),
+        _initialized(false), _master(spi_master), _generate_CS(true),
         _EUSCI_CTLW0(mod->CTLW0), _EUSCI_BRW  (mod->BRW),
         _EUSCI_STATW(mod->STATW), _EUSCI_RXBUF(mod->RXBUF),
         _EUSCI_TXBUF(mod->TXBUF), _EUSCI_IE   (mod->IE),
@@ -73,26 +74,22 @@ spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin * cs,
     // Configure hardware characteristics of the 4 B-type modules
     /////////////////////////////////////////////////////////////
     if (mod == EUSCI_B0_SPI) {
-        _ste.setGpio (PORT_PIN(1, 4));
         _clk.setGpio (PORT_PIN(1, 5));
         _miso.setGpio(PORT_PIN(1, 7));
         _mosi.setGpio(PORT_PIN(1, 6));
         _irq = EUSCIB0_IRQn;
     } else if (mod == EUSCI_B1_SPI) {
-        _ste.setGpio (PORT_PIN(6, 2));
         _clk.setGpio (PORT_PIN(6, 3));
         _miso.setGpio(PORT_PIN(6, 5));
         _mosi.setGpio(PORT_PIN(6, 4));
         _irq = EUSCIB1_IRQn;
     } else if (mod == EUSCI_B2_SPI) {
-        _ste.setGpio(PORT_PIN (3, 4));
-        _clk.setGpio(PORT_PIN (3, 5));
+        _clk.setGpio( PORT_PIN(3, 5));
         _miso.setGpio(PORT_PIN(3, 7));
         _mosi.setGpio(PORT_PIN(3, 6));
         _irq = EUSCIB2_IRQn;
     } else if (mod == EUSCI_B3_SPI) {
-        _ste.setGpio(PORT_PIN (10, 0));
-        _clk.setGpio(PORT_PIN (10, 1));
+        _clk.setGpio( PORT_PIN(10, 1));
         _miso.setGpio(PORT_PIN(10, 3));
         _mosi.setGpio(PORT_PIN(10, 2));
         _irq = EUSCIB3_IRQn;
@@ -124,16 +121,7 @@ void spi_msp432::initialize() {
 
     // Configure CS pin
     ///////////////////
-    if(_cs) {
-        // Use specific gpio pin
-        _use_hw_CS = false;
-        _cs->gpioMode(_master ? GPIO::OUTPUT | GPIO::INIT_HIGH : GPIO::INPUT);
-    } else {
-        _ste.setSEL(1);
-        _ste.setMode (_master ? GPIO::OUTPUT : GPIO::INPUT);
-        // Use default (internal) CS pin
-        _cs = &_ste;
-    }
+    _cs.gpioMode(_master ? GPIO::OUTPUT | GPIO::INIT_HIGH : GPIO::INPUT);
 
     // Reset CTLW0 register to default values
     // (EUSCI is in reset state)
@@ -169,10 +157,10 @@ int16_t spi_msp432::spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
     if (!_initialized) initialize();
     if (_master) {
         // Activate CS line
-        if (!_use_hw_CS) _cs->gpioWrite(LOW);
+        if (_generate_CS) _cs.gpioWrite(LOW);
     } else {
         // Wait for CS to be LOW
-        while(_cs->gpioRead()) ;
+        while(_cs.gpioRead()) ;
     }
 
     _EUSCI_IFG = 0;
@@ -192,10 +180,10 @@ int16_t spi_msp432::spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
 
     if (_master) {
         // De-activate CS line
-        if (!_use_hw_CS) _cs->gpioWrite(HIGH);
+        if (_generate_CS) _cs.gpioWrite(HIGH);
     } else {
         // Wait for CS to be HIGH
-        while(!_cs->gpioRead()) ;
+        while(!_cs.gpioRead()) ;
     }
     return len;
 }
@@ -204,10 +192,10 @@ int16_t spi_msp432::spiTx(const uint8_t *txbuf, uint16_t len) {
     if (!_initialized) initialize();
     if (_master) {
         // Activate CS line
-        if (!_use_hw_CS) _cs->gpioWrite(LOW);
+        if (_generate_CS) _cs.gpioWrite(LOW);
     } else {
         // Wait for CS to be LOW
-        while(_cs->gpioRead()) ;
+        while(_cs.gpioRead()) ;
     }
 
     _EUSCI_IFG = 0;
@@ -228,10 +216,10 @@ int16_t spi_msp432::spiTx(const uint8_t *txbuf, uint16_t len) {
 
     if (_master) {
         // De-activate CS line
-        if (!_use_hw_CS) _cs->gpioWrite(HIGH);
+        if (_generate_CS) _cs.gpioWrite(HIGH);
     } else {
         // Wait for CS to be HIGH
-        while(!_cs->gpioRead()) ;
+        while(!_cs.gpioRead()) ;
     }
     return len;
 }
@@ -240,10 +228,10 @@ int16_t spi_msp432::spiRx(uint8_t tx_byte, uint8_t *rxbuf, uint16_t len) {
     if (!_initialized) initialize();
     if (_master) {
         // Activate CS line
-        if (!_use_hw_CS) _cs->gpioWrite(LOW);
+        if (_generate_CS) _cs.gpioWrite(LOW);
     } else {
         // Wait for CS to be LOW
-        while(_cs->gpioRead()) ;
+        while(_cs.gpioRead()) ;
     }
 
     _EUSCI_IFG = 0;
@@ -263,10 +251,10 @@ int16_t spi_msp432::spiRx(uint8_t tx_byte, uint8_t *rxbuf, uint16_t len) {
 
     if (_master) {
         // De-activate CS line
-        if (!_use_hw_CS) _cs->gpioWrite(HIGH);
+        if (_generate_CS) _cs.gpioWrite(HIGH);
     } else {
         // Wait for CS to be HIGH
-        while(!_cs->gpioRead()) ;
+        while(!_cs.gpioRead()) ;
     }
     return len;
 }
@@ -274,21 +262,19 @@ int16_t spi_msp432::spiRx(uint8_t tx_byte, uint8_t *rxbuf, uint16_t len) {
 
 void spi_msp432::setSpeed(uint32_t baud)
 {
+    if (!_initialized) initialize();
     _EUSCI_BRW = SystemCoreClock / baud;
 }
 
-void spi_msp432::useHwCS(bool val)
+void spi_msp432::generateCS(bool val)
 {
     if (!_initialized) initialize();
-    // This only has effect when the
-    // internal CS pin is used!
-    _use_hw_CS = val;
-    _ste.setSEL(val ? 1 : 0);
+    _generate_CS = val;
 }
 
 void spi_msp432::setCS(bool val) {
     if (!_initialized) initialize();
-    _cs->gpioWrite(val);
+    _cs.gpioWrite(val);
 }
 
 void spi_msp432::spiAttachRxIrq(void (*handler)(uint8_t)) {
