@@ -136,15 +136,18 @@ all: directories $(TARGET)
 define compileRules
 $(BUILD_DIR)/%.cpp.o : $(1)/%.cpp
 	@echo "C++ $$(notdir $$<)"
-	$(HIDE) $$(CXX) $$(DEFINES) $$(INCLUDES) $$(CXXFLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
+	$$(eval EXTRA_FLAGS := $$(shell cat $$(dir $$<)CPPFLAGS 2>/dev/null))
+	$(HIDE) $$(CXX) $$(DEFINES) $$(INCLUDES) $$(CXXFLAGS) $$(EXTRA_FLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
 
 $(BUILD_DIR)/%.c.o : $(1)/%.c
 	@echo "C   $$(notdir $$<)"
-	$(HIDE) $$(CC)  $$(DEFINES) $$(INCLUDES) $$(CFLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
+	$$(eval EXTRA_FLAGS := $$(shell cat $$(dir $$<)CFLAGS 2>/dev/null))
+	$(HIDE) $$(CC)  $$(DEFINES) $$(INCLUDES) $$(CFLAGS) $$(EXTRA_FLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
 
 $(BUILD_DIR)/%.S.o : $(1)/%.S
 	@echo "ASM $$(notdir $$<)"
-	$(HIDE) $$(CC)  $$(DEFINES) $$(INCLUDES) $$(ASMFLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
+	$$(eval EXTRA_FLAGS := $$(shell cat $$(dir $$<)ASMFLAGS 2>/dev/null))
+	$(HIDE) $$(CC)  $$(DEFINES) $$(INCLUDES) $$(ASMFLAGS) $$(EXTRA_FLAGS) -c -o $$@ $(QUOTE)$$<$(QUOTE) -MMD
 endef
 $(foreach srcdir, $(SRC_DIRS), $(eval $(call compileRules, $(srcdir))))
 
