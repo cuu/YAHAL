@@ -18,11 +18,11 @@ public:
         delete [] _buffer;
     }
 
-    bool get(T & data) {
+    bool get(T & data) volatile {
         if (_get_ptr == _put_ptr) {
             return false;
         }
-        T * nextget =  _get_ptr + 1;
+        T * nextget = _get_ptr + 1;
         if (nextget == _need_wrap) {
             nextget =  _buffer;
         }
@@ -31,7 +31,7 @@ public:
         return true;
     }
 
-    bool put(const T & data) {
+    bool put(const T & data) volatile {
         T * nextput =  _put_ptr + 1;
         if (nextput == _need_wrap){
             nextput =  _buffer;
@@ -45,7 +45,7 @@ public:
         return true;
     }
 
-    int available_get() {
+    int available_get() volatile {
         int res = _put_ptr - _get_ptr;
         if (res < 0) {
             res += _buffer_size;
@@ -53,7 +53,7 @@ public:
         return res;
     }
 
-    int available_put() {
+    volatile int available_put() volatile {
         return _buffer_size - available_get() -1;
     }
 
