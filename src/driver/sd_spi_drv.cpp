@@ -104,7 +104,7 @@ int sd_spi_drv::sd_init()
     if (r &  0xfa) return -2; // protocol error
     if (r == 0x01) _isV200 = true;
 
-    // CMD58 (read OCR)
+    // CMD58 (read OCR) (bits 30/31 maybe NOT available here!!)
     _spi.setCS(LOW);
     sd_cmd(58, 0);
     r = sd_get_r37(&r3);
@@ -113,7 +113,7 @@ int sd_spi_drv::sd_init()
     if (r == 0xff) return -1; // SPI error
     if (r &  0xfe) return -2; // protocol error
 
-    for (tries=1000; tries > 0; --tries) {
+    for (tries=100; tries > 0; --tries) {
         // CMD55 (next is application command ACMD)
         _spi.setCS(LOW);
         sd_cmd(55, 0);
@@ -125,7 +125,9 @@ int sd_spi_drv::sd_init()
 
         // ACMD41 (activate initialization)
         _spi.setCS(LOW);
-        sd_cmd(41, r3 & 0x40000000);
+        // Try both versions!
+        r3 = (tries > 50) ? 0x40000000 : 0;
+        sd_cmd(41, r3);
         r = sd_get_r1();
         sd_nec();
         _spi.setCS(HIGH);
