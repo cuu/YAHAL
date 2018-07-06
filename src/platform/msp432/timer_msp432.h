@@ -31,6 +31,10 @@ class timer_msp432 : public timer_interface {
 	uint32_t getCounter();
 	void	 resetCounter();
 
+    // Additional methods (not in timer_interface)
+	void     setNanoPeriod(uint32_t ns, TIMER::timer_mode mode = TIMER::ONE_SHOT);
+    uint32_t getNanoPeriod();
+
 	// IRQ handlers are our best friends
     friend void T32_INT1_IRQHandler(void);
     friend void T32_INT2_IRQHandler(void);
@@ -45,6 +49,7 @@ class timer_msp432 : public timer_interface {
 	Timer32_Type * _timer;
 	uint32_t _factor;     // count for one us
     uint32_t _period_us ; // load value in us
+    uint32_t _period_ns ; // load value in ns
     uint32_t _period_load;
 };
 
