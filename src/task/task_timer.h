@@ -20,9 +20,9 @@ class task_timer : public TASK, public timer_interface
 {
   public:
     task_timer(const char * name,
-              uint16_t stack_size = DEFAULT_STACK_SIZE,
-              uint16_t priority   = DEFAULT_PRIORITY,
-              bool privileged     = false) : TASK(name, stack_size) {
+               uint16_t stack_size = DEFAULT_STACK_SIZE,
+               uint16_t priority   = DEFAULT_PRIORITY,
+               bool privileged     = false) : TASK(name, stack_size) {
         _priority   = priority;
         _privileged = privileged;
 
