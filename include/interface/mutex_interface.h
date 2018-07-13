@@ -17,8 +17,8 @@
 #ifndef _MUTEX_INTERFACE_H_
 #define _MUTEX_INTERFACE_H_
 
-namespace TIMER {
-    enum mutex_type { SPINLOCK, YIELD, BLOCK };
+namespace MUTEX {
+    enum mutex_type { ACTIVE_WAIT, YIELD, BLOCK };
 }
 
 class mutex_interface {
