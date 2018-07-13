@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <cstring>
 #include "circular_list.h"
+#include "lock_base_interface.h"
 #include "yahal_assert.h"
 
 ///////////////////////////
@@ -47,11 +48,11 @@ protected:
     task_base & operator= (const task_base &) = delete;
 
     // enum type for the different task states.
-    enum state_t : uint8_t { READY=0, SLEEPING=1, SUSPENDED=2 };
+    enum state_t : uint8_t { READY=0, SLEEPING=1, SUSPENDED=2, BLOCKED=3 };
 
     // helper method to convert a state to a string
     inline const char * state_to_str(state_t state) {
-        static const char * names[] = { "READY", "SLEEPING", "SUSPENDED"};
+        static const char * names[] = { "READY", "SLEEPING", "SUSPENDED", "BLOCKED"};
         return names[state];
     }
 
@@ -65,7 +66,9 @@ public:
     void sleep(uint32_t ms);
     void suspend();
     void resume();
+    void block(lock_base_interface * lbi, bool yield = true);
     void join();
+    void yield();
 
     // getters for various attributes
     inline const char * getName()      const { return _name;       }
@@ -105,7 +108,9 @@ protected:
     // by a concrete implementation of a task class
 
     // Handling of run pointers
+public:
     static task_base * _run_ptr;  // Pointer to running Task
+protected:
     static task_base * _run_next; // Pointer to next running Task
 
     static inline void switchToHead() { _run_ptr = _list.getHead(); }
@@ -135,27 +140,26 @@ protected:
     static  void _disable_irq();
     static  void _cpu_sleep();
     static  void _trigger_context_switch();
-public:
-    static  void yield();
 
 private:
     // Instances of task_base are organized as a circular list
     friend class circular_list<task_base>;
     static circular_list<task_base> _list;
-    static uint64_t _up_ticks; // global tick count from start
+    static uint64_t _up_ticks;   // global tick count from start
 
     // private members dealing with linked list
-    bool         _linked_in;   // is this task in the list?
-    task_base *  _next;        // pointer to next task
-    task_base *  _prev;        // pointer to previous task
+    bool         _linked_in;     // is this task in the list?
+    task_base *  _next;          // pointer to next task
+    task_base *  _prev;          // pointer to previous task
 
     // private task members
-    char         _name[16];    // name of the task
-    uint16_t     _priority;    // Task priority
-    state_t      _state;       // state of this task
-    uint32_t     _ticks;       // consumed tick_count
-    uint32_t     _last_ticks;  // _ticks at last call to getDeltaTicks()
-    uint64_t     _sleep_until; // tick count until sleep ends
+    char         _name[16];      // name of the task
+    uint16_t     _priority;      // Task priority
+    state_t      _state;         // state of this task
+    uint32_t     _ticks;         // consumed tick_count
+    uint32_t     _last_ticks;    // _ticks at last call to getDeltaTicks()
+    uint64_t     _sleep_until;   // tick count until sleep ends
+    lock_base_interface * _lock; // pointer to lock if thread is blocked
 };
 
 #endif /* TASK_H */

@@ -38,12 +38,13 @@ task_base::task_base(const char * n, uint16_t stack_size)
 
     // Initialize task attributes
     strncpy(_name, n, 15);
-    _name[15] = '\0';
+    _name[15]    = '\0';
     _priority    = 0;
     _state       = state_t::SUSPENDED;
     _ticks       = 0;
     _last_ticks  = 0;
     _sleep_until = 0;
+    _lock        = nullptr;
 }
 
 task_base::~task_base() {
@@ -86,23 +87,28 @@ void task_base::end() {
 }
 
 void task_base::sleep(uint32_t ms) {
-    _sleep_until  = _up_ticks;
-    _sleep_until += millis2ticks(ms);
-    _state = state_t::SLEEPING;
+    // The task which is calling sleep should sleep!
+    task_base * ptr = _run_ptr;
+    ptr->_sleep_until  = _up_ticks;
+    ptr->_sleep_until += millis2ticks(ms);
+    ptr->_state = state_t::SLEEPING;
     yield();
 }
 
 void task_base::suspend() {
-    if (_state != state_t::SUSPENDED) {
-        _state  = state_t::SUSPENDED;
-        yield();
-    }
+    _state  = state_t::SUSPENDED;
+    yield();
 }
 
 void task_base::resume() {
-    if (_state != state_t::READY) {
-        _state  = state_t::READY;
-    }
+    _state  = state_t::READY;
+    yield();
+}
+
+void task_base::block(lock_base_interface * lbi, bool _yield) {
+    _lock  = lbi;
+    _state = state_t::BLOCKED;
+    if (_yield) yield();
 }
 
 void task_base::join() {
@@ -140,6 +146,12 @@ void task_base::run_scheduler(void) {
                 state = state_t::READY;
             }
         }
+        // Handle blocked Tasks
+        if (state == state_t::BLOCKED) {
+            if (cur_ptr->_lock->is_locked() == false) {
+                state = state_t::READY;
+            }
+        }
         // Look for potential new Tasks to run
         if ((state == state_t::READY) && (prio > max_prio)) {
             max_prio = prio;
@@ -165,6 +177,7 @@ void task_base::tick_handler() {
     ++(_up_ticks);
     // and the millisecond ticks of the running Task
     ++(_run_ptr->_ticks);
+    // find new task to execute
     run_scheduler();
 }
 
