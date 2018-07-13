@@ -284,10 +284,10 @@ public:
     /* Area structure */
     struct AREA
     {
-        int16_t xs;
-        int16_t ys;
-        int16_t xe;
-        int16_t ye;
+        int16_t xs{0};
+        int16_t ys{0};
+        int16_t xe{0};
+        int16_t ye{0};
     };
 
     /* Object structure */
