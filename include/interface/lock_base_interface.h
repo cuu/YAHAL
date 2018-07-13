@@ -12,28 +12,27 @@
 // ---------------------------------------------
 //
 //  This file defines a generic and abstract C++
-//  interface for a simple mutex
+//  interface for a elementary, simple lock. This
+//  interface is the basis for all mutexes, semaphores
+//  or condition variables, and has to be implemented
+//  by every platform.
 
-#ifndef _MUTEX_INTERFACE_H_
-#define _MUTEX_INTERFACE_H_
+#ifndef _LOCK_BASE_INTERFACE_H_
+#define _LOCK_BASE_INTERFACE_H_
 
-namespace TIMER {
-    enum mutex_type { SPINLOCK, YIELD, BLOCK };
-}
-
-class mutex_interface {
+class lock_base_interface {
 public:
-    // Lock the mutex
-    virtual void lock() = 0;
-
-    // Unlock the mutex
-    virtual void unlock() = 0;
-
     // Try to lock. Return true on success.
     virtual bool try_lock() = 0;
 
+    // Unlock lock
+    virtual void unlock() = 0;
+
+    // Status of lock
+    virtual bool is_locked() = 0;
+
 protected:
-    virtual ~mutex_interface() = default;
+    virtual ~lock_base_interface() = default;
 };
 
-#endif /* _MUTEX_INTERFACE_H_ */
+#endif // _LOCK_BASE_INTERFACE_H_
