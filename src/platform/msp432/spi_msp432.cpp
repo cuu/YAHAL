@@ -200,16 +200,11 @@ int16_t spi_msp432::spiTx(const uint8_t *txbuf, uint16_t len) {
 
     _EUSCI_IFG = 0;
     _EUSCI_STATW = 0; // TODO: Works only in Reset mode ...
-    uint8_t rx_byte = _EUSCI_RXBUF;
-    (void)rx_byte; // Remove warning
 
     for (int i = 0; i < len; ++i)
     {
         // Transfer single char to TX buffer
         _EUSCI_TXBUF = (uint16_t) (txbuf[i]);
-        // Receive single char from RX buffer
-        while( !(_EUSCI_IFG & EUSCI_A_IFG_RXIFG));
-        rx_byte = (uint8_t)(_EUSCI_RXBUF);
         // Wait until last data was sent
         while (!(_EUSCI_IFG & EUSCI_A_IFG_TXIFG));
     }
