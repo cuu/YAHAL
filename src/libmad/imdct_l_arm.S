@@ -523,11 +523,14 @@ loop:
     movs    r3, r3, lsr #28
     adc     r3, r3, r4, lsl #4          @ r3 = bits[59..28] of r3..r4
 
-    push    {r1}
-    add     r1, r1, r8
-    lsr     r1, r1, #24
-    str     r3, [r1]                    @ push completion flag off the bottom end
-    pop     {r1}
+	push	{r12}
+	mov     r12, r8
+	lsr     r12, r12, #24
+	add     r12, r1
+	str     r3, [r12]
+	pop		{r12}
+
+@    str     r3, [r1, r8, lsr #24]       @ push completion flag off the bottom end
 
     movs    r8, r8, lsl #8              @ push result location index off the top end
     beq     loop                        @ loop back if completion flag not set
