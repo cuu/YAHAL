@@ -8,11 +8,12 @@
 #ifndef TASK_IDLE_H
 #define TASK_IDLE_H
 
-template<typename TASK>
-class task_idle : public TASK
+#include "task.h"
+
+class task_idle : public task
 {
   public:
-    task_idle() : TASK("IDLE", 200) { }
+    task_idle() : task("IDLE", 200) { }
     virtual ~task_idle() = default;
 
     // No copy, no assignment
@@ -22,7 +23,7 @@ class task_idle : public TASK
     inline void run(void) override {
         // Do nothing but sleep ...
         ///////////////////////////
-        while(true) task_base::_cpu_sleep();
+        while(true) cpu_sleep();
     }
 };
 

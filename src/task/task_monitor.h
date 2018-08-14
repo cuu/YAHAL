@@ -9,7 +9,8 @@
 #define TASKMONITOR_H
 
 #include <cstdio>
-#include "task_base.h"
+#include "yahal_config.h"
+#include "task.h"
 #include "task_timer.h"
 
 #define MONITOR_WAIT 5  // in seconds !!
@@ -25,13 +26,12 @@
 #define CYAN 36
 #define WHITE 37
 
-template<typename T>
-class task_monitor : public task_timer<T>
+class task_monitor : public task_timer
 {
 public:
-    task_monitor() : task_timer<T>("Monitor", 600, 5) {
-        task_timer<T>::setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
-        task_timer<T>::setCallback(callback, this);
+    task_monitor() : task_timer("Monitor", 600, 5) {
+        task_timer::setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
+        task_timer::setCallback(callback, this);
     }
 
     virtual ~task_monitor() = default;
@@ -41,10 +41,10 @@ public:
     task_monitor & operator= (const task_monitor &) = delete;  private:
 
     static void callback(void * data) {
-        task_monitor<T> * _this = (task_monitor<T> *)data;
+        task_monitor * _this = (task_monitor *)data;
 
-        task_base * p = _this->getListHead();
-        uint32_t millis  = task_base::ticks2millis( _this->getUpTicks() );
+        task * p = _this->_list.getHead();
+        uint32_t millis  = task::ticks2millis( _this->getUpTicks() );
         printf(CLEAR_SCREEN);
         printf(VT100_COLOR, BLUE);
         printf("\n             ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%lds) >--- \n\n",
@@ -69,8 +69,8 @@ public:
                             t * 100  / MONITOR_WAIT / TICK_FREQUENCY,
                            (t * 1000 / MONITOR_WAIT / TICK_FREQUENCY) % 10
             );
-            p = p->getNext();
-        } while(p != _this->getListHead());
+            p = p->_next;
+        } while(p != _this->_list.getHead());
         printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
     }
 

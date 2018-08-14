@@ -5,7 +5,7 @@
 
 #include "mutex_interface.h"
 #include "lock_base_interface.h"
-#include "task_base.h"
+#include "task.h"
 
 template<typename T>
 class mutex : public mutex_interface {
@@ -20,21 +20,21 @@ public:
                     continue;
                 }
                 case MUTEX::YIELD: {
-                    task_base::_run_ptr->yield();
+                    task::yield();
                     break;
                 }
                 case MUTEX::BLOCK: {
-                    task_base::_run_ptr->block(&_lock);
+                    task::thisTask()->block(&_lock);
                 }
             }
         }
         // Store which task did get the lock...
-        _task = task_base::_run_ptr;
+        _task = task::thisTask();
     }
 
     inline void unlock() override {
         if (_task){
-            yahal_assert(task_base::_run_ptr == _task);
+            yahal_assert(task::thisTask() == _task);
         }
         _task = nullptr;
         _lock.unlock();
@@ -43,7 +43,7 @@ public:
     inline bool try_lock() override {
         bool res = _lock.try_lock();
         if (res) {
-            _task = task_base::_run_ptr;
+            _task = task::thisTask();
         }
         return res;
     }
@@ -57,7 +57,7 @@ public:
 private:
     T                   _lock;
     MUTEX::mutex_type   _type;
-    task_base *         _task;
+    task *              _task;
 };
 
 #endif // _MUTEX_H_

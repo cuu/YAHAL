@@ -5,25 +5,24 @@
  *      Author: andreas
  */
 
-#include <task_base.h>
-#include <task_idle.h>
+#include "task.h"
+#include "task_idle.h"
 #include "yahal_assert.h"
-
 #include <cstring>
 
 ///////////////////////////////
 // Definition of static members
 ///////////////////////////////
-task_base *   task_base::_run_ptr   = nullptr;
-task_base *   task_base::_run_next  = nullptr;
-circular_list<task_base> task_base::_list;
-uint64_t      task_base::_up_ticks  = 0;
+task *   task::_run_ptr   = nullptr;
+task *   task::_run_next  = nullptr;
+circular_list<task> task::_list;
+uint64_t task::_up_ticks  = 0;
 
 ////////////////
 // CTOR and DTOR
 ////////////////
 
-task_base::task_base(const char * n, uint16_t stack_size)
+task::task(const char * n, uint16_t stack_size)
 {
     // Initialize stack
     _stack_size = stack_size & ~0x3;
@@ -47,12 +46,12 @@ task_base::task_base(const char * n, uint16_t stack_size)
     _lock        = nullptr;
 }
 
-task_base::~task_base() {
+task::~task() {
     delete [] _stack_base;
     _stack_base = nullptr;
 }
 
-void task_base::start(uint16_t priority, bool priv) {
+void task::start(uint16_t priority, bool priv) {
     yahal_assert((priority > 0) && !_linked_in);
 
     // Initialize the stack with a magic number
@@ -75,7 +74,7 @@ void task_base::start(uint16_t priority, bool priv) {
     _enable_irq();
 }
 
-void task_base::end() {
+void task::end() {
     yahal_assert(_linked_in);
     // Link out the Task, so it will not
     // consume any further runtime ...
@@ -86,36 +85,36 @@ void task_base::end() {
     yield();
 }
 
-void task_base::sleep(uint32_t ms) {
+void task::sleep(uint32_t ms) {
     // The task which is calling sleep should sleep!
-    task_base * ptr = _run_ptr;
+    task * ptr = _run_ptr;
     ptr->_sleep_until  = _up_ticks;
     ptr->_sleep_until += millis2ticks(ms);
     ptr->_state = state_t::SLEEPING;
     yield();
 }
 
-void task_base::suspend() {
+void task::suspend() {
     _state  = state_t::SUSPENDED;
     yield();
 }
 
-void task_base::resume() {
+void task::resume() {
     _state  = state_t::READY;
     yield();
 }
 
-void task_base::block(lock_base_interface * lbi, bool _yield) {
+void task::block(lock_base_interface * lbi, bool _yield) {
     _lock  = lbi;
     _state = state_t::BLOCKED;
     if (_yield) yield();
 }
 
-void task_base::join() {
+void task::join() {
     while ( _linked_in ) yield();
 }
 
-uint32_t task_base::getDeltaTicks() {
+uint32_t task::getDeltaTicks() {
     uint32_t now = _ticks;
     uint32_t ret = now - _last_ticks;
     _last_ticks  = now;
@@ -126,14 +125,14 @@ uint32_t task_base::getDeltaTicks() {
 ////////// Private methods ////////////
 ///////////////////////////////////////
 
-void task_base::_run(void) {
+void task::_run(void) {
     run();
     end();
 }
 
-void task_base::run_scheduler(void) {
-    register task_base * cur_ptr  = _run_ptr->_next;
-    register task_base * next_ptr = nullptr;
+void task::_scheduler(void) {
+    register task * cur_ptr  = _run_ptr->_next;
+    register task * next_ptr = nullptr;
     register uint16_t    max_prio = 0;
 
     for(uint16_t i=0; i < _list.getSize(); ++i) {
@@ -172,12 +171,12 @@ void task_base::run_scheduler(void) {
     }
 }
 
-void task_base::tick_handler() {
+void task::_tick_handler() {
     // Increment the global millisecond timer ...
     ++(_up_ticks);
     // and the millisecond ticks of the running Task
     ++(_run_ptr->_ticks);
     // find new task to execute
-    run_scheduler();
+    _scheduler();
 }
 

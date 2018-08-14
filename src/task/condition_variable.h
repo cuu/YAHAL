@@ -12,6 +12,8 @@ public:
     condition_variable() { }
 
     void wait(mutex_interface & m) {
+        // Get the current task (ASAP)
+        task * thisTask = task::thisTask();
         // create a new element and lock the mutex in it
         stop_list_elem elem;
         while(!elem._lock.try_lock()) ;
@@ -20,9 +22,9 @@ public:
         _stop_list.push_back(&elem);
         _stop_list_mutex.unlock();
         // Stop now ...
-        task_base::_run_ptr->block(&elem._lock, false);
+        thisTask->block(&elem._lock, false);
         m.unlock();
-        task_base::_run_ptr->yield();
+        task::yield();
         m.lock();
     }
 
@@ -37,11 +39,9 @@ public:
             stop_list_elem * elem = _stop_list.getHead();
             _stop_list.remove(elem);
             elem->_lock.unlock();
-        } else {
-            yahal_assert(false);
         }
         _stop_list_mutex.unlock();
-        task_base::_run_ptr->yield();
+        task::yield();
     }
 
     void notify_all() {
@@ -52,7 +52,7 @@ public:
             elem->_lock.unlock();
         }
         _stop_list_mutex.unlock();
-        task_base::_run_ptr->yield();
+        task::_run_ptr->yield();
     }
 
     // No copy, no assignment

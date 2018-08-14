@@ -13,16 +13,16 @@
 #define TASK_TIMER_H
 
 #include "timer_interface.h"
+#include "task.h"
 #include <yahal_assert.h>
 
-template<typename TASK>
-class task_timer : public TASK, public timer_interface
+class task_timer : public task, public timer_interface
 {
   public:
     task_timer(const char * name,
                uint16_t stack_size = DEFAULT_STACK_SIZE,
                uint16_t priority   = DEFAULT_PRIORITY,
-               bool privileged     = false) : TASK(name, stack_size) {
+               bool privileged     = false) : task(name, stack_size) {
         _priority   = priority;
         _privileged = privileged;
 
@@ -61,13 +61,13 @@ class task_timer : public TASK, public timer_interface
 
     void start() override {
         resetCounter();
-        task_base::start(_priority, _privileged);
+        task::start(_priority, _privileged);
         _running = true;
     }
 
     void stop() override {
         _running = false;
-        task_base::end();
+        task::end();
     }
 
     bool isRunning() override {
@@ -76,24 +76,24 @@ class task_timer : public TASK, public timer_interface
 
     uint32_t getCounter() override {
         if (_running) {
-            return TASK::ticks2millis(TASK::getUpTicks()) - _start_ms;
+            return ticks2millis(getUpTicks()) - _start_ms;
         } else {
             return 0;
         }
     }
 
     void resetCounter() override {
-        uint64_t now = TASK::ticks2millis(TASK::getUpTicks());
+        uint64_t now = ticks2millis(getUpTicks());
         _start_ms = now;
         _next_ms  = now + _delta_ms;
     }
 
     void run(void) override {
         while(true) {
-            uint64_t now = TASK::ticks2millis(TASK::getUpTicks());
+            uint64_t now = ticks2millis(getUpTicks());
             if (now < _next_ms) {
                 int64_t diff = _next_ms - now;
-                TASK::sleep(diff);
+                sleep(diff);
             } else {
                 _callback(_callback_arg);
                 _start_ms = _next_ms;
