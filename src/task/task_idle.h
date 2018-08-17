@@ -1,12 +1,20 @@
-/*
- * TaskMonitor.h
- *
- *  Created on: 10.07.2017
- *      Author: Andreas Terstegge
- */
-
-#ifndef TASK_IDLE_H
-#define TASK_IDLE_H
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// This idle task. It does nothing but sleep.
+//
+#ifndef _TASK_IDLE_H_
+#define _TASK_IDLE_H_
 
 #include "task.h"
 
@@ -27,5 +35,5 @@ class task_idle : public task
     }
 };
 
-#endif /* TASKIDLE_H */
+#endif /* _TASKIDLE_H_ */
 

@@ -1,17 +1,27 @@
-/*
- * TaskMonitor.h
- *
- *  Created on: 10.07.2017
- *      Author: Andreas Terstegge
- */
-
-#ifndef TASKMONITOR_H
-#define TASKMONITOR_H
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// A task monitor which prints a task table to
+// stdout.
+//
+#ifndef _TASK_MONITOR_H
+#define _TASK_MONITOR_H
 
 #include <cstdio>
 #include "yahal_config.h"
 #include "task.h"
 #include "task_timer.h"
+#include "malloc.h"
 
 #define MONITOR_WAIT 5  // in seconds !!
 
@@ -26,10 +36,13 @@
 #define CYAN 36
 #define WHITE 37
 
+extern uint32_t __data_start__;
+extern uint32_t __heap_start__;
+
 class task_monitor : public task_timer
 {
 public:
-    task_monitor() : task_timer("Monitor", 600, 5) {
+    task_monitor() : task_timer("Monitor", 1024, 5) {
         task_timer::setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
         task_timer::setCallback(callback, this);
     }
@@ -44,47 +57,54 @@ public:
         task_monitor * _this = (task_monitor *)data;
 
         task * p = _this->_list.getHead();
-        uint32_t millis  = task::ticks2millis( _this->getUpTicks() );
+        uint32_t millis  = task::millis();
         printf(CLEAR_SCREEN);
         printf(VT100_COLOR, BLUE);
-        printf("\n             ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%lds) >--- \n\n",
+        printf("\n       ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%lds) >--- \n\n",
                 millis/3600000,
                (millis/60000) % 60,
                (millis/1000)  % 60,
                 millis%1000);
         printf(VT100_COLOR, BLACK);
-        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
-        printf("| Task Name        | Flg | Prio | State     | Stack usage | Ticks/s |  CPU %% |\n");
-        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
+
+        uint32_t ram_start  = (uint32_t)(&__data_start__);
+        uint32_t heap_start = (uint32_t)(&__heap_start__);
+        uint32_t heap_used  = mallinfo().uordblks;
+        printf("RAM usage: data %ld, heap %ld, total: %ld bytes\n",
+               heap_start - ram_start,  heap_used,
+               heap_start - ram_start + heap_used);
+
+        printf("+------------------+-----+------+-----------+-------------+--------+\n");
+        printf("| Task Name        | Flg | Prio | State     | Stack usage |  CPU %% |\n");
+        printf("+------------------+-----+------+-----------+-------------+--------+\n");
         do {
             register uint32_t t = p->getDeltaTicks();
-            printf("| %-16s | %c/%c | %4d | %-9s | %4d / %-4d | %7ld | %2ld.%1ld %% |\n",
+            printf("| %-16s | %c/%c | %4d | %-9s | %4d / %-4d | %2ld.%1ld %% |\n",
                    p->getName(),
                    p->isPrivileged() ? 'P' : 'U', p->isUsingFloat() ? 'F' : 'I',
                            p->getPriority(),
                            _this->state_to_str(p->getState()),
                            _this->used_stack  (p->_stack_base, p->_stack_size),
                            p->_stack_size,
-                            t        / MONITOR_WAIT,
                             t * 100  / MONITOR_WAIT / TICK_FREQUENCY,
                            (t * 1000 / MONITOR_WAIT / TICK_FREQUENCY) % 10
             );
             p = p->_next;
         } while(p != _this->_list.getHead());
-        printf("+------------------+-----+------+-----------+-------------+---------+--------+\n");
+        printf("+------------------+-----+------+-----------+-------------+--------+\n");
     }
 
     friend void callback(void * data);
 
 private:
 
-    uint16_t used_stack  (const uint32_t * stack_base, uint16_t stack_size) {
-        const uint32_t * p = 0;
-        for (p = stack_base; p < (stack_base + stack_size); ++p) {
-            if (*p != STACK_MAGIC) break;
+    uint16_t used_stack  (const uint8_t * stack_base, uint16_t stack_size) {
+        uint16_t i;
+        for (i=0; i < stack_size; ++i) {
+            if (stack_base[i] != STACK_MAGIC) break;
         }
-        return ((uint32_t)stack_base + (uint32_t)stack_size - (uint32_t)p);
+        return stack_size - i;
     }
 };
 
-#endif /* TASKMONITOR_H */
+#endif // _TASK_MONITOR_H

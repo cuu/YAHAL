@@ -1,40 +1,32 @@
-/*
- * Task.cpp
- *
- *  Created on: 10.07.2017
- *      Author: andreas
- */
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
 
 #include "task.h"
 #include "task_idle.h"
 #include "yahal_assert.h"
 #include <cstring>
 
-///////////////////////////////
 // Definition of static members
 ///////////////////////////////
-task *   task::_run_ptr   = nullptr;
-task *   task::_run_next  = nullptr;
+uint64_t            task::_up_ticks  = 0;
+task *              task::_run_ptr   = nullptr;
+task *              task::_run_next  = nullptr;
 circular_list<task> task::_list;
-uint64_t task::_up_ticks  = 0;
 
-////////////////
 // CTOR and DTOR
 ////////////////
-
 task::task(const char * n, uint16_t stack_size)
 {
-    // Initialize stack
-    _stack_size = stack_size & ~0x3;
-    _stack_base = new uint32_t[_stack_size/4];
-    yahal_assert(_stack_base);
-    _stack_ptr   = nullptr;
-
-    // Initialize list stuff
-    _linked_in   = false;
-    _next        = nullptr;
-    _prev        = nullptr;
-
     // Initialize task attributes
     strncpy(_name, n, 15);
     _name[15]    = '\0';
@@ -44,21 +36,36 @@ task::task(const char * n, uint16_t stack_size)
     _last_ticks  = 0;
     _sleep_until = 0;
     _lock        = nullptr;
+
+    // Allocate the stack
+    _stack_size = stack_size;
+    _stack_base = new uint8_t[_stack_size];
+    yahal_assert(_stack_base);
+    _stack_ptr   = nullptr;
+
+    // Initialize circular list attributes
+    _linked_in   = false;
+    _next        = nullptr;
+    _prev        = nullptr;
 }
 
 task::~task() {
+    stop();
     delete [] _stack_base;
     _stack_base = nullptr;
 }
 
+// public task methods
+//////////////////////
 void task::start(uint16_t priority, bool priv) {
     yahal_assert((priority > 0) && !_linked_in);
 
     // Initialize the stack with a magic number
-    for(register uint16_t i=0; i < _stack_size/4; ++i) {
+    for(register uint16_t i=0; i < _stack_size; ++i) {
         _stack_base[i] = STACK_MAGIC;
     }
 
+    // Setup HW specific stack stuff
     _setup_stack(priv);
 
     // Set remaining Task data members
@@ -67,36 +74,36 @@ void task::start(uint16_t priority, bool priv) {
     _ticks       = 0;
     _last_ticks  = 0;
     _sleep_until = 0;
+    _lock        = nullptr;
 
     // Finally link in the Task
-    _disable_irq();
+    disable_irq();
     _list.push_back(this);
-    _enable_irq();
+    enable_irq();
 }
 
-void task::end() {
-    yahal_assert(_linked_in);
-    // Link out the Task, so it will not
-    // consume any further runtime ...
-    _disable_irq();
-    _list.remove(this);
-    _enable_irq();
-    // and switch to another task
-    yield();
+void task::stop() {
+    if (_linked_in) {
+        // Link out the Task, so it will not
+        // consume any further runtime ...
+        disable_irq();
+        _list.remove(this);
+        enable_irq();
+        // and switch to another task
+        yield();
+    }
 }
 
 void task::sleep(uint32_t ms) {
-    // The task which is calling sleep should sleep!
-    task * ptr = _run_ptr;
-    ptr->_sleep_until  = _up_ticks;
-    ptr->_sleep_until += millis2ticks(ms);
-    ptr->_state = state_t::SLEEPING;
-    yield();
+    _sleep_until  = _up_ticks;
+    _sleep_until += (ms * TICK_FREQUENCY) / 1000;
+    _state = state_t::SLEEPING;
+    if (task::runningTask() == this) yield();
 }
 
 void task::suspend() {
     _state  = state_t::SUSPENDED;
-    yield();
+    if (task::runningTask() == this) yield();
 }
 
 void task::resume() {
@@ -104,10 +111,9 @@ void task::resume() {
     yield();
 }
 
-void task::block(lock_base_interface * lbi, bool _yield) {
+void task::block(lock_base_interface * lbi) {
     _lock  = lbi;
     _state = state_t::BLOCKED;
-    if (_yield) yield();
 }
 
 void task::join() {
@@ -121,19 +127,19 @@ uint32_t task::getDeltaTicks() {
     return ret;
 }
 
-///////////////////////////////////////
-////////// Private methods ////////////
-///////////////////////////////////////
-
+// private methods
+//////////////////
 void task::_run(void) {
     run();
-    end();
+    stop();
 }
 
+// methods which will be called by IRQ handlers
+///////////////////////////////////////////////
 void task::_scheduler(void) {
-    register task * cur_ptr  = _run_ptr->_next;
-    register task * next_ptr = nullptr;
-    register uint16_t    max_prio = 0;
+    register task *     cur_ptr  = _run_ptr->_next;
+    register task *     next_ptr = nullptr;
+    register uint16_t   max_prio = 0;
 
     for(uint16_t i=0; i < _list.getSize(); ++i) {
         register state_t & state = cur_ptr->_state;
@@ -167,7 +173,7 @@ void task::_scheduler(void) {
     // Check if we need a context switch
     if (next_ptr != _run_ptr) {
         _run_next = next_ptr;
-        _trigger_context_switch();
+        _context_switch();
     }
 }
 

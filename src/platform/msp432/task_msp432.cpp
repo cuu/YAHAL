@@ -1,18 +1,26 @@
-/*
- * Task.cpp
- *
- *  Created on: 10.07.2017
- *      Author: andreas
- */
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Low-level task implementation for MSP432/Cortex M4(F)
+//
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpmf-conversions"
 
 #include "yahal_config.h"
+#include "yahal_assert.h"
 #include "msp.h"
 #include "task.h"
 #include "task_idle.h"
-#include "yahal_assert.h"
 #include <cstring>
 
 //////////////////
@@ -23,30 +31,9 @@
 #define SYS_START_SCHEDULER     0
 #define SYS_YIELD               1
 
-///////////////////
-// The IRQ handlers
-///////////////////
-
-extern "C" {
-void SysTick_Handler(void);
-void PendSV_Handler (void);
-void SVC_Handler    (void);
-void SVC_Handler_C  (uint32_t *);
-}
-
-void task::_enable_irq()             { __enable_irq();      }
-void task::_disable_irq()            { __disable_irq();     }
-void task::_trigger_context_switch() { SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk; }
-
-void task::start_scheduler()         { sys_call(SYS_START_SCHEDULER); }
-void task::yield()                   { sys_call(SYS_YIELD); }
-void task::cpu_sleep()               { __WFE();             }
-
-///////////////////////////////
 // Definition of static members
 ///////////////////////////////
-
-static uint32_t _exc_ret = 0;
+static uint32_t _exec_ret = 0;
 
 //////////////////////////////////////////
 // The following structure defines a stack
@@ -87,13 +74,37 @@ void task::_setup_stack(bool priv) {
     yahal_assert(_stack_size > sizeof(Stack_Frame));
 
     _stack_ptr = _stack_base +
-                (_stack_size - sizeof(Stack_Frame))/sizeof(uint32_t);
+                (_stack_size - sizeof(Stack_Frame));
 
     Stack_Frame *frame = (Stack_Frame *)_stack_ptr;
     frame->psr  = 0x01000000;   // Set the Thumb-Bit
     frame->pc   = (void (*)(void))(&task::_run);
     frame->r0   = this;         // Set the 'this'-pointer
     frame->ctrl = priv ? 0x02 : 0x03;
+}
+
+void task::_context_switch() {
+    SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+}
+
+void task::start_scheduler() {
+    sys_call(SYS_START_SCHEDULER);
+}
+
+void task::yield() {
+    sys_call(SYS_YIELD);
+}
+
+void task::cpu_sleep() {
+    __WFE();
+}
+
+void task::enable_irq() {
+    __enable_irq();
+}
+
+void task::disable_irq() {
+    __disable_irq();
 }
 
 bool task::isPrivileged() const {
@@ -137,10 +148,10 @@ void __attribute__((optimize("O0"))) PendSV_Handler(void) {
     "       vstmdbeq    r0!, {s16-s31}      @ \n"
     "       stmdb       r0!, {r3-r11}       @ \n");
 
-    register uint32_t * psp asm("r0");
+    register uint8_t * psp asm("r0");
     task::_setStackPtr(psp);
 #ifdef CHECK_STACK_OVERFLOW
-    yahal_assert((psp - task_base::_run_ptr->_stack_base) > 10);
+    yahal_assert((psp - task::_getStackBase()) > 10);
 #endif
     task::_switchToNext();
     psp = task::_getStackPtr();
@@ -170,7 +181,7 @@ void SVC_Handler(void) {
     "       ldr         r1, =%[exec_ret]    @ \n"
     "       ldr         lr, [r1]            @ Restore LR value \n"
     "       bx          lr                  @ \n"
-    : : [exec_ret] "i" (&_exc_ret) );
+    : : [exec_ret] "i" (&_exec_ret) );
 }
 
 void SVC_Handler_C(uint32_t * args) {
@@ -201,11 +212,11 @@ void SVC_Handler_C(uint32_t * args) {
             SysTick_Config(SystemCoreClock / TICK_FREQUENCY);
 
             // Return in unprivileged mode
-            _exc_ret = 0xfffffffd;
+            _exec_ret = 0xfffffffd;
 
             // Only restore regiters r0-PSR, because these
             // will be restored on return of the SVC-handler
-            __set_PSP((uint32_t)(task::_getStackPtr() + 9));
+            __set_PSP((uint32_t)(task::_getStackPtr() + 36));
 
             // Set control register
             __set_CONTROL(task::_getStackPtr()[0]);
@@ -228,6 +239,6 @@ void SVC_Handler_C(uint32_t * args) {
     }
 }
 
-}
+} // extern "C"
 
 #pragma GCC diagnostic pop

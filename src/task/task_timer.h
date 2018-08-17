@@ -1,16 +1,22 @@
-/*
- * task_timer.h
- *
- * A simple timer_interface implementation based on
- * the task class. The maximum timer resolution is
- * the tick count period - typically 1ms.
- *
- *  Created on: 24.07.2017
- *      Author: Andreas Terstegge
- */
-
-#ifndef TASK_TIMER_H
-#define TASK_TIMER_H
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// A simple timer_interface implementation based on
+// the task class. The maximum timer resolution is
+// the tick count period - typically 1ms.
+//
+#ifndef _TASK_TIMER_H_
+#define _TASK_TIMER_H_
 
 #include "timer_interface.h"
 #include "task.h"
@@ -67,7 +73,7 @@ class task_timer : public task, public timer_interface
 
     void stop() override {
         _running = false;
-        task::end();
+        task::stop();
     }
 
     bool isRunning() override {
@@ -76,21 +82,21 @@ class task_timer : public task, public timer_interface
 
     uint32_t getCounter() override {
         if (_running) {
-            return ticks2millis(getUpTicks()) - _start_ms;
+            return task::millis() - _start_ms;
         } else {
             return 0;
         }
     }
 
     void resetCounter() override {
-        uint64_t now = ticks2millis(getUpTicks());
+        uint64_t now = task::millis();
         _start_ms = now;
         _next_ms  = now + _delta_ms;
     }
 
     void run(void) override {
         while(true) {
-            uint64_t now = ticks2millis(getUpTicks());
+            uint64_t now = task::millis();
             if (now < _next_ms) {
                 int64_t diff = _next_ms - now;
                 sleep(diff);
@@ -123,4 +129,4 @@ class task_timer : public task, public timer_interface
 
 };
 
-#endif /* TASKTIMER_H */
+#endif /* _TASK_TIMER_H_ */

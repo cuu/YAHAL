@@ -1,10 +1,44 @@
-// This is a checked mutex implementation
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// A simple mutex implementation with the typical
+// lock()/unlock()/try_lock() methods. This class
+// template relies on a platform specific mutex_interface
+// implementation.
+// Note that lock() and unlock() have to be called from
+// the same task! Otherwise a assertion will fail. There
+// are 3 modes for a mutex when waiting for the lock.
+// The mode is specified as the constructor parameter.
+//
+// ACTIVE_WAIT:
+// The mutex actively polls for the lock. This makes sense
+// if e.g. a HW trigger/IRQ handler releases the lock.
+//
+// YIELD:
+// The mutex passes back the control to the scheduler, but
+// does not block the task.
+//
+// BLOCK:
+// The task is blocked and does not get any further time
+// slices until the lock is unlocked. This is also the
+// default mode!
+//
 #ifndef _MUTEX_H_
 #define _MUTEX_H_
 
 #include "mutex_interface.h"
 #include "lock_base_interface.h"
+#include "yahal_assert.h"
 #include "task.h"
 
 template<typename T>
@@ -24,17 +58,18 @@ public:
                     break;
                 }
                 case MUTEX::BLOCK: {
-                    task::thisTask()->block(&_lock);
+                    task::runningTask()->block(&_lock);
+                    task::yield();
                 }
             }
         }
         // Store which task did get the lock...
-        _task = task::thisTask();
+        _task = task::runningTask();
     }
 
     inline void unlock() override {
         if (_task){
-            yahal_assert(task::thisTask() == _task);
+            yahal_assert(task::runningTask() == _task);
         }
         _task = nullptr;
         _lock.unlock();
@@ -43,12 +78,10 @@ public:
     inline bool try_lock() override {
         bool res = _lock.try_lock();
         if (res) {
-            _task = task::thisTask();
+            _task = task::runningTask();
         }
         return res;
     }
-
-    T * getLock() { return &_lock; }
 
     // No copy, no assignment
     mutex             (const mutex &) = delete;

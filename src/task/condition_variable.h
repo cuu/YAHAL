@@ -1,3 +1,20 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Simple condition variable implementation.
+// A condition variable stores all needed mutexes
+// in a circular list.
+//
 #ifndef _CONDITION_VARIABLE_H_
 #define _CONDITION_VARIABLE_H_
 
@@ -13,7 +30,7 @@ public:
 
     void wait(mutex_interface & m) {
         // Get the current task (ASAP)
-        task * thisTask = task::thisTask();
+        task * thisTask = task::runningTask();
         // create a new element and lock the mutex in it
         stop_list_elem elem;
         while(!elem._lock.try_lock()) ;
@@ -21,9 +38,14 @@ public:
         _stop_list_mutex.lock();
         _stop_list.push_back(&elem);
         _stop_list_mutex.unlock();
-        // Stop now ...
-        thisTask->block(&elem._lock, false);
+        // Stop now. We have to block this task and
+        // also unlock the mutex m. This operation has
+        // to be atomic, so interrupts are disabled.
+        task::disable_irq();
+        thisTask->block(&elem._lock);
         m.unlock();
+        task::enable_irq();
+        // Switch to other task
         task::yield();
         m.lock();
     }
@@ -52,7 +74,7 @@ public:
             elem->_lock.unlock();
         }
         _stop_list_mutex.unlock();
-        task::_run_ptr->yield();
+        task::yield();
     }
 
     // No copy, no assignment
