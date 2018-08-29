@@ -77,18 +77,18 @@ void task::start(uint16_t priority, bool priv) {
     _lock        = nullptr;
 
     // Finally link in the Task
-    disable_irq();
+    enterCritical();
     _list.push_back(this);
-    enable_irq();
+    leaveCritical();
 }
 
 void task::stop() {
     if (_linked_in) {
         // Link out the Task, so it will not
         // consume any further runtime ...
-        disable_irq();
+        enterCritical();
         _list.remove(this);
-        enable_irq();
+        leaveCritical();
         // and switch to another task
         yield();
     }
@@ -98,12 +98,12 @@ void task::sleep(uint32_t ms) {
     _sleep_until  = _up_ticks;
     _sleep_until += (ms * TICK_FREQUENCY) / 1000;
     _state = state_t::SLEEPING;
-    if (task::runningTask() == this) yield();
+    if (task::currentTask() == this) yield();
 }
 
 void task::suspend() {
     _state  = state_t::SUSPENDED;
-    if (task::runningTask() == this) yield();
+    if (task::currentTask() == this) yield();
 }
 
 void task::resume() {
@@ -118,6 +118,14 @@ void task::block(lock_base_interface * lbi) {
 
 void task::join() {
     while ( _linked_in ) yield();
+}
+
+uint16_t task::getUsedStack() {
+    uint16_t i;
+    for (i=0; i < _stack_size; ++i) {
+        if (_stack_base[i] != STACK_MAGIC) break;
+    }
+    return _stack_size - i;
 }
 
 uint32_t task::getDeltaTicks() {

@@ -42,7 +42,7 @@ extern uint32_t __heap_start__;
 class task_monitor : public task_timer
 {
 public:
-    task_monitor() : task_timer("Monitor", 1024, 5) {
+    task_monitor() : task_timer("Monitor", 600, 5) {
         task_timer::setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
         task_timer::setCallback(callback, this);
     }
@@ -51,8 +51,10 @@ public:
 
     // No copy, no assignment
     task_monitor             (const task_monitor &) = delete;
-    task_monitor & operator= (const task_monitor &) = delete;  private:
+    task_monitor & operator= (const task_monitor &) = delete;
 
+private:
+    friend void callback(void * data);
     static void callback(void * data) {
         task_monitor * _this = (task_monitor *)data;
 
@@ -60,7 +62,7 @@ public:
         uint32_t millis  = task::millis();
         printf(CLEAR_SCREEN);
         printf(VT100_COLOR, BLUE);
-        printf("\n       ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%lds) >--- \n\n",
+        printf("\n       ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%03lds) >--- \n\n",
                 millis/3600000,
                (millis/60000) % 60,
                (millis/1000)  % 60,
@@ -70,7 +72,7 @@ public:
         uint32_t ram_start  = (uint32_t)(&__data_start__);
         uint32_t heap_start = (uint32_t)(&__heap_start__);
         uint32_t heap_used  = mallinfo().uordblks;
-        printf("RAM usage: data %ld, heap %ld, total: %ld bytes\n",
+        printf("       RAM usage: data %ld, heap %ld, total: %ld bytes\n",
                heap_start - ram_start,  heap_used,
                heap_start - ram_start + heap_used);
 
@@ -84,26 +86,13 @@ public:
                    p->isPrivileged() ? 'P' : 'U', p->isUsingFloat() ? 'F' : 'I',
                            p->getPriority(),
                            _this->state_to_str(p->getState()),
-                           _this->used_stack  (p->_stack_base, p->_stack_size),
-                           p->_stack_size,
+                           p->getUsedStack(), p->getStackSize(),
                             t * 100  / MONITOR_WAIT / TICK_FREQUENCY,
                            (t * 1000 / MONITOR_WAIT / TICK_FREQUENCY) % 10
             );
             p = p->_next;
         } while(p != _this->_list.getHead());
         printf("+------------------+-----+------+-----------+-------------+--------+\n");
-    }
-
-    friend void callback(void * data);
-
-private:
-
-    uint16_t used_stack  (const uint8_t * stack_base, uint16_t stack_size) {
-        uint16_t i;
-        for (i=0; i < stack_size; ++i) {
-            if (stack_base[i] != STACK_MAGIC) break;
-        }
-        return stack_size - i;
     }
 };
 

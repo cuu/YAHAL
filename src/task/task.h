@@ -115,7 +115,12 @@ public:
     inline void          setPriority(uint8_t p)  { _priority = p;    }
     inline state_t       getState()     const    { return _state;    }
     inline uint32_t      getMillisRun() const    { return (_ticks * 1000) / TICK_FREQUENCY; }
-    inline static task * runningTask()           { return _run_ptr;  }
+    inline uint16_t      getStackSize() const    { return _stack_size; }
+    inline static task * currentTask()           { return _run_ptr;    }
+    inline bool          isAlive()      const    { return _linked_in;  }
+
+    // method to report the number of used bytes in the stack
+    uint16_t getUsedStack();
 
     // method to report current uptime in milliseconds
     static inline uint64_t millis() {
@@ -167,8 +172,8 @@ public:
     static void start_scheduler();
     static void yield();
     static void cpu_sleep();
-    static void enable_irq();
-    static void disable_irq();
+    static void enterCritical();
+    static void leaveCritical();
 
     bool isPrivileged() const;
     bool isUsingFloat() const;

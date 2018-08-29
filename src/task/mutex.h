@@ -58,18 +58,18 @@ public:
                     break;
                 }
                 case MUTEX::BLOCK: {
-                    task::runningTask()->block(&_lock);
+                    task::currentTask()->block(&_lock);
                     task::yield();
                 }
             }
         }
         // Store which task did get the lock...
-        _task = task::runningTask();
+        _task = task::currentTask();
     }
 
     inline void unlock() override {
         if (_task){
-            yahal_assert(task::runningTask() == _task);
+            yahal_assert(task::currentTask() == _task);
         }
         _task = nullptr;
         _lock.unlock();
@@ -78,7 +78,7 @@ public:
     inline bool try_lock() override {
         bool res = _lock.try_lock();
         if (res) {
-            _task = task::runningTask();
+            _task = task::currentTask();
         }
         return res;
     }

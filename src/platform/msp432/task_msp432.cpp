@@ -62,7 +62,7 @@ struct Stack_Frame {
 
     task *      r0;     // register R0 (the 'this' pointer in C++ calls)
     uint32_t    r1;     // .
-    uint32_t    r2;     // . to ...
+    uint32_t    r2;     // . ...to ...
     uint32_t    r3;     // .
     uint32_t    r12;    // register R12
     uint32_t    lr;     // register R14 (=LR)
@@ -99,12 +99,17 @@ void task::cpu_sleep() {
     __WFE();
 }
 
-void task::enable_irq() {
-    __enable_irq();
+void task::enterCritical() {
+    NVIC_DisableIRQ(PendSV_IRQn);
+//    __disable_irq();
+    __DSB();
+    __ISB();
 }
 
-void task::disable_irq() {
-    __disable_irq();
+void task::leaveCritical() {
+    NVIC_EnableIRQ(PendSV_IRQn);
+//    __enable_irq();
+    __ISB();
 }
 
 bool task::isPrivileged() const {
