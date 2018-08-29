@@ -163,24 +163,6 @@
 / Drive/Volume Configurations
 /---------------------------------------------------------------------------*/
 
-#define FF_VOLUMES		1
-/* Number of volumes (logical drives) to be used. (1-10) */
-
-
-#define FF_STR_VOLUME_ID	0
-#define FF_VOLUME_STRS		"RAM","NAND","CF","SD","SD2","USB","USB2","USB3"
-/* FF_STR_VOLUME_ID switches support for volume ID in arbitrary strings.
-/  When FF_STR_VOLUME_ID is set to 1 or 2, arbitrary strings can be used as drive
-/  number in the path name. FF_VOLUME_STRS defines the volume ID strings for each
-/  logical drives. Number of items must not be less than FF_VOLUMES. Valid
-/  characters for the volume ID strings are A-Z, a-z and 0-9, however, they are
-/  compared in case-insensitive. If FF_STR_VOLUME_ID >= 1 and FF_VOLUME_STRS is
-/  not defined, a user defined volume string table needs to be defined as:
-/
-/  const char* VolumeStr[FF_VOLUMES] = {"ram","flash","sd","usb",...
-*/
-
-
 #define FF_MULTI_PARTITION	0
 /* This option switches support for multiple volumes on the physical drive.
 /  By default (0), each logical drive number is bound to the same physical drive
@@ -236,7 +218,7 @@
 /  Note that enabling exFAT discards ANSI C (C89) compatibility. */
 
 
-#define FF_FS_NORTC		0
+#define FF_FS_NORTC		1
 #define FF_NORTC_MON	1
 #define FF_NORTC_MDAY	1
 #define FF_NORTC_YEAR	2018

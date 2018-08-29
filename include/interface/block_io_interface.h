@@ -20,34 +20,48 @@
 
 #include <stdint.h>
 
-typedef uint8_t blockio_result_t;
 typedef uint8_t blockio_status_t;
 
-const blockio_result_t RES_OK     = 0;  // 0: Successful
-const blockio_result_t RES_ERROR  = 1;  // 1: R/W Error
-const blockio_result_t RES_WRPRT  = 2;  // 2: Write Protected
-const blockio_result_t RES_NOTRDY = 3;  // 3: Not Ready
-const blockio_result_t RES_PARERR = 4;  // 4: Invalid Parameter
-
-const blockio_status_t STA_NOINIT  = 0x01; // Drive not initialized
-const blockio_status_t STA_NODISK  = 0x02; // No medium in the drive
-const blockio_status_t STA_PROTECT = 0x04; // Write protected
-
-
 namespace BLOCKIO {
+    // Enum for return value of blockio operations
+    enum result_t {
+        OK     = 0, // 0: Successful
+        ERROR  = 1, // 1: R/W Error
+        WRPRT  = 2, // 2: Write Protected
+        NOTRDY = 3, // 3: Not Ready
+        PARERR = 4  // 4: Invalid Parameter
+    };
+    // Bit masks for device status
+    const blockio_status_t NOINIT  = 0x01;
+    const blockio_status_t NODISK  = 0x02;
+    const blockio_status_t PROTECT = 0x04;
 }
 
 class block_io_interface {
 public:
-
+    // Initialize device and return status
     virtual blockio_status_t initialize() = 0;
-    virtual blockio_status_t status    () = 0;
 
-    virtual blockio_result_t readBlock (uint8_t* buff, uint32_t block, uint16_t count) = 0;
-    virtual blockio_result_t writeBlock(const uint8_t* buff, uint32_t block, uint16_t count) = 0;
+    // Get current device status
+    virtual blockio_status_t status() = 0;
 
-    virtual uint32_t         getBlockCount() = 0;
-    virtual blockio_result_t sync() = 0;
+    // Read in 'count' 512-byte blocks. Start reading at 'start_block'.
+    // Store the data in buff, which has to point to a memory buffer
+    // with at least 512 * count bytes size.
+    virtual BLOCKIO::result_t readBlock(uint8_t* buff, uint32_t start_block,
+                                        uint16_t count) = 0;
+
+    // Write 'count' 512-byte blocks. Start storing at 'start_block'.
+    // Read the data from buff, which has to point to a memory buffer
+    // with at least 512 * count bytes size.
+    virtual BLOCKIO::result_t writeBlock(const uint8_t* buff, uint32_t start_block,
+                                         uint16_t count) = 0;
+
+    // Get the block count (total size of device is 512 * count bytes)
+    virtual uint32_t getBlockCount() = 0;
+
+    // Sync the IO device (dirty buffers are written)
+    virtual BLOCKIO::result_t sync() = 0;
 
 protected:
     virtual ~block_io_interface() = default;

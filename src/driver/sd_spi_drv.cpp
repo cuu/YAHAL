@@ -21,12 +21,12 @@ blockio_status_t sd_spi_drv::initialize() {
         }
     }
     if (!sd_init_ok)
-        return STA_NOINIT;
+        return BLOCKIO::NOINIT;
 
     // read various registers
-    if (sd_read_status()) return STA_NOINIT;
-    if (sd_read_cid())    return STA_NOINIT;
-    if (sd_read_csd())    return STA_NOINIT;
+    if (sd_read_status()) return BLOCKIO::NOINIT;
+    if (sd_read_cid())    return BLOCKIO::NOINIT;
+    if (sd_read_csd())    return BLOCKIO::NOINIT;
 
     _initialized = true;
     return 0;
@@ -34,30 +34,30 @@ blockio_status_t sd_spi_drv::initialize() {
 
 blockio_status_t sd_spi_drv::status() {
     if (!_initialized) {
-        return STA_NOINIT;
+        return BLOCKIO::NOINIT;
     } else {
         return 0;
     }
 }
 
-blockio_result_t sd_spi_drv::readBlock (uint8_t* buff, uint32_t block, uint16_t count) {
+BLOCKIO::result_t sd_spi_drv::readBlock (uint8_t* buff, uint32_t block, uint16_t count) {
     if (!_initialized) initialize();
 
     for (int i=0; i < count; ++i) {
         int r = sd_readsector(block+i, buff+512*i);
-        if (r) return RES_ERROR;
+        if (r) return BLOCKIO::ERROR;
     }
-    return RES_OK;
+    return BLOCKIO::OK;
 }
 
-blockio_result_t sd_spi_drv::writeBlock(const uint8_t* buff, uint32_t block, uint16_t count) {
+BLOCKIO::result_t sd_spi_drv::writeBlock(const uint8_t* buff, uint32_t block, uint16_t count) {
     if (!_initialized) initialize();
 
     for (int i=0; i < count; ++i) {
         int r = sd_writesector(block+i, buff+512*i);
-        if (r) return RES_ERROR;
+        if (r) return BLOCKIO::ERROR;
     }
-    return RES_OK;
+    return BLOCKIO::OK;
 }
 
 

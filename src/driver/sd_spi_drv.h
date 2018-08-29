@@ -13,13 +13,13 @@ public:
     blockio_status_t initialize() override;
     blockio_status_t status() override;
 
-    blockio_result_t readBlock (uint8_t* buff, uint32_t block, uint16_t count) override;
-    blockio_result_t writeBlock(const uint8_t* buff, uint32_t block, uint16_t count) override;
+    BLOCKIO::result_t readBlock (uint8_t* buff, uint32_t block, uint16_t count) override;
+    BLOCKIO::result_t writeBlock(const uint8_t* buff, uint32_t block, uint16_t count) override;
 
     uint32_t getBlockCount() override;
 
     // We do not use buffers, so there is nothing to sync...
-    blockio_result_t sync() override { return RES_OK; }
+    BLOCKIO::result_t sync() override { return BLOCKIO::OK; }
 
 private:
 
