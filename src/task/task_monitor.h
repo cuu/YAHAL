@@ -42,7 +42,7 @@ extern uint32_t __heap_start__;
 class task_monitor : public task_timer
 {
 public:
-    task_monitor() : task_timer("Monitor", 600, 5) {
+    task_monitor() : task_timer("Monitor", 700, 5) {
         task_timer::setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
         task_timer::setCallback(callback, this);
     }

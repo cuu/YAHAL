@@ -21,7 +21,7 @@
 class task_idle : public task
 {
   public:
-    task_idle() : task("IDLE", 120) { }
+    task_idle() : task("IDLE", 200) { }
     virtual ~task_idle() = default;
 
     // No copy, no assignment
