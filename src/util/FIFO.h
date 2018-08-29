@@ -22,7 +22,7 @@ public:
         if (_get_ptr == _put_ptr) {
             return false;
         }
-        T * nextget = _get_ptr + 1;
+        T * nextget =  _get_ptr + 1;
         if (nextget == _need_wrap) {
             nextget =  _buffer;
         }
@@ -54,7 +54,7 @@ public:
     }
 
     volatile int available_put() volatile {
-        return _buffer_size - available_get() -1;
+        return _buffer_size - available_get() - 1;
     }
 
 private:
