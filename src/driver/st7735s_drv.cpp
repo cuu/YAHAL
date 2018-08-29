@@ -330,6 +330,8 @@ void st7735s_drv::inverseColors(bool b)
         _mutex->unlock();
 }
 
+// private methods.
+///////////////////
 void st7735s_drv::change(uint16_t & x, uint16_t & y)
 {
     switch (_orientation)
