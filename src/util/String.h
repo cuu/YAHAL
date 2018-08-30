@@ -23,6 +23,9 @@
 class String
 {
 public:
+
+    static const uint16_t npos = -1;
+
     // Constructors
     String(const char * ptr = "");
     String(const String &);
@@ -47,6 +50,8 @@ public:
 
     // Capacity
     bool     empty() const { return _len == 0; }
+	/* Returns the number of characters in the string,
+	 * not including any null-terminaltion */
     uint16_t size()  const { return _len; }
     void     reserve(uint16_t);
     uint16_t capacity() const { return _cap; }
@@ -56,8 +61,27 @@ public:
     void clear();
     String & operator += (const String &);
 
+    // Returns a newly constructed string object with
+    // its value initialized to a copy of a substring
+    // of this object. The substring is the portion of
+    // the object that starts at character position pos
+    // and spans len characters (or until the end of the
+    // string, whichever comes first).
+    String substr(uint16_t pos=0, uint16_t n=npos) const;
+
+    // Searches the string for the first occurrence of
+    // character c. When pos is specified, the search
+    // only includes characters at or after position pos,
+    // ignoring any possible occurrences that include
+    // characters before pos.
+    uint16_t find (char c, uint16_t pos=0) const;
+
     // Conversions
     operator const char * () { return _ptr; }
+
+    // Comparison operators
+    bool operator==(const String& r) const;
+    bool operator!=(const String& r) const;
 
 protected:
     uint16_t _len;
