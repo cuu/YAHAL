@@ -53,7 +53,7 @@ public:
         return res;
     }
 
-    volatile int available_put() volatile {
+    int available_put() volatile {
         return _buffer_size - available_get() - 1;
     }
 

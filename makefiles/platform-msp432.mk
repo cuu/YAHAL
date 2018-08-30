@@ -37,11 +37,11 @@ MSP_INC_DIR = $(YAHAL_DIR)/include/platform/$(PLATFORM)
 DSLITE = $(CCS_ROOT)/ccs_base/DebugServer/bin/DSLite
 
 # Flag helper variables
-FLAGS_F         = -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables
-FLAGS_M         = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs
-FLAGS_DEBUG     = -g -gdwarf-3 -gstrict-dwarf
-FLAGS_WARN      = -Wall -Wextra
-FLAGS_OPT       = # -Os
+FLAGS_F        += -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables
+FLAGS_M        += -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs
+FLAGS_DEBUG    += -g -gdwarf-3 -gstrict-dwarf
+FLAGS_WARN     += -Wall -Wextra
+FLAGS_OPT      += # -Os
 
 FLAGS_CXX       = -fno-threadsafe-statics -fno-exceptions -std=c++11
 FLAGS_C         =
@@ -87,7 +87,7 @@ PLATFORM_INC_DIRS += $(QUOTE)$(MSP_INC_DIR)/CMSIS$(QUOTE)
 ####################################
 define PLATFORM_RULES
 .PHONY: upload
-upload: $(TARGET)
-	$(DSLITE) load -c $(MSP_INC_DIR)/MSP432P401R.ccxml -f $$^
+upload: all
+	$(DSLITE) load -c $(MSP_INC_DIR)/MSP432P401R.ccxml -f $(TARGET)
 endef
 

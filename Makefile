@@ -59,5 +59,8 @@ INC_DIRS += src/libmad
 SRC_DIRS += src/libmad
 endif
 
+# Optimization settings 
+# FLAGS_OPT = -Ofast
+
 include makefiles/common.mk
 

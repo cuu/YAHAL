@@ -33,10 +33,12 @@ public:
       _cs (PORT_PIN(10,0)),
       _spi(EUSCI_B3_SPI, _cs),
       _sd (_spi),
-      _btn(PORT_PIN(1,4)),
+      _next(PORT_PIN(1,4)),
+      _part(PORT_PIN(1,1)),
       _fs (_sd)
     {
-        _btn.gpioMode(GPIO::INPUT | GPIO::PULLUP);
+        _next.gpioMode(GPIO::INPUT | GPIO::PULLUP);
+        _part.gpioMode(GPIO::INPUT | GPIO::PULLUP);
     }
 
     void run() override {
@@ -46,18 +48,20 @@ public:
         mp3_decoder_task decoder(sd_reader, audio_output);
         audio_output.start();
 
-        // Mount SD card (auto partition)
-        FatFs::FRESULT res = _fs.mount();
+        // Mount SD card.
+        // If button S1 is not pressed during reset, auto-partition mode is
+        // used. If button S1 is pressed, partition 2 on the SD card is used.
+        FatFs::FRESULT res = _fs.mount(_part.gpioRead() == LOW ? 2 : 0);
 
         // Find first MP3 file
-        yahal_assert(res == FatFs::FRESULT::FR_OK);
+        yahal_assert(res == FatFs::FR_OK);
         res = _fs.findfirst(&_dir, &_finfo, "", "*.mp3");
 
         // Loop over all MP3 files
         while(res == FatFs::FR_OK && _finfo.fname[0]) {
             // Open the MP3 file
             res = _fs.open (&_file, _finfo.fname, FA_OPEN_EXISTING | FA_READ);
-            yahal_assert(res == FatFs::FRESULT::FR_OK);
+            yahal_assert(res == FatFs::FR_OK);
 
             // Start the SD reader and decoder tasks
             sd_reader.start(&_fs, &_file);
@@ -66,14 +70,15 @@ public:
             // Wait until file has been played. Check
             // for NEXT-button to skip to next file
             while(sd_reader.isAlive() || decoder.isAlive()) {
-                if (_btn.gpioRead() == LOW) {
+                if (_next.gpioRead() == LOW) {
                     // Stop playing the current title
                     sd_reader.force_eof();
                 }
                 sleep(200);
             }
-            // Wait until button is released
-            while(_btn.gpioRead() == LOW) sleep(100);
+            // Wait until button is released, so we only
+            // skip _one_ song...
+            while(_next.gpioRead() == LOW) sleep(100);
 
             // Close the MP3 file and find next one
             _fs.close(&_file);
@@ -88,7 +93,8 @@ private:
     spi_msp432      _spi;   // SPI interface used for the SD card reader
     sd_spi_drv      _sd;    // SD card low level driver
 
-    gpio_msp432_pin _btn;   // Next button
+    gpio_msp432_pin _next;  // Next button
+    gpio_msp432_pin _part;  // Partition button
 
     FatFs           _fs;
     FatFs::DIR      _dir;

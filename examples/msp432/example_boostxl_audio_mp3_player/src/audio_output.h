@@ -1,3 +1,16 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
 
 #ifndef _AUDIO_OUTPUT_H_
 #define _AUDIO_OUTPUT_H_
@@ -28,8 +41,8 @@ public:
         _pcm_timer.setNanoPeriod(1000000000/kHz+1, TIMER::PERIODIC);
     }
 
-    int  fifo_available_put() { return _pcm_fifo.available_put(); }
-    void fifo_put(uint16_t v) { _pcm_fifo.put(v); }
+    inline int  fifo_available_put() { return _pcm_fifo.available_put(); }
+    inline void fifo_put(uint16_t v) { _pcm_fifo.put(v); }
 
 private:
     // BoostXL-Audio Objects

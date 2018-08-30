@@ -129,6 +129,7 @@ enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * hea
 ////////////////////////////
 enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad_pcm *pcm)
 {
+    (void)(header);
     mp3_decoder_task * _this = (mp3_decoder_task *)data;
 
     // Wait until the PCM result can be written
@@ -152,6 +153,9 @@ enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad
 ///////////////////////////
 enum mad_flow mp3_decoder_task::error(void *data,mad_stream *stream, mad_frame *frame)
 {
+    (void)(data);
+    (void)(stream);
+    (void)(frame);
     // return MAD_FLOW_BREAK to stop decoding
     return MAD_FLOW_CONTINUE;
 }

@@ -13,27 +13,31 @@
 
 # platform and YAHAL location
 PLATFORM  = msp432
-YAHAL_DIR = /home/student/git/workspace_mct/YAHAL
+YAHAL_DIR = ../../..
 
 # name of final target
-TARGET = example_retro_focal.out
+TARGET = example_retro_PDP8_Focal.out
 
 # folder for build artifacts
 # (same as eclipse build folder)
 BUILD_DIR = Debug
 
 # all source folders of our project
-SRC_DIRS = . src
+SRC_DIRS  = .
+SRC_DIRS += src
 
 # include dirs
+INC_DIRS += $(SRC_DIRS)
 INC_DIRS += $(YAHAL_DIR)/src/platform/$(PLATFORM)
 INC_DIRS += $(YAHAL_DIR)/include/interface
 INC_DIRS += $(YAHAL_DIR)/src/driver
-INC_DIRS += $(YAHAL_DIR)/src/task
 INC_DIRS += $(YAHAL_DIR)/src/util
 
 # linked in libraries
 LINK_LIBS = $(YAHAL_DIR)/libYAHAL_msp432.a 
+
+# optimization flags
+FLAGS_OPT = -Ofast
 
 include $(YAHAL_DIR)/makefiles/common.mk
 

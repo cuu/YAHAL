@@ -1,9 +1,16 @@
-/*
- * audio_output.cpp
- *
- *  Created on: 23.08.2018
- *      Author: student
- */
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
 
 #include <audio_output.h>
 
@@ -19,7 +26,9 @@ audio_output::audio_output()
     _audio_spi.setSpeed(24000000);
     enable_output(true);
 
-    // Configure timer
+    // Configure timer. Set a default time of
+    // 1 ms. The correct value will be set via
+    // the setRate() method by libmad.
     _pcm_timer.setCallback(audio_output::handler, this);
     _pcm_timer.setPeriod(1000, TIMER::PERIODIC);
 

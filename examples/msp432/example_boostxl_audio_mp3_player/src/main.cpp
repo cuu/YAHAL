@@ -11,6 +11,7 @@
 //
 // ---------------------------------------------
 //
+
 #include <cstdint>
 #include "uart_msp432.h"
 #include "std_io.h"
