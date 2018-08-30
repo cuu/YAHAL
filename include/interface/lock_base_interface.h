@@ -16,6 +16,11 @@
 //  interface is the basis for all mutexes, semaphores
 //  or condition variables, and has to be implemented
 //  by every platform.
+//  It has to be made sure that locking/unlocking can
+//  be performed from anywhere in the code (different
+//  task etc.). Other classes like mutex will define
+//  stronger constraints in this respect (e.g. a mutex
+//  can only be locked/unlocked from the same task).
 
 #ifndef _LOCK_BASE_INTERFACE_H_
 #define _LOCK_BASE_INTERFACE_H_

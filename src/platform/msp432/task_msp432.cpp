@@ -216,14 +216,14 @@ void SVC_Handler_C(uint32_t * args) {
             // set SysTick to TICK_FREQUENCY
             SysTick_Config(SystemCoreClock / TICK_FREQUENCY);
 
-            // Return in unprivileged mode
+            // Return to thread mode and use PSP
             _exec_ret = 0xfffffffd;
 
             // Only restore regiters r0-PSR, because these
             // will be restored on return of the SVC-handler
             __set_PSP((uint32_t)(task::_getStackPtr() + 36));
 
-            // Set control register
+            // Set control register (set privileged)
             __set_CONTROL(task::_getStackPtr()[0]);
             __ISB();
             break;

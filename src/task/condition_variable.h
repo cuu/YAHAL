@@ -29,7 +29,7 @@ template<typename T>
 class condition_variable {
 public:
 
-    condition_variable() { }
+    condition_variable() = default;
 
     void wait(mutex_interface & m) {
         // create a new element and lock the mutex in it

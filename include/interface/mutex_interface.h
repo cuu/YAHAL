@@ -11,8 +11,30 @@
 //
 // ---------------------------------------------
 //
-//  This file defines a generic and abstract C++
-//  interface for a simple mutex
+// This file defines a generic and abstract C++
+// interface for a simple mutex. A concrete class
+// implementing this interface will typically use an
+// instance implementing the lock_base_interface.
+//
+// Note that lock() and unlock() have to be called from
+// the same task! Otherwise an assertion should fail.
+// There are 3 modes for a mutex when waiting for the lock.
+// The mode is typically specified as the constructor
+// parameter (not part of this interface!).
+//
+// ACTIVE_WAIT:
+// The mutex actively polls for the lock. This makes sense
+// if e.g. a HW trigger/IRQ handler releases the lock.
+//
+// YIELD:
+// The mutex passes back the control to the scheduler, but
+// does not block the task.
+//
+// BLOCK:
+// The task is blocked and does not get any further time
+// slices until the lock is unlocked. This is also the
+// default mode!
+//
 
 #ifndef _MUTEX_INTERFACE_H_
 #define _MUTEX_INTERFACE_H_

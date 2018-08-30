@@ -48,10 +48,10 @@ public:
     // static, so they can be used also in non-derived
     // classes and other code without a task object.
     enum state_t : uint8_t {
-        READY    =0,    // task is ready to run
-        SLEEPING =1,    // sleep() was called on task
-        SUSPENDED=2,    // suspend() was called on task
-        BLOCKED  =3     // block() was called on task
+        READY     = 0,  // task is ready to run
+        SLEEPING  = 1,  // sleep() was called on task
+        SUSPENDED = 2,  // suspend() was called on task
+        BLOCKED   = 3   // block() was called on task
     };
 
     inline const char * state_to_str(state_t state) {

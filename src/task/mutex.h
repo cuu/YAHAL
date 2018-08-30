@@ -12,27 +12,9 @@
 // ---------------------------------------------
 //
 // A simple mutex implementation with the typical
-// lock()/unlock()/try_lock() methods. This class
-// template relies on a platform specific mutex_interface
-// implementation.
-// Note that lock() and unlock() have to be called from
-// the same task! Otherwise a assertion will fail. There
-// are 3 modes for a mutex when waiting for the lock.
-// The mode is specified as the constructor parameter.
-//
-// ACTIVE_WAIT:
-// The mutex actively polls for the lock. This makes sense
-// if e.g. a HW trigger/IRQ handler releases the lock.
-//
-// YIELD:
-// The mutex passes back the control to the scheduler, but
-// does not block the task.
-//
-// BLOCK:
-// The task is blocked and does not get any further time
-// slices until the lock is unlocked. This is also the
-// default mode!
-//
+// lock() / unlock() / try_lock() methods.
+// See mutex_interface.h for more information.
+
 #ifndef _MUTEX_H_
 #define _MUTEX_H_
 
