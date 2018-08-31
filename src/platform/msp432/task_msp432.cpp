@@ -1,24 +1,39 @@
-/*
- * Task.cpp
- *
- *  Created on: 10.07.2017
- *      Author: andreas
- */
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Low-level task implementation for MSP432/Cortex M4(F)
+//
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpmf-conversions"
 
-#include <task_msp432.h>
-#include <task_idle.h>
+#include "yahal_config.h"
 #include "yahal_assert.h"
-
+#include "msp.h"
+#include "task.h"
+#include "task_idle.h"
 #include <cstring>
 
-void task_base::_enable_irq()             { __enable_irq();      }
-void task_base::_disable_irq()            { __disable_irq();     }
-void task_base::yield()                   { sys_call(SYS_YIELD); }
-void task_base::_cpu_sleep()              { __WFE();             }
-void task_base::_trigger_context_switch() { SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk; }
+//////////////////
+// System call API
+//////////////////
+#define sys_call(code)  asm volatile ("svc %0":: "I" (code));
+
+#define SYS_START_SCHEDULER     0
+#define SYS_YIELD               1
+
+// Definition of static members
+///////////////////////////////
+static uint32_t _exec_ret = 0;
 
 //////////////////////////////////////////
 // The following structure defines a stack
@@ -27,16 +42,16 @@ void task_base::_trigger_context_switch() { SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 // it is started.
 //////////////////////////////////////////
 
-struct task_msp432::Stack_Frame {
+struct Stack_Frame {
 
     // The following 9 registers have to be saved by
     // the context switching handler (callee-saved registers)
 
     uint32_t    ctrl;   // the CONTROL register, bit 8 set: FP stack frame
-    uint32_t    r4;     // register R4 to R11
+    uint32_t    r4;     // register R4 ...
     uint32_t    r5;     // .
     uint32_t    r6;     // .
-    uint32_t    r7;     // . to ...
+    uint32_t    r7;     // . ...to ...
     uint32_t    r8;     // .
     uint32_t    r9;     // .
     uint32_t    r10;    // .
@@ -45,9 +60,9 @@ struct task_msp432::Stack_Frame {
     // The following 8 registers are automatically
     // saved when handling an exception (caller-saved registers)
 
-    task_base * r0;     // register R0 (the 'this' pointer in C++ calls)
+    task *      r0;     // register R0 (the 'this' pointer in C++ calls)
     uint32_t    r1;     // .
-    uint32_t    r2;     // . to ...
+    uint32_t    r2;     // . ...to ...
     uint32_t    r3;     // .
     uint32_t    r12;    // register R12
     uint32_t    lr;     // register R14 (=LR)
@@ -55,40 +70,49 @@ struct task_msp432::Stack_Frame {
     uint32_t    psr;    // PSR
 };
 
-///////////////////////////////
-// Definition of static members
-///////////////////////////////
+void task::_setup_stack(bool priv) {
+    yahal_assert(_stack_size > sizeof(Stack_Frame));
 
-uint32_t task_msp432::_exc_ret = 0;
+    _stack_ptr = _stack_base +
+                (_stack_size - sizeof(Stack_Frame));
 
-///////////////////////////////////////////////////
-// Our own version of some special getters/setters,
-// which are working now with stack POINTERs!
-///////////////////////////////////////////////////
-
-__attribute__ (( always_inline))
-static inline uint32_t * get_PSP(void)
-{
-    register uint32_t * result;
-    asm volatile ("mrs %0, psp" : "=r" (result) );
-    return(result);
+    Stack_Frame *frame = (Stack_Frame *)_stack_ptr;
+    frame->psr  = 0x01000000;   // Set the Thumb-Bit
+    frame->pc   = (void (*)(void))(&task::_run);
+    frame->r0   = this;         // Set the 'this'-pointer
+    frame->ctrl = priv ? 0x02 : 0x03;
 }
 
-__attribute__ ((always_inline))
-static inline void set_PSP(const uint32_t * psp)
-{
-    asm volatile ("msr psp, %0" : : "r" (psp) : "sp");
+void task::_context_switch() {
+    SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
-__attribute__ ((always_inline))
-static inline uint32_t * get_MSP(void)
-{
-    register uint32_t * result;
-    asm volatile ("mrs %0, msp\n" : "=r" (result) );
-    return(result);
+void task::start_scheduler() {
+    sys_call(SYS_START_SCHEDULER);
 }
 
-bool task_msp432::isPrivileged() const {
+void task::yield() {
+    sys_call(SYS_YIELD);
+}
+
+void task::cpu_sleep() {
+    __WFE();
+}
+
+void task::enterCritical() {
+    NVIC_DisableIRQ(PendSV_IRQn);
+//    __disable_irq();
+    __DSB();
+    __ISB();
+}
+
+void task::leaveCritical() {
+    NVIC_EnableIRQ(PendSV_IRQn);
+//    __enable_irq();
+    __ISB();
+}
+
+bool task::isPrivileged() const {
     uint32_t ctrl;
     if (_run_ptr == this) {
         ctrl = __get_CONTROL();
@@ -98,25 +122,12 @@ bool task_msp432::isPrivileged() const {
     return (ctrl & 0x01) == 0;
 }
 
-bool task_msp432::isUsingFloat() const {
+bool task::isUsingFloat() const {
     if (_run_ptr == this) {
         return __get_CONTROL() & 0x04;
     } else {
         return _stack_ptr[0] & 0x10;
     }
-}
-
-void task_msp432::_setup_stack(bool priv) {
-    yahal_assert(_stack_size > sizeof(Stack_Frame));
-
-    _stack_ptr = _stack_base +
-                (_stack_size - sizeof(Stack_Frame))/sizeof(uint32_t);
-
-    Stack_Frame *frame = (Stack_Frame *)_stack_ptr;
-    frame->psr  = 0x01000000;   // Set the Thumb-Bit
-    frame->pc   = (void (*)(void))(&task_msp432::_run);
-    frame->r0   = this;         // Set the 'this'-pointer
-    frame->ctrl = priv ? 0x02 : 0x03;
 }
 
 ////////////////
@@ -126,54 +137,56 @@ void task_msp432::_setup_stack(bool priv) {
 extern "C" {
 
 void SysTick_Handler(void) {
-    task_base::tick_handler();
+    task::_tick_handler();
 }
 
 
 void PendSV_Handler(void) __attribute__((naked));
-void PendSV_Handler(void) {
+void __attribute__((optimize("O0"))) PendSV_Handler(void) {
 
-    asm volatile("mrs       r0, psp       ");
-    asm volatile("mrs       r3, control   ");
+    asm volatile(
+    "       mrs         r0, psp             @ \n"
+    "       mrs         r3, control         @ \n"
+    "       tst         lr, #0x10           @ \n"
+    "       itt         eq                  @ \n"
+    "       orreq       r3, #0x10           @ \n"
+    "       vstmdbeq    r0!, {s16-s31}      @ \n"
+    "       stmdb       r0!, {r3-r11}       @ \n");
 
-    asm volatile("tst       lr, #0x10     ");
-    asm volatile("itt       eq            ");
-    asm volatile("orreq     r3, #0x10     ");
-    asm volatile("vstmdbeq  r0!, {s16-s31}");
-    asm volatile("stmdb     r0!, {r3-r11} ");
-
-    register uint32_t * psp asm("r0");
-    task_base::_run_ptr->_stack_ptr = psp;
+    register uint8_t * psp asm("r0");
+    task::_setStackPtr(psp);
 #ifdef CHECK_STACK_OVERFLOW
-    yahal_assert((psp - task_base::_run_ptr->_stack_base) > 10);
+    yahal_assert((psp - task::_getStackBase()) > 10);
 #endif
-    task_msp432::_run_ptr = task_msp432::_run_next;
-    psp = task_msp432::_run_ptr->_stack_ptr;
+    task::_switchToNext();
+    psp = task::_getStackPtr();
 
-    asm volatile("ldmia     r0!, {r3-r11} ");
-    asm volatile("mvn       lr, #2        "); // ~2 = 0xfffffffd
-    asm volatile("tst       r3, #0x10     ");
-    asm volatile("itt       ne            ");
-    asm volatile("bicne     lr, #0x10     ");
-    asm volatile("vldmiane  r0!, {s16-s31}");
-
-    asm volatile("msr       control, r3   ");
-    asm volatile("msr       psp, r0       ");
-
-    asm volatile("bx        lr            ");
+    asm volatile(
+    "       ldmia       r0!, {r3-r11}       @ \n"
+    "       mvn         lr, #2              @ ~2 = 0xfffffffd \n"
+    "       tst         r3, #0x10           @ \n"
+    "       itt         ne                  @ \n"
+    "       bicne       lr, #0x10           @ \n"
+    "       vldmiane    r0!, {s16-s31}      @ \n"
+    "       msr         control, r3         @ \n"
+    "       msr         psp, r0             @ \n"
+    "       bx          lr                  @ \n");
 }
 
 void SVC_Handler(void) __attribute__((naked));
 void SVC_Handler(void) {
-    register uint32_t * sp asm("r0");
-    register uint32_t   lr asm("lr");
-
-    // get the correct stack pointer
-    sp = (lr & 0x4) ? get_PSP() : get_MSP();
-    task_msp432::_exc_ret = lr;
-    SVC_Handler_C(sp);
-    lr = task_msp432::_exc_ret;
-    asm volatile("bx lr");
+    asm volatile(
+    "       tst         lr, #4              @ Check which stack to use \n"
+    "       ite         eq                  @ \n"
+    "       mrseq       r0, msp             @ R0 will be first parameter \n"
+    "       mrsne       r0, psp             @ of SCV_Handler_C \n"
+    "       ldr         r1, =%[exec_ret]    @ \n"
+    "       str         lr, [r1]            @ Store current LR value \n"
+    "       bl          SVC_Handler_C       @ Call C part of SVC handler \n"
+    "       ldr         r1, =%[exec_ret]    @ \n"
+    "       ldr         lr, [r1]            @ Restore LR value \n"
+    "       bx          lr                  @ \n"
+    : : [exec_ret] "i" (&_exec_ret) );
 }
 
 void SVC_Handler_C(uint32_t * args) {
@@ -192,10 +205,10 @@ void SVC_Handler_C(uint32_t * args) {
         /////////////////////////
         {
             // Start the Idle Task with the lowest priority (1).
-            (new task_idle<task_msp432>)->start(1);
+            (new task_idle)->start(1);
 
             // The first Task to run is the first created task
-            task_msp432::switchToHead();
+            task::_switchToHead();
 
             // Set scheduler priority to lowest possible value
             NVIC_SetPriority(PendSV_IRQn, 0xff);
@@ -203,15 +216,15 @@ void SVC_Handler_C(uint32_t * args) {
             // set SysTick to TICK_FREQUENCY
             SysTick_Config(SystemCoreClock / TICK_FREQUENCY);
 
-            // Return in unprivileged mode
-            task_msp432::_exc_ret = 0xfffffffd;
+            // Return to thread mode and use PSP
+            _exec_ret = 0xfffffffd;
 
             // Only restore regiters r0-PSR, because these
             // will be restored on return of the SVC-handler
-            set_PSP(task_msp432::_run_ptr->_stack_ptr + 9);
+            __set_PSP((uint32_t)(task::_getStackPtr() + 36));
 
-            // Set control register
-            __set_CONTROL(task_msp432::_run_ptr->_stack_ptr[0]);
+            // Set control register (set privileged)
+            __set_CONTROL(task::_getStackPtr()[0]);
             __ISB();
             break;
         }
@@ -219,7 +232,7 @@ void SVC_Handler_C(uint32_t * args) {
         case SYS_YIELD:
         ///////////////
         {
-            task_msp432::run_scheduler();
+            task::_scheduler();
             break;
         }
         ////////
@@ -231,6 +244,6 @@ void SVC_Handler_C(uint32_t * args) {
     }
 }
 
-}
+} // extern "C"
 
 #pragma GCC diagnostic pop

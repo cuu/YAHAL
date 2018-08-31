@@ -1,28 +1,34 @@
-/*
- * task_timer.h
- *
- * A simple timer_interface implementation based on
- * the task class. The maximum timer resolution is
- * the tick count period - typically 1ms.
- *
- *  Created on: 24.07.2017
- *      Author: Andreas Terstegge
- */
-
-#ifndef TASK_TIMER_H
-#define TASK_TIMER_H
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// A simple timer_interface implementation based on
+// the task class. The maximum timer resolution is
+// the tick count period - typically 1ms.
+//
+#ifndef _TASK_TIMER_H_
+#define _TASK_TIMER_H_
 
 #include "timer_interface.h"
+#include "task.h"
 #include <yahal_assert.h>
 
-template<typename TASK>
-class task_timer : public TASK, public timer_interface
+class task_timer : public task, public timer_interface
 {
   public:
     task_timer(const char * name,
-              uint16_t stack_size = DEFAULT_STACK_SIZE,
-              uint16_t priority   = DEFAULT_PRIORITY,
-              bool privileged     = false) : TASK(name, stack_size) {
+               uint16_t stack_size = DEFAULT_STACK_SIZE,
+               uint16_t priority   = DEFAULT_PRIORITY,
+               bool privileged     = false) : task(name, stack_size) {
         _priority   = priority;
         _privileged = privileged;
 
@@ -61,13 +67,13 @@ class task_timer : public TASK, public timer_interface
 
     void start() override {
         resetCounter();
-        task_base::start(_priority, _privileged);
+        task::start(_priority, _privileged);
         _running = true;
     }
 
     void stop() override {
         _running = false;
-        task_base::end();
+        task::stop();
     }
 
     bool isRunning() override {
@@ -76,24 +82,24 @@ class task_timer : public TASK, public timer_interface
 
     uint32_t getCounter() override {
         if (_running) {
-            return TASK::ticks2millis(TASK::getUpTicks()) - _start_ms;
+            return task::millis() - _start_ms;
         } else {
             return 0;
         }
     }
 
     void resetCounter() override {
-        uint64_t now = TASK::ticks2millis(TASK::getUpTicks());
+        uint64_t now = task::millis();
         _start_ms = now;
         _next_ms  = now + _delta_ms;
     }
 
     void run(void) override {
         while(true) {
-            uint64_t now = TASK::ticks2millis(TASK::getUpTicks());
+            uint64_t now = task::millis();
             if (now < _next_ms) {
                 int64_t diff = _next_ms - now;
-                TASK::sleep(diff);
+                sleep(diff);
             } else {
                 _callback(_callback_arg);
                 _start_ms = _next_ms;
@@ -123,4 +129,4 @@ class task_timer : public TASK, public timer_interface
 
 };
 
-#endif /* TASKTIMER_H */
+#endif /* _TASK_TIMER_H_ */

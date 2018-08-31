@@ -1,18 +1,27 @@
-/*
- * TaskMonitor.h
- *
- *  Created on: 10.07.2017
- *      Author: Andreas Terstegge
- */
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// This idle task. It does nothing but sleep.
+//
+#ifndef _TASK_IDLE_H_
+#define _TASK_IDLE_H_
 
-#ifndef TASK_IDLE_H
-#define TASK_IDLE_H
+#include "task.h"
 
-template<typename TASK>
-class task_idle : public TASK
+class task_idle : public task
 {
   public:
-    task_idle() : TASK("IDLE", 200) { }
+    task_idle() : task("IDLE", 200) { }
     virtual ~task_idle() = default;
 
     // No copy, no assignment
@@ -22,9 +31,9 @@ class task_idle : public TASK
     inline void run(void) override {
         // Do nothing but sleep ...
         ///////////////////////////
-        while(true) task_base::_cpu_sleep();
+        while(true) cpu_sleep();
     }
 };
 
-#endif /* TASKIDLE_H */
+#endif /* _TASKIDLE_H_ */
 

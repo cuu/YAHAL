@@ -118,6 +118,43 @@ String & String::operator += (const String & s) {
     return *this;
 }
 
+String String::substr(uint16_t pos, uint16_t n) const
+{
+    String s("");
+    if (pos >= _len) return s;
+    for (; pos < _len; ++pos) {
+        if (!n) break; else --n;
+        s += _ptr[pos];
+    }
+    return s;
+}
+
+uint16_t String::find (char c, uint16_t pos) const
+{
+    for (; pos < _len; ++pos) {
+        if (c == _ptr[pos]) return pos;
+    }
+    return npos;
+}
+
+bool String::operator==(const String & r) const
+{
+    if (_len != r._len) return false;
+    for (uint16_t pos = 0; pos < _len; ++pos) {
+        if (_ptr[pos] != r._ptr[pos])
+            return false;
+    }
+    return true;
+}
+
+bool String::operator!=(const String& r) const
+{
+    return !((*this) == r);
+}
+
+// private methods
+//////////////////
+
 void String::reserve_only(uint16_t size) {
    if(size > _cap) {
       char * temp = new char[size+1];
@@ -165,4 +202,3 @@ String operator + (const String & lhs, const String & rhs) {
     String res(lhs);
     return res += rhs;
 }
-

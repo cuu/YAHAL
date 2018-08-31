@@ -89,8 +89,8 @@ void delay(int t)
 
 st7735s_drv::st7735s_drv(spi_interface & spi, gpio_pin & rst_pin,
                          gpio_pin & dc_pin, config & lcd,
-                         mutex_interface * mutex) :
-                _spi(spi), _rst_pin(rst_pin), _dc_pin(dc_pin), _lcd(lcd), _mutex(mutex)
+                         mutex_interface * mutex)
+    : _spi(spi), _rst_pin(rst_pin), _dc_pin(dc_pin), _lcd(lcd), _mutex(mutex)
 {
 
     // Initialize Reset & D/C pins
@@ -185,8 +185,9 @@ void st7735s_drv::drawPixel(uint16_t x, uint16_t y, color_t c)
         _mutex->lock();
     setFrame(x, y, x, y);
     writeCommand(CMD_RAMWR);
-    writeData(color >> 8);
-    writeData(color & 0xff);
+    _tx_buffer[0] = color >> 8;
+    _tx_buffer[1] = color & 0xff;
+    writeDataBuffer(2);
     if (_mutex)
         _mutex->unlock();
 }
@@ -201,11 +202,13 @@ void st7735s_drv::drawHLine(uint16_t xs, uint16_t y, uint16_t xe, color_t c)
         _mutex->lock();
     setFrame(xs, y, xe, y);
     writeCommand(CMD_RAMWR);
+    int buf_index = 0;
     for (int i = xs; i <= xe; ++i)
     {
-        writeData(color >> 8);
-        writeData(color & 0xff);
+        _tx_buffer[buf_index++] = color >> 8;
+        _tx_buffer[buf_index++] = color & 0xff;
     }
+    writeDataBuffer(buf_index);
     if (_mutex)
         _mutex->unlock();
 }
@@ -220,11 +223,13 @@ void st7735s_drv::drawVLine(uint16_t x, uint16_t ys, uint16_t ye, color_t c)
         _mutex->lock();
     setFrame(x, ys, x, ye);
     writeCommand(CMD_RAMWR);
+    int buf_index = 0;
     for (int i = ys; i <= ye; ++i)
     {
-        writeData(color >> 8);
-        writeData(color & 0xff);
+        _tx_buffer[buf_index++] = color >> 8;
+        _tx_buffer[buf_index++] = color & 0xff;
     }
+    writeDataBuffer(buf_index);
     if (_mutex)
         _mutex->unlock();
 }
@@ -241,6 +246,7 @@ void st7735s_drv::drawArea(uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye,
     setFrame(xs, ys, xe, ye);
     int16_t pixels = (xe - xs + 1) * (ye - ys + 1);
     writeCommand(CMD_RAMWR);
+    int index = 0;
     for (int i = 0; i < pixels; i++)
     {
         color_t color = ps.getNext();
@@ -248,8 +254,15 @@ void st7735s_drv::drawArea(uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye,
         {
             color = convertColor(color, LCD::COLORTYPE_RGB565);
         }
-        writeData(color >> 8);
-        writeData(color & 0xff);
+        _tx_buffer[index++] = color >> 8;
+        _tx_buffer[index++] = color & 0xff;
+        if (index == BUF_LEN) {
+            writeDataBuffer(index);
+            index = 0;
+        }
+    }
+    if (index) {
+        writeDataBuffer(index);
     }
     if (_mutex)
         _mutex->unlock();
@@ -289,10 +302,17 @@ void st7735s_drv::clearScreen(color_t c)
     writeCommand(CMD_RAMWR);
     uint8_t msb = color >> 8;
     uint8_t lsb = color & 0xff;
-    for (int i = 0; i <= pixels; i++)
-    {
-        writeData(msb);
-        writeData(lsb);
+    int index = 0;
+    for (int i = 0; i <= pixels; i++) {
+        _tx_buffer[index++] = msb;
+        _tx_buffer[index++] = lsb;
+        if (index == BUF_LEN) {
+            writeDataBuffer(index);
+            index = 0;
+        }
+    }
+    if (index) {
+        writeDataBuffer(index);
     }
     if (_mutex)
         _mutex->unlock();
@@ -310,6 +330,8 @@ void st7735s_drv::inverseColors(bool b)
         _mutex->unlock();
 }
 
+// private methods.
+///////////////////
 void st7735s_drv::change(uint16_t & x, uint16_t & y)
 {
     switch (_orientation)
@@ -363,29 +385,35 @@ void st7735s_drv::setFrame(uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye)
         break;
     }
     writeCommand(CMD_CASET);
-    writeData(0);
-    writeData(xs);
-    writeData(0);
-    writeData(xe);
+    _tx_buffer[0] = 0;
+    _tx_buffer[1] = xs;
+    _tx_buffer[2] = 0;
+    _tx_buffer[3] = xe;
+    writeDataBuffer(4);
 
     writeCommand(CMD_RASET);
-    writeData(0);
-    writeData(ys);
-    writeData(0);
-    writeData(ye);
+    _tx_buffer[0] = 0;
+    _tx_buffer[1] = ys;
+    _tx_buffer[2] = 0;
+    _tx_buffer[3] = ye;
+    writeDataBuffer(4);
 }
 
 void st7735s_drv::writeData(uint8_t data)
 {
-    uint8_t rcv_data;
-    _spi.transfer(&data, &rcv_data, 1);
+    _spi.spiTx(&data, 1);
+}
+
+void st7735s_drv::writeDataBuffer(int len)
+{
+    _spi.spiTx(_tx_buffer, len);
 }
 
 void st7735s_drv::writeCommand(uint8_t cmd)
 {
     _dc_pin.gpioWrite(LOW);
     uint8_t rcv_data;
-    _spi.transfer(&cmd, &rcv_data, 1);
+    _spi.spiTxRx(&cmd, &rcv_data, 1);
     _dc_pin.gpioWrite(HIGH);
 }
 

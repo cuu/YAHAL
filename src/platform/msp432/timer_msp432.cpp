@@ -27,6 +27,7 @@ timer_msp432::timer_msp432(Timer32_Type * timer)
     // calculate factor (counts for 1us)
     _factor      = SystemCoreClock / 1000000;
     _period_us   = 0;
+    _period_ns   = 0;
     _period_load = 0;
     // enable IRQ in NVIC
     NVIC_EnableIRQ( (timer==TIMER32_1) ? T32_INT1_IRQn : T32_INT2_IRQn );
@@ -80,6 +81,22 @@ uint32_t timer_msp432::getCounter() {
 
 void timer_msp432::resetCounter() {
 	_timer->LOAD = _period_load;
+}
+
+void timer_msp432::setNanoPeriod(uint32_t ns, TIMER::timer_mode mode) {
+    _period_ns = ns;
+    // set load register
+    _timer->LOAD = _period_load = (ns * _factor) / 1000;
+    // set onshot
+    if (mode == TIMER::ONE_SHOT) {
+        _timer->CONTROL |=  TIMER32_CONTROL_ONESHOT;
+    } else {
+        _timer->CONTROL &= ~TIMER32_CONTROL_ONESHOT;
+    }
+}
+
+uint32_t timer_msp432::getNanoPeriod() {
+    return _period_ns;
 }
 
 // Interrupt handler

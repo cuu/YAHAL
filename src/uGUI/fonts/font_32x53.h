@@ -20,6 +20,6 @@
 #include "uGUI.h"
 
 extern const unsigned char font_32x53[256][212];
-extern const uGUI::FONT FONT_32X53 = {(unsigned char*)font_32x53,32,53};
+extern const uGUI::FONT    FONT_32X53;
 
 #endif /* _FONT32X53_H_ */

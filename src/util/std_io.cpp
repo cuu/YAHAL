@@ -33,11 +33,15 @@ int _read  (int fd, void *buf, size_t count) {
 void std_io::redirect_stdin(uart_interface & uart_in, bool echo) {
     _uart_in    = &uart_in;
     _local_echo = echo;
+    // line-buffering with 100 chars
+    setvbuf(stdin, NULL, _IOLBF, 100);
 }
 
 void std_io::redirect_stdout(uart_interface & uart_out, bool add_CR) {
     _uart_out = &uart_out;
     _add_CR   = add_CR;
+    // line-buffering with 100 chars
+    setvbuf(stdout, NULL, _IOLBF, 100);
 }
 
 void std_io::putc(char c) {
