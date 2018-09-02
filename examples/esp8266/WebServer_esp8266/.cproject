@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.1679651776">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1679651776" moduleId="org.eclipse.cdt.core.settings" name="Default">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactName="${ProjName}" buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.cross.base.1679651776" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.1679651776.2128528175" name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.827441522" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.1873285720" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix" value="xtensa-lx106-elf-" valueType="string"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.1315889176" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="/home/andreas/.arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/bin" valueType="string"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.494267461" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<builder id="cdt.managedbuild.builder.gnu.cross.588672020" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.231146456" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
+								<option id="gnu.c.compiler.option.include.paths.1684806935" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src/detail"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src/include"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266mDNS"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/umm_malloc"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.969415176" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1797846969" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
+								<option id="gnu.cpp.compiler.option.include.paths.377696625" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src/detail"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src/include"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266mDNS"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/umm_malloc"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/interface}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/platform/esp8266}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/driver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/esp8266}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.dialect.std.2058698582" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.flags.1031332011" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=c++11" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.529772256" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.preprocessor.undef.57147217" name="Undefined symbols (-U)" superClass="gnu.cpp.compiler.option.preprocessor.undef" useByScannerDiscovery="false" valueType="undefDefinedSymbols">
+									<listOptionValue builtIn="false" value="__STRICT_ANSI__"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.885492708" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1475255481" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1543051289" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
+								<option id="gnu.cpp.link.option.paths.353078903" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libextra_esp8266}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libarduino_esp8266}&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.libs.2065799236" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="extra_esp8266"/>
+									<listOptionValue builtIn="false" value="yahal_esp8266"/>
+									<listOptionValue builtIn="false" value="arduino_esp8266"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2072169092" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1497988251" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.797977200" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
+								<option id="gnu.both.asm.option.include.paths.336608753" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src/detail"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src/include"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266mDNS"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/umm_malloc"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1748252582" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
+				<externalSettings containerId="libarduino_esp8266;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/umm_malloc"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/libarduino_esp8266"/>
+						<entry flags="NONE" kind="libraryFile" name="arduino_esp8266" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="libextra_esp8266;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src/detail"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src/include"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266mDNS"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/libextra_esp8266"/>
+						<entry flags="NONE" kind="libraryFile" name="extra_esp8266" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+			</storageModule>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="WebServer_esp8266.null.1004548598" name="WebServer_esp8266"/>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/WebServer_esp8266"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1679651776;cdt.managedbuild.toolchain.gnu.cross.base.1679651776.2128528175;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1797846969;cdt.managedbuild.tool.gnu.cpp.compiler.input.885492708">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1679651776;cdt.managedbuild.toolchain.gnu.cross.base.1679651776.2128528175;cdt.managedbuild.tool.gnu.cross.c.compiler.231146456;cdt.managedbuild.tool.gnu.c.compiler.input.969415176">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+		<buildTargets>
+			<target name="upload" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments/>
+				<buildTarget>upload</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+		</buildTargets>
+	</storageModule>
+</cproject>

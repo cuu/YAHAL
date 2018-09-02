@@ -20,7 +20,7 @@
 // So the derived class has to implement run().
 // When run() ends, the task is removed from the
 // scheduling process.
-// The base class task_msp432 also provides functions
+// The base class 'task' also provides functions
 // like sleep() to delay the execution (parameter is
 // the delay time in milliseconds).
 // This program also redirects stdout to the backchannel
@@ -46,7 +46,7 @@
 class blink_task : public task {
 public:
 
-    // The base class task_msp432 has to be called with
+    // The base class 'task' has to be called with
     // the name of the task, and optionally (as the second
     // parameter) the stack size of the task.
     blink_task(const char * name, gpio_pin_t gpio, int delay)
