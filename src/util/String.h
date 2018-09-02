@@ -29,7 +29,7 @@ public:
     // Constructors
     String(const char * ptr = "");
     String(const String &);
-    String(char);
+    String(char, uint16_t=1);
 
     // Destructor
     virtual ~String();
@@ -79,6 +79,10 @@ public:
     // ignoring any possible occurrences that include
     // characters before pos.
     uint16_t find (char c, uint16_t pos=0) const;
+
+    // field width adaptions
+    String fill_left (uint16_t width, const char c=' ');
+    String fill_right(uint16_t width, const char c=' ');
 
     // Conversions
     operator const char * () { return _ptr; }

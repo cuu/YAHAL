@@ -27,10 +27,11 @@ String::String(const String & s)
    strcpy(_ptr, s._ptr);
 }
 
-String::String(char c)
-   : _len(1), _cap(1), _ptr(new char[2]) {
-   _ptr[0] = c;
-   _ptr[1] = 0;
+String::String(char c, uint16_t n)
+   : _len(n), _cap(n), _ptr(new char[n+1]) {
+    uint16_t i=0;
+    for (; i < n; ++i) _ptr[i] = c;
+    _ptr[i] = 0;
 }
 
 String::~String()
@@ -151,6 +152,23 @@ uint16_t String::find (char c, uint16_t pos) const
     }
     return npos;
 }
+
+String String::fill_left (uint16_t width, const char c) {
+    if (_len < width) {
+        return String(c, width-_len) + *this;
+    } else {
+        return *this;
+    }
+}
+
+String String::fill_right(uint16_t width, const char c) {
+    if (_len < width) {
+        return *this + String(c, width-_len);
+    } else {
+        return *this;
+    }
+}
+
 
 // private methods
 //////////////////

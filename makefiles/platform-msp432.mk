@@ -42,7 +42,7 @@ FLAGS_F		   += -fno-strict-aliasing
 FLAGS_M        += -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs
 FLAGS_DEBUG    += -g -gdwarf-3 -gstrict-dwarf
 FLAGS_WARN     += -Wall -Wextra
-FLAGS_OPT      += -Ofast
+FLAGS_OPT      += # -Ofast
 
 FLAGS_CXX       = -fno-threadsafe-statics -fno-exceptions -std=c++11
 FLAGS_C         =
