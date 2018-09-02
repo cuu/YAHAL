@@ -23,12 +23,12 @@
 							<builder id="cdt.managedbuild.builder.gnu.cross.2123618225" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.264637587" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option id="gnu.c.compiler.option.include.paths.942925687" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src/detail"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src/include"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266mDNS"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src/detail"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src/include"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266mDNS"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs"/>
@@ -38,12 +38,12 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.389554927" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.include.paths.681067900" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src/detail"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src/include"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266mDNS"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src/detail"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src/include"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266mDNS"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs"/>
@@ -69,12 +69,12 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.107997708" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.1186635631" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1016224621" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src/detail"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src/include"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266mDNS"/>
-									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src/detail"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src/include"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266mDNS"/>
+									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64"/>
 									<listOptionValue builtIn="false" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs"/>
@@ -99,12 +99,12 @@
 				</externalSettings>
 				<externalSettings containerId="libextra_esp8266;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src"/>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src/detail"/>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src"/>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src/include"/>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266mDNS"/>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src/detail"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src/include"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266mDNS"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/SPI"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/libextra_esp8266"/>
 						<entry flags="NONE" kind="libraryFile" name="extra_esp8266" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
