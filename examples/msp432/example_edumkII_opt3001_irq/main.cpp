@@ -25,6 +25,7 @@ uint8_t txbuf[3];
 // Handler to process a OPT3001 interrupt
 
 void handler(gpio_pin_t gpio) {
+    (void)(gpio);
     // Read the Result register
     txbuf[0] = 0x00;
     opt3001.i2cWrite(0x44, txbuf, 1);

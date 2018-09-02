@@ -13,7 +13,7 @@
 
 # platform and YAHAL location
 PLATFORM  = msp432
-YAHAL_DIR = /home/student/git/workspace_mct/YAHAL
+YAHAL_DIR = ../../..
 
 # name of final target
 TARGET = example_adc_simple.out

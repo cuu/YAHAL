@@ -14,11 +14,13 @@
 
 #include "sd_reader_task.h"
 
-sd_reader_task::sd_reader_task() :
-    task("SD reader", 500),
+sd_reader_task::sd_reader_task() : task("SD reader", 500),
+    _fs(nullptr),
+    _file(nullptr),
     _req_buff(nullptr),
     _req_btr(0),
     _req_br(0),
+    _req_result(FatFs::FR_OK),
     _eof(false),
     _force_eof(false),
     _execute(false)

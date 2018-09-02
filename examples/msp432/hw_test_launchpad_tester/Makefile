@@ -16,7 +16,7 @@ PLATFORM  = msp432
 YAHAL_DIR = ../../..
 
 # name of final target
-TARGET = example_blink_CMSIS.out
+TARGET = hw_test_launchpad_tester.out
 
 # folder for build artifacts
 # (same as eclipse build folder)
@@ -24,6 +24,16 @@ BUILD_DIR = Debug
 
 # all source folders of our project
 SRC_DIRS = .
+
+# include dirs
+INC_DIRS += $(YAHAL_DIR)/src/platform/$(PLATFORM)
+INC_DIRS += $(YAHAL_DIR)/include/interface
+INC_DIRS += $(YAHAL_DIR)/src/driver
+INC_DIRS += $(YAHAL_DIR)/src/task
+INC_DIRS += $(YAHAL_DIR)/src/util
+
+# linked in libraries
+LINK_LIBS = $(YAHAL_DIR)/libYAHAL_msp432.a 
 
 include $(YAHAL_DIR)/makefiles/common.mk
 

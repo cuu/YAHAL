@@ -11,7 +11,23 @@
 //
 // ---------------------------------------------
 //
-
+///////////////////////////////////////////////////////
+// MP3 player for MSP432 launchpad and boostxl-audio //
+///////////////////////////////////////////////////////
+//
+// This program will read MP3 files from a SD card, and
+// play them on the MPS432 launchpad with a boostxl audio
+// boosterpack. The MP3 decoder is implemented in software,
+// so only some kind of PCM output is necessary.
+//
+// The main task will loop over all *.mp3 files and play
+// them. During reset, button S1 can be used to select
+// the partition on the SD card (see comment below!).
+// Button S2 can be used to skip to the next song.
+//
+// For every new song, the SD reader and MP3 decoder
+// tasks are started again.
+//
 #ifndef _MAIN_TASK_H_
 #define _MAIN_TASK_H_
 
@@ -28,8 +44,7 @@
 class main_task : public task
 {
 public:
-    main_task()
-    : task("Main", 6000),
+    main_task() : task("Main", 6000),
       _cs (PORT_PIN(10,0)),
       _spi(EUSCI_B3_SPI, _cs),
       _sd (_spi),
@@ -48,7 +63,7 @@ public:
         mp3_decoder_task decoder(sd_reader, audio_output);
         audio_output.start();
 
-        // Mount SD card.
+        // Mount the SD card.
         // If button S1 is not pressed during reset, auto-partition mode is
         // used. If button S1 is pressed, partition 2 on the SD card is used.
         FatFs::FRESULT res = _fs.mount(_part.gpioRead() == LOW ? 2 : 0);
@@ -64,8 +79,9 @@ public:
             yahal_assert(res == FatFs::FR_OK);
 
             // Start the SD reader and decoder tasks
+            // to play the song :)
             sd_reader.start(&_fs, &_file);
-            decoder.start(); //DEFAULT_PRIORITY, true);
+            decoder.start();
 
             // Wait until file has been played. Check
             // for NEXT-button to skip to next file

@@ -18,7 +18,13 @@
 // and register definitions. See file msp432p401r.h
 // for details.
 
-// generic include file for various types
+// This is to suppress errors during eclispe
+// scanning the source code...
+#ifndef __MSP432P401R__
+#define __MSP432P401R__
+#endif
+
+// This is a generic include file for various types
 // of msp432 processors. When you 'walk down'
 // starting from this file, you find the (large)
 // include file msp432p401r.h mentioned above.

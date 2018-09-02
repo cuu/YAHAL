@@ -11,6 +11,17 @@
 //
 // ---------------------------------------------
 //
+///////////////////////////////////////////////////////
+// MP3 player for MSP432 launchpad and boostxl-audio //
+///////////////////////////////////////////////////////
+//
+// main() only prepares the infrastructure, namely:
+//  - redirects stdout
+//  - starts the main task
+//  - starts the task monitor
+//  - starts the scheduler
+// The program logic is contained in the main_task
+// and not here!
 
 #include <cstdint>
 #include "uart_msp432.h"

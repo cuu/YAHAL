@@ -15,7 +15,7 @@
 // Port 1 pin 0 and the green LED on Port 2 pin 1.
 // This program uses the multitasking kernel of YAHAL.
 // A task can be defined by deriving a class from
-// task_msp432. This class has an abstract method
+// class 'task'. This class has an abstract method
 // run(), which will contain the code to execute.
 // So the derived class has to implement run().
 // When run() ends, the task is removed from the

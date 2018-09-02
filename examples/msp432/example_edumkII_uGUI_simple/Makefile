@@ -13,10 +13,10 @@
 
 # platform and YAHAL location
 PLATFORM  = msp432
-YAHAL_DIR = /home/student/git/workspace_mct/YAHAL
+YAHAL_DIR = ../../..
 
 # name of final target
-TARGET = example_ugui_simple.out
+TARGET = example_edumkII_uGUI_simple.out
 
 # folder for build artifacts
 # (same as eclipse build folder)
