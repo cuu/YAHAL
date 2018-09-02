@@ -50,6 +50,7 @@ FLAGS_ASM       =
 LN_SCRIPT_FLASH = msp432p401r.lds
 FLAGS_LD        = -Wl,-T$(MSP_INC_DIR)/$(LN_SCRIPT_FLASH)
 FLAGS_LD       += -Wl,-Map,$(basename $(TARGET)).map
+FLAGS_LD       += -Wl,--gc-sections
 
 #################################################
 # The following variables are used by common.mk #

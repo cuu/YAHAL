@@ -85,6 +85,21 @@ char & String::operator [] (uint16_t pos) {
     return _ptr[pos];
 }
 
+bool String::operator == (const String & r) const
+{
+    if (_len != r._len) return false;
+    for (uint16_t pos = 0; pos < _len; ++pos) {
+        if (_ptr[pos] != r._ptr[pos])
+            return false;
+    }
+    return true;
+}
+
+bool String::operator != (const String & r) const
+{
+    return !((*this) == r);
+}
+
 void String::reserve(uint16_t size) {
     if(size > _cap) {
        char *temp = new char[size+1];
@@ -135,21 +150,6 @@ uint16_t String::find (char c, uint16_t pos) const
         if (c == _ptr[pos]) return pos;
     }
     return npos;
-}
-
-bool String::operator==(const String & r) const
-{
-    if (_len != r._len) return false;
-    for (uint16_t pos = 0; pos < _len; ++pos) {
-        if (_ptr[pos] != r._ptr[pos])
-            return false;
-    }
-    return true;
-}
-
-bool String::operator!=(const String& r) const
-{
-    return !((*this) == r);
 }
 
 // private methods

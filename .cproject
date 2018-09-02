@@ -3,6 +3,9 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693" moduleId="org.eclipse.cdt.core.settings" name="Default">
+				<macros>
+					<stringMacro name="ESP_SRC_DIR" type="VALUE_PATH_DIR" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2"/>
+				</macros>
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/include/interface"/>
@@ -39,6 +42,18 @@
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1846344057" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
 							<builder id="cdt.managedbuild.builder.gnu.cross.1771010402" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.885615721" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
+								<option id="gnu.c.compiler.option.include.paths.1202614418" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.216035533" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.517441019" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
@@ -51,6 +66,16 @@
 								<option id="gnu.cpp.compiler.option.include.paths.835728100" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include/platform/msp432}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include/platform/msp432/CMSIS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1351950353" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1134475121" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -64,6 +89,18 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.733983293" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.908044714" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
+								<option id="gnu.both.asm.option.include.paths.914384145" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.116359178" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
@@ -96,6 +133,9 @@
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.1136808877">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1136808877" moduleId="org.eclipse.cdt.core.settings" name="Default">
+				<macros>
+					<stringMacro name="AndisVar" type="VALUE_TEXT" value="laberlaber"/>
+				</macros>
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/include/interface"/>
@@ -145,6 +185,16 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
 									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include/CMSIS"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1475289686" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -162,6 +212,16 @@
 									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/tools/compiler/gcc-arm-none-eabi-6-2017-q1-update/arm-none-eabi/include"/>
 									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432/DSP_Lib/Include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.125148932" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -181,6 +241,16 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
 									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include/CMSIS"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1104408959" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
