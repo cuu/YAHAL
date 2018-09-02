@@ -5,10 +5,10 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1211555526" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266"/>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64"/>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs"/>
-						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/umm_malloc"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/cores/esp8266"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/cores/esp8266/libb64"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/cores/esp8266/spiffs"/>
+						<entry flags="NONE" kind="includePath" name="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/cores/esp8266/umm_malloc"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/libarduino_esp8266"/>
 						<entry flags="NONE" kind="libraryFile" name="arduino_esp8266" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
@@ -57,9 +57,6 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="libarduino_esp8266.null.1526500791" name="libarduino_esp8266"/>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
@@ -67,4 +64,13 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1211555526;cdt.managedbuild.toolchain.gnu.cross.base.1211555526.1573641535;cdt.managedbuild.tool.gnu.cross.c.compiler.2080600306;cdt.managedbuild.tool.gnu.c.compiler.input.1110369174">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1211555526;cdt.managedbuild.toolchain.gnu.cross.base.1211555526.1573641535;cdt.managedbuild.tool.gnu.cross.cpp.compiler.2065659307;cdt.managedbuild.tool.gnu.cpp.compiler.input.1292846865">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
 </cproject>
