@@ -24,7 +24,7 @@ uint8_t txbuf[3];
 
 // Handler to process a OPT3001 interrupt
 
-void handler(gpio_pin_t gpio) {
+void handler(gpio_pin_t gpio, void *) {
     (void)(gpio);
     // Read the Result register
     txbuf[0] = 0x00;
@@ -49,7 +49,7 @@ int main(void)
 
     // Initialize GPIOs
     opt_irq.gpioMode(GPIO::INPUT);
-    opt_irq.gpioAttachIrq(handler, GPIO::FALLING);
+    opt_irq.gpioAttachIrq(GPIO::FALLING, handler);
 
     // Reset OPT3001
     txbuf[0] = 0x06;

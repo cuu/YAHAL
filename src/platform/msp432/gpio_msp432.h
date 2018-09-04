@@ -32,8 +32,8 @@ public:
     void gpioToggle(gpio_pin_t gpio);
 
     // Interrupt handling
-    void gpioAttachIrq (gpio_pin_t gpio,
-                        void (*)(gpio_pin_t gpio), gpio_mode_t mode);
+    void gpioAttachIrq (gpio_pin_t gpio, gpio_mode_t mode,
+                        void (*)(gpio_pin_t, void *), void * arg = nullptr);
     void gpioDetachIrq (gpio_pin_t gpio);
     void gpioEnableIrq (gpio_pin_t gpio);
     void gpioDisableIrq(gpio_pin_t gpio);
@@ -57,7 +57,9 @@ private:
 
     void handleIrq(uint8_t port, uint8_t pin);
     //    volatile int8_t * _port_base[10];
-    void (*_intHandler[6][8])(uint16_t gpio);
+    void (*_intHandler[6][8])(gpio_pin_t, void *);
+    void * _arg[6][8];
+    bool   _both[6][8];
 
     uint8_t _open_source[10];
     uint8_t _open_drain [10];

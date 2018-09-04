@@ -182,13 +182,13 @@ private:
 
 // Button S1 toggles the left LED on the Launchpad
 //////////////////////////////////////////////////
-void callback_LP_S1(gpio_pin_t) {
+void callback_LP_S1(gpio_pin_t, void *) {
     HW::inst()->red.gpioToggle();
 }
 
 // Button S2 toggles the RGB LED on the Launchpad
 /////////////////////////////////////////////////
-void callback_LP_S2(gpio_pin_t) {
+void callback_LP_S2(gpio_pin_t, void *) {
     static int i = 0;
     HW::inst()->rgb_red.gpioWrite(LOW);
     HW::inst()->rgb_green.gpioWrite(LOW);
@@ -205,7 +205,7 @@ void callback_LP_S2(gpio_pin_t) {
 
 // Button S1 on EDU MKII toggles the EDU RGB LED
 ////////////////////////////////////////////////
-void callback_EDU_S1(gpio_pin_t) {
+void callback_EDU_S1(gpio_pin_t, void *) {
     static int i = 0;
     HW::inst()->edu_red.gpioWrite(LOW);
     HW::inst()->edu_green.gpioWrite(LOW);
@@ -222,7 +222,7 @@ void callback_EDU_S1(gpio_pin_t) {
 
 // Button S2 on EDU MKII toggles speaker on/off
 ///////////////////////////////////////////////
-void callback_EDU_S2(gpio_pin_t) {
+void callback_EDU_S2(gpio_pin_t, void *) {
     static bool b = false;
     b = !b;
     HW::inst()->edu_speaker.setSEL(b);
@@ -231,7 +231,7 @@ void callback_EDU_S2(gpio_pin_t) {
 // Joystick button changes the color of the
 // microphone signal
 ///////////////////////////////////////////
-void callback_EDU_joy(gpio_pin_t) {
+void callback_EDU_joy(gpio_pin_t, void *) {
     static int i = 0;
     i++;
     i %= 3;
@@ -268,11 +268,11 @@ int main(void)
     TA0CTL   = 0x2d0;  // up-mode, divide by 8
 
     // Setup interrupt handler
-    HW::inst()->sw1.gpioAttachIrq(callback_LP_S1, GPIO::FALLING);
-    HW::inst()->sw2.gpioAttachIrq(callback_LP_S2, GPIO::FALLING);
-    HW::inst()->edu_sw1.gpioAttachIrq(callback_EDU_S1, GPIO::FALLING);
-    HW::inst()->edu_sw2.gpioAttachIrq(callback_EDU_S2, GPIO::FALLING);
-    HW::inst()->edu_joy_sw.gpioAttachIrq(callback_EDU_joy, GPIO::FALLING);
+    HW::inst()->sw1.gpioAttachIrq(GPIO::FALLING, callback_LP_S1);
+    HW::inst()->sw2.gpioAttachIrq(GPIO::FALLING, callback_LP_S2);
+    HW::inst()->edu_sw1.gpioAttachIrq(GPIO::FALLING, callback_EDU_S1);
+    HW::inst()->edu_sw2.gpioAttachIrq(GPIO::FALLING, callback_EDU_S2);
+    HW::inst()->edu_joy_sw.gpioAttachIrq(GPIO::FALLING, callback_EDU_joy);
 
     // Draw static elements on the display
     gui.DrawLine( 0, 64, 127, 64, C_GREEN);

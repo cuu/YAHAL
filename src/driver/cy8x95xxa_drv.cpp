@@ -154,13 +154,15 @@ void cy8c95xxa_drv::gpioToggle(uint16_t gpio) {
 // Interrupt handling
 /////////////////////
 void cy8c95xxa_drv::gpioAttachIrq(uint16_t gpio,
-                                  void (*handler)(uint16_t gpio),
-                                  uint16_t mode) {
+                                  uint16_t mode,
+                                  void (*handler)(gpio_pin_t, void *),
+                                  void * arg) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
     yahal_assert(!(mode & ~GPIO::RISING & ~GPIO::FALLING));
     intHandler[port][pin] = handler;
     intMode   [port][pin] = mode;
+    intArg    [port][pin] = arg;
     gpioEnableIrq(gpio);
 }
 
@@ -209,16 +211,16 @@ void cy8c95xxa_drv::handleInterrupt() {
             switch(intMode[port][pin]) {
             case GPIO::RISING:
                 if (irqValue[port] & mask) {
-                    intHandler[port][pin](PORT_PIN(port, pin));
+                    intHandler[port][pin](PORT_PIN(port, pin), intArg[port][pin]);
                 }
                 break;
             case GPIO::FALLING:
                 if (!(irqValue[port] & mask)) {
-                    intHandler[port][pin](PORT_PIN(port, pin));
+                    intHandler[port][pin](PORT_PIN(port, pin), intArg[port][pin]);
                 }
                 break;
             case GPIO::RISING | GPIO::FALLING:
-            intHandler[port][pin](PORT_PIN(port, pin));
+            intHandler[port][pin](PORT_PIN(port, pin), intArg[port][pin]);
             break;
             default:
                 // Do nothing for all other triggers

@@ -87,8 +87,9 @@ public:
 
     // Interrupt handling
     virtual void gpioAttachIrq (gpio_pin_t gpio,
-                                void (*handler)(gpio_pin_t gpio),
-                                gpio_irq_t irq_mode) = 0;
+                                gpio_irq_t irq_mode,
+                                void (*handler)(gpio_pin_t, void *),
+                                void * arg = nullptr) = 0;
     virtual void gpioDetachIrq (gpio_pin_t gpio) = 0;
     virtual void gpioEnableIrq (gpio_pin_t gpio) = 0;
     virtual void gpioDisableIrq(gpio_pin_t gpio) = 0;
@@ -123,9 +124,10 @@ public:
     inline void gpioToggle() {
         _interf.gpioToggle(_gpio);
     }
-    inline void gpioAttachIrq (void (*handler)(gpio_pin_t gpio),
-                               uint16_t irq_mode)  {
-        _interf.gpioAttachIrq(_gpio, handler, irq_mode);
+    inline void gpioAttachIrq (uint16_t irq_mode,
+                               void (*handler)(gpio_pin_t, void *),
+                               void * arg = nullptr)  {
+        _interf.gpioAttachIrq(_gpio, irq_mode, handler, arg);
     }
     inline void gpioDetachIrq() {
         _interf.gpioDetachIrq(_gpio);
