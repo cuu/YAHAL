@@ -32,18 +32,18 @@ public:
     condition_variable() = default;
 
     void wait(mutex_interface & m) {
-        // create a new element and lock the mutex in it
+        // create a new element and store task pointer
         stop_list_elem elem;
-        while(!elem._lock.try_lock()) ;
-        // store mutex so we can unlock it afterwards
+        elem._task = task::currentTask();
+        // store element so we can resume the task afterwards
         _stop_list_mutex.lock();
         _stop_list.push_back(&elem);
         _stop_list_mutex.unlock();
-        // Stop now. We have to block this task and
+        // Stop now. We have to suspend this task and
         // also unlock the mutex m. This operation has
-        // to be atomic, so interrupts are disabled.
+        // to be atomic, so a critical section is used.
         task::enterCritical();
-        task::currentTask()->block(&elem._lock);
+        elem._task->suspend();
         m.unlock();
         task::leaveCritical();
         // Switch to other task
@@ -61,9 +61,10 @@ public:
         if (_stop_list.getSize()) {
             stop_list_elem * elem = _stop_list.getHead();
             _stop_list.remove(elem);
-            elem->_lock.unlock();
+            elem->_task->resume();
         }
         _stop_list_mutex.unlock();
+        // Give the resumed task a chance to run
         task::yield();
     }
 
@@ -72,9 +73,10 @@ public:
         while (_stop_list.getSize()) {
             stop_list_elem * elem = _stop_list.getHead();
             _stop_list.remove(elem);
-            elem->_lock.unlock();
+            elem->_task->resume();
         }
         _stop_list_mutex.unlock();
+        // Give the resumed tasks a chance to run
         task::yield();
     }
 
@@ -87,11 +89,11 @@ private:
     struct stop_list_elem {
         stop_list_elem * _prev;
         stop_list_elem * _next;
-        bool _linked_in;
-        T    _lock;
+        bool             _linked_in;
+        task *           _task;
     };
 
-    mutex<T> _stop_list_mutex;
+    mutex<T>                      _stop_list_mutex;
     circular_list<stop_list_elem> _stop_list;
 };
 
