@@ -23,18 +23,23 @@ soft_i2c_slave::~soft_i2c_slave() {
     _scl.gpioDetachIrq();
 }
 
-void soft_i2c_slave::reset() {
-    _state = I2C::IDLE;
-    _i2c_address = 0;
-    _data =0;
-    _bit_mask =0;
-    _byte_index =0;
-    _enter = false;
-    _send = false;
-    _ack =  false;
-    _read_addr = false;
+// event-generating interrupt handlers
+void soft_i2c_slave::sda_handler(gpio_pin_t, void * arg) {
+    soft_i2c_slave * _this = (soft_i2c_slave *)arg;
+    if (!_this->_scl.gpioRead()) return;
+    _this->handler(_this->_sda.gpioRead() ? I2C::stop : I2C::start);
 }
 
+void soft_i2c_slave::scl_handler(gpio_pin_t, void * arg) {
+    soft_i2c_slave * _this = (soft_i2c_slave *)arg;
+    if (_this->_scl.gpioRead()) {
+        _this->handler(_this->_sda.gpioRead() ? I2C::high : I2C::low);
+    } else {
+        _this->handler(I2C::scl_falling);
+    }
+}
+
+// I2C slave state machine
 void soft_i2c_slave::handler(I2C::I2C_event e)
 {
     do {
@@ -247,20 +252,5 @@ void soft_i2c_slave::handler(I2C::I2C_event e)
     } while (true);
 }
 
-
-void soft_i2c_slave::sda_handler(gpio_pin_t, void * arg) {
-    soft_i2c_slave * _this = (soft_i2c_slave *)arg;
-    if (!_this->_scl.gpioRead()) return;
-    _this->handler(_this->_sda.gpioRead() ? I2C::stop : I2C::start);
-}
-
-void soft_i2c_slave::scl_handler(gpio_pin_t, void * arg) {
-    soft_i2c_slave * _this = (soft_i2c_slave *)arg;
-    if (_this->_scl.gpioRead()) {
-        _this->handler(_this->_sda.gpioRead() ? I2C::high : I2C::low);
-    } else {
-        _this->handler(I2C::scl_falling);
-    }
-}
 
 
