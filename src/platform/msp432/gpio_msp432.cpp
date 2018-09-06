@@ -156,10 +156,12 @@ void gpio_msp432::gpioDisableIrq(uint16_t gpio) {
 }
 
 void gpio_msp432::handleIrq(uint8_t port, uint8_t pin) {
+	_intHandler[port-1][pin](PORT_PIN(port, pin), _arg[port-1][pin]);
     if (_both[port-1][pin]) {
         DIO_BIT(port, pin, PORT_IES_OFS) = DIO_BIT(port, pin, PORT_IN_OFS);
+        // Make sure we don't accidently trigger a irq!
+        DIO_BIT(port, pin, PORT_IFG_OFS) = 0;
     }
-	_intHandler[port-1][pin](PORT_PIN(port, pin), _arg[port-1][pin]);
 }
 
 void gpio_msp432::setSEL(uint16_t gpio, uint8_t mode) {
