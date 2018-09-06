@@ -53,6 +53,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.216035533" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -76,6 +77,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1351950353" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1134475121" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -100,6 +102,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.116359178" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -195,6 +198,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1475289686" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -222,6 +226,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.125148932" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -251,6 +256,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1104408959" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
