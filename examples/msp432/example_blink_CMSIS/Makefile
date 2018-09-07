@@ -13,7 +13,7 @@
 
 # platform and YAHAL location
 PLATFORM  = msp432
-YAHAL_DIR = /home/student/git/workspace_mct/YAHAL
+YAHAL_DIR = ../../..
 
 # name of final target
 TARGET = example_blink_CMSIS.out
@@ -24,15 +24,6 @@ BUILD_DIR = Debug
 
 # all source folders of our project
 SRC_DIRS = .
-
-# include dirs
-#INC_DIRS += $(YAHAL_DIR)/src/platform/$(PLATFORM)
-#INC_DIRS += $(YAHAL_DIR)/include/interface
-#INC_DIRS += $(YAHAL_DIR)/src/driver
-#INC_DIRS += $(YAHAL_DIR)/src/util
-
-# linked in libraries
-#LINK_LIBS = $(YAHAL_DIR)/libYAHAL_msp432.a 
 
 include $(YAHAL_DIR)/makefiles/common.mk
 

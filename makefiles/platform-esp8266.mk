@@ -14,7 +14,7 @@ TOOLCHAIN_PATH   = $(ESP8266_PACKAGE)/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404
 TOOLCHAIN_PREFIX = xtensa-lx106-elf
 
 # Various path variables
-ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/2.4.1
+ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/2.4.2
 ESP_CORE_DIR    = $(ESP_SRC_DIR)/cores/esp8266
 ESP_LIB_DIR     = $(ESP_SRC_DIR)/libraries
 ESP_VARIANTS_DIR= $(ESP_SRC_DIR)/variants
@@ -22,7 +22,7 @@ ESP_SDK_DIR     = $(ESP_SRC_DIR)/tools/sdk
 
 # Various ESP tools 
 ESP_TOOL        = $(ESP8266_PACKAGE)/tools/esptool/0.4.13/esptool
-MKSPIFFS        = $(ESP8266_PACKAGE)/tools/mkspiffs/0.1.2/mkspiffs
+MKSPIFFS        = $(ESP8266_PACKAGE)/tools/mkspiffs/0.2.0/mkspiffs
 ESP_BOOTLOADER  = $(ESP_SRC_DIR)/bootloaders/eboot/eboot.elf
 
 # Flag helper variables

@@ -15,12 +15,12 @@
 // Port 1 pin 0 and the green LED on Port 2 pin 1.
 // This program uses the multitasking kernel of YAHAL.
 // A task can be defined by deriving a class from
-// task_msp432. This class has an abstract method
+// class 'task'. This class has an abstract method
 // run(), which will contain the code to execute.
 // So the derived class has to implement run().
 // When run() ends, the task is removed from the
 // scheduling process.
-// The base class task_msp432 also provides functions
+// The base class 'task' also provides functions
 // like sleep() to delay the execution (parameter is
 // the delay time in milliseconds).
 // This program also redirects stdout to the backchannel
@@ -46,7 +46,7 @@
 class blink_task : public task {
 public:
 
-    // The base class task_msp432 has to be called with
+    // The base class 'task' has to be called with
     // the name of the task, and optionally (as the second
     // parameter) the stack size of the task.
     blink_task(const char * name, gpio_pin_t gpio, int delay)

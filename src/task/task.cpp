@@ -103,12 +103,10 @@ void task::sleep(uint32_t ms) {
 
 void task::suspend() {
     _state  = state_t::SUSPENDED;
-    if (task::currentTask() == this) yield();
 }
 
 void task::resume() {
     _state  = state_t::READY;
-    yield();
 }
 
 void task::block(lock_base_interface * lbi) {

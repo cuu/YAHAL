@@ -29,7 +29,7 @@ public:
     // Constructors
     String(const char * ptr = "");
     String(const String &);
-    String(char);
+    String(char, uint16_t=1);
 
     // Destructor
     virtual ~String();
@@ -48,11 +48,15 @@ public:
     char &       operator [] (uint16_t);
     const char * c_str() { return _ptr; }
 
-    // Capacity
+    // Comparison operators
+    bool operator == (const String & r) const;
+    bool operator != (const String & r) const;
+
+    // Size of the String (not including any null-termination)
     bool     empty() const { return _len == 0; }
-	/* Returns the number of characters in the string,
-	 * not including any null-terminaltion */
     uint16_t size()  const { return _len; }
+
+    // Capacity handling
     void     reserve(uint16_t);
     uint16_t capacity() const { return _cap; }
     void     shrink_to_fit();
@@ -76,12 +80,12 @@ public:
     // characters before pos.
     uint16_t find (char c, uint16_t pos=0) const;
 
+    // field width adaptions
+    String fill_left (uint16_t width, const char c=' ');
+    String fill_right(uint16_t width, const char c=' ');
+
     // Conversions
     operator const char * () { return _ptr; }
-
-    // Comparison operators
-    bool operator==(const String& r) const;
-    bool operator!=(const String& r) const;
 
 protected:
     uint16_t _len;

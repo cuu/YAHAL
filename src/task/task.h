@@ -85,15 +85,16 @@ public:
     void sleep(uint32_t ms);
 
     // Suspend a task execution. The task will only come
-    // back to life if resume() is called. If suspend() is
-    // called on the currently running task, a yield()
-    // is performed so that execution proceeds with the
-    // next ready task.
+    // back to life if resume() is called from another
+    // task or a interrupt handler. If suspend() is called
+    // on the currently running task, a yield() might be
+    // necessary to stop the current task and proceed with
+    // the next ready task.
     void suspend();
 
-    // Resume a task, which was suspended before. A yield()
-    // is called afterwards so that the resumed task has
-    // a chance to run.
+    // Resume a task, which was suspended before. If the
+    // resumed task should run immediately, a consecutive
+    // yield() might be necessary.
     void resume();
 
     // Block a task on a lock. As long as the lock is locked,
@@ -101,7 +102,7 @@ public:
     // will never call yield(), so if block() is called on the
     // currently running task, a yield() could follow block()
     // so that execution proceeds with the next ready task.
-    // block() is e.g. used in mutexes and condition variables.
+    // block() is e.g. used in mutexes.
     void block(lock_base_interface * lbi);
 
     // Join a task. This means that the caller of this method

@@ -57,6 +57,7 @@ void Device_TTO::processPulse(unsigned int pulse, CPU & cpu) {
     ///////////////////////////////////////////////////////////////
     case 6:
         FLAG=false;
+        //no break
     case 4: { // TPC (Load TTO from AC and print/punch character)
         char c = cpu.getAC() & 0177;
         if (c==127) c = 7;

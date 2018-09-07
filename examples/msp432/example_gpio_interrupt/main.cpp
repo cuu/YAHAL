@@ -24,7 +24,7 @@
 #define BUTTON1     PORT_PIN(1, 1)  // left  S1 button
 #define BUTTON2     PORT_PIN(1, 4)  // right S2 button
 
-void gpio_handler(gpio_pin_t gpio) {
+void gpio_handler(gpio_pin_t gpio, void *) {
     if (gpio == BUTTON1) {
         // Here we use the gpio_msp432 singleton to
         // access the LEDs, because we did not want the
@@ -63,8 +63,8 @@ int main()
     // (pressing the button sets the gpio to LOW, so this is
     // a falling edge!)
     // The right LED will change its status when S2 is _released_!
-    button_S1.gpioAttachIrq(gpio_handler, GPIO::FALLING);
-    button_S2.gpioAttachIrq(gpio_handler, GPIO::RISING);
+    button_S1.gpioAttachIrq(GPIO::FALLING, gpio_handler);
+    button_S2.gpioAttachIrq(GPIO::RISING,  gpio_handler);
 
     // Endless loop, which is only 'interrupted' by
     // our HW-interrupts.

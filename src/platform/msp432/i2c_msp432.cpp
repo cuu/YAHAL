@@ -74,52 +74,49 @@ i2c_msp432::~i2c_msp432() {
 }
 
 int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
-    // set the slave address
-    _EUSCI->IFG   = 0;
+    // clear interrupt status and set slave address
+    int16_t i = _EUSCI->RXBUF;
+    _EUSCI->IFG = 0;
     _EUSCI->I2CSA = addr;
     set_receiver();
     send_START();
-    int16_t i = 0;
-    for (i=0; i < len;  ++i) {
-        // check for stop
+    for (i=0; i < len; ++i) {
+        // check for last byte to receive
         if ((i+1) == len) {
             if (sendStop) send_STOP();
+            else _EUSCI->CTLW0 |= EUSCI_B_CTLW0_TXSTT;
         }
         // Wait until data available
-        while(!(_EUSCI->IFG & EUSCI_B_IFG_RXIFG0));
-        // read the data
-        rxbuf[i] = _EUSCI->RXBUF;
-        // check for NAK
-        if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
-            if (sendStop) send_STOP();
-            return i;
-        }
-    }
-    return i;
-}
-int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
-    // set the slave address
-    _EUSCI->IFG   = 0;
-    _EUSCI->I2CSA = addr;
-    set_transmitter();
-    send_START();
-    int16_t i = 0;
-    for (i=0; i < len;  ++i) {
-        // Place character in buffer
-        _EUSCI->TXBUF = txbuf[i];
-        // Wait until transmission begins
-        while(!(_EUSCI->IFG & EUSCI_B_IFG_TXIFG0));
-        // Send a stop during the transmission
-        // of the last byte
-        if ((i+1) == len) {
-            if (sendStop) send_STOP();
-        }
+        while(!(_EUSCI->IFG & (EUSCI_B_IFG_RXIFG0 | EUSCI_B_IFG_NACKIFG)));
         // Check NAK condition
         if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
             if (sendStop) send_STOP();
             return i;
         }
+        // read the data
+        rxbuf[i] = _EUSCI->RXBUF;
     }
+    return i;
+}
+int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
+    // clear interrupt status and set slave address
+    _EUSCI->IFG   = 0;
+    _EUSCI->I2CSA = addr;
+    set_transmitter();
+    send_START();
+    int16_t i = 0;
+    for (i=0; i < len; ++i) {
+        // Place character in buffer
+        _EUSCI->TXBUF = txbuf[i];
+        // Wait until byte has been sent or NACK
+        while(!(_EUSCI->IFG & (EUSCI_B_IFG_TXIFG0 | EUSCI_B_IFG_NACKIFG)));
+        // Check NAK condition (also if wrong address!)
+        if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
+            if (sendStop) send_STOP();
+            return i;
+        }
+    }
+    if (sendStop) send_STOP();
     return i;
 }
 

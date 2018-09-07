@@ -26,7 +26,7 @@ audio_output::audio_output()
     _audio_spi.setSpeed(24000000);
     enable_output(true);
 
-    // Configure timer. Set a default time of
+    // Configure PCM timer. Set a default time of
     // 1 ms. The correct value will be set via
     // the setRate() method by libmad.
     _pcm_timer.setCallback(audio_output::handler, this);

@@ -40,7 +40,11 @@ public:
                     break;
                 }
                 case MUTEX::BLOCK: {
+                    // Make sure there is no context switch
+                    // during the block operation
+                    task::enterCritical();
                     task::currentTask()->block(&_lock);
+                    task::leaveCritical();
                     task::yield();
                 }
             }

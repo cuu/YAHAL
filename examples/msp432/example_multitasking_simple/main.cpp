@@ -16,6 +16,11 @@
 // to blink a red and blue LED with different
 // frequencies. Both methods are added as tasks
 // to the mini-OS, and the scheduler is started.
+//
+// The purpose of this project is to demonstrate
+// and teach multitasking. If you want to use
+// a more complete and fully featured multitasking
+// kernel, use YAHAL's task class.
 
 #include "gpio_msp432.h"
 #include "OS.h"

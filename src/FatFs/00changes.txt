@@ -1,3 +1,7 @@
+Changes in FatFs for the YAHAL library
+======================================
+  Author:  A. Terstegge, August 2018
+
 The basis for this version of FatFs was FatFs R0.13b (April 07, 2018).
 Changes have been done to better integrate FatFs into C++ code (the
 library was transformed to have an object-oriented interface).
@@ -17,10 +21,13 @@ The following changes have been done to the original FatFs distribution:
   block_io_interface. The constructor parameter of FatFs is a
   concrete instance implementing this interface.
 
-- Removed the FATFS structure. Moved all FATFS members to private
+- Removed the FATFS structure and as a consequence removed the FATFS
+  parameter from some functions. Moved all FATFS members to private
   members of the class FatFs. Added prefix '_' to all those members
   
-- Removed the 'f_' prefix of all public methods.
+- Removed the 'f_' prefix of all public methods. With object orientaton,
+  you know the object on which you call a method, and don't need the
+  method to show that it belongs to some 'functionality'.
   
 - Changed mount() parameter: The parameter now specifies the partition to
   mount: 0=auto selection, 1...4=select primary partion. mount() will
@@ -30,4 +37,6 @@ The following changes have been done to the original FatFs distribution:
 - Added a umount() method.
 
 - Removed most of the volume handling code in the original distributon.
-
+  Changed some methods accordingly.
+  
+TODO: Clean up the locking mechanism and use the generic mutex_interface.
