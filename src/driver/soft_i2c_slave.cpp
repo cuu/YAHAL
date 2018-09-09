@@ -2,13 +2,14 @@
 #include "soft_i2c_slave.h"
 
 soft_i2c_slave::soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
-                               bool    (*r)(uint8_t index, uint8_t data),
-                               uint8_t (*t)(uint8_t index),
-                               void    (*m)())
+                               bool    (*r)(uint8_t index, uint8_t data, void *),
+                               uint8_t (*t)(uint8_t index, void *),
+                               void    (*m)(void *),
+                               void     * ptr)
 : _sda(sda), _scl(scl), _state(I2C::IDLE),
   _i2c_address(0), _data(0),  _bit_mask(0), _byte_index(0),
   _enter(false), _send(false), _ack(false), _read_addr(false),
-  _receive(r), _transmit(t), _wantmore(m)
+  _receive(r), _transmit(t), _wantmore(m), _user_ptr(ptr)
 {
     _sda.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
     _scl.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
@@ -94,7 +95,7 @@ void soft_i2c_slave::handler(I2C::I2C_event e)
                         } else {
                             // process user data and stretch clock
                             _scl.gpioWrite(LOW);
-                            _ack = _receive(_byte_index++, _data);
+                            _ack = _receive(_byte_index++, _data, _user_ptr);
                             _scl.gpioWrite(HIGH);
                         }
                         setState(I2C::WRITE_ACK);
@@ -154,7 +155,7 @@ void soft_i2c_slave::handler(I2C::I2C_event e)
                     _bit_mask = 0x80;
                     // Read in the byte to send
                     _scl.gpioWrite(LOW);
-                    _data = _transmit(_byte_index++);
+                    _data = _transmit(_byte_index++, _user_ptr);
                     _scl.gpioWrite(HIGH);
                     // set first bit
                     _sda.gpioWrite(_data & _bit_mask);
@@ -208,7 +209,7 @@ void soft_i2c_slave::handler(I2C::I2C_event e)
                 else if (e == I2C::scl_falling) {
                     if (_ack) {
                         _scl.gpioWrite(LOW);
-                        _wantmore();
+                        _wantmore(_user_ptr);
                         _scl.gpioWrite(HIGH);
                         setState(I2C::WRITE);
                     } else {

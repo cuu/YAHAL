@@ -21,13 +21,14 @@ public:
     // further. It is reset after a stop event.
     // The transmit() handler asks for new user data to be sent. The
     // wantmore() callback is called after the master has sent a ACK,
-    // signalling it wants more data during a master read operation.
+    // signaling it wants more data during a master read operation.
     // This method can be used to prepare new data, which in turn will
     // be sent via transmit().
     soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
-                   bool    (*receive) (uint8_t index, uint8_t data),
-                   uint8_t (*transmit)(uint8_t index),
-                   void    (*wantmore)());
+                   bool    (*receive) (uint8_t index, uint8_t data, void *),
+                   uint8_t (*transmit)(uint8_t index, void *),
+                   void    (*wantmore)(void *),
+                   void     *ptr);
     virtual ~soft_i2c_slave();
 
     // Getter/Setter for slaves I2C address it listens to
@@ -67,9 +68,11 @@ private:
     bool      _read_addr;   // true if next byte to read is the I2C address
 
     // callback methods
-    bool    (*_receive) (uint8_t index, uint8_t data);
-    uint8_t (*_transmit)(uint8_t index);
-    void    (*_wantmore)();
+    bool    (*_receive) (uint8_t index, uint8_t data, void *);
+    uint8_t (*_transmit)(uint8_t index, void *);
+    void    (*_wantmore)(void *);
+
+    void *    _user_ptr;
 };
 
 #endif // _SOFT_I2C_SLAVE_H_

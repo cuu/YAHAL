@@ -19,10 +19,11 @@ public:
                     bool pullup = false);
     virtual ~soft_i2c_master();
 
-    int16_t i2cRead(uint16_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop =
-                            true) override;
-    int16_t i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool sendStop =
-                             true) override;
+    int16_t i2cRead(uint16_t addr, uint8_t *rxbuf, uint8_t len,
+                    bool sendStop = true) override;
+
+    int16_t i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
+                     bool sendStop = true) override;
 
     void setSpeed(uint32_t) { return; }
 

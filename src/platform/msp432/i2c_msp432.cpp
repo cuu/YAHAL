@@ -74,6 +74,9 @@ i2c_msp432::~i2c_msp432() {
 }
 
 int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
+    // Check for len 0 because the sendStart/Stop
+    // routines might hang in this case.
+    if (!len) return 0;
     // clear interrupt status and set slave address
     int16_t i = _EUSCI->RXBUF;
     _EUSCI->IFG = 0;
@@ -91,7 +94,7 @@ int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool se
         // Check NAK condition
         if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
             if (sendStop) send_STOP();
-            return i;
+            return i-1;
         }
         // read the data
         rxbuf[i] = _EUSCI->RXBUF;
@@ -99,6 +102,9 @@ int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool se
     return i;
 }
 int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
+    // Check for len 0 because the sendStart/Stop
+    // routines might hang in this case.
+    if (!len) return 0;
     // clear interrupt status and set slave address
     _EUSCI->IFG   = 0;
     _EUSCI->I2CSA = addr;
@@ -113,9 +119,18 @@ int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool se
         // Check NAK condition (also if wrong address!)
         if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) {
             if (sendStop) send_STOP();
-            return i;
+            return i-1;
         }
     }
+    // Wait until a NACK after the last byte can be
+    // seen, and a send_STOP() is not discarded ...
+    uint32_t delay = 0;
+    while (!_scl.gpioRead()) delay++; // Wait until HIGH
+    while ( _scl.gpioRead()) delay++; // Wait until LOW
+    delay *= 128;
+    while (delay) delay--;
+    // Check NACK
+    if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) i--;
     if (sendStop) send_STOP();
     return i;
 }
