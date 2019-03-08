@@ -20,14 +20,14 @@
 
 # Root folder CCS installation
 ifeq ($(FILE_UNIX_STYLE),1)
-CCS_ROOT = /opt/ti/ccsv7
+CCS_ROOT = /opt/ti/ccsv8
 else
-CCS_ROOT = C:/ti/ccsv7
+CCS_ROOT = C:/ti/ccsv8
 endif
 
 # Toolchain location
 # TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-4_9-2015q3
-TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-6-2017-q1-update
+TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major
 TOOLCHAIN_PREFIX = arm-none-eabi
 
 # Various path variables
