@@ -10,11 +10,11 @@ ESP8266_PACKAGE  = $(HOME_DIR)/AppData/Local/Arduino15/packages/esp8266
 endif
 
 # Toolchain helpers
-TOOLCHAIN_PATH   = $(ESP8266_PACKAGE)/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2
+TOOLCHAIN_PATH   = $(ESP8266_PACKAGE)/tools/xtensa-lx106-elf-gcc/2.5.0-3-20ed2b9
 TOOLCHAIN_PREFIX = xtensa-lx106-elf
 
 # Various path variables
-ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/2.4.2
+ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/2.5.0
 ESP_CORE_DIR    = $(ESP_SRC_DIR)/cores/esp8266
 ESP_LIB_DIR     = $(ESP_SRC_DIR)/libraries
 ESP_VARIANTS_DIR= $(ESP_SRC_DIR)/variants

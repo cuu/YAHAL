@@ -4,7 +4,7 @@
 		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<macros>
-					<stringMacro name="ESP_SRC_DIR" type="VALUE_PATH_DIR" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.4.2"/>
+					<stringMacro name="ESP_SRC_DIR" type="VALUE_PATH_DIR" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0"/>
 				</macros>
 				<externalSettings>
 					<externalSetting>
@@ -40,7 +40,7 @@
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.796215692" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix" value="arm-none-eabi-" valueType="string"/>
 							<option id="cdt.managedbuild.option.gnu.cross.path.1735633647" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="/opt/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major/bin" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1846344057" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder id="cdt.managedbuild.builder.gnu.cross.1771010402" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder autoBuildTarget="all" buildPath="${workspace_loc:/YAHAL}/Default" cleanBuildTarget="clean" enableAutoBuild="false" enableCleanBuild="true" enabledIncrementalBuild="true" id="cdt.managedbuild.builder.gnu.cross.1771010402" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="false" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.885615721" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option id="gnu.c.compiler.option.include.paths.1202614418" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
