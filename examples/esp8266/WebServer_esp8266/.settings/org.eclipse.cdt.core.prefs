@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1679651776/VERBOSE/delimiter=\:
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1679651776/VERBOSE/operation=append
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1679651776/VERBOSE/value=1
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1679651776/YAHAL_DIR/delimiter=\:
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1679651776/YAHAL_DIR/operation=append
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1679651776/YAHAL_DIR/value=../../YAHAL

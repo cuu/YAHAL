@@ -21,7 +21,7 @@ ESP_VARIANTS_DIR= $(ESP_SRC_DIR)/variants
 ESP_SDK_DIR     = $(ESP_SRC_DIR)/tools/sdk
 
 # Various ESP tools 
-ESP_TOOL        = $(ESP8266_PACKAGE)/tools/esptool/0.4.13/esptool
+ESP_TOOL        = $(ESP8266_PACKAGE)/tools/esptool/2.5.0-3-20ed2b9/esptool
 MKSPIFFS        = $(ESP8266_PACKAGE)/tools/mkspiffs/0.2.0/mkspiffs
 ESP_BOOTLOADER  = $(ESP_SRC_DIR)/bootloaders/eboot/eboot.elf
 
@@ -45,6 +45,7 @@ FLAGS_LD       += -T$(ESP_FLASH_SCRIPT)
 FLAGS_LD       += -Wl,-Map,$(basename $(TARGET)).map
 FLAGS_LD       += -L$(QUOTE)$(ESP_SDK_DIR)/lib$(QUOTE)
 FLAGS_LD       += -L$(QUOTE)$(ESP_SDK_DIR)/ld$(QUOTE)
+FLAGS_LD       += -L$(BUILD_DIR)
 FLAGS_LD       += -L$(QUOTE)$(ESP_SDK_DIR)/libc/xtensa-lx106-elf/lib$(QUOTE)
 
 
@@ -71,14 +72,21 @@ CXXFLAGS = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLA
 CFLAGS   = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_C)
 ASMFLAGS = $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_ASM)
 LDFLAGS  = $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_LD)
-LIBS     = -lhal -lphy -lpp -lnet80211 -llwip2 -lwpa -lcrypto -lmain -lwps \
-           -laxtls -lespnow -lsmartconfig -lairkiss -lwpa2 -lstdc++ -lm -lc -lgcc
+LIBS     = -lhal -lphy -lpp -lnet80211 -llwip2-536-feat -lwpa -lcrypto -lmain -lwps \
+           -lbearssl -laxtls -lespnow -lsmartconfig -lairkiss -lwpa2 -lstdc++ -lm -lc -lgcc
 
 # Compiler defines
 ##################
-DEFINES  = -D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ -DF_CPU=80000000L -DLWIP_OPEN_SRC -DTCP_MSS=536 -DARDUINO=10805
-DEFINES += -DARDUINO_ESP8266_GENERIC -DARDUINO_ARCH_ESP8266 -DARDUINO_BOARD=\"ESP8266_GENERIC\" -DESP8266 
+DEFINES  = -D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ -DF_CPU=80000000L
+DEFINES += -DLWIP_OPEN_SRC -DTCP_MSS=536 -DLWIP_FEATURES=1 -DLWIP_IPV6=0 
+DEFINES += -DARDUINO=10808 -DARDUINO_ESP8266_GENERIC -DARDUINO_ARCH_ESP8266 -DARDUINO_BOARD=\"ESP8266_GENERIC\" -DESP8266 
 #DEFINES += -DNDEBUG
+
+# -w -Os -g 
+# -falign-functions=4 
+# -w -x c++ -E -CC  
+# -DLED_BUILTIN=2 -DFLASHMODE_DOUT
+
 
 # Platform includes
 ###################
@@ -86,9 +94,18 @@ PLATFORM_INC_DIRS  = $(ESP_SDK_DIR)/include
 PLATFORM_INC_DIRS += $(ESP_SDK_DIR)/lwip2/include
 PLATFORM_INC_DIRS += $(ESP_VARIANTS_DIR)/generic
 
+# Add linker script source file
+LINK_DEPS += $(BUILD_DIR)/local.eagle.app.v6.common.ld
+
 # Additional rules (e.g. for upload)
 ####################################
 define PLATFORM_RULES
+
+# Generate ld script
+$(BUILD_DIR)/local.eagle.app.v6.common.ld : $(ESP_SDK_DIR)/ld/eagle.app.v6.common.ld.h
+	@echo "LDS $$(notdir $$<)"
+	$(CC) -CC -E -P -DVTABLES_IN_FLASH $$< -o $$@
+
 .PHONY: upload
 upload: $$(TARGET)
 	@echo "Uploading program"

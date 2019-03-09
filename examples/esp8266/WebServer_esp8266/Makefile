@@ -36,7 +36,7 @@ INC_DIRS += $(ESP_LIB_DIR)/ESP8266WebServer/src/detail
 INC_DIRS += $(ESP_LIB_DIR)/ESP8266WiFi/src
 INC_DIRS += $(ESP_LIB_DIR)/ESP8266WiFi/src/include
 # ESP8266mDNS
-INC_DIRS += $(ESP_LIB_DIR)/ESP8266mDNS
+INC_DIRS += $(ESP_LIB_DIR)/ESP8266mDNS/src
 
 # all linked-in libraries
 LINK_LIBS  = ../libarduino_esp8266/libarduino_esp8266.a

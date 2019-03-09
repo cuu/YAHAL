@@ -122,9 +122,9 @@ INCLUDES += $(foreach dir, $(PLATFORM_INC_DIRS), -I$(QUOTE)$(dir)$(QUOTE))
 all: directories $(TARGET)
 
 # rule for executable targets
-%.out : $(OBJECTS) $(LINK_LIBS)
+%.out : $(OBJECTS) $(LINK_LIBS) $(LINK_DEPS)
 	@echo "LD  $@"
-	$(HIDE) $(LD) $(LDFLAGS) -Wl,--start-group $^ $(LIBS) -Wl,--end-group -o $@
+	$(HIDE) $(LD) $(LDFLAGS) -Wl,--start-group $(OBJECTS) $(LINK_LIBS) $(LIBS) -Wl,--end-group -o $@
 
 # rule for library targets
 %.a :   $(OBJECTS)

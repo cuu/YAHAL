@@ -50,7 +50,7 @@ public:
     virtual void setBaudrate(uint32_t) = 0;
 
     // Interrupt handling
-    virtual void uartAttachIrq (void (*handler)(char)) = 0;
+    virtual void uartAttachIrq (void (*handler)(char, void *), void *) = 0;
     virtual void uartDetachIrq () = 0;
     virtual void uartEnableIrq () = 0;
     virtual void uartDisableIrq() = 0;

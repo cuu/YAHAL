@@ -9,7 +9,8 @@
 
 extern uint32_t SystemCoreClock;
 
-void (*uart_msp432::_intHandler[4])(char) = {nullptr, nullptr, nullptr, nullptr};
+void (*uart_msp432::_intHandler[4])(char, void*) = {nullptr, nullptr, nullptr, nullptr};
+void * uart_msp432::_intData[4] = {nullptr, nullptr, nullptr, nullptr};
 
 uart_msp432::uart_msp432(EUSCI_A_Type * module, uint32_t baud,uart_mode_t mode)
 : _init(false), _EUSCI(module), _baud(baud), _mode(mode),
@@ -141,10 +142,11 @@ void uart_msp432::setBaudrate(uint32_t baud) {
     _EUSCI->BRW = (uint16_t)(SystemCoreClock / baud);
 }
 
-void uart_msp432::uartAttachIrq( void (*handler)(char) ) {
+void uart_msp432::uartAttachIrq( void (*handler)(char, void *), void * ptr ) {
     if (!_init) init();
     uint8_t index = (((uint32_t)_EUSCI) >> 10) & 0x3;
     _intHandler[index] = handler;
+    _intData[index] = ptr;
     _EUSCI->IE = EUSCI_A_IE_RXIE;
     NVIC_EnableIRQ((IRQn_Type)(16 + index));
 }
@@ -169,7 +171,7 @@ void uart_msp432::handleIrq(EUSCI_A_Type * uart) {
     char c = uart->RXBUF;
     uint8_t index = (((uint32_t)uart) >> 10) & 0x3;
     if (_intHandler[index])
-        _intHandler[index](c);
+        _intHandler[index](c, _intData[index]);
 }
 
 

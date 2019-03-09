@@ -56,30 +56,18 @@ struct HW {
 // Hardware-independent section. //
 ///////////////////////////////////
 
-// declaration of IRQ handlers
-void button_s1_handler(uint16_t);
-void uart_bc_rx_handler (char);
-void uart_esp_rx_handler(char);
+void delay() {
+    for (int i=0; i < 400000; ++i) ;
+}
 
 class Main {
-
-    HW hw;
-    bool baud_is_115200 = true;
-    bool baud_is_set    = true;
-    bool in_prgm_mode   = false;
-
 public:
-
-    // The IRQ handlers are our best friends
-    friend void button_s1_handler(uint16_t);
-    friend void uart_bc_rx_handler (char);
-    friend void uart_esp_rx_handler(char);
 
     void main() {
 
         // Initialize GPIOs
         hw.button_s1.gpioMode( GPIO::INPUT | GPIO::PULLUP);
-        hw.button_s1.gpioAttachIrq(button_s1_handler, GPIO::RISING);
+        hw.button_s1.gpioAttachIrq(GPIO::RISING, button_s1_handler, this);
         hw.button_s2.gpioMode( GPIO::INPUT | GPIO::PULLUP);
         hw.esp_gpio0.gpioMode( GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH );
         hw.esp_gpio2.gpioMode( GPIO::INPUT );
@@ -87,9 +75,14 @@ public:
         hw.esp_reset.gpioMode( GPIO::OUTPUT | GPIO::INIT_HIGH );
 
         // Initialize UARTs
-        hw.uart_bc. uartAttachIrq(uart_bc_rx_handler);
-        hw.uart_esp.uartAttachIrq(uart_esp_rx_handler);
+        hw.uart_bc. uartAttachIrq(uart_bc_rx_handler, this);
+        hw.uart_esp.uartAttachIrq(uart_esp_rx_handler,this);
 
+        // Put ESP8266 to programming mode as default
+        hw.esp_reset.gpioWrite( LOW );  delay();
+        hw.esp_gpio0.gpioWrite( LOW );  delay();
+        hw.esp_reset.gpioWrite( HIGH ); delay();
+        
         // The never-ending main loop
         while(true) {
             // Handle buttons in main loop
@@ -108,55 +101,64 @@ public:
             }
         }
     }
-};
 
-Main m;
+private:
 
-// This handler is called when the
-// Reset button (S1) is released
-void button_s1_handler(uint16_t) {
-    // Small delay for debounce
-    for(int i=0; i < 200; ++i) ;
-    // Check the program button (S2)
-    m.in_prgm_mode   = !m.hw.button_s2.gpioRead();
-    m.baud_is_115200 = false;
-    m.baud_is_set    = false;
-}
+    HW hw;
+    bool baud_is_115200 = true;
+    bool baud_is_set    = true;
+    bool in_prgm_mode   = false;
 
-void uart_bc_rx_handler(char c) {
-    // Forward any chars from the back-channel UART to the ESP
-    m.hw.uart_esp.putc(c);
-}
-
-void uart_esp_rx_handler(char c) {
-    static char magic_prgm[] = "\r\n\r\n";
-    static char magic_run[]  = "~ld\n";
-    static uint8_t cnt  = 0;
-
-    // Forward any chars from the ESP to the back-channel UART
-    m.hw.uart_bc.putc(c);
-
-    // No check for magic strings during programming
-    if (m.in_prgm_mode && m.baud_is_115200) return;
-
-    // Simple state machine to check magic string
-    const char * magic_ptr = m.in_prgm_mode ? magic_prgm : magic_run;
-    switch(cnt) {
-    case 0: if (c==magic_ptr[0]) cnt = 1; break;
-    case 1: if (c==magic_ptr[1]) cnt = 2; else cnt = 0; break;
-    case 2: if (c==magic_ptr[2]) cnt = 3; else cnt = 0; break;
-    case 3: if (c==magic_ptr[3]) {
-        // Change back to 115200 baud...
-        m.hw.uart_bc.putc('\r');
-        m.baud_is_115200 = true;
-        m.baud_is_set    = false;
-    } else
-        cnt = 0;
+    // This handler is called when the
+    // Reset button (S1) is released
+    static void button_s1_handler(gpio_pin_t, void *ptr) {
+        Main * _this = (Main *)ptr;
+        // Small delay for debounce
+        for(int i=0; i < 200; ++i) ;
+        // Check the program button (S2)
+        _this->in_prgm_mode   = !_this->hw.button_s2.gpioRead();
+        _this->baud_is_115200 = false;
+        _this->baud_is_set    = false;
     }
-}
+
+    static void uart_bc_rx_handler(char c, void *ptr) {
+        Main * _this = (Main *)ptr;
+        // Forward any chars from the back-channel UART to the ESP
+        _this->hw.uart_esp.putc(c);
+    }
+
+    static void uart_esp_rx_handler(char c, void *ptr) {
+        Main * _this = (Main *)ptr;
+        static char magic_prgm[] = "\r\n\r\n";
+        static char magic_run[]  = "~ld\n";
+        static uint8_t cnt  = 0;
+
+        // Forward any chars from the ESP to the back-channel UART
+        _this->hw.uart_bc.putc(c);
+
+        // No check for magic strings during programming
+        if (_this->in_prgm_mode && _this->baud_is_115200) return;
+
+        // Simple state machine to check magic string
+        const char * magic_ptr = _this->in_prgm_mode ? magic_prgm : magic_run;
+        switch(cnt) {
+        case 0: if (c==magic_ptr[0]) cnt = 1; break;
+        case 1: if (c==magic_ptr[1]) cnt = 2; else cnt = 0; break;
+        case 2: if (c==magic_ptr[2]) cnt = 3; else cnt = 0; break;
+        case 3: if (c==magic_ptr[3]) {
+            // Change back to 115200 baud...
+            _this->hw.uart_bc.putc('\r');
+            _this->baud_is_115200 = true;
+            _this->baud_is_set    = false;
+        } else
+            cnt = 0;
+        }
+    }
+};
 
 int main(void)
 {
+    Main m;
     m.main();
     return 0;
 }

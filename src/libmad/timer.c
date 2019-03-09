@@ -452,7 +452,7 @@ void mad_timer_string(mad_timer_t timer,
       /* not yet implemented */
       sub = 0;
     }
-    //no break
+    __attribute__ ((fallthrough));
 
   case MAD_UNITS_DECISECONDS:
   case MAD_UNITS_CENTISECONDS:

@@ -1,163 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693" moduleId="org.eclipse.cdt.core.settings" name="Default">
+		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.16522482">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.16522482" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<macros>
 					<stringMacro name="ESP_SRC_DIR" type="VALUE_PATH_DIR" value="/home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0"/>
 				</macros>
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/include/interface"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/FatFs"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/driver"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/libmad"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/task"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/util"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI/fonts"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432/DSP/Include"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/FatFs"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/libmad"/>
-						<entry flags="NONE" kind="macro" name="ARM_MATH_CM4" value=""/>
-						<entry flags="NONE" kind="macro" name="__FPU_PRESENT" value="1"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/YAHAL"/>
-						<entry flags="NONE" kind="libraryFile" name="YAHAL_msp432" srcPrefixMapping="" srcRootPath=""/>
-					</externalSetting>
-				</externalSettings>
-				<extensions>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-				</extensions>
-			</storageModule>
-			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
-					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693.1009521" name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.1857709541" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
-							<option id="cdt.managedbuild.option.gnu.cross.prefix.796215692" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix" value="arm-none-eabi-" valueType="string"/>
-							<option id="cdt.managedbuild.option.gnu.cross.path.1735633647" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="/opt/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major/bin" valueType="string"/>
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1846344057" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder autoBuildTarget="all" buildPath="${workspace_loc:/YAHAL}/Default" cleanBuildTarget="clean" enableAutoBuild="false" enableCleanBuild="true" enabledIncrementalBuild="true" id="cdt.managedbuild.builder.gnu.cross.1771010402" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="false" superClass="cdt.managedbuild.builder.gnu.cross"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.885615721" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
-								<option id="gnu.c.compiler.option.include.paths.1202614418" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.216035533" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.517441019" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
-								<option id="gnu.cpp.compiler.option.preprocessor.def.405101785" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="__MSP432P401R__"/>
-									<listOptionValue builtIn="false" value="__ARM_ARCH_7EM__=1"/>
-									<listOptionValue builtIn="false" value="ARM_MATH_CM4"/>
-									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
-								</option>
-								<option id="gnu.cpp.compiler.option.include.paths.835728100" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include/platform/msp432}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include/platform/msp432/CMSIS}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
-								</option>
-								<option id="gnu.cpp.compiler.option.dialect.std.1351950353" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1134475121" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1388130053" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1076289505" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1908735926" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.733983293" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.908044714" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.914384145" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.116359178" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.1029134693.1803420333" name="/" resourcePath="src/uGUI">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.1633582845" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
-							<option id="cdt.managedbuild.option.gnu.cross.prefix.796215692.1632596498" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.796215692"/>
-							<option id="cdt.managedbuild.option.gnu.cross.path.1735633647.2080883868" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path.1735633647"/>
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.423642833" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler.885615721">
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.264111950" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1455713443" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler.517441019">
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.113749872" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.879275725" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker.1388130053"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.108907107" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker.1076289505"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.717553147" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver.733983293"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.409424015" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler.908044714">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1386935249" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-					<sourceEntries>
-						<entry excluding="uGUI" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-					</sourceEntries>
-				</configuration>
-			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
-		</cconfiguration>
-		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.1136808877">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1136808877" moduleId="org.eclipse.cdt.core.settings" name="Default">
-				<macros>
-					<stringMacro name="AndisVar" type="VALUE_TEXT" value="laberlaber"/>
-				</macros>
-				<externalSettings>
-					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/include/interface"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/driver"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/include/platform/msp432"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/task"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/util"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/uGUI"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/uGUI/fonts"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432/DSP_Lib/Include"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/FatFs"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/libmad"/>
-						<entry flags="NONE" kind="macro" name="__ARM_ARCH_7EM__" value="1"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432/DSP/Include"/>
 						<entry flags="NONE" kind="macro" name="ARM_MATH_CM4" value=""/>
 						<entry flags="NONE" kind="macro" name="__FPU_PRESENT" value="1"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/YAHAL"/>
 						<entry flags="NONE" kind="libraryFile" name="YAHAL_msp432" srcPrefixMapping="" srcRootPath=""/>
-						<entry flags="NONE" kind="libraryFile" name="stdc++" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -170,108 +34,42 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.cross.base.1136808877" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
-					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.1136808877.1544723603" name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.564557053" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
-							<option id="cdt.managedbuild.option.gnu.cross.prefix.2103821040" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix" value="arm-none-eabi-" valueType="string"/>
-							<option id="cdt.managedbuild.option.gnu.cross.path.385769298" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="/opt/ti/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin" valueType="string"/>
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.979751533" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder id="cdt.managedbuild.builder.gnu.cross.2131466156" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1969265942" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
-								<option id="gnu.c.compiler.option.preprocessor.def.symbols.878363396" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="__MSP432P401R__"/>
-								</option>
-								<option id="gnu.c.compiler.option.include.paths.6983462" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/interface}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/platform/msp432}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/driver}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
-									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include/CMSIS"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1475289686" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+				<configuration artifactName="${ProjName}" buildProperties="" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.toolchain.gnu.cross.base.16522482" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.16522482.1736835153" name="/" resourcePath="">
+						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.cross.base.397141333" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.1920736012" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix" value="arm-none-eabi-" valueType="string"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.33838985" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="/opt/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major/bin" valueType="string"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.724177089" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<builder errorParsers="org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.CWDLocator" id="cdt.managedbuild.builder.gnu.cross.1352237679" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<tool errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.cross.c.compiler.416467974" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1143390484" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1946952606" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
-								<option id="gnu.cpp.compiler.option.preprocessor.def.1965631325" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="__MSP432P401R__"/>
-								</option>
-								<option id="gnu.cpp.compiler.option.include.paths.1085990352" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/interface}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/platform/msp432}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/driver}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
-									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include/CMSIS"/>
-									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/tools/compiler/gcc-arm-none-eabi-6-2017-q1-update/arm-none-eabi/include"/>
-									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432/DSP_Lib/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.125148932" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							<tool errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1918382449" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.657446138" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1369012687" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1905948194" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1326000005" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.2038992597" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
+							<tool errorParsers="org.eclipse.cdt.core.GLDErrorParser" id="cdt.managedbuild.tool.gnu.cross.cpp.linker.2033475995" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1158827643" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
 							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1698723853" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.900640901" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.1558414057" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/interface}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/platform/msp432}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/driver}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
-									<listOptionValue builtIn="false" value="/opt/ti/ccsv7/ccs_base/arm/include/CMSIS"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/libb64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/spiffs&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/cores/esp8266/umm_malloc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WebServer/src/detail&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266WiFi/src/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/ESP8266mDNS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/libraries/SPI&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ESP_SRC_DIR}/tools/sdk/include&quot;"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1104408959" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1726537721" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
+							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.cross.assembler.458244870" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1294231715" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<sourceEntries>
-						<entry excluding="src/uGUI|uGUI" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="YAHAL.null.1224370332" name="YAHAL"/>
+		<project id="YAHAL.null.1253272262" name="YAHAL"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
@@ -279,23 +77,7 @@
 			<resource resourceType="PROJECT" workspacePath="/YAHAL"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="null.devicePreference"/>
 	<storageModule moduleId="cpuFamily"/>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1029134693;cdt.managedbuild.toolchain.gnu.cross.base.1029134693.1009521;cdt.managedbuild.tool.gnu.cross.cpp.compiler.517441019;cdt.managedbuild.tool.gnu.cpp.compiler.input.1134475121">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1029134693;cdt.managedbuild.toolchain.gnu.cross.base.1029134693.1009521;cdt.managedbuild.tool.gnu.cross.c.compiler.885615721;cdt.managedbuild.tool.gnu.c.compiler.input.216035533">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1136808877;cdt.managedbuild.toolchain.gnu.cross.base.1136808877.1544723603;cdt.managedbuild.tool.gnu.cross.c.compiler.1969265942;cdt.managedbuild.tool.gnu.c.compiler.input.1475289686">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1136808877;cdt.managedbuild.toolchain.gnu.cross.base.1136808877.1544723603;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1946952606;cdt.managedbuild.tool.gnu.cpp.compiler.input.125148932">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>
