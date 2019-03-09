@@ -41,7 +41,7 @@
 
 uart_msp432 uart; // default is backchannel UART!
 
-void uart_esp_rx_handler(char c) {
+void uart_esp_rx_handler(char c, void *) {
     // Forward any chars from the ESP8266 UART to the back channel UART
     // so we can see the debug messages from the ESP8266!
     uart.putc(c);
@@ -58,7 +58,7 @@ int main(void)
     // Initialize the UART which is connected to the ESP8266
     // and handle all incoming chars via an interrupt routine
     uart_msp432 uart_esp(EUSCI_A3,115200);
-    uart_esp.uartAttachIrq(uart_esp_rx_handler);
+    uart_esp.uartAttachIrq(uart_esp_rx_handler, nullptr);
 
     // Initialize the SPI interface which is connected to the
     // ESP8266 and use the client mode on MSP432 side
