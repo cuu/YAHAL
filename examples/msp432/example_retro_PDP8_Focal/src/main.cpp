@@ -50,10 +50,8 @@ int main() {
 
     // Add some PDP devices (Teletype input/output)
     Devices devices;
-    Device_TTI tti;
-    devices.addDevice(&tti); // Add a Keyboard Device
-    Device_TTO tto;
-    devices.addDevice(&tto); // Add a Teletype Device
+    devices.addDevice(new Device_TTI); // Add a Keyboard Device
+    devices.addDevice(new Device_TTO); // Add a Teletype Device
 
     Memory m;
     CPU cpu(m, devices);

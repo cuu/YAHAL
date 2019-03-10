@@ -45,7 +45,7 @@ void CPU::Reset() {
 
 // Run until we encounter a HLT
 void CPU::run() {
-    do { singleStep(); } while(RUN);
+    while( singleStep() ) ;
 }
 
 // Perform a single CPU cycle/state.

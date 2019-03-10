@@ -196,7 +196,7 @@ String to_String(int num, int base) {
         buf[--i] = '0';
         return String(buf+i);
     }
-    // Negative numbers are only handeled with base 10
+    // Negative numbers are only handled with base 10
     if (num < 0 && base == 10)
     {
         isNegative = true;

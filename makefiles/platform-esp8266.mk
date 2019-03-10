@@ -82,12 +82,6 @@ DEFINES += -DLWIP_OPEN_SRC -DTCP_MSS=536 -DLWIP_FEATURES=1 -DLWIP_IPV6=0
 DEFINES += -DARDUINO=10808 -DARDUINO_ESP8266_GENERIC -DARDUINO_ARCH_ESP8266 -DARDUINO_BOARD=\"ESP8266_GENERIC\" -DESP8266 
 #DEFINES += -DNDEBUG
 
-# -w -Os -g 
-# -falign-functions=4 
-# -w -x c++ -E -CC  
-# -DLED_BUILTIN=2 -DFLASHMODE_DOUT
-
-
 # Platform includes
 ###################
 PLATFORM_INC_DIRS  = $(ESP_SDK_DIR)/include
@@ -104,7 +98,7 @@ define PLATFORM_RULES
 # Generate ld script
 $(BUILD_DIR)/local.eagle.app.v6.common.ld : $(ESP_SDK_DIR)/ld/eagle.app.v6.common.ld.h
 	@echo "LDS $$(notdir $$<)"
-	$(CC) -CC -E -P -DVTABLES_IN_FLASH $$< -o $$@
+	$(HIDE) $(CC) -CC -E -P -DVTABLES_IN_FLASH $$< -o $$@
 
 .PHONY: upload
 upload: $$(TARGET)
