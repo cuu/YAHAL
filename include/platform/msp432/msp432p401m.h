@@ -45,7 +45,7 @@
 *  - ADC14->CTL0 |= ADC14_CTL0_ENC;
 *  - BITBAND_PERI(ADC14->CTL0, ADC14_CTL0_ENC_OFS) = 1;
 *
-* File creation date: 2017-10-13
+* File creation date: 2017-12-06
 *
 ******************************************************************************/
 
@@ -59,7 +59,7 @@
  extern "C" {
 #endif
 
-#define __MSP432_HEADER_VERSION__ 3220
+#define __MSP432_HEADER_VERSION__ 3230
 
 /* Remap MSP432 intrinsics to ARM equivalents */
 #include "msp_compatibility.h"

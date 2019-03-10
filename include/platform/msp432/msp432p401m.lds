@@ -32,7 +32,7 @@
 *
 * GCC linker script for Texas Instruments MSP432P401M
 *
-* File creation date: 10/13/17
+* File creation date: 12/06/17
 *
 ******************************************************************************/
 

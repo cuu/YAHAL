@@ -35,7 +35,7 @@
 * This file includes MSP430 style component and register definitions
 * for legacy components re-used in MSP432
 *
-* File creation date: 2017-10-13
+* File creation date: 2017-12-06
 *
 ******************************************************************************/
 

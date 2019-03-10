@@ -32,7 +32,7 @@
 *
 * MSP432 Family Generic Include File
 *
-* File creation date: 10/13/17
+* File creation date: 12/06/17
 *
 ******************************************************************************/
 
