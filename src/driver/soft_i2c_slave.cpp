@@ -9,12 +9,8 @@ soft_i2c_slave::soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
 : _sda(sda), _scl(scl), _state(I2C::IDLE),
   _i2c_address(0), _data(0),  _bit_mask(0), _byte_index(0),
   _enter(false), _send(false), _ack(false), _read_addr(false),
-  _receive(r), _transmit(t), _wantmore(m), _user_ptr(ptr)
+  _receive(r), _transmit(t), _moredata(m), _user_ptr(ptr), _init(false)
 {
-    _sda.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
-    _scl.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
-    _sda.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, sda_handler, this);
-    _scl.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, scl_handler, this);
 }
 
 soft_i2c_slave::~soft_i2c_slave() {
@@ -22,6 +18,16 @@ soft_i2c_slave::~soft_i2c_slave() {
     _scl.gpioMode(GPIO::INPUT);
     _sda.gpioDetachIrq();
     _scl.gpioDetachIrq();
+}
+
+void soft_i2c_slave::init() {
+    if (_init) return;
+    _sda.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
+    _scl.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
+    _sda.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, sda_handler, this);
+    _scl.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, scl_handler, this);
+    setState(I2C::IDLE);
+    _init = true;
 }
 
 // event-generating interrupt handlers
@@ -43,6 +49,7 @@ void soft_i2c_slave::scl_handler(gpio_pin_t, void * arg) {
 // I2C slave state machine
 void soft_i2c_slave::handler(I2C::I2C_event e)
 {
+    init();
     do {
         switch (_state) {
             ////////////////
@@ -84,20 +91,9 @@ void soft_i2c_slave::handler(I2C::I2C_event e)
                     return;
                 }
                 else if (e == I2C::scl_falling) {
+                    _sda.gpioWrite(HIGH);
                     // check if complete byte has been received
                     if (!_bit_mask) {
-                        if (_read_addr) {
-                            // process device address
-                            _send = _data & 0x01;
-                            _data >>= 1;
-                            _ack  = (_data == _i2c_address);
-                            _read_addr = false;
-                        } else {
-                            // process user data and stretch clock
-                            _scl.gpioWrite(LOW);
-                            _ack = _receive(_byte_index++, _data, _user_ptr);
-                            _scl.gpioWrite(HIGH);
-                        }
                         setState(I2C::WRITE_ACK);
                         break;
                     }
@@ -120,8 +116,23 @@ void soft_i2c_slave::handler(I2C::I2C_event e)
             case I2C::WRITE_ACK: {
                 // enter code
                 if (_enter) {
-                    _sda.gpioWrite(!_ack);
                     _enter = false;
+
+                    if (_read_addr) {
+                        // process device address
+                        _send = _data & 0x01;
+                        _data >>= 1;
+                        _ack  = (_data == _i2c_address);
+                        _read_addr = false;
+                    } else {
+                        // process user data and stretch clock
+                        _scl.gpioWrite(LOW);
+                        _ack = _receive(_byte_index++, _data, _user_ptr);
+//                            _scl.gpioWrite(HIGH);
+                    }
+
+                    _sda.gpioWrite(!_ack);
+                    _scl.gpioWrite(HIGH); // release SCL (clock stretch)
                     return;
                 }
                 // events
@@ -209,7 +220,7 @@ void soft_i2c_slave::handler(I2C::I2C_event e)
                 else if (e == I2C::scl_falling) {
                     if (_ack) {
                         _scl.gpioWrite(LOW);
-                        _wantmore(_user_ptr);
+                        _moredata(_user_ptr);
                         _scl.gpioWrite(HIGH);
                         setState(I2C::WRITE);
                     } else {

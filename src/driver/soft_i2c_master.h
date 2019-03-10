@@ -25,6 +25,8 @@ public:
     int16_t i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
                      bool sendStop = true) override;
 
+    void init();
+
     void setSpeed(uint32_t) { return; }
 
 private:
@@ -37,7 +39,6 @@ private:
     int8_t i2c_read_byte(bool nack);
 
     bool _init;
-    void init();
 
     gpio_pin & _sda;
     gpio_pin & _scl;

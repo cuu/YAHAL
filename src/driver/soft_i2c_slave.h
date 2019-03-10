@@ -27,9 +27,11 @@ public:
     soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
                    bool    (*receive) (uint8_t index, uint8_t data, void *),
                    uint8_t (*transmit)(uint8_t index, void *),
-                   void    (*wantmore)(void *),
+                   void    (*moredata)(void *),
                    void     *ptr);
     virtual ~soft_i2c_slave();
+
+    void init();
 
     // Getter/Setter for slaves I2C address it listens to
     inline uint8_t getI2cAddress() {
@@ -70,9 +72,11 @@ private:
     // callback methods
     bool    (*_receive) (uint8_t index, uint8_t data, void *);
     uint8_t (*_transmit)(uint8_t index, void *);
-    void    (*_wantmore)(void *);
+    void    (*_moredata)(void *);
 
     void *    _user_ptr;
+
+    bool _init;
 };
 
 #endif // _SOFT_I2C_SLAVE_H_

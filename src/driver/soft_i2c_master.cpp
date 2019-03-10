@@ -22,7 +22,7 @@ soft_i2c_master::~soft_i2c_master()
 int16_t soft_i2c_master::i2cRead(uint16_t addr, uint8_t *rxbuf, uint8_t len,
                                  bool sendStop)
 {
-    if (!_init) init();
+    init();
     if (!i2c_start())
         return -1;
     addr <<= 1;
@@ -51,7 +51,7 @@ int16_t soft_i2c_master::i2cRead(uint16_t addr, uint8_t *rxbuf, uint8_t len,
 int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
                                   bool sendStop)
 {
-    if (!_init) init();
+    init();
     if (!i2c_start())
         return -1;
     addr <<= 1;
@@ -81,6 +81,7 @@ int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
 
 void soft_i2c_master::init()
 {
+    if (_init) return;
     uint16_t mode = GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
     if (_pullup)
         mode |= GPIO::PULLUP;
