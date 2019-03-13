@@ -5,15 +5,18 @@ soft_i2c_slave::soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
                                bool    (*r)(uint8_t index, uint8_t data, void *),
                                uint8_t (*t)(uint8_t index, void *),
                                void    (*m)(void *),
-                               void     * ptr)
+                               void     * user_ptr,
+                               bool     pullup)
 : _sda(sda), _scl(scl), _state(I2C::IDLE),
   _i2c_address(0), _data(0),  _bit_mask(0), _byte_index(0),
   _enter(false), _send(false), _ack(false), _read_addr(false),
-  _receive(r), _transmit(t), _moredata(m), _user_ptr(ptr), _init(false)
+  _receive(r), _transmit(t), _moredata(m), _user_ptr(user_ptr), _pullup(pullup), _init(false)
 {
 }
 
 soft_i2c_slave::~soft_i2c_slave() {
+    // Check if we need to de-configure
+    if (!_init) return;
     _sda.gpioMode(GPIO::INPUT);
     _scl.gpioMode(GPIO::INPUT);
     _sda.gpioDetachIrq();
@@ -22,8 +25,13 @@ soft_i2c_slave::~soft_i2c_slave() {
 
 void soft_i2c_slave::init() {
     if (_init) return;
-    _sda.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
-    _scl.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
+//    uint16_t mode = GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
+    uint16_t mode = GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
+    if (_pullup) {
+        mode |= GPIO::PULLUP;
+    }
+    _sda.gpioMode(mode);
+    _scl.gpioMode(mode);
     _sda.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, sda_handler, this);
     _scl.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, scl_handler, this);
     setState(I2C::IDLE);

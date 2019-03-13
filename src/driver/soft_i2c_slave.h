@@ -28,7 +28,8 @@ public:
                    bool    (*receive) (uint8_t index, uint8_t data, void *),
                    uint8_t (*transmit)(uint8_t index, void *),
                    void    (*moredata)(void *),
-                   void     *ptr);
+                   void     *user_ptr,
+                   bool     pullup = false);
     virtual ~soft_i2c_slave();
 
     void init();
@@ -42,7 +43,7 @@ public:
     }
 
 private:
-    // The interrupt handler generating the events
+    // The interrupt handlers generating the events
     static void sda_handler(gpio_pin_t, void *);
     static void scl_handler(gpio_pin_t, void *);
 
@@ -75,6 +76,7 @@ private:
     void    (*_moredata)(void *);
 
     void *    _user_ptr;
+    bool      _pullup;
 
     bool _init;
 };
