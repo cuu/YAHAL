@@ -1,9 +1,18 @@
-/*
- * softi2cmaster.h
- *
- *  Created on: 31.01.2017
- *      Author: aterstegge
- */
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+//  This is a I2C master driver implemented in SW.
+//  The I2C protocol is simulated by 2 GPIO line.
 
 #ifndef _SOFT_I2C_MASTER_H_
 #define _SOFT_I2C_MASTER_H_
@@ -28,6 +37,10 @@ public:
     void setSpeed(uint32_t);
 
     void init();
+
+    // No copy, no assignment
+    soft_i2c_master              (const soft_i2c_master &) = delete;
+    soft_i2c_master & operator = (const soft_i2c_master &) = delete;
 
 private:
 

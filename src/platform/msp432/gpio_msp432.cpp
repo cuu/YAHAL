@@ -155,6 +155,13 @@ void gpio_msp432::gpioDisableIrq(uint16_t gpio) {
 	DIO_BIT(port, pin, PORT_IE_OFS) = LOW;
 }
 
+void gpio_msp432::gpioClearIrq(uint16_t gpio) {
+    uint8_t port = PORT(gpio);
+    uint8_t pin  = PIN (gpio);
+    yahal_assert((port > 0) && (port < 7) && (pin < 8));
+    DIO_BIT(port, pin, PORT_IFG_OFS) = LOW;
+}
+
 void gpio_msp432::handleIrq(uint8_t port, uint8_t pin) {
 	_intHandler[port-1][pin](PORT_PIN(port, pin), _arg[port-1][pin]);
     if (_both[port-1][pin]) {

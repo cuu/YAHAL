@@ -93,6 +93,7 @@ public:
     virtual void gpioDetachIrq (gpio_pin_t gpio) = 0;
     virtual void gpioEnableIrq (gpio_pin_t gpio) = 0;
     virtual void gpioDisableIrq(gpio_pin_t gpio) = 0;
+    virtual void gpioClearIrq  (gpio_pin_t gpio) = 0;
 
 protected:
     virtual ~gpio_interface() = default;
@@ -137,6 +138,9 @@ public:
     }
     inline void gpioDisableIrq() {
         _interf.gpioDisableIrq(_gpio);
+    }
+    inline void gpioClearIrq() {
+        _interf.gpioClearIrq(_gpio);
     }
 
 protected:

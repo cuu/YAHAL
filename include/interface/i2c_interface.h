@@ -22,17 +22,18 @@
 class i2c_interface {
 public:
     // Read max. len bytes from the I2C interface.
-    // The number of bytes read is returned, or -1
-    // case of errors. The last parameter specifies
-    // if a I2C STOP condition is generated at the end.
+    // The number of bytes read is returned, or a
+    // negative value in case of errors. The last
+    // parameter specifies if a I2C STOP condition
+    // is generated at the end.
     virtual int16_t i2cRead (uint16_t addr,
                              uint8_t *rxbuf, uint8_t len,
                              bool sendStop = true) = 0;
 
     // Write len bytes from txbuf to the I2C interface.
-    // The number of bytes written is returned, or -1
-    // in case of errors. The last parameter specifies
-    // if a I2C STOP condition is generated at the end.
+    // The number of bytes written is returned, or a
+    // negative value in case of errors. The last parameter
+    // specifies if a I2C STOP condition is generated at the end.
     virtual int16_t i2cWrite(uint16_t addr,
                              uint8_t *txbuf, uint8_t len,
                              bool sendStop = true) = 0;

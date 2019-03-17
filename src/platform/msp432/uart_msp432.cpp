@@ -63,6 +63,8 @@ void uart_msp432::init() {
 }
 
 uart_msp432::~uart_msp432() {
+    // Check if we need to de-configure
+    if (!_init) return;
     // Wait for pending operations
     while (_EUSCI->STATW & EUSCI_A_STATW_BUSY);
     // Reset CTLW0 register to default values

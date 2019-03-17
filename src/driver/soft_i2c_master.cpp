@@ -1,15 +1,26 @@
-/*
- * softi2cmaster.cpp
- *
- *  Created on: 31.01.2017
- *      Author: aterstegge
- */
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
 
 #include "soft_i2c_master.h"
 
 soft_i2c_master::soft_i2c_master(gpio_pin & sda, gpio_pin & scl,
-                                 void (*delay)(uint32_t us), bool pullup) :
-        _init(false), _sda(sda), _scl(scl), _delay(delay), _pullup(pullup)
+                                 void (*delay)(uint32_t us), bool pullup)
+    : _init(false),
+      _sda(sda),
+      _scl(scl),
+      _delay(delay),
+      _pullup(pullup)
 {
 }
 
@@ -61,8 +72,11 @@ int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
 }
 
 void soft_i2c_master::setSpeed(uint32_t hz) {
-    uint32_t _us = 1000000 / hz;
-    _us /= 2;
+    _us = 1000000 / hz;
+    // There are 3 delays during sending/receiving
+    // of a single bit (one SCL cycle). So we have
+    // to divide the time by 3.
+    _us /= 3;
 }
 
 void soft_i2c_master::init()
@@ -101,6 +115,7 @@ bool soft_i2c_master::write_byte(uint8_t byte)
 bool soft_i2c_master::read_bit()
 {
     _scl.gpioWrite(LOW);
+    _delay(_us);
     _sda.gpioWrite(HIGH);
     _delay(_us);
     _scl.gpioWrite(HIGH);
@@ -114,6 +129,7 @@ bool soft_i2c_master::read_bit()
 bool soft_i2c_master::write_bit(bool bit)
 {
     _scl.gpioWrite(LOW);
+    _delay(_us);
     _sda.gpioWrite(bit);
     _delay(_us);
     _scl.gpioWrite(HIGH);
@@ -133,6 +149,7 @@ bool soft_i2c_master::send_start()
 void soft_i2c_master::send_stop()
 {
     _scl.gpioWrite(LOW);
+    _delay(_us);
     _sda.gpioWrite(LOW);
     _delay(_us);
     _scl.gpioWrite(HIGH);

@@ -1,17 +1,34 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
 
 #include "soft_i2c_slave.h"
 
 soft_i2c_slave::soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
                                bool    (*r)(uint8_t index, uint8_t data, void *),
                                uint8_t (*t)(uint8_t index, void *),
-                               void    (*m)(void *),
+                               void    (*s)(void *),
                                void     * user_ptr,
-                               bool     pullup)
-: _sda(sda), _scl(scl), _state(I2C::IDLE),
-  _i2c_address(0), _data(0),  _bit_mask(0), _byte_index(0),
-  _enter(false), _send(false), _ack(false), _read_addr(false),
-  _receive(r), _transmit(t), _moredata(m), _user_ptr(user_ptr), _pullup(pullup), _init(false)
+                               bool       pullup)
+    : _sda(sda), _scl(scl), _init(false), _pullup(pullup),
+      _receive(r), _transmit(t), _stop(s),_user_ptr(user_ptr),
+      _i2c_address(0),
+      _state     (nullptr),
+      _idle      (*this), _read_addr (*this), _write_ack (*this),
+      _read_data (*this), _write_data(*this), _read_ack  (*this)
 {
+    // Set start state
+    setState(&_idle);
 }
 
 soft_i2c_slave::~soft_i2c_slave() {
@@ -24,8 +41,6 @@ soft_i2c_slave::~soft_i2c_slave() {
 }
 
 void soft_i2c_slave::init() {
-    if (_init) return;
-//    uint16_t mode = GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
     uint16_t mode = GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
     if (_pullup) {
         mode |= GPIO::PULLUP;
@@ -34,243 +49,24 @@ void soft_i2c_slave::init() {
     _scl.gpioMode(mode);
     _sda.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, sda_handler, this);
     _scl.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, scl_handler, this);
-    setState(I2C::IDLE);
     _init = true;
 }
 
-// event-generating interrupt handlers
+/////////////////////////////////////////////
+// The event-generating interrupt handlers //
+/////////////////////////////////////////////
 void soft_i2c_slave::sda_handler(gpio_pin_t, void * arg) {
     soft_i2c_slave * _this = (soft_i2c_slave *)arg;
     if (!_this->_scl.gpioRead()) return;
-    _this->handler(_this->_sda.gpioRead() ? I2C::stop : I2C::start);
+    _this->_sda.gpioRead() ? _this->_state->stop() : _this->_state->start();
 }
 
 void soft_i2c_slave::scl_handler(gpio_pin_t, void * arg) {
     soft_i2c_slave * _this = (soft_i2c_slave *)arg;
     if (_this->_scl.gpioRead()) {
-        _this->handler(_this->_sda.gpioRead() ? I2C::high : I2C::low);
+        _this->_sda.gpioRead() ? _this->_state->high() : _this->_state->low();
     } else {
-        _this->handler(I2C::scl_falling);
+        _this->_state->scl_falling();
     }
 }
-
-// I2C slave state machine
-void soft_i2c_slave::handler(I2C::I2C_event e)
-{
-    init();
-    do {
-        switch (_state) {
-            ////////////////
-            // STATE IDLE //
-            ////////////////
-            case I2C::IDLE: {
-                // enter code
-                if (_enter) {
-                    _byte_index = 0;
-                    _enter = false;
-                }
-                // events
-                if (e == I2C::start) {
-                    _read_addr = true;
-                    setState(I2C::READ);
-                    break;
-                }
-                return;
-            }
-            ////////////////
-            // STATE READ //
-            ////////////////
-            case I2C::READ: {
-                // enter code
-                if (_enter) {
-                    _data      = 0;
-                    _bit_mask  = 0x80;
-                    _enter     = false;
-                    return;
-                }
-                // events
-                if (e == I2C::high) {
-                    _data |= _bit_mask;
-                    _bit_mask >>= 1;
-                    return;
-                }
-                else if (e == I2C::low) {
-                    _bit_mask >>= 1;
-                    return;
-                }
-                else if (e == I2C::scl_falling) {
-                    _sda.gpioWrite(HIGH);
-                    // check if complete byte has been received
-                    if (!_bit_mask) {
-                        setState(I2C::WRITE_ACK);
-                        break;
-                    }
-                    return;
-                }
-                else if (e == I2C::start) {
-                    _read_addr = true;
-                    setState(I2C::READ);
-                    break;
-                }
-                else if (e == I2C::stop) {
-                    setState(I2C::IDLE);
-                    break;
-                }
-                return;
-            }
-            /////////////////////
-            // STATE WRITE ACK //
-            /////////////////////
-            case I2C::WRITE_ACK: {
-                // enter code
-                if (_enter) {
-                    _enter = false;
-
-                    if (_read_addr) {
-                        // process device address
-                        _send = _data & 0x01;
-                        _data >>= 1;
-                        _ack  = (_data == _i2c_address);
-                        _read_addr = false;
-                    } else {
-                        // process user data and stretch clock
-                        _scl.gpioWrite(LOW);
-                        _ack = _receive(_byte_index++, _data, _user_ptr);
-//                            _scl.gpioWrite(HIGH);
-                    }
-
-                    _sda.gpioWrite(!_ack);
-                    _scl.gpioWrite(HIGH); // release SCL (clock stretch)
-                    return;
-                }
-                // events
-                if (e == I2C::scl_falling) {
-                    // release SDA line
-                    _sda.gpioWrite(HIGH);
-                    if (_ack) {
-                        setState(_send ? I2C::WRITE : I2C::READ);
-                    } else {
-                        setState(I2C::WAIT);
-                    }
-                    break;
-                }
-                else if (e == I2C::start) {
-                    _read_addr = true;
-                    setState(I2C::READ);
-                    break;
-                }
-                else if (e == I2C::stop) {
-                    setState(I2C::IDLE);
-                    break;
-                }
-                return;
-            }
-            /////////////////
-            // STATE WRITE //
-            /////////////////
-            case I2C::WRITE: {
-                // enter code
-                if (_enter) {
-                    _bit_mask = 0x80;
-                    // Read in the byte to send
-                    _scl.gpioWrite(LOW);
-                    _data = _transmit(_byte_index++, _user_ptr);
-                    _scl.gpioWrite(HIGH);
-                    // set first bit
-                    _sda.gpioWrite(_data & _bit_mask);
-                    _bit_mask >>= 1;
-                    _enter = false;
-                    return;
-                }
-                // events
-                if (e == I2C::scl_falling) {
-                    if (_bit_mask) {
-                        // send next bit
-                        _sda.gpioWrite(_data & _bit_mask);
-                        _bit_mask >>= 1;
-                        return;
-                    } else {
-                        // release SDA line
-                        _sda.gpioWrite(HIGH);
-                        setState(I2C::READ_ACK);
-                        break;
-                    }
-                }
-                else if (e == I2C::start) {
-                    _read_addr = true;
-                    setState(I2C::READ);
-                    break;
-                }
-                else if (e == I2C::stop) {
-                    setState(I2C::IDLE);
-                    break;
-                }
-                return;
-            }
-            ////////////////////
-            // STATE READ ACK //
-            ////////////////////
-            case I2C::READ_ACK: {
-                // enter code
-                if (_enter) {
-                    _enter = false;
-                    return;
-                }
-                // events
-                if (e == I2C::high) {
-                    _ack = false;
-                    return;
-                }
-                else if (e == I2C::low) {
-                    _ack = true;
-                    return;
-                }
-                else if (e == I2C::scl_falling) {
-                    if (_ack) {
-                        _scl.gpioWrite(LOW);
-                        _moredata(_user_ptr);
-                        _scl.gpioWrite(HIGH);
-                        setState(I2C::WRITE);
-                    } else {
-                        setState(I2C::WAIT);
-                    }
-                    break;
-                }
-                else if (e == I2C::start) {
-                    _read_addr = true;
-                    setState(I2C::READ);
-                    break;
-                }
-                else if (e == I2C::stop) {
-                    setState(I2C::IDLE);
-                    break;
-                }
-                return;
-            }
-            ////////////////
-            // STATE WAIT //
-            ////////////////
-            case I2C::WAIT: {
-                // enter code
-                if (_enter) {
-                    _enter = false;
-                    return;
-                }
-                // events
-                if (e == I2C::start) {
-                    _read_addr = true;
-                    setState(I2C::READ);
-                    break;
-                }
-                else if (e == I2C::stop) {
-                    setState(I2C::IDLE);
-                    break;
-                }
-                return;
-            }
-        }
-    } while (true);
-}
-
-
 
