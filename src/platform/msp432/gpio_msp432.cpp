@@ -144,22 +144,17 @@ void gpio_msp432::gpioEnableIrq(uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	yahal_assert((port > 0) && (port < 7) && (pin < 8));
-	DIO_BIT(port, pin, PORT_IE_OFS) = HIGH;
+    // Clear pending interrupts
+    DIO_BIT(port, pin, PORT_IFG_OFS) = LOW;
+    DIO_BIT(port, pin, PORT_IE_OFS) = HIGH;
 	NVIC_EnableIRQ((IRQn_Type)(34 + port));
 }
 
 void gpio_msp432::gpioDisableIrq(uint16_t gpio) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
-	yahal_assert((port > 0) && (port < 7) && (pin < 8));
-	DIO_BIT(port, pin, PORT_IE_OFS) = LOW;
-}
-
-void gpio_msp432::gpioClearIrq(uint16_t gpio) {
-    uint8_t port = PORT(gpio);
-    uint8_t pin  = PIN (gpio);
     yahal_assert((port > 0) && (port < 7) && (pin < 8));
-    DIO_BIT(port, pin, PORT_IFG_OFS) = LOW;
+	DIO_BIT(port, pin, PORT_IE_OFS)  = LOW;
 }
 
 void gpio_msp432::handleIrq(uint8_t port, uint8_t pin) {

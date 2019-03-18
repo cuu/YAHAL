@@ -37,7 +37,6 @@ public:
     void gpioDetachIrq (gpio_pin_t gpio);
     void gpioEnableIrq (gpio_pin_t gpio);
     void gpioDisableIrq(gpio_pin_t gpio);
-    void gpioClearIrq  (gpio_pin_t gpio);
 
     // MSP432 specific methods
     //////////////////////////

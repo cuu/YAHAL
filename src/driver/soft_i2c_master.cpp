@@ -64,7 +64,7 @@ int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
     for (uint8_t i = 0; i < len; ++i) {
         if (!write_byte(txbuf[i])) {
             if (sendStop) send_stop();
-            return -3;
+            return i;
         }
     }
     if (sendStop) send_stop();
