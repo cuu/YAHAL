@@ -132,6 +132,8 @@ ICACHE_FLASH_ATTR
 void gpio_esp8266::gpioEnableIrq(uint16_t gpio)
 {
     yahal_assert(gpio < 16);
+    // Clear pending interrupts
+    ESP_GPIO.STATUS_W1TC = (1 << gpio);
     ESP_GPIO.PIN[gpio].INT_TYPE = intMode[gpio];
 }
 
