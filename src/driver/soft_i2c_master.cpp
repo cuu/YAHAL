@@ -31,7 +31,7 @@ soft_i2c_master::~soft_i2c_master()
     _scl.gpioMode(GPIO::INPUT);
 }
 
-int16_t soft_i2c_master::i2cRead(uint16_t addr, uint8_t *rxbuf, uint8_t len,
+int16_t soft_i2c_master::i2cRead(uint16_t addr, uint8_t *rxbuf, uint16_t len,
                                  bool sendStop)
 {
     if (!_init) init();
@@ -43,17 +43,17 @@ int16_t soft_i2c_master::i2cRead(uint16_t addr, uint8_t *rxbuf, uint8_t len,
         if (sendStop) send_stop();
         return -2;
     }
-    for (uint8_t i = 0; i < len; ++i) {
+    for (uint16_t i = 0; i < len; ++i) {
         rxbuf[i] = read_byte(i==(len-1));
     }
     if (sendStop) send_stop();
     return len;
 }
 
-int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
+int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint16_t len,
                                   bool sendStop)
 {
-    if (_init) init();
+    if (!_init) init();
     if (!send_start()) return -1;
     addr <<= 1;
     addr &= 0xff;
@@ -61,7 +61,7 @@ int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
         if (sendStop) send_stop();
         return -2;
     }
-    for (uint8_t i = 0; i < len; ++i) {
+    for (uint16_t i = 0; i < len; ++i) {
         if (!write_byte(txbuf[i])) {
             if (sendStop) send_stop();
             return i;
@@ -72,6 +72,7 @@ int16_t soft_i2c_master::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len,
 }
 
 void soft_i2c_master::setSpeed(uint32_t hz) {
+    if (!_init) init();
     _us = 1000000 / hz;
     // There are 3 delays during sending/receiving
     // of a single bit (one SCL cycle). So we have

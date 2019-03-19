@@ -61,8 +61,8 @@ public:
     // further. It is reset after a stop event.
     // The transmit() handler asks for new user data to be sent.
     soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
-                   bool    (*receive) (uint8_t index, uint8_t data, void *),
-                   uint8_t (*transmit)(uint8_t index, void *),
+                   bool    (*receive) (uint16_t index, uint8_t data, void *),
+                   uint8_t (*transmit)(uint16_t index, void *),
                    void    (*stop)(void *),
                    void     *user_ptr,
                    bool     pullup = false);
@@ -89,8 +89,8 @@ private:
     bool       _pullup;
 
     // callback methods
-    bool     (*_receive) (uint8_t index, uint8_t data, void *);
-    uint8_t  (*_transmit)(uint8_t index, void *);
+    bool     (*_receive) (uint16_t index, uint8_t data, void *);
+    uint8_t  (*_transmit)(uint16_t index, void *);
     void     (*_stop)    (void *);
     void *     _user_ptr;
 

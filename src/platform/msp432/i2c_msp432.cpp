@@ -73,7 +73,7 @@ i2c_msp432::~i2c_msp432() {
     _scl.setSEL(0); _scl.setMode(GPIO::INPUT);
 }
 
-int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool sendStop) {
+int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint16_t len, bool sendStop) {
     // Check for len 0 because the sendStart/Stop
     // routines might hang in this case.
     if (!len) return 0;
@@ -101,7 +101,7 @@ int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint8_t len, bool se
     }
     return i;
 }
-int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint8_t len, bool sendStop) {
+int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint16_t len, bool sendStop) {
     // Check for len 0 because the sendStart/Stop
     // routines might hang in this case.
     if (!len) return 0;

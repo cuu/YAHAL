@@ -15,8 +15,8 @@
 #include "soft_i2c_slave.h"
 
 soft_i2c_slave::soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
-                               bool    (*r)(uint8_t index, uint8_t data, void *),
-                               uint8_t (*t)(uint8_t index, void *),
+                               bool    (*r)(uint16_t index, uint8_t data, void *),
+                               uint8_t (*t)(uint16_t index, void *),
                                void    (*s)(void *),
                                void     * user_ptr,
                                bool       pullup)
