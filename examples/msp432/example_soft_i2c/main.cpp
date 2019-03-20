@@ -51,7 +51,7 @@ int main(void)
     uart.puts("==============================\r\n");
     uart.puts("Press Button S1 during startup to select HW I2C master!\r\n");
 
-    // set up gpios for button and I2C master/slave
+    // set up GPIOs for button and I2C master/slave
     gpio_msp432_pin button1( PORT_PIN(1,1));
     button1.gpioMode(GPIO::INPUT | GPIO::PULLUP);
     gpio_msp432_pin m_sda( PORT_PIN(6,4) );
@@ -66,11 +66,14 @@ int main(void)
         // button pressed -> use hardware master
         uart.puts("Using HW I2C master (EUSCI_B1)\r\n");
         master = new i2c_msp432(EUSCI_B1);
+        // HW master can operate up to 20kHz
+        master->setSpeed(20000);
     } else {
         uart.puts("Using SW I2C master\r\n");
         master = new soft_i2c_master(m_sda, m_scl, delay, true);
+        // SW master can run as fast as possible
+        master->setSpeed(100000);
     }
-    master->setSpeed(20000);
 
     // create I2C slave instance for address 0x55
     /////////////////////////////////////////////
