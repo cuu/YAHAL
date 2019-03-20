@@ -138,4 +138,19 @@ namespace DMA
     };
 }
 
+class dma_msp432 {
+public:
+    // DMA is a singleton...
+    static dma_msp432 & inst();
+
+    // public structure for 8 primary
+    // and 8 alternate channels
+    __attribute__ ((aligned (256)))
+    DMA::CH_CTRL_DATA ctrl_data[16];
+
+private:
+    static dma_msp432 _inst;
+    dma_msp432();
+};
+
 #endif // _DMA_MSP432_H_
