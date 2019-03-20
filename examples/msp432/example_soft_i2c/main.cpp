@@ -24,7 +24,7 @@
 //  P5.5 and P5.4 by the I2C client.
 //  Alternatively, the HW implementation of a I2C
 //  master (EUSCI_B1) can be used to talk to the
-//  soft_i2c_slave (it also uses P6.4 and P6.5).
+//  soft_i2c_slave (EUSCI_B1 also uses P6.4 and P6.5).
 //
 
 #include <cstdint>
@@ -90,7 +90,7 @@ int main(void)
     if (buffer_recv[0] != 0xab || buffer_recv[1] != 0xcd) {
         uart.puts("FAILED!\r\n");
         uart.puts("Did you use the jumpers to connect master and slave?");
-        while(1);
+        return 0;
     }
     uart.puts("OK!\r\n");
 
@@ -110,7 +110,7 @@ int main(void)
         for(uint16_t i=0; i < 256; ++i) {
             if (buffer_recv[i] != val) {
                 uart.puts("FAILURE");
-                while(1);
+                return 0;
             }
         }
         uart.puts(" OK!\r");

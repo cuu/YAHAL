@@ -27,6 +27,7 @@ i2c_device::i2c_device(gpio_pin & sda, gpio_pin & scl, uint8_t i2c_addr, bool pu
         _reg[i].data = new uint8_t[ _reg[i].length];
     }
 
+    // Set a magic value in the ID register (reg 0)
     _reg[0].data[0] = 0xAB;
     _reg[0].data[1] = 0xCD;
 }
@@ -77,6 +78,8 @@ uint8_t i2c_device::_transmit(uint16_t index, void * ptr) {
 }
 
 void i2c_device::_stop(void * ptr) {
-
+    // STOP condition is ignored. So we don't care if
+    // communication uses I2C RESTART conditions, or
+    // regular START-STOP sequences.
 }
 
