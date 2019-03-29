@@ -20,7 +20,7 @@
 // interface:
 //   - WLAN SSID
 //   - WLAN Password
-//   - The HTTP host (e.g. "wdr-wdr2-aachenundregion.icecast.wdr.de")
+//   - The HTTP host (e.g. "dg-wdr-http-dus-dtag-cdn.cast.addradio.de")
 //   - The HTTP port (e.g. 80)
 //   - The HTTP path (e.g. "/wdr/wdr2/aachenundregion/mp3/128/stream.mp3")
 //   - Start the receiving process

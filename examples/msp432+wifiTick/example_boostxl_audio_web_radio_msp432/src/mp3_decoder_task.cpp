@@ -120,7 +120,7 @@ enum mad_flow mp3_decoder_task::input(void *data, struct mad_stream *stream) {
 
 enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * header) {
     mp3_decoder_task * _this = (mp3_decoder_task *)data;
-    _this->_audio_output.setRate( header->samplerate );
+   _this->_audio_output.setRate( header->samplerate );
     return MAD_FLOW_CONTINUE;
 }
 
@@ -129,7 +129,6 @@ enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * hea
 ////////////////////////////
 enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad_pcm *pcm)
 {
-    (void)(header);
     mp3_decoder_task * _this = (mp3_decoder_task *)data;
 
     // Wait until the PCM result can be written
@@ -138,11 +137,16 @@ enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad
     }
     // Copy PCM samples to PCM fifo. We only have a MONO
     // audio channel, so we calculate the mean value of
-    // the left and right channel.
+    // the left and right channel, if there are 2 channels.
     mad_fixed_t const * left_ch  = pcm->samples[MAD_PCM_CHANNEL_STEREO_LEFT];
     mad_fixed_t const * right_ch = pcm->samples[MAD_PCM_CHANNEL_STEREO_RIGHT];
     for (int i=0; i < pcm->length; ++i) {
-        mad_fixed_t mono = (left_ch[i] + right_ch[i]) / 2;
+        mad_fixed_t mono = 0;
+        if (header->mode == MAD_MODE_SINGLE_CHANNEL) {
+            mono = (left_ch[i]);
+        } else {
+            mono = (left_ch[i] + right_ch[i]) / 2;
+        }
         _this->_audio_output.fifo_put( scale( mono ) );
     }
     return MAD_FLOW_CONTINUE;

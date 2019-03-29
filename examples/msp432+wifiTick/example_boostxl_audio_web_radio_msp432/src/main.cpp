@@ -54,8 +54,8 @@ int main(void)
     Main.start(50, true);
 
     // Start the Task monitor
-    task_monitor monitor;
-    monitor.start();
+//    task_monitor monitor;
+//    monitor.start();
 
     // Start the multitasking
     task::start_scheduler();

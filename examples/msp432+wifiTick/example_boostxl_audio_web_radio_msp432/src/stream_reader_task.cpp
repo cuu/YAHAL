@@ -13,6 +13,7 @@
 //
 
 #include <cstring>
+#include <cstdio>
 
 #include "stream_reader_task.h"
 #include "i2c_commands.h"
@@ -23,43 +24,30 @@
 #define I2C_ADDR 0x55
 
 void __attribute__((optimize("O0"))) delay(uint32_t us) {
-    for(int i=0; i < 200; ++i) ;
+    for(int i=0; i < 150; ++i) ;
 }
 
 void __attribute__((optimize("O0"))) delay1(uint32_t us) {
-    for(int i=0; i < 100; ++i) ;
+    for(int i=0; i < 50; ++i) ;
 }
 
-stream_reader_task::stream_reader_task() : task("MP3 stream", 500),
+stream_reader_task::stream_reader_task(audio_output & ao) : task("MP3 stream", 500),
+    _wifi_tick( [this] (uint32_t ms) { sleep(ms); } ),
     _sda(PORT_PIN(7,4)),
     _scl(PORT_PIN(7,5)),
     _i2c(_sda, _scl, delay),
-    //_reset    (PORT_PIN(10,5)),
     _esp_spi_cs(PORT_PIN(10, 0)),
     _esp_spi(EUSCI_B3_SPI, _esp_spi_cs),
-    _oneQuarter(PORT_PIN(9,7)),
-    _twoQuarters(PORT_PIN(7,6)),
-    _threeQuarters(PORT_PIN(7,7)),
-    _ctrl7_backup(0),
     _req_buff(nullptr),
     _req_btr(0),
     _req_br(nullptr),
     _req_result(0),
-    _execute(false)
+    _execute(false),
+    _audio_output(ao)
 {
-    _oneQuarter.gpioMode(GPIO::INPUT);
-    _twoQuarters.gpioMode(GPIO::INPUT);
-    _threeQuarters.gpioMode(GPIO::INPUT);
-    //_reset.    gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
-
-    _esp_spi.setSpeed(15000000);
+    _esp_spi.setSpeed(10000000);
     _esp_spi.generateCS(false);
-
     _i2c.init();
-
-//    sleep(1500);
-//    _reset.gpioWrite(HIGH);
-//    sleep(1500);
 }
 
 void stream_reader_task::connectToWlan(const char *ssid, const char *passwd) {
@@ -83,14 +71,12 @@ void stream_reader_task::connectToWlan(const char *ssid, const char *passwd) {
     res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 2);
     yahal_assert(res == 2);
 
-    sleep(5000);
-//    do {
-//        sleep(5000);
-//        res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 1, false);
-//        yahal_assert(res == 1);
-//        res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
-//        yahal_assert(res == 1);
-//    } while (buff[1]);
+    // Wait until ESP8266 is connected to WLAN
+    do {
+        sleep(500);
+        res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
+        if (res != 1) continue;
+    } while (buff[1]);
 }
 
 void stream_reader_task::connectToSrv(const char *host, int port, const char *path) {
@@ -120,14 +106,12 @@ void stream_reader_task::connectToSrv(const char *host, int port, const char *pa
     res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 2);
     yahal_assert(res == 2);
 
-    sleep(1000);
-//    do {
-//        sleep(500);
-//        res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 1, false);
-//        yahal_assert(res == 1);
-//        res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
-//        yahal_assert(res == 1);
-//    } while (buff[1]);
+    // Wait until ESP8266 is connected to server
+    do {
+        sleep(500);
+        res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
+        if (res != 1) continue;
+    } while (buff[1]);
 }
 
 int stream_reader_task::read_data(uint8_t* buff, uint16_t btr, uint16_t* br) {
@@ -150,6 +134,85 @@ void stream_reader_task::run() {
     char buff[80];
     int  res;
 
+    _wifi_tick.led(HIGH);
+    _wifi_tick.reset();
+    _wifi_tick.led(LOW);
+
+    sleep(2000);
+
+    connectToWlan("TG WLAN EG", "7209142041838311");
+    // KLARA
+    connectToSrv ("icecast.vrtcdn.be", 80, "/klara-mid.mp3");
+    // WDR 2
+    //  connectToSrv ("dg-wdr-http-fra-dtag-cdn.cast.addradio.de", 80, "/wdr/wdr2/rheinland/mp3/128/stream.mp3");
+    // WDR 4
+    //  connectToSrv ("dg-wdr-http-dus-dtag-cdn.cast.addradio.de", 80, "/wdr/wdr4/live/mp3/128/stream.mp3");
+
+    do {
+        // Wait for a new request
+        /////////////////////////
+        _execute_cv.wait(_execute_mutex, [this]() {return _execute;});
+
+        // Get the size of the FIFO on the ESP8266
+        //////////////////////////////////////////
+        buff[0] = FIFO_SIZE;
+        res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 1, false);
+        yahal_assert(res == 1);
+        res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 2);
+        yahal_assert(res == 2);
+        int fifo_size = buff[1] * 256 + buff[2];
+
+        int err = fifo_size - 30000;
+        err /= 10;
+        _audio_output.addToOffset(err);
+
+        // Send the amount of bytes needed and
+        // wait until data is available
+        buff[0] = READ_DATA;
+        buff[1] = _req_btr / 256;
+        buff[2] = _req_btr % 256;
+        res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 3);
+        yahal_assert(res == 3);
+
+        // Wait until data is prepared
+        do {
+            sleep(20);
+            _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 2);
+        } while (buff[1] || buff[2]);
+
+        uint8_t minibuf[2];
+        minibuf[0] = 0x03;
+        minibuf[1] = 0x00;
+
+        // Receive the data
+        *_req_br = 0;
+        while (_req_btr) {
+            int rec = (_req_btr >= 32) ? 32 : _req_btr;
+            _esp_spi.setCS(LOW);
+            _esp_spi.spiTx(minibuf, 2);
+            _esp_spi.spiRx(0, _req_buff, rec);
+            _esp_spi.setCS(HIGH);
+            delay1(0);
+            _req_buff += rec;
+            _req_btr  -= rec;
+            *_req_br  += rec;
+        }
+        // Read the metadata
+//        for (int i=0; i < 320; i+=32) {
+//            _esp_spi.setCS(LOW);
+//            _esp_spi.spiTx(minibuf, 2);
+//            _esp_spi.spiRx(0, _metaData+i, 32);
+//            _esp_spi.setCS(HIGH);
+//        }
+        // We have no errors ...
+        _req_result = 0;
+        // Notify end of execution
+        _execute = false;
+        _caller_cv.notify_one();
+    } while (true);
+}
+
+
 //    dma_msp432 & dma = dma_msp432::inst();
 //    dma.ctrl_data[7].SRC_DATA_END_PTR = &(EUSCI_B3->RXBUF);
 //    dma.ctrl_data[7].CTRL.CYCLE_CTRL  = DMA::CYCLE_BASIC;
@@ -163,47 +226,3 @@ void stream_reader_task::run() {
 //    DMA_Channel->CH_SRCCFG[7] = 2;
 //    DMA_Control->CFG          = DMA_STAT_MASTEN;
 //    DMA_Control->PRIOSET      = BIT7;
-
-    //if (!_oneQuarter.gpioRead()) sleep(20);
-
-    while(!_twoQuarters.gpioRead()) sleep(20);
-
-    do {
-        // Wait for a new request
-        _execute_cv.wait(_execute_mutex, [this]() {return _execute;});
-
-        // Send the amount of bytes needed
-        buff[0] = DATA_SIZE;
-        buff[1] = _req_btr / 256;
-        buff[2] = _req_btr % 256;
-        res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 3);
-        yahal_assert(res == 3);
-
-        uint8_t minibuf[2];
-        minibuf[0] = 0x03;
-        minibuf[1] = 0x00;
-
-        // Receive the data
-        *_req_br = 0;
-        while (_req_btr) {
-            int rec = (_req_btr >= 32) ? 32 : _req_btr;
-
-            _esp_spi.setCS(LOW);
-            _esp_spi.spiTx(minibuf, 2);
-            _esp_spi.spiRx(0, _req_buff, rec);
-            _esp_spi.setCS(HIGH);
-
-            delay1(0);
-
-            _req_buff += rec;
-            _req_btr  -= rec;
-            *_req_br  += rec;
-        }
-
-        // We have no errors ...
-        _req_result = 0;
-        // Notify end of execution
-        _execute = false;
-        _caller_cv.notify_one();
-    } while (true);
-}

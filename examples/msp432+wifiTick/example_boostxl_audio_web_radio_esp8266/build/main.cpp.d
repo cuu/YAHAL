@@ -1,4 +1,9 @@
-build/main.cpp.o: src/main.cpp src/WEB_Radio.h src/i2c_commands.h \
+build/main.cpp.o: src/main.cpp src/WEB_Radio.h src/i2c_device.h \
+ src/i2c_commands.h ../../../include/interface/gpio_interface.h \
+ ../../../src/driver/soft_i2c_slave.h \
+ ../../../src/driver/soft_i2c_slave_states.h \
+ ../../../src/platform/esp8266/gpio_esp8266.h ../../../src/util/FIFO.h \
+ ../../../src/util/yahal_assert.h \
  /home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0/libraries/ESP8266WiFi/src/WiFiClient.h \
  /home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0/cores/esp8266/Arduino.h \
  /home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0/cores/esp8266/stdlib_noniso.h \
@@ -59,9 +64,4 @@ build/main.cpp.o: src/main.cpp src/WEB_Radio.h src/i2c_commands.h \
  /home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0/tools/sdk/lwip2/include/lwip-git-hash.h \
  /home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0/tools/sdk/lwip2/include/lwip/debug.h \
  /home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0/cores/esp8266/IPAddress.h \
- /home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0/libraries/ESP8266WiFi/src/include/slist.h \
- ../../../src/platform/esp8266/gpio_esp8266.h \
- ../../../include/interface/gpio_interface.h \
- ../../../src/driver/soft_i2c_slave.h \
- ../../../src/driver/soft_i2c_slave_states.h ../../../src/util/FIFO.h \
- ../../../src/util/yahal_assert.h
+ /home/student/.arduino15/packages/esp8266/hardware/esp8266/2.5.0/libraries/ESP8266WiFi/src/include/slist.h
