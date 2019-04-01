@@ -14,9 +14,9 @@
 //  This is a I2C slave driver  implemented in SW.
 //  The I2C protocol is decoded with 2 GPIO line,
 //  which need support for edge interrupts. The
-//  interrupt handler generate 5 events (see I2C_event),
-//  which in turn are processed by a state machine.
-//  The user code has to provide 3 callback methods,
+//  interrupt handlers generate 5 events (start, stop,
+//  high, low, SCL falling), which in turn are processed
+//  by a state machine. The user code has to provide 3 callback methods,
 //  which are used within the state machine:
 //
 //      bool receive(uint8_t index, uint8_t data, void *)
@@ -56,10 +56,13 @@ class soft_i2c_slave {
 public:
     // The receive() handler passes received data to the user code.
     // The index ranges from 0..N and counts every received/transmitted
-    // byte (without the slave addresses) within one start/stop sequence.
-    // So for a I2C sequence with repeated starts, the index increases
-    // further. It is reset after a stop event.
-    // The transmit() handler asks for new user data to be sent.
+    // byte (without the slave addresses) after a start condition.
+    // So for a I2C sequence with repeated starts, the index starts
+    // with 0 after every start condition. Stop conditions can be
+    // detected with the stop() callback.
+    // The transmit() handler asks for new user data to be sent. The
+    // index is the save as for read operations (0 for the first byte
+    // after the I2C address).
     soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
                    bool    (*receive) (uint16_t index, uint8_t data, void *),
                    uint8_t (*transmit)(uint16_t index, void *),

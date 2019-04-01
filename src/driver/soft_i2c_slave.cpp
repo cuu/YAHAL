@@ -55,6 +55,7 @@ void soft_i2c_slave::init() {
 /////////////////////////////////////////////
 // The event-generating interrupt handlers //
 /////////////////////////////////////////////
+
 void soft_i2c_slave::sda_handler(gpio_pin_t, void * arg) {
     soft_i2c_slave * _this = (soft_i2c_slave *)arg;
     if (!_this->_scl.gpioRead()) return;
