@@ -95,10 +95,11 @@ void task::stop() {
 }
 
 void task::sleep(uint32_t ms) {
-    _sleep_until  = _up_ticks;
-    _sleep_until += (ms * TICK_FREQUENCY) / 1000;
-    _state = state_t::SLEEPING;
-    if (task::currentTask() == this) yield();
+    task * c = task::currentTask();
+    c->_sleep_until  = _up_ticks;
+    c->_sleep_until += (ms * TICK_FREQUENCY) / 1000;
+    c->_state = state_t::SLEEPING;
+    yield();
 }
 
 void task::suspend() {
