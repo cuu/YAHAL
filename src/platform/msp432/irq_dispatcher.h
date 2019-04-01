@@ -1,6 +1,12 @@
 #ifndef _IRQ_DISPATCHER_H_
 #define _IRQ_DISPATCHER_H_
 
+// dummy handler for bad function calls,
+// when using std::functional
+namespace std {
+    void __throw_bad_function_call();
+}
+
 extern "C" {
     void Default_EUSCI_Handler(void);
 

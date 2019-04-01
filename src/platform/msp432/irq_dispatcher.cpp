@@ -3,6 +3,10 @@
 
 void irq_dispatcher::link_in() { }
 
+void std::__throw_bad_function_call() {
+    while(1);
+}
+
 extern "C" {
 
     void Default_EUSCI_Handler(void) {
