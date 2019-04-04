@@ -102,6 +102,8 @@ $(BUILD_DIR)/local.eagle.app.v6.common.ld : $(ESP_SDK_DIR)/ld/eagle.app.v6.commo
 
 .PHONY: upload
 upload: $$(TARGET)
+	@echo "Uploading programmer"
+	$(HIDE) make -C ../../msp432+wifiTick/WifiTick-Programmer upload
 	@echo "Uploading program"
 	$(HIDE) $(ESP_TOOL) -eo $(ESP_BOOTLOADER) \
 			    -bo $$(TARGET).bin \
