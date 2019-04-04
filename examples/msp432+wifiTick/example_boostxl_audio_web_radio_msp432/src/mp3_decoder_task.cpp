@@ -19,13 +19,15 @@ mp3_decoder_task::mp3_decoder_task(stream_reader_task & sr, audio_output & ao) :
     task("MP3 decoder", 8200),
     _stream_reader(sr),
     _audio_output(ao),
-    _led(PORT_PIN(8,0))
+    _led(PORT_PIN(8,0)),
+    _eof(false)
 {
     _led.gpioMode ( GPIO::OUTPUT );
 }
 
 void mp3_decoder_task::run() {
 
+    _eof = false;
     mad_decoder_init(&_decoder, // the decoder object
                      this,      // parameter for callback functions
                      input,     // input callback
@@ -91,7 +93,7 @@ enum mad_flow mp3_decoder_task::input(void *data, struct mad_stream *stream) {
         // Read error.
         yahal_assert( false );
         return MAD_FLOW_STOP;
-    } else if (sr.eof()) {
+    } else if (_this->_eof) {
         // End of file. Append MAD_BUFFER_GUARD zero bytes to make
         // sure that the last frame is properly decoded.
         if (keep + MAD_BUFFER_GUARD <= MP3_BUF_SIZE) {

@@ -28,7 +28,7 @@ void __attribute__((optimize("O0"))) delay(uint32_t us) {
 }
 
 void __attribute__((optimize("O0"))) delay1(uint32_t us) {
-    for(int i=0; i < 50; ++i) ;
+    for(int i=0; i < 100; ++i) ;
 }
 
 stream_reader_task::stream_reader_task(audio_output & ao) : task("MP3 stream", 500),
@@ -43,7 +43,8 @@ stream_reader_task::stream_reader_task(audio_output & ao) : task("MP3 stream", 5
     _req_br(nullptr),
     _req_result(0),
     _execute(false),
-    _audio_output(ao)
+    _audio_output(ao),
+    _eof(false)
 {
     _esp_spi.setSpeed(10000000);
     _esp_spi.generateCS(false);
@@ -66,7 +67,7 @@ void stream_reader_task::connectToWlan(const char *ssid, const char *passwd) {
     res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, len);
     yahal_assert(res == len);
 
-    buff[0] = CONN_WLAN;
+    buff[0] = CONNECT_WLAN;
     buff[1] = 1;
     res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 2);
     yahal_assert(res == 2);
@@ -101,10 +102,12 @@ void stream_reader_task::connectToSrv(const char *host, int port, const char *pa
     res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, len);
     yahal_assert(res == len);
 
-    buff[0] = CONN_SRV;
+    buff[0] = CONNECT_SERVER;
     buff[1] = 1;
     res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 2);
     yahal_assert(res == 2);
+
+    _eof = false;
 
     // Wait until ESP8266 is connected to server
     do {
@@ -113,6 +116,27 @@ void stream_reader_task::connectToSrv(const char *host, int port, const char *pa
         if (res != 1) continue;
     } while (buff[1]);
 }
+
+
+void stream_reader_task::stopSrv() {
+    char buff[80];
+    int  res;
+
+    buff[0] = STOP_SERVER;
+    buff[1] = 1;
+    res = _i2c.i2cWrite(I2C_ADDR, (uint8_t *)buff, 2);
+    yahal_assert(res == 2);
+
+    _eof = true;
+
+    // Wait until ESP8266 is connected to server
+    do {
+        sleep(500);
+        res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
+        if (res != 1) continue;
+    } while (buff[1]);
+}
+
 
 int stream_reader_task::read_data(uint8_t* buff, uint16_t btr, uint16_t* br) {
     // Copy request parameters
@@ -138,16 +162,6 @@ void stream_reader_task::run() {
     _wifi_tick.reset();
     _wifi_tick.led(LOW);
 
-    sleep(2000);
-
-    connectToWlan("TG WLAN EG", "7209142041838311");
-    // KLARA
-    connectToSrv ("icecast.vrtcdn.be", 80, "/klara-mid.mp3");
-    // WDR 2
-    //  connectToSrv ("dg-wdr-http-fra-dtag-cdn.cast.addradio.de", 80, "/wdr/wdr2/rheinland/mp3/128/stream.mp3");
-    // WDR 4
-    //  connectToSrv ("dg-wdr-http-dus-dtag-cdn.cast.addradio.de", 80, "/wdr/wdr4/live/mp3/128/stream.mp3");
-
     do {
         // Wait for a new request
         /////////////////////////
@@ -162,7 +176,7 @@ void stream_reader_task::run() {
         yahal_assert(res == 2);
         int fifo_size = buff[1] * 256 + buff[2];
 
-        int err = fifo_size - 30000;
+        int err = fifo_size - 20000;
         err /= 10;
         _audio_output.addToOffset(err);
 

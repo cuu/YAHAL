@@ -32,6 +32,8 @@ public:
 
     void run() override;
 
+    void eof() { _eof = true; }
+
 private:
     static enum mad_flow input (void *data, struct mad_stream *stream);
     static enum mad_flow header(void *, struct mad_header const *);
@@ -44,6 +46,7 @@ private:
     mad_decoder          _decoder;
     gpio_msp432_pin      _led;
     uint8_t              _mp3_buf[MP3_BUF_SIZE];
+    bool                 _eof;
 };
 
 #endif // _MP3_DECODER_TASK_H_

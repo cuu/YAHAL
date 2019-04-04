@@ -19,18 +19,19 @@
 
 #include <cstdint>
 
-const uint8_t I2C_COMMAND_SIZE = 9;
+const uint8_t I2C_COMMAND_SIZE = 10;
 
 enum i2c_command {
-    WLAN_SSID   = 0,
-    WLAN_PASSWD = 1,
-    HTTP_HOST   = 2,
-    HTTP_PORT   = 3,
-    HTTP_PATH   = 4,
-    CONN_WLAN   = 5,
-    CONN_SRV    = 6,
-    READ_DATA   = 7,
-    FIFO_SIZE   = 8
+    WLAN_SSID      = 0,
+    WLAN_PASSWD    = 1,
+    HTTP_HOST      = 2,
+    HTTP_PORT      = 3,
+    HTTP_PATH      = 4,
+    CONNECT_WLAN   = 5,
+    CONNECT_SERVER = 6,
+    STOP_SERVER    = 7,
+    READ_DATA      = 8,
+    FIFO_SIZE      = 9
 };
 
 #endif // _I2C_COMMANDS_H_

@@ -1,4 +1,4 @@
-#include <WifiTick.h>
+#include "WifiTick.h"
 
 WifiTick::WifiTick(std::function<void(uint32_t ms)> delay)
 : _gpio0  (PORT_PIN( 7, 4)),
@@ -10,8 +10,8 @@ WifiTick::WifiTick(std::function<void(uint32_t ms)> delay)
   _delay(delay)
 {
     // We only set the modes for the GPIOs which we control.
-    // gpio0 or gpio2 e.g. might me used for other purposes,
-    // so we don't touch their modes.
+    // gpio0/2/15 might me used for other purposes, so we
+    // don't touch their modes.
     _reset.gpioMode  (GPIO::OUTPUT | GPIO::INIT_HIGH);
     _powerUp.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH);
     _led.gpioMode    (GPIO::OUTPUT | GPIO::INIT_LOW);

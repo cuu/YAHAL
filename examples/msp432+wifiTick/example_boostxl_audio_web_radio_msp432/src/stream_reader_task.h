@@ -33,13 +33,14 @@ public:
 
     void connectToWlan(const char *ssid, const char *passwd);
     void connectToSrv (const char *host, int port, const char *path);
+    void stopSrv();
 
     // Read some data from the file
-    int read_data(uint8_t* buff, uint16_t btr, uint16_t* br);
+    int  read_data(uint8_t* buff, uint16_t btr, uint16_t* br);
     void run() override;
 
     // EOF handling
-    inline bool eof() { return false; }
+    inline bool eof() { return _eof; }
 
 private:
     // Instance to control WifiTick
@@ -69,6 +70,8 @@ private:
     audio_output &       _audio_output;
 
     uint8_t _metaData[320];
+
+    bool _eof;
 };
 
 #endif // _STREAM_READER_TASK_H_

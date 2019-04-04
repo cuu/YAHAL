@@ -46,12 +46,24 @@ public:
         // tasks objects
         audio_output       audio_output;
         stream_reader_task stream_reader(audio_output);
-        mp3_decoder_task   decoder(stream_reader, audio_output);
 
-        // start the tasks
         stream_reader.start();
-        audio_output.setRate(49000);
+
+        // Wait for reset of ESP8266
+        sleep(2000);
+
+        stream_reader.connectToWlan("TG WLAN EG", "7209142041838311");
+
+        // KLARA
+        stream_reader.connectToSrv ("icecast.vrtcdn.be", 80, "/klara-mid.mp3");
+//        stream_reader.connectToSrv ("dg-wdr-http-fra-dtag-cdn.cast.addradio.de", 80, "/wdr/wdr2/rheinland/mp3/128/stream.mp3");
+//        stream_reader.connectToSrv ("dg-wdr-http-dus-dtag-cdn.cast.addradio.de", 80, "/wdr/wdr4/live/mp3/128/stream.mp3");
+//        stream_reader.connectToSrv ("s9.viastreaming.net", 9620, "/;stream/1");
+//        stream_reader.connectToSrv ("s1.distortionradio.com", 80, "/aggression-64");
+
         audio_output.start();
+
+        mp3_decoder_task decoder(stream_reader, audio_output);
         decoder.start();
 
         while(1) {
@@ -63,51 +75,3 @@ public:
 
 #endif // _MAIN_TASK_H_
 
-
-
-//        audio_output.start();
-//        sleep(6000);
-//
-//
-//        stream_reader.connectToWlan("TG WLAN EG", "7209142041838311");
-//        sleep(2000);
-//        stream_reader.connectToSrv ("icecast.vrtcdn.be", 80, "/klara-mid.mp3");
-//        sleep(2000);
-//
-//        while(1) {
-//            red.gpioWrite  ( LOW );
-//            green.gpioWrite( LOW );
-//            blue.gpioWrite ( LOW );
-//
-//            if (threeQuarters.gpioRead()) {
-//                blue.gpioWrite( HIGH );
-//            } else
-//                if (twoQuarters.gpioRead()) {
-//                    green.gpioWrite( HIGH );
-//                } else
-//                    if (oneQuarter.gpioRead()) {
-//                        red.gpioWrite( HIGH );
-//                    }
-//
-//            sleep(100);
-//        }
-
-
-// https://dg-wdr-https-dus-dtag-cdn.sslcast.addradio.de/wdr/wdr2/rheinland/mp3/128/stream.mp3
-// https://dg-wdr-https-fra-dtag-cdn.sslcast.addradio.de/wdr/wdr5/live/mp3/128/stream.mp3
-
-// /wdr/wdr2/rheinland/mp3/128/stream.mp3
-// /wdr/wdr3/live/mp3/128/stream.mp3
-// /wdr/wdr5/live/mp3/128/stream.mp3
-// http://icecast.vrtcdn.be/klara-high.mp3   http://icecast.vrtcdn.be/klara-high.mp3
-
-//        gpio_msp432_pin oneQuarter(PORT_PIN(9,7));
-//        gpio_msp432_pin twoQuarters(PORT_PIN(7,6));
-//        gpio_msp432_pin threeQuarters(PORT_PIN(7,7));
-//
-//        gpio_msp432_pin red(PORT_PIN(2,0));
-//        gpio_msp432_pin green(PORT_PIN(2,1));
-//        gpio_msp432_pin blue(PORT_PIN(2,2));
-//        red.gpioMode(GPIO::OUTPUT);
-//        green.gpioMode(GPIO::OUTPUT);
-//        blue.gpioMode(GPIO::OUTPUT);
