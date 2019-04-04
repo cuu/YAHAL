@@ -37,15 +37,16 @@ private:
         uint8_t *   data;       // pointer to register data
     } _reg[I2C_COMMAND_SIZE] =
             {
-             /* WLAN_SSID   */ { true,  80, nullptr }, // SSID of WLAN
-             /* WLAN_PASSWD */ { true,  80, nullptr }, // Password of WLAN
-             /* HTTP_HOST   */ { true,  80, nullptr }, // Host part of URL
-             /* HTTP_PORT   */ { true,   2, nullptr }, // Port (typically 80)
-             /* HTTP_PATH   */ { true,  80, nullptr }, // Path part of URL
-             /* CONN_WLAN   */ { true ,  1, nullptr }, // Command to connect to WLAN
-             /* CONN_SRV    */ { true,   1, nullptr }, // Command to connect to server
-             /* READ_DATA   */ { true,   2, nullptr }, // Command to read a block of data
-             /* FIFO_SIZE   */ { false,  2, nullptr }  // Return the current size of FIFO
+             /* WLAN_SSID      */ { true,  80, nullptr }, // SSID of WLAN
+             /* WLAN_PASSWD    */ { true,  80, nullptr }, // Password of WLAN
+             /* HTTP_HOST      */ { true,  80, nullptr }, // Host part of URL
+             /* HTTP_PORT      */ { true,   2, nullptr }, // Port (typically 80)
+             /* HTTP_PATH      */ { true,  80, nullptr }, // Path part of URL
+             /* CONNECT_WLAN   */ { true ,  1, nullptr }, // Command to connect to WLAN
+             /* CONNECT_SERVER */ { true,   1, nullptr }, // Command to connect to server
+             /* STOP_SERVER    */ { true,   1, nullptr }, // Command to stop server
+             /* READ_DATA      */ { true,   2, nullptr }, // Command to read a block of data
+             /* FIFO_SIZE      */ { false,  2, nullptr }  // Return the current size of FIFO
             };
 public:
 
@@ -70,19 +71,21 @@ public:
                                      + _reg[READ_DATA].data[1]; }
     // Integer setter
     /////////////////
-    inline void  readData(uint16_t v){ _reg[READ_DATA].data[0] = v / 256;
-                                       _reg[READ_DATA].data[1] = v % 256; }
-    inline void  fifoSize(uint16_t v){ _reg[FIFO_SIZE].data[0] = v / 256;
-                                       _reg[FIFO_SIZE].data[1] = v % 256; }
+    inline void  readData(uint16_t v){ _reg[READ_DATA].data[1] = v % 256;
+                                       _reg[READ_DATA].data[0] = v / 256; }
+    inline void  fifoSize(uint16_t v){ _reg[FIFO_SIZE].data[1] = v % 256;
+                                       _reg[FIFO_SIZE].data[0] = v / 256; }
     // Boolean getter
     /////////////////
-    inline char connectWLAN() { return _reg[CONN_WLAN].data[0]; }
-    inline char connectSRV()  { return _reg[CONN_SRV ].data[0]; }
+    inline char connectWLAN() { return _reg[CONNECT_WLAN].data[0]; }
+    inline char connectSRV()  { return _reg[CONNECT_SERVER ].data[0]; }
+    inline char stopSRV()     { return _reg[CONNECT_SERVER ].data[0]; }
 
     // Boolean setter
     /////////////////
-    inline void connectWLAN(uint8_t v) { _reg[CONN_WLAN].data[0] = v; }
-    inline void connectSRV (uint8_t v) { _reg[CONN_SRV ].data[0] = v; }
+    inline void connectWLAN(uint8_t v) { _reg[CONNECT_WLAN].data[0] = v; }
+    inline void connectSRV (uint8_t v) { _reg[CONNECT_SERVER ].data[0] = v; }
+    inline void stopSRV    (uint8_t v) { _reg[CONNECT_SERVER ].data[0] = v; }
 
 private:
     // The I2C slave instance

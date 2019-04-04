@@ -12,30 +12,17 @@
 // ---------------------------------------------
 //
 // This program is the ESP8266 part of the web radio example.
-// The MSP432 and the ESP826 communicate via 3 interfaces:
+// The MSP432 and the ESP826 communicate via 2 interfaces:
 //
 // The I2C interface is used to control the ESP8266, which is
 // running as a I2C slave on the ESP8266 (software implementation).
-// The MSP432 can configure the following items/functions via this
-// interface:
-//   - WLAN SSID
-//   - WLAN Password
-//   - The HTTP host (e.g. "dg-wdr-http-dus-dtag-cdn.cast.addradio.de")
-//   - The HTTP port (e.g. 80)
-//   - The HTTP path (e.g. "/wdr/wdr2/aachenundregion/mp3/128/stream.mp3")
-//   - Start the receiving process
-//   - Triggering a data transfer by writing the amount of needed bytes
-//   - Stop the receiving process
+// The MSP432 can control the ESP8266 using this interface
+// (see i2c_commands.h and i2c_device.h/cpp for details).
 //
 // The SPI interface is used to quickly write MP3 data from
-// the ESP8266 to the MSP432. So the ESP8266 is master and the
-// MSP432 is the SPI client. On MSP432 side, DMA can be used to
-// quickly receive the data without using up CPU time.
+// the ESP8266 to the MSP432. So the ESP8266 is slave and the
+// MSP432 is the SPI master.
 //
-// The GPIO4 pin, which is set by the ESP8266 to signal that
-// at least 4KiB bytes are available for sending. This GPIO
-// pin can be read by the MSP432 to know when to start a new
-// data transfer.
 
 #include "WEB_Radio.h"
 
