@@ -58,8 +58,7 @@ public:
         stream_reader.connectToSrv ("icecast.vrtcdn.be", 80, "/klara-mid.mp3");
 //        stream_reader.connectToSrv ("dg-wdr-http-fra-dtag-cdn.cast.addradio.de", 80, "/wdr/wdr2/rheinland/mp3/128/stream.mp3");
 //        stream_reader.connectToSrv ("dg-wdr-http-dus-dtag-cdn.cast.addradio.de", 80, "/wdr/wdr4/live/mp3/128/stream.mp3");
-//        stream_reader.connectToSrv ("s9.viastreaming.net", 9620, "/;stream/1");
-//        stream_reader.connectToSrv ("s1.distortionradio.com", 80, "/aggression-64");
+
 
         audio_output.start();
 
