@@ -1,4 +1,6 @@
 /build_msp432/
 /build_esp8266/
+/build_BBB/
 /libYAHAL_msp432.a
 /libYAHAL_esp8266.a
+/libYAHAL_BBB.a
