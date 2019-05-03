@@ -19,7 +19,7 @@
 
 #include "adc14_msp432.h"
 #include "gpio_msp432.h"
-#include "msp.h"
+#include "msp.h" // Needed for TIMER_A stuff
 
 int main(void)
 {
@@ -40,7 +40,10 @@ int main(void)
     // P2.4 (green LED) is now driven by TA0.1 (TIMER_A0, CCR 1)
     // P5.6 (blue LED)  is now driven by TA2.1 (TIMER_A2, CCR 1)
     // Configure TIMER_A0 and TIMER_A2 to use SMCLK as clock
-    // source and UP mode
+    // source and UP mode. The macros like TIMER_A_CTL_SSEL__SMCLK
+    // can be found in the msp432p401r.h file (click right on a macro
+    // and select 'Open Declaration'). They make the code more
+    // readable.
     TIMER_A0->CTL = TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_MC__UP;
     TIMER_A2->CTL = TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_MC__UP;
 
