@@ -64,9 +64,9 @@ int main(void)
     // 16384 (the same value as in CCR[0]), the pulses have a length
     // of 5,461ms, so the PWM signal will never be LOW.
     // We use ADC14 to control these two CCR values:
-
     adc14_msp432_channel joy_X(15);
     adc14_msp432_channel joy_Y(9);
+
     // The ADC will generate raw signals with 14 bits resolution
     // (0...16383 raw-value range)
     joy_X.adcMode(ADC::ADC_14_BIT);
