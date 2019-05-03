@@ -259,13 +259,13 @@ int main(void)
 
     // Setup TA0.4 for speaker sound
     // and TA0.2 for servo output
-    TA0EX0   = TAIDEX__2; // Divide by 2
-    TA0CCR0  = 60000;
-    TA0CCR2  = 4500;
-    TA0CCTL2 = 0xe0;
-    TA0CCR4  = 30000;
-    TA0CCTL4 = 0xe0;
-    TA0CTL   = 0x2d0;  // up-mode, divide by 8
+    TIMER_A0->EX0     = TAIDEX__2; // Divide by 2
+    TIMER_A0->CCR[0]  = 60000;
+    TIMER_A0->CCR[2]  = 4500;
+    TIMER_A0->CCTL[2] = 0xe0;
+    TIMER_A0->CCR[4]  = 30000;
+    TIMER_A0->CCTL[4] = 0xe0;
+    TIMER_A0->CTL     = 0x2d0;  // up-mode, divide by 8
 
     // Setup interrupt handler
     HW::inst()->sw1.gpioAttachIrq(GPIO::FALLING, callback_LP_S1);
