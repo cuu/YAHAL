@@ -20,7 +20,7 @@
 
 # Root folder CCS installation
 ifeq ($(FILE_UNIX_STYLE),1)
-CCS_ROOT = /opt/ti/ccsv8
+CCS_ROOT = /opt/ti/ccs930/ccs
 else
 CCS_ROOT = C:/ti/ccsv8
 endif
