@@ -14,7 +14,6 @@
 
 #include "yahal_assert.h"
 #include "String.h"
-#include <algorithm>
 #include <cstring>
 
 String::String(const char * ptr)
@@ -70,9 +69,11 @@ String::String(String && s) {
 }
 
 String & String::operator = (String && s) {
-    std::swap(_ptr, s._ptr);
+    char * tmp = _ptr;
+    _ptr = s._ptr;
     _len = s._len;
     _cap = s._cap;
+    s._ptr = tmp;
     return *this;
 }
 
