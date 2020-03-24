@@ -5,7 +5,7 @@ The following steps are necessary to create a new project with YAHAL-support:
 
     - create a new CCS project as usual. Make sure you select the 'MSP 432 Family'
       and the MSP432P401R processor. Make also sure that you select a GNU C++
-      compiler for the project (currently GNU v6.3.1. Linaro).
+      compiler for the project (currently GNU v7.2.1 Linaro).
       
     - CCS itself does not support the creation of a C++ project, so after the
       step above some modifications have to be done manually:
