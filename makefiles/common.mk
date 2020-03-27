@@ -166,7 +166,7 @@ directories:
 # 'clean up'-rule
 clean:
 	@echo "Cleaning files ..."
-	$(HIDE) $(RM) $(basename $(TARGET)).* $(ERRIGNORE)
+	$(HIDE) $(RM) $(basename $(TARGET)).* *~ $(ERRIGNORE)
 	$(HIDE) $(RMDIR) $(BUILD_DIR) $(ERRIGNORE)
 
 # include the platform-specific rules
