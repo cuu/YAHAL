@@ -26,7 +26,6 @@ CCS_ROOT = C:/ti/ccsv8
 endif
 
 # Toolchain location
-# TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-4_9-2015q3
 TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major
 TOOLCHAIN_PREFIX = arm-none-eabi
 

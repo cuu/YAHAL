@@ -246,8 +246,10 @@ void CPU::operate_instruction_group1() {
         case 000: break; // No rotate
         case 002: bsw(); break;
         case 006: ral();
+        //no break
         case 004: ral(); break;
         case 012: rar();
+        //no break
         case 010: rar(); break;
         case 014: AC &= MD; break; //r3l(); break;
         case 016: break; // Do not use

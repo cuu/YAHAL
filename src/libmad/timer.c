@@ -307,7 +307,7 @@ signed long mad_timer_count(mad_timer_t timer, enum mad_units units)
   case MAD_UNITS_47_952_FPS:
   case MAD_UNITS_49_95_FPS:
   case MAD_UNITS_59_94_FPS:
-    return (mad_timer_count(timer, -units) + 1) * 1000 / 1001;
+    return (mad_timer_count(timer, (mad_units)(-units)) + 1) * 1000 / 1001;
   }
 
   /* unsupported units */
@@ -453,6 +453,7 @@ void mad_timer_string(mad_timer_t timer,
       sub = 0;
     }
     __attribute__ ((fallthrough));
+    //no break
 
   case MAD_UNITS_DECISECONDS:
   case MAD_UNITS_CENTISECONDS:
