@@ -1,0 +1,10 @@
+.gpio_bbb.ko.cmd
+.gpio_bbb.mod.o.cmd
+.gpio_bbb.o.cmd
+.tmp_versions/
+Module.symvers
+gpio_bbb.ko
+gpio_bbb.mod.c
+gpio_bbb.mod.o
+gpio_bbb.o
+modules.order
