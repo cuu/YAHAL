@@ -41,7 +41,7 @@ void timer_msp432::setPeriod(uint32_t us, TIMER::timer_mode mode) {
     _period_us = us;
     // set load register
     _timer->LOAD = _period_load = us * _factor;
-    // set onshot
+    // set oneshot
     if (mode == TIMER::ONE_SHOT) {
         _timer->CONTROL |=  TIMER32_CONTROL_ONESHOT;
     } else {
