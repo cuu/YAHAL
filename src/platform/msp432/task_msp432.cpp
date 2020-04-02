@@ -21,7 +21,6 @@
 #include "msp.h"
 #include "task.h"
 #include "task_idle.h"
-#include <cstring>
 
 //////////////////
 // System call API

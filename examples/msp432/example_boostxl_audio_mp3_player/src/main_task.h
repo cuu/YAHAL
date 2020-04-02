@@ -18,7 +18,8 @@
 // This program will read MP3 files from a SD card, and
 // play them on the MPS432 launchpad with a boostxl audio
 // boosterpack. The MP3 decoder is implemented in software,
-// so only some kind of PCM output is necessary.
+// so only some kind of PCM output is necessary, which is
+// provided by the audio booster pack.
 //
 // The main task will loop over all *.mp3 files and play
 // them. During reset, button S1 can be used to select
@@ -28,6 +29,11 @@
 // For every new song, the SD reader and MP3 decoder
 // tasks are started again.
 //
+// Make sure you connect the SD-card PCB to the correct
+// SPI interface (see pin assignment below), and provide
+// some MP3 files without too high quality (128kbps
+// will work fine!)
+
 #ifndef _MAIN_TASK_H_
 #define _MAIN_TASK_H_
 
@@ -41,15 +47,42 @@
 #include "mp3_decoder_task.h"
 #include "ff.h"
 
+// SD card interface configuration
+//////////////////////////////////
+// Connect this pin to the SD-card
+// CS line:
+#define CS_PIN  PORT_PIN(10,0)
+
+// Here are the other 3 pins you have to
+// connect to the SD-card PCB, depending
+// on the used SPI port:
+//
+//                CLK    MISO    MOSI
+// -------------+------+-------+-------
+// EUSCI_A0_SPI   P1.1   P1.2    P1.3
+// EUSCI_A1_SPI   P2.1   P2.2    P2.3
+// EUSCI_A2_SPI   P3.1   P3.2    P3.3
+// EUSCI_A3_SPI   P9.5   P9.6    P9.7
+// EUSCI_B0_SPI   P1.5   P1.7    P1.6
+// EUSCI_B1_SPI   P6.3   P6.5    P6.4
+// EUSCI_B2_SPI   P3.5   P3.7    P3.6
+// EUSCI_B3_SPI   P10.1  P10.3   P10.2
+#define SPI_IF  EUSCI_B3_SPI
+
+// Button configuration
+///////////////////////
+#define NEXT_BUTTON  PORT_PIN(1,4)
+#define PART_BUTTON  PORT_PIN(1,1)
+
 class main_task : public task
 {
 public:
     main_task() : task("Main", 6000),
-      _cs (PORT_PIN(10,0)),
-      _spi(EUSCI_B3_SPI, _cs),
+      _cs (CS_PIN),
+      _spi(SPI_IF, _cs),
       _sd (_spi),
-      _next(PORT_PIN(1,4)),
-      _part(PORT_PIN(1,1)),
+      _next(NEXT_BUTTON),
+      _part(PART_BUTTON),
       _fs (_sd)
     {
         _next.gpioMode(GPIO::INPUT | GPIO::PULLUP);
