@@ -12,7 +12,7 @@
 // ---------------------------------------------
 //
 // This is a simulator for a PDP-8, a minicomputer
-// build by Digital Equipment Cooperation in the
+// build by Digital Equipment Corporation in the
 // 1960s. It was a 12-bit computer with 4k-words
 // core memory (every bit was stored in a small
 // magnetic core) and a compact instruction set.
