@@ -21,7 +21,7 @@
 #############################
 
 # Get the OS name (will not work for Windows)
-OSNAME = $(shell uname -o 2>NUL; rm -f NUL)
+OSNAME = $(shell uname 2>NUL; rm -f NUL)
 
 # All kinds of Windows OS
 ifeq ($(OS),Windows_NT)
@@ -30,10 +30,17 @@ ifeq ($(OS),Windows_NT)
 endif
 
 # All typical Linux installations
-ifeq ($(OSNAME),GNU/Linux)
+ifeq ($(OSNAME),Linux)
     FILE_UNIX_STYLE = 1
     CMD_UNIX_STYLE  = 1
 endif
+
+# A typical MacOS installations
+ifeq ($(OSNAME),Darwin)
+    FILE_UNIX_STYLE = 1
+    CMD_UNIX_STYLE  = 1
+endif
+
 
 # Cygwin uses Linux commands
 # but Windows file names
