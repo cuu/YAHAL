@@ -23,7 +23,7 @@
 // YAHAL includes
 #include "uart_msp432.h"
 #include "std_io.h"
-#include "String.h"
+#include "yahal_String.h"
 
 #include "uGUI.h"
 #include "uGUI_colors.h"

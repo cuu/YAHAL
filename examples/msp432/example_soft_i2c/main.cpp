@@ -34,7 +34,7 @@
 #include "i2c_msp432.h"
 #include "soft_i2c_master.h"
 #include "i2c_device.h"
-#include "String.h"
+#include "yahal_String.h"
 
 // Simple us-delay (assuming 48MHz clock)
 void delay(uint32_t us) {

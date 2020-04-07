@@ -13,8 +13,8 @@
 //
 
 #include "yahal_assert.h"
-#include "String.h"
 #include <cstring>
+#include "yahal_String.h"
 
 String::String(const char * ptr)
    : _len(strlen(ptr)), _cap(_len), _ptr(new char[_cap+1]) {
