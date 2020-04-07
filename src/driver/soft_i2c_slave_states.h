@@ -39,6 +39,8 @@ public:
     virtual void low()   { }
     virtual void scl_falling() { }
 
+    virtual ~STATE() { }
+
 protected:
     soft_i2c_slave & _context;
 };
@@ -82,7 +84,7 @@ private:
 
 class WRITE_DATA : public STATE {
 public:
-    WRITE_DATA(soft_i2c_slave & c) :  STATE(c) {}
+    WRITE_DATA(soft_i2c_slave & c) :  STATE(c), _data(0), _bit_mask(0) {}
     void enter() override;
     void scl_falling() override;
 private:

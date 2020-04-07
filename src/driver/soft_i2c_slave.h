@@ -14,7 +14,7 @@
 //  This is a I2C slave driver  implemented in SW.
 //  The I2C protocol is decoded with 2 GPIO line,
 //  which need support for edge interrupts. The
-//  interrupt handler generate 5 events (see I2C_event),
+//  interrupt handler generates 5 events (see I2C_event),
 //  which in turn are processed by a state machine.
 //  The user code has to provide 3 callback methods,
 //  which are used within the state machine:
@@ -23,7 +23,8 @@
 //
 //  This method is called when the state machine has
 //  received a complete byte. The index is a number
-//  being incremented within one Start sequence.
+//  being incremented within one Start sequence, starting
+//  from 0.
 //
 //     uint8_t transmit(uint8_t index, void *)
 //
