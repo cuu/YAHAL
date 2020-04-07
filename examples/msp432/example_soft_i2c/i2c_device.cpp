@@ -16,7 +16,7 @@
 #include <cstddef>
 
 i2c_device::i2c_device(gpio_pin & sda, gpio_pin & scl, uint8_t i2c_addr, bool pullup)
-: _slave(sda, scl, _receive, _transmit, _stop, this, pullup)
+: _slave(sda, scl, _receive, _transmit, _stop, this, pullup), _reg_index(0)
 {
     // Set the I2C address, This will also
     // initialize the slave (GPIOs etc,)

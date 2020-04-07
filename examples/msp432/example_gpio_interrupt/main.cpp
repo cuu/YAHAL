@@ -18,22 +18,30 @@
 // nothing (see below).
 
 #include "gpio_msp432.h"
+#include "msp.h"
 
 #define LED_RED1    PORT_PIN(1, 0)  // left  red LED
 #define LED_RED2    PORT_PIN(2, 0)  // right red RGB LED
 #define BUTTON1     PORT_PIN(1, 1)  // left  S1 button
 #define BUTTON2     PORT_PIN(1, 4)  // right S2 button
 
-void gpio_handler(gpio_pin_t gpio, void *) {
-    if (gpio == BUTTON1) {
-        // Here we use the gpio_msp432 singleton to
-        // access the LEDs, because we did not want the
-        // gpio_msp432_pin-instances to be global.
-        gpio_msp432::inst.gpioToggle(LED_RED1);
-    } else
-    if (gpio == BUTTON2) {
-        gpio_msp432::inst.gpioToggle(LED_RED2);
-    }
+void gpio_handler(gpio_pin_t gpio, void *param) {
+    // Cast the parameter 'param' to a gpio_msp432_pointer,
+    // and toggle the LED.
+    gpio_msp432_pin *  pin = static_cast<gpio_msp432_pin *>(param);
+    pin->gpioToggle();
+
+    // This is an alternative implementation, which
+    // uses the gpio parameter to find out the LED
+    // to handle. Since we only have the gpio number,
+    // we have to use the gpio_msp432 singleton to
+    // access the LEDs.
+//    if (gpio == BUTTON1) {
+//        gpio_msp432::inst.gpioToggle(LED_RED1);
+//    } else
+//    if (gpio == BUTTON2) {
+//        gpio_msp432::inst.gpioToggle(LED_RED2);
+//    }
 }
 
 int main()
@@ -57,16 +65,19 @@ int main()
     // they are using the same handler, which can find
     // out the interrupt source by looking at the 'gpio'
     // parameter, which is passed to the interrupt handler
-    // (see above).
+    // (see above). Alternatively we can use the user-defined
+    // parameter which is provided with the gpioAttatchIrq
+    // calls: The pointer to the respective gpio_msp_432_pin is
+    // used here.
     //
     // The left  LED will change its status when S1 is _pressed_!
     // (pressing the button sets the gpio to LOW, so this is
     // a falling edge!)
     // The right LED will change its status when S2 is _released_!
-    button_S1.gpioAttachIrq(GPIO::FALLING, gpio_handler);
-    button_S2.gpioAttachIrq(GPIO::RISING,  gpio_handler);
+    button_S1.gpioAttachIrq(GPIO::FALLING, gpio_handler, &red_led1);
+    button_S2.gpioAttachIrq(GPIO::RISING,  gpio_handler, &red_led2);
 
     // Endless loop, which is only 'interrupted' by
     // our HW-interrupts.
-    while(true) ;
+    while(true) __WFE();
 }
