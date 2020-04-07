@@ -1,0 +1,25 @@
+YAHAL can also be used on MacOS without the MCT VM.
+The following steps have been tried out successfully on MacOS Darwin:
+
+1.) Install CCS under MacOS (e.g. version 10.00)
+2.) To work with git under CCS, the JRE in CCS
+    has to be updated. For CCS 10.00, download
+    jre-8u241-macosx-x64.tar.gz from the Oracle
+    WEB site, and unpack the file unter
+    /Applications/ti/ccs1000/ccs/Eclipse.app/jre
+    There is also a documentation for this step
+    in ILIAS.
+3.) Clone the YAHAL repository (either in CCS or
+    in a Terminal).
+4.) Import the YAHAL project into the project explorer
+5.) Under Properties->C/C++ Build->Environment
+    change the PATH variable so that it contains an entry
+    to the GNU arm compiler binary.
+6.) Adapt the file makefiles/platform-msp432.mk so
+    the entry CCS_ROOT points to your CCS installation
+7.) In Proprties->C/C++ General->Indexer enable
+    project specific settings and uncheck the box
+    'Index source files not included in the build'
+    
+With these changes YAHAL should work fine with MacOS.
+    
