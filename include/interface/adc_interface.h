@@ -77,7 +77,7 @@ public:
     inline void adcMode(adc_mode_t mode) {
         _interf.adcMode(_channel, mode);
     }
-    inline adc_mode_t getResolution() {
+    inline adc_mode_t getMode() {
         return _interf.getMode(_channel);
     }
     inline uint16_t adcReadRaw() {
