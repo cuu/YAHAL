@@ -60,6 +60,11 @@ void adc14_msp432::adcMode(uint8_t channel, uint16_t mode) {
     gpio_msp432::inst.setSEL(PORT_PIN(port, pin), 3);
 }
 
+adc_mode_t adc14_msp432::getResolution (uint8_t channel) {
+    yahal_assert(channel < 24);
+    return _modes[channel];
+}
+
 uint16_t adc14_msp432::adcReadRaw(uint8_t channel) {
     yahal_assert(channel < 24);
     // set resolution
