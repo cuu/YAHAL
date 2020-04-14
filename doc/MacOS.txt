@@ -6,7 +6,7 @@ The following steps have been tried out successfully on MacOS Darwin:
     has to be updated. For CCS 10.00, download
     jre-8u241-macosx-x64.tar.gz from the Oracle
     WEB site, and unpack the file unter
-    /Applications/ti/ccs1000/ccs/Eclipse.app/jre
+    /Applications/ti/ccs1000/ccs/Eclipse/Eclipse.app/jre
     There is also a documentation for this step
     in ILIAS.
 3.) Clone the YAHAL repository (either in CCS or
