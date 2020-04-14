@@ -19,6 +19,12 @@ void adc_esp8266::adcMode(uint8_t channel, uint16_t mode) {
 }
 
 ICACHE_FLASH_ATTR
+adc_mode_t adc_esp8266::getResolution (uint8_t channel) {
+    assert(channel == 0);
+    return ADC::ADC_10_BIT;
+}
+
+ICACHE_FLASH_ATTR
 uint16_t adc_esp8266::adcReadRaw(uint8_t channel) {
 	assert(channel == 0);
 	uint16_t res = 0;
