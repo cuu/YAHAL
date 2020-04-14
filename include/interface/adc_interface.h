@@ -45,7 +45,7 @@ public:
     virtual void adcMode(uint8_t channel, adc_mode_t mode) = 0;
 
     // Read the current resolution of a channel
-    virtual adc_mode_t getResolution(uint8_t channel) = 0;
+    virtual adc_mode_t getMode(uint8_t channel) = 0;
 
     // Read a single raw (binary) ADC value.
     virtual uint16_t adcReadRaw(uint8_t channel) = 0;
@@ -78,7 +78,7 @@ public:
         _interf.adcMode(_channel, mode);
     }
     inline adc_mode_t getResolution() {
-        return _interf.getResolution(_channel);
+        return _interf.getMode(_channel);
     }
     inline uint16_t adcReadRaw() {
         return _interf.adcReadRaw(_channel);

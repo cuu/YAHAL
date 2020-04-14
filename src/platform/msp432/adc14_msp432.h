@@ -27,7 +27,7 @@ class adc14_msp432 : public adc_interface {
 
     // Basic ADC functions
     void       adcMode       (uint8_t channel, uint16_t mode) override;
-    adc_mode_t getResolution (uint8_t channel) override;
+    adc_mode_t getMode       (uint8_t channel) override;
     uint16_t   adcReadRaw    (uint8_t channel) override;
     float      adcReadVoltage(uint8_t channel) override;
     float      rawToVoltage  (uint8_t channel, uint16_t raw) override;

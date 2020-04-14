@@ -13,7 +13,7 @@ class adc_esp8266 : public adc_interface {
 	virtual ~adc_esp8266();
 
     void       adcMode	     (uint8_t channel, uint16_t mode);
-    adc_mode_t getResolution (uint8_t channel);
+    adc_mode_t getMode       (uint8_t channel);
     uint16_t   adcReadRaw    (uint8_t channel);
     float      adcReadVoltage(uint8_t channel);
     float      rawToVoltage  (uint8_t channel, uint16_t raw);
