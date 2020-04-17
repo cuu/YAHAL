@@ -21,7 +21,7 @@
 class Device_TTO : public Device_Base {
 public:
 
-    Device_TTO() : FLAG(false), last(false) { }
+    Device_TTO() : FLAG(false) { }
     unsigned short getDeviceNumber();
     void processPulse(unsigned int pulse, CPU & cpu);
     void cycle();
@@ -32,7 +32,6 @@ public:
 
 private:
     bool FLAG;
-    bool last;
 };
 
 #endif /* DEVICETTO_H_ */

@@ -50,23 +50,36 @@ bool Device_TTI::intRequest() {
 void Device_TTI::processPulse(unsigned int pulse, CPU & cpu) {
 
     switch (pulse) {
-    case 01: { // KSF (Skip if keyboard flag is 1)
+    // KCF (Keyboard Clear Flags)
+    /////////////////////////////
+    case 00: {
+        FLAG=false;
+        break;
+    }
+    // KSF (Keyboard Skip if Flag)
+    //////////////////////////////
+    case 01: {
         if (FLAG) cpu.skip();
         break;
     }
-    case 02: { // KCC (Clear AC and keyboard flag)
+    // KCC (Keyboard Clear and read character)
+    //////////////////////////////////////////
+    case 02: {
         cpu.setAC(0);
-        // while (kbhit()) getchar();
         FLAG = false;
         break;
     }
-    case 04: { // KRS (Read keyboard buffer static
+    // KRB (Keyboard Read and begin next read)
+    //////////////////////////////////////////
+    case 06: {
+        cpu.setAC(0);
+        FLAG = false;
+    }
+    // KRS (Keyboard Read Static)
+    /////////////////////////////
+    // no break
+    case 04: {
         cpu.setAC( cpu.getAC() | c);
-        break;
-    }
-    case 06: { // KRB (Clear AC and keyboard flag, read char)
-        FLAG = false;
-        cpu.setAC(c);
         break;
     }
     default:
