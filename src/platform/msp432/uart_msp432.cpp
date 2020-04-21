@@ -7,7 +7,11 @@
 #include <string.h>
 #include "msp.h"
 
-extern uint32_t SystemCoreClock;
+// If existing, use the global SubsystemMasterClock. If not, use our own
+// copy of the SystemCoreClock, assuming that MCLK equals SMCLK ...
+uint32_t UART_CLK = SystemCoreClock;
+extern uint32_t SubsystemMasterClock __attribute__((weak,alias("UART_CLK")));
+
 
 void (*uart_msp432::_intHandler[4])(char, void*) = {nullptr, nullptr, nullptr, nullptr};
 void * uart_msp432::_intData[4] = {nullptr, nullptr, nullptr, nullptr};
@@ -141,7 +145,7 @@ void uart_msp432::uartMode(uart_mode_t mode) {
 
 void uart_msp432::setBaudrate(uint32_t baud) {
     _baud = baud;
-    _EUSCI->BRW = (uint16_t)(SystemCoreClock / baud);
+    _EUSCI->BRW = (uint16_t)(SubsystemMasterClock / baud);
 }
 
 void uart_msp432::uartAttachIrq( void (*handler)(char, void *), void * ptr ) {

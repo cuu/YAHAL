@@ -8,6 +8,12 @@
 #include "i2c_msp432.h"
 #include "yahal_assert.h"
 
+// If existing, use the global SubsystemMasterClock. If not, use our own
+// copy of the SystemCoreClock, assuming that MCLK equals SMCLK ...
+uint32_t I2C_CLK = SystemCoreClock;
+extern uint32_t SubsystemMasterClock __attribute__((weak,alias("I2C_CLK")));
+
+
 i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 : _EUSCI(mod)
 {
@@ -40,7 +46,7 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
 
     // Set i2c clock to default 100 kHz
     ///////////////////////////////////
-    _EUSCI->BRW = SystemCoreClock / 100000;
+    _EUSCI->BRW = SubsystemMasterClock / 100000;
 
     // Disable interrupts
     /////////////////////
@@ -136,7 +142,7 @@ int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint16_t len, bool s
 }
 
 void i2c_msp432::setSpeed(uint32_t baud) {
-    _EUSCI->BRW = SystemCoreClock / baud;
+    _EUSCI->BRW = SubsystemMasterClock / baud;
 }
 
 //void i2c_msp432::send_ADR_ACK() {

@@ -21,6 +21,12 @@
 #include "yahal_assert.h"
 #include "irq_dispatcher.h"
 
+// If existing, use the global SubsystemMasterClock. If not, use our own
+// copy of the SystemCoreClock, assuming that MCLK equals SMCLK ...
+uint32_t SPI_CLK = SystemCoreClock;
+extern uint32_t SubsystemMasterClock __attribute__((weak,alias("SPI_CLK")));
+
+
 void (*spi_msp432::_intHandler[8])(uint8_t);
 
 spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
@@ -258,7 +264,7 @@ int16_t spi_msp432::spiRx(uint8_t tx_byte, uint8_t *rxbuf, uint16_t len) {
 void spi_msp432::setSpeed(uint32_t baud)
 {
     if (!_initialized) initialize();
-    _EUSCI_BRW = SystemCoreClock / baud;
+    _EUSCI_BRW = SubsystemMasterClock / baud;
 }
 
 void spi_msp432::generateCS(bool val)

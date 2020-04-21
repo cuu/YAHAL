@@ -25,7 +25,7 @@ timer_msp432::timer_msp432(Timer32_Type * timer)
                       TIMER32_CONTROL_IE |   // enable irq
                       TIMER32_CONTROL_SIZE;  // use 32 bit counter
     // calculate factor (counts for 1us)
-    _factor      = SystemCoreClock / 1000000;
+    _factor      = ((float)SystemCoreClock / 1000000.0) + 0.5;
     _period_us   = 0;
     _period_ns   = 0;
     _period_load = 0;

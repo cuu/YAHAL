@@ -8,17 +8,40 @@
 #ifndef _CLOCK_MSP432_H_
 #define _CLOCK_MSP432_H_
 
+#if 0
 #include <stdint.h>
 
 namespace CLKSYS {
-  enum OSC {
-	LFXT,		// Low Frequency XTAL
-	HFXT,		// High Frequency XTAL
-	DCO,		// Digital-Conrolles Oscillator
-	VLO,
-	REFO,
-	MODOSC
-  };
+
+enum DCO_CENTER {
+    DCO_1500kHz = 0,
+    DCO_3MHz,
+    DCO_6MHz,
+    DCO_12MHz,
+    DCO_24MHz,
+    DCO_48MHz
+};
+
+enum OSC {
+    LFXT = 0,
+    VLO,
+    REFO,
+    DCO,
+    MOD,
+    HFXT
+};
+
+enum DIVIDER {
+    DIV1 = 0,
+    DIV2,
+    DIV4,
+    DIV8,
+    DIV16,
+    DIV32,
+    DIV64,
+    DIV128
+};
+
 
   enum CLK {
 	ACLK,
@@ -46,5 +69,6 @@ private:
     float kalib5;
     uint32_t getDcoFrequency();
 };
+#endif
 
 #endif /* _CLOCK_MSP432_H_ */
