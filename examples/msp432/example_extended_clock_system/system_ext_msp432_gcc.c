@@ -161,59 +161,6 @@ uint32_t SubsystemMasterClock = __SUBSYS_CLOCK;  // the value of SMCLK in Hz
 uint32_t HfxtFrequency = 0;
 uint32_t LfxtFrequency = 0;
 
-//
-// Calculate the DCO clock using the DCO tune value
-//
-// @param  dco_base_clock: The DCO base clock without
-//                         using the DCO tune value
-// @return The real DCO clock
-//
-// @brief  Calcluates the DCO clock using the DCO tune value
-//
-uint32_t calculate_DCO_clock(uint32_t dco_base_clock)
-{
-    // Get DCO tune value
-    int16_t __DCOTUNE = (CS->CTL0 & CS_CTL0_DCOTUNE_MASK)
-                                 >> CS_CTL0_DCOTUNE_OFS;
-    // Check if we have a zero tune value
-    if (!__DCOTUNE) {
-        return dco_base_clock;
-    }
-    // Convert 10 bits signed int to 16 bits signed int
-    if (__DCOTUNE &  0x0200) {
-        __DCOTUNE |= 0xFC00;
-    }
-    // Get calibration data
-    float    __DCO_CONSTK;
-    uint32_t __DCO_FCAL;
-    if (CS->CTL0 & CS_CTL0_DCORES) {
-        // external resistor
-        if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
-            // DCORSEL is 5
-            __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL5;
-            __DCO_FCAL   = TLV->DCOER_FCAL_RSEL5;
-        } else {
-            // DCORSEL is 0..4
-            __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL04;
-            __DCO_FCAL   = TLV->DCOER_FCAL_RSEL04;
-        }
-    } else {
-        // internal resistor
-        if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
-            // DCORSEL is 5
-            __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL5;
-            __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL5;
-        } else {
-            // DCORSEL is 0..4
-            __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL04;
-            __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL04;
-        }
-    }
-    // Calculate tuned frequency
-    float denom = 1.0f / __DCO_CONSTK + 768 - (float)__DCO_FCAL;
-    return (float)dco_base_clock / (1.0f - (float)__DCOTUNE / denom);
-}
-
 
 //
 // Initialize the system
@@ -320,14 +267,67 @@ void SystemInit(void)
 
 
 //
+// Calculate the DCO clock using the DCO tune value
+//
+// @param  dco_base_clock: The DCO base clock without
+//                         using the DCO tune value
+// @return The real DCO clock
+//
+// @brief  Calcluates the DCO clock using the DCO tune value
+//
+uint32_t calculate_DCO_clock(uint32_t dco_base_clock)
+{
+    // Get DCO tune value
+    int16_t __DCOTUNE = (CS->CTL0 & CS_CTL0_DCOTUNE_MASK)
+                                 >> CS_CTL0_DCOTUNE_OFS;
+    // Check if we have a zero tune value
+    if (!__DCOTUNE) {
+        return dco_base_clock;
+    }
+    // Convert 10 bits signed int to 16 bits signed int
+    if (__DCOTUNE &  0x0200) {
+        __DCOTUNE |= 0xFC00;
+    }
+    // Get calibration data
+    float    __DCO_CONSTK;
+    uint32_t __DCO_FCAL;
+    if (CS->CTL0 & CS_CTL0_DCORES) {
+        // external resistor
+        if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
+            // DCORSEL is 5
+            __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL5;
+            __DCO_FCAL   = TLV->DCOER_FCAL_RSEL5;
+        } else {
+            // DCORSEL is 0..4
+            __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL04;
+            __DCO_FCAL   = TLV->DCOER_FCAL_RSEL04;
+        }
+    } else {
+        // internal resistor
+        if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
+            // DCORSEL is 5
+            __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL5;
+            __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL5;
+        } else {
+            // DCORSEL is 0..4
+            __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL04;
+            __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL04;
+        }
+    }
+    // Calculate tuned frequency
+    float denom = 1.0f / __DCO_CONSTK + 768 - (float)__DCO_FCAL;
+    return (float)dco_base_clock / (1.0f - (float)__DCOTUNE / denom);
+}
+
+
+//
 // Update SystemCoreClock and SubsystemMasterClock variables
 //
 // @param  none
 // @return none
 //
-// @brief  Updates the SystemCoreClock with current core Clock
-//         retrieved from cpu registers. Also SubsystemMasterClock
-//         is updated.
+// @brief  Updates the SystemCoreClock and SubsystemMasterClock
+//         with current core Clock retrieved from CS registers.
 //
 void SystemCoreClockUpdate(void)
 {
@@ -451,11 +451,9 @@ void SystemCoreClockUpdate(void)
             break;
         }
     }
-
     // Get the MCLK and SMCLK dividers
     int32_t __DIVM = 1 << ((CS->CTL1 & CS_CTL1_DIVM_MASK) >> CS_CTL1_DIVM_OFS);
     int32_t __DIVS = 1 << ((CS->CTL1 & CS_CTL1_DIVS_MASK) >> CS_CTL1_DIVS_OFS);
-
     // Update SystemCoreClock (MCLK) with divider value
     SystemCoreClock /= __DIVM;
     // Update SubsystemMasterClock (SMCLK) with divider value
