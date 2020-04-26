@@ -49,6 +49,8 @@
 
 extern uint32_t SystemCoreClock;
 extern uint32_t SubsystemMasterClock;
+extern uint32_t loops_lf;
+extern uint32_t loops_hf;
 
 void callback1(void * arg) {
     // Convert the argument to a gpio pointer
@@ -87,9 +89,138 @@ int main(void)
     uart_msp432 uart;
     std_io::inst.redirect_stdout(uart);
 
-    printf("Clock configuration:\n");
-    printf("MCLK:  %ld Hz\n", SystemCoreClock);
-    printf("SMCLK: %ld Hz\n", SubsystemMasterClock);
+    printf("************ DCO configuration ************\n");
+    const char * dco_f = "";
+    printf("DCO force on:        %ld\n", (CS->CTL0 & CS_CTL0_DCOEN)  >> CS_CTL0_DCOEN_OFS  );
+    printf("DCO ext. resistor:   %ld\n", (CS->CTL0 & CS_CTL0_DCORES) >> CS_CTL0_DCORES_OFS );
+    switch ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) >> CS_CTL0_DCORSEL_OFS) {
+        case 0: dco_f = "1.5"; break;
+        case 1: dco_f = "3.0"; break;
+        case 2: dco_f = "6.0"; break;
+        case 3: dco_f = "12.0"; break;
+        case 4: dco_f = "24.0"; break;
+        case 5: dco_f = "48.0"; break;
+        case 6: dco_f = "??6"; break;
+        case 7: dco_f = "??7"; break;
+    }
+    printf("DCO center freq.:    %s MHz\n", dco_f);
+    int16_t tune = CS->CTL0 & CS_CTL0_DCOTUNE_MASK;
+    if (tune & BIT9) tune |= 0xfc00;
+    printf("DCO tune:            %d\n", tune);
+    printf("DCO bias on:         %ld\n",  (CS->STAT & CS_STAT_DCOBIAS_ON) >> CS_STAT_DCOBIAS_ON_OFS);
+    printf("DCO on:              %ld\n",  (CS->STAT & CS_STAT_DCO_ON) >> CS_STAT_DCO_ON_OFS);
+
+    printf("************ HFXT configuration ************\n");
+    printf("HFXT bypass:         %ld\n", (CS->CTL2 & CS_CTL2_HFXTBYPASS) >> CS_CTL2_HFXTBYPASS_OFS);
+    printf("HFXT force enable:   %ld\n", (CS->CTL2 & CS_CTL2_HFXT_EN)    >> CS_CTL2_HFXT_EN_OFS);
+
+    const char * hfxt_freq = "";
+    switch((CS->CTL2 & CS_CTL2_HFXTFREQ_MASK) >> CS_CTL2_HFXTFREQ_OFS) {
+        case 0: hfxt_freq = "1 to 4"; break;
+        case 1: hfxt_freq = "4 to 8"; break;
+        case 2: hfxt_freq = "8 to 16"; break;
+        case 3: hfxt_freq = "16 to 24"; break;
+        case 4: hfxt_freq = "24 to 32"; break;
+        case 5: hfxt_freq = "32 to 40"; break;
+        case 6: hfxt_freq = "40 to 48"; break;
+        default: hfxt_freq = "??"; break;
+    }
+    printf("HFXT freq. sel.:     %s MHz\n", hfxt_freq);
+    printf("HFXT drive:          %ld\n", (CS->CTL2 & CS_CTL2_HFXTDRIVE) >> CS_CTL2_HFXTDRIVE_OFS);
+    printf("HFXT on:             %ld\n",  (CS->STAT & CS_STAT_HFXT_ON) >> CS_STAT_HFXT_ON_OFS);
+
+    printf("************ LFXT configuration ************\n");
+    printf("LFXT bypass:         %ld\n", (CS->CTL2 & CS_CTL2_LFXTBYPASS) >> CS_CTL2_LFXTBYPASS_OFS);
+    printf("LFXT force enable:   %ld\n", (CS->CTL2 & CS_CTL2_LFXT_EN)    >> CS_CTL2_LFXT_EN_OFS);
+    const char * lfxt_drv = "";
+    switch((CS->CTL2 & CS_CTL2_LFXTDRIVE_MASK) >> CS_CTL2_LFXTDRIVE_OFS) {
+        case 0: lfxt_drv = "low (0)"; break;
+        case 1: lfxt_drv = "medium (1)"; break;
+        case 2: lfxt_drv = "medium (2)"; break;
+        case 3: lfxt_drv = "strong (3)"; break;
+        default: lfxt_drv = "??"; break;
+    }
+    printf("LFXT drive:          %s\n", lfxt_drv);
+    printf("LFXT on:             %ld\n",  (CS->STAT & CS_STAT_LFXT_ON) >> CS_STAT_LFXT_ON_OFS);
+
+    printf("************ REFO configuration ************\n");
+    printf("REFO select:         %s kHz\n", CS->CLKEN & CS_CLKEN_REFOFSEL ? "128" : "32.768" );
+    printf("REFO force enable:   %ld\n",  (CS->CLKEN  & CS_CLKEN_REFO_EN) >> CS_CLKEN_REFO_EN_OFS);
+    printf("REFO on:             %ld\n",  (CS->STAT   & CS_STAT_REFO_ON)  >> CS_STAT_REFO_ON_OFS);
+
+    printf("************ VLO configuration ************\n");
+    printf("VLO force enable:    %ld\n", (CS->CLKEN & CS_CLKEN_VLO_EN) >> CS_CLKEN_VLO_EN_OFS);
+    printf("VLO on:              %ld\n", (CS->STAT  & CS_STAT_VLO_ON)  >> CS_STAT_VLO_ON_OFS);
+
+    printf("************ MODOSC configuration ************\n");
+    printf("MODOSC force enable: %ld\n",  (CS->CLKEN & CS_CLKEN_MODOSC_EN) >> CS_CLKEN_MODOSC_EN_OFS);
+    printf("MODOSC on:           %ld\n",  (CS->STAT & CS_STAT_MODOSC_ON) >> CS_STAT_MODOSC_ON_OFS);
+
+    printf("************ MCLK signal ************\n");
+    const char * selm = "";
+    switch((CS->CTL1 & CS_CTL1_SELM_MASK) >> CS_CTL1_SELM_OFS) {
+        case 0: selm = "LFXTCLK"; break;
+        case 1: selm = "VLOCLK"; break;
+        case 2: selm = "REFOCLK"; break;
+        case 3: selm = "DCOCLK"; break;
+        case 4: selm = "MODOSC"; break;
+        case 5: selm = "HFXTCLK"; break;
+        default: selm = "??"; break;
+    }
+    printf("MCLK select:         %s\n", selm);
+    printf("MCLK divider:        %d\n", 1 << ((CS->CTL1 & CS_CTL1_DIVM_MASK)  >> CS_CTL1_DIVM_OFS));
+    printf("MCLK cond. on:       %ld\n", (CS->CLKEN & CS_CLKEN_MCLK_EN)   >> CS_CLKEN_MCLK_EN_OFS);
+    printf("MCLK ready:          %ld\n", (CS->STAT  & CS_STAT_MCLK_READY) >> CS_STAT_MCLK_READY_OFS);
+    printf("MCLK on:             %ld\n", (CS->STAT  & CS_STAT_MCLK_ON)    >> CS_STAT_MCLK_ON_OFS);
+
+    printf("************ SMCLK/HSMCLK signal ************\n");
+    const char * sels = "";
+    switch((CS->CTL1 & CS_CTL1_SELS_MASK) >> CS_CTL1_SELS_OFS) {
+        case 0: sels = "LFXTCLK"; break;
+        case 1: sels = "VLOCLK"; break;
+        case 2: sels = "REFOCLK"; break;
+        case 3: sels = "DCOCLK"; break;
+        case 4: sels = "MODOSC"; break;
+        case 5: sels = "HFXTCLK"; break;
+        default: sels = "??"; break;
+    }
+    printf("(H)SMCLK select:     %s\n", sels);
+    printf("HSMCLK divider:      %d\n", 1 << ((CS->CTL1 & CS_CTL1_DIVHS_MASK) >> CS_CTL1_DIVHS_OFS));
+    printf("HSMCLK cond. on:     %ld\n", (CS->CLKEN & CS_CLKEN_HSMCLK_EN) >> CS_CLKEN_HSMCLK_EN_OFS);
+    printf("HSMCLK ready:        %ld\n",  (CS->STAT & CS_STAT_HSMCLK_READY) >> CS_STAT_HSMCLK_READY_OFS);
+    printf("HSMCLK on:           %ld\n", (CS->STAT  & CS_STAT_HSMCLK_ON)  >> CS_STAT_HSMCLK_ON_OFS);
+    printf("SMCLK divider:       %d\n", 1 << ((CS->CTL1 & CS_CTL1_DIVS_MASK)  >> CS_CTL1_DIVS_OFS));
+    printf("SMCLK cond. on:      %ld\n", (CS->CLKEN & CS_CLKEN_SMCLK_EN) >> CS_CLKEN_SMCLK_EN_OFS);
+    printf("SMCLK ready:         %ld\n",  (CS->STAT & CS_STAT_SMCLK_READY) >> CS_STAT_SMCLK_READY_OFS);
+    printf("SMCLK on:            %ld\n", (CS->STAT  & CS_STAT_SMCLK_ON)  >> CS_STAT_SMCLK_ON_OFS);
+
+    printf("************ ACLK signal ************\n");
+    const char * sela = "";
+    switch((CS->CTL1 & CS_CTL1_SELA_MASK) >> CS_CTL1_SELA_OFS) {
+        case 0: sela = "LFXTCLK"; break;
+        case 1: sela = "VLOCLK"; break;
+        case 2: sela = "REFOCLK"; break;
+        default: sela = "??"; break;
+    }
+    printf("ACLK select:         %s\n", sela);
+    printf("ACLK divider:        %d\n", 1 << ((CS->CTL1 & CS_CTL1_DIVA_MASK)  >> CS_CTL1_DIVA_OFS));
+    printf("ACLK cond. on:       %ld\n", (CS->CLKEN & CS_CLKEN_ACLK_EN)  >> CS_CLKEN_ACLK_EN_OFS);
+    printf("ACLK ready:          %ld\n", (CS->STAT & CS_STAT_ACLK_READY) >> CS_STAT_ACLK_READY_OFS);
+    printf("ACLK on:             %ld\n", (CS->STAT & CS_STAT_ACLK_ON)    >> CS_STAT_ACLK_ON_OFS);
+
+    printf("************ BCLK signal ************\n");
+    printf("BCLK select:         %s\n",  (CS->CTL1 & CS_CTL1_SELB) ? "REFOCLK" : "LFXTCLK" );
+    printf("BCLK ready:          %ld\n", (CS->STAT & CS_STAT_BCLK_READY) >> CS_STAT_BCLK_READY_OFS);
+
+    printf("************ Other signals ************\n");
+    printf("REFOCLK on:          %ld\n", (CS->STAT & CS_STAT_REFOCLK_ON) >> CS_STAT_REFOCLK_ON_OFS);
+    printf("LFXTCLK on:          %ld\n", (CS->STAT & CS_STAT_LFXTCLK_ON) >> CS_STAT_LFXTCLK_ON_OFS);
+    printf("VLOCLK on:           %ld\n", (CS->STAT & CS_STAT_VLOCLK_ON) >> CS_STAT_VLOCLK_ON_OFS);
+    printf("MODCLK on:           %ld\n", (CS->STAT & CS_STAT_MODCLK_ON) >> CS_STAT_MODCLK_ON_OFS);
+
+    printf("\n");
+    printf("SystemCoreClock:      %ld Hz\n", SystemCoreClock);
+    printf("SubsystemMasterClock: %ld Hz\n", SubsystemMasterClock);
 
     // Setup two LEDs on the launchpad for blinking
     gpio_msp432_pin led1( PORT_PIN(1,0) ); // Left red LED

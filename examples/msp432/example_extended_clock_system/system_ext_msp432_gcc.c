@@ -21,7 +21,7 @@
 // Defines the LFXT frequency in Hz (e.g. 32768)
 // When defined, SystemInit() will start the LFXT,
 // which will delay the system startup time by approx. 1s.
-//#define TARGET_LFXT_HZ 32768
+#define TARGET_LFXT_HZ 32768
 
 ///////////////////////////
 // Configuration section //
@@ -164,6 +164,60 @@ uint32_t HfxtFrequency = 0;
 uint32_t LfxtFrequency = 0;
 
 //
+// Calculate the DCO clock using the DCO tune value
+//
+// @param  dco_base_clock: The DCO base clock without
+//                         using the DCO tune value
+// @return The real DCO clock
+//
+// @brief  Calcluates the DCO clock using the DCO tune value
+//
+uint32_t calculate_DCO_clock(uint32_t dco_base_clock)
+{
+    // Get DCO tune value
+    int16_t __DCOTUNE = (CS->CTL0 & CS_CTL0_DCOTUNE_MASK)
+                                 >> CS_CTL0_DCOTUNE_OFS;
+    // Check if we have a zero tune value
+    if (!__DCOTUNE) {
+        return dco_base_clock;
+    }
+    // Convert 10 bits signed int to 16 bits signed int
+    if (__DCOTUNE &  0x0200) {
+        __DCOTUNE |= 0xFC00;
+    }
+    // Get calibration data
+    float    __DCO_CONSTK;
+    uint32_t __DCO_FCAL;
+    if (CS->CTL0 & CS_CTL0_DCORES) {
+        // external resistor
+        if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
+            // DCORSEL is 5
+            __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL5;
+            __DCO_FCAL   = TLV->DCOER_FCAL_RSEL5;
+        } else {
+            // DCORSEL is 0..4
+            __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL04;
+            __DCO_FCAL   = TLV->DCOER_FCAL_RSEL04;
+        }
+    } else {
+        // internal resistor
+        if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
+            // DCORSEL is 5
+            __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL5;
+            __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL5;
+        } else {
+            // DCORSEL is 0..4
+            __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL04;
+            __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL04;
+        }
+    }
+    // Calculate tuned frequency
+    float denom = 1.0f / __DCO_CONSTK + 768 - (float)__DCO_FCAL;
+    return (float)dco_base_clock / (1.0f - (float)__DCOTUNE / denom);
+}
+
+
+//
 // Initialize the system
 //
 // @param  none
@@ -214,17 +268,21 @@ void SystemInit(void)
 
     // Unlock CS module
     CS->KEY = CS_KEY_VAL;
-
+    int count;
 #ifdef TARGET_HFXT_HZ
     HfxtFrequency = TARGET_HFXT_HZ;
     // Enable the HFXT crystal oscillator.
     // Initialize PJ for HFXT
     PJ->SEL0 |=  BIT3;
     PJ->SEL1 &= ~BIT3;
-    CS->CTL2 |= CS_CTL2_HFXT_EN | HFXT_FREQ;
-    // Wait for the HFXT to stabilize
-    while (CS->IFG & CS_IFG_HFXTIFG) {
-        CS->CLRIFG |= CS_CLRIFG_CLR_HFXTIFG;
+    CS->CTL2 |=  CS_CTL2_HFXT_EN | HFXT_FREQ;
+    // Wait for the HFXT to stabilize. After a soft reset
+    // this code might run with 48MHz, so we make sure the
+    // clock is stable for some loop iterations...
+    for (count=0; count < 200; ++count) {
+        if (CS->IFG & CS_IFG_HFXTIFG) {
+            CS->CLRIFG |= CS_CLRIFG_CLR_HFXTIFG;
+        }
     }
 #endif
 
@@ -238,9 +296,13 @@ void SystemInit(void)
     PJ->SEL1 &= ~BIT0;
     // Enable LFXT
     CS->CTL2 |= CS_CTL2_LFXT_EN;  // Enable LFXT
-    // Wait for the XTAL to stabilize
-    while (CS->IFG & CS_IFG_LFXTIFG) {
-        CS->CLRIFG |= CS_CLRIFG_CLR_LFXTIFG;
+    // Wait for the LFXT to stabilize. After a soft reset
+    // this code might run with 48MHz, so we make sure the
+    // clock is stable for some loop iterations...
+    for (count=0; count < 200; ++count) {
+        if (CS->IFG & CS_IFG_LFXTIFG) {
+            CS->CLRIFG |= CS_CLRIFG_CLR_LFXTIFG;
+        }
     }
 #endif
 
@@ -259,6 +321,7 @@ void SystemInit(void)
     SystemCoreClockUpdate();
 }
 
+
 //
 // Update SystemCoreClock and SubsystemMasterClock variables
 //
@@ -267,8 +330,7 @@ void SystemInit(void)
 //
 // @brief  Updates the SystemCoreClock with current core Clock
 //         retrieved from cpu registers. Also SubsystemMasterClock
-//         is updated, assuming that SMCLK has the same clock source
-//         as MCLK.
+//         is updated.
 //
 void SystemCoreClockUpdate(void)
 {
@@ -277,12 +339,8 @@ void SystemCoreClockUpdate(void)
         //////////////////////////
         case CS_CTL1_SELM__LFXTCLK: {
         //////////////////////////
-            // Clear pending LFXT fault condition (irq flag)
-            CS->KEY     = CS_KEY_VAL;
-            CS->CLRIFG |= CS_CLRIFG_CLR_LFXTIFG;
-            CS->KEY     = 0;
             // Check if we still have a LFXT fault
-            if (BITBAND_PERI(CS->IFG, CS_IFG_LFXTIFG_OFS)) {
+            if (CS->IFG & CS_IFG_LFXTIFG) {
                 // According to the TRM, a LFXT fault will
                 // always switch to REFOCLK with 32768Hz
                 SystemCoreClock = __REFOCLK_L;
@@ -300,7 +358,7 @@ void SystemCoreClockUpdate(void)
         //////////////////////////
         case CS_CTL1_SELM__REFOCLK: {
         //////////////////////////
-            if (BITBAND_PERI(CS->CLKEN, CS_CLKEN_REFOFSEL_OFS)) {
+            if (CS->CLKEN & CS_CLKEN_REFOFSEL) {
                 SystemCoreClock = __REFOCLK_H;
             } else {
                 SystemCoreClock = __REFOCLK_L;
@@ -309,49 +367,11 @@ void SystemCoreClockUpdate(void)
         }
         /////////////////////////
         case CS_CTL1_SELM__DCOCLK: {
-        /////////////////////////
+        ////////////////////////
             // Set the center frequency
             SystemCoreClock = 1500000 << ((CS->CTL0 & CS_CTL0_DCORSEL_MASK)
-                                          >> CS_CTL0_DCORSEL_OFS);
-            // Get DCO tune value
-            int16_t __DCOTUNE = (CS->CTL0 & CS_CTL0_DCOTUNE_MASK)
-                                >> CS_CTL0_DCOTUNE_OFS;
-            // Check if we have a nonzero tune value
-            if (__DCOTUNE) {
-                // Convert 10 bits signed int to 16 bits signed int
-                if (__DCOTUNE & 0x200) {
-                    __DCOTUNE |= 0xFC00;
-                }
-                // Get calibration data
-                float    __DCO_CONSTK;
-                uint32_t __DCO_FCAL;
-                if (CS->CTL0 & CS_CTL0_DCORES) {
-                    // external resistor
-                    if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
-                        // DCORSEL is 5
-                        __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL5;
-                        __DCO_FCAL   = TLV->DCOER_FCAL_RSEL5;
-                    } else {
-                        // DCORSEL is 0..4
-                        __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL04;
-                        __DCO_FCAL   = TLV->DCOER_FCAL_RSEL04;
-                    }
-                } else {
-                    // internal resistor
-                    if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
-                        // DCORSEL is 5
-                        __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL5;
-                        __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL5;
-                    } else {
-                        // DCORSEL is 0..4
-                        __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL04;
-                        __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL04;
-                    }
-                }
-                // Calculate tuned frequency
-                float denom = 1.0f / __DCO_CONSTK + 768 - (float)__DCO_FCAL;
-                SystemCoreClock = (float)SystemCoreClock / (1.0f - (float)__DCOTUNE / denom);
-            }
+                                                   >> CS_CTL0_DCORSEL_OFS);
+            SystemCoreClock = calculate_DCO_clock(SystemCoreClock);
             break;
         }
         /////////////////////////
@@ -363,12 +383,8 @@ void SystemCoreClockUpdate(void)
         //////////////////////////
         case CS_CTL1_SELM__HFXTCLK: {
         //////////////////////////
-            // Clear pending HFXT fault condition (irq flag)
-            CS->KEY     = CS_KEY_VAL;
-            CS->CLRIFG |= CS_CLRIFG_CLR_HFXTIFG;
-            CS->KEY     = 0;
             // Check if we still have a HFXT fault
-            if (BITBAND_PERI(CS->IFG, CS_IFG_HFXTIFG_OFS)) {
+            if (CS->IFG & CS_IFG_HFXTIFG) {
                 // According to the TRM, a HFXT fault will
                 // switch over to SYSOSC...
                 SystemCoreClock = __SYSCLK;
@@ -383,12 +399,8 @@ void SystemCoreClockUpdate(void)
         //////////////////////////
         case CS_CTL1_SELS__LFXTCLK: {
         //////////////////////////
-            // Clear pending LFXT fault condition (irq flag)
-            CS->KEY     = CS_KEY_VAL;
-            CS->CLRIFG |= CS_CLRIFG_CLR_LFXTIFG;
-            CS->KEY     = 0;
             // Check if we still have a LFXT fault
-            if (BITBAND_PERI(CS->IFG, CS_IFG_LFXTIFG_OFS)) {
+            if (CS->IFG & CS_IFG_LFXTIFG_OFS) {
                 // According to the TRM, a LFXT fault will
                 // always switch to REFOCLK with 32768Hz
                 SubsystemMasterClock = __REFOCLK_L;
@@ -406,7 +418,7 @@ void SystemCoreClockUpdate(void)
         //////////////////////////
         case CS_CTL1_SELS__REFOCLK: {
         //////////////////////////
-            if (BITBAND_PERI(CS->CLKEN, CS_CLKEN_REFOFSEL_OFS)) {
+            if (CS->CLKEN & CS_CLKEN_REFOFSEL) {
                 SubsystemMasterClock = __REFOCLK_H;
             } else {
                 SubsystemMasterClock = __REFOCLK_L;
@@ -418,46 +430,8 @@ void SystemCoreClockUpdate(void)
         /////////////////////////
             // Set the center frequency
             SubsystemMasterClock = 1500000 << ((CS->CTL0 & CS_CTL0_DCORSEL_MASK)
-                                               >> CS_CTL0_DCORSEL_OFS);
-            // Get DCO tune value
-            int16_t __DCOTUNE = (CS->CTL0 & CS_CTL0_DCOTUNE_MASK)
-                                >> CS_CTL0_DCOTUNE_OFS;
-            // Check if we have a nonzero tune value
-            if (__DCOTUNE) {
-                // Convert 10 bits signed int to 16 bits signed int
-                if (__DCOTUNE & 0x200) {
-                    __DCOTUNE |= 0xFC00;
-                }
-                // Get calibration data
-                float    __DCO_CONSTK;
-                uint32_t __DCO_FCAL;
-                if (CS->CTL0 & CS_CTL0_DCORES) {
-                    // external resistor
-                    if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
-                        // DCORSEL is 5
-                        __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL5;
-                        __DCO_FCAL   = TLV->DCOER_FCAL_RSEL5;
-                    } else {
-                        // DCORSEL is 0..4
-                        __DCO_CONSTK = TLV->DCOER_CONSTK_RSEL04;
-                        __DCO_FCAL   = TLV->DCOER_FCAL_RSEL04;
-                    }
-                } else {
-                    // internal resistor
-                    if ((CS->CTL0 & CS_CTL0_DCORSEL_MASK) == CS_CTL0_DCORSEL_5) {
-                        // DCORSEL is 5
-                        __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL5;
-                        __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL5;
-                    } else {
-                        // DCORSEL is 0..4
-                        __DCO_CONSTK = TLV->DCOIR_CONSTK_RSEL04;
-                        __DCO_FCAL   = TLV->DCOIR_FCAL_RSEL04;
-                    }
-                }
-                // Calculate tuned frequency
-                float denom = 1.0f / __DCO_CONSTK + 768 - (float)__DCO_FCAL;
-                SubsystemMasterClock = (float)SubsystemMasterClock / (1.0f - (float)__DCOTUNE / denom);
-            }
+                                                        >> CS_CTL0_DCORSEL_OFS);
+            SubsystemMasterClock = calculate_DCO_clock(SubsystemMasterClock);
             break;
         }
         /////////////////////////
@@ -469,12 +443,8 @@ void SystemCoreClockUpdate(void)
         //////////////////////////
         case CS_CTL1_SELS__HFXTCLK: {
         //////////////////////////
-            // Clear pending HFXT fault condition (irq flag)
-            CS->KEY     = CS_KEY_VAL;
-            CS->CLRIFG |= CS_CLRIFG_CLR_HFXTIFG;
-            CS->KEY     = 0;
             // Check if we still have a HFXT fault
-            if (BITBAND_PERI(CS->IFG, CS_IFG_HFXTIFG_OFS)) {
+            if (CS->IFG & CS_IFG_HFXTIFG) {
                 // According to the TRM, a HFXT fault will
                 // switch over to SYSOSC...
                 SubsystemMasterClock = __SYSCLK;
@@ -484,6 +454,7 @@ void SystemCoreClockUpdate(void)
             break;
         }
     }
+
     // Get the MCLK and SMCLK dividers
     int32_t __DIVM = 1 << ((CS->CTL1 & CS_CTL1_DIVM_MASK) >> CS_CTL1_DIVM_OFS);
     int32_t __DIVS = 1 << ((CS->CTL1 & CS_CTL1_DIVS_MASK) >> CS_CTL1_DIVS_OFS);
