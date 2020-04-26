@@ -19,8 +19,6 @@
 #define TARGET_HFXT_HZ 48000000
 
 // Defines the LFXT frequency in Hz (e.g. 32768)
-// When defined, SystemInit() will start the LFXT,
-// which will delay the system startup time by approx. 1s.
 #define TARGET_LFXT_HZ 32768
 
 ///////////////////////////
@@ -29,6 +27,14 @@
 
 // Controls the watchdog timer
 #define TARGET_WDT_DISABLE 1
+
+// Defines the DCO center frequency (3/6/12/24/48 MHz)
+// DCO_1500kHz|DCO_3MHz|DCO_6MHz|DCO_12MHz|DCO_24MHz|DCO_48MHz
+#define TARGET_DCO_RSEL DCO_3MHz
+
+// Defines the DCO tuning value (-512...511)
+// Use with caution! Too high values might brick the board...
+#define TARGET_DCO_TUNE 0
 
 // Selects the MCLK source: LFXT, VLO, REFO, DCO, MOD, HFXT
 #define TARGET_MCLK_SELECT HFXT
@@ -43,14 +49,6 @@
 // Selects the SMCLK divider (1/2/4/8/16/32/64/128)
 // DIV1, DIV2, DIV4, DIV8, DIV16, DIV32, DIV64, DIV128
 #define TARGET_SMCLK_DIV DIV2
-
-// Defines the DCO center frequency (3/6/12/24/48 MHz)
-// DCO_1500kHz|DCO_3MHz|DCO_6MHz|DCO_12MHz|DCO_24MHz|DCO_48MHz
-#define TARGET_DCO_RSEL DCO_3MHz
-
-// Defines the DCO tuning value (-512...511)
-// Use with caution! Too high values might brick the board...
-#define TARGET_DCO_TUNE 0
 
 //////////////////////////////////////
 // Defines for configuration values //
@@ -268,7 +266,6 @@ void SystemInit(void)
 
     // Unlock CS module
     CS->KEY = CS_KEY_VAL;
-    int count;
 #ifdef TARGET_HFXT_HZ
     HfxtFrequency = TARGET_HFXT_HZ;
     // Enable the HFXT crystal oscillator.
@@ -279,7 +276,7 @@ void SystemInit(void)
     // Wait for the HFXT to stabilize. After a soft reset
     // this code might run with 48MHz, so we make sure the
     // clock is stable for some loop iterations...
-    for (count=0; count < 200; ++count) {
+    for (int count=0; count < 200; ++count) {
         if (CS->IFG & CS_IFG_HFXTIFG) {
             CS->CLRIFG |= CS_CLRIFG_CLR_HFXTIFG;
         }
@@ -299,7 +296,7 @@ void SystemInit(void)
     // Wait for the LFXT to stabilize. After a soft reset
     // this code might run with 48MHz, so we make sure the
     // clock is stable for some loop iterations...
-    for (count=0; count < 200; ++count) {
+    for (int count=0; count < 200; ++count) {
         if (CS->IFG & CS_IFG_LFXTIFG) {
             CS->CLRIFG |= CS_CLRIFG_CLR_LFXTIFG;
         }
