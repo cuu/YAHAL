@@ -49,8 +49,6 @@
 
 extern uint32_t SystemCoreClock;
 extern uint32_t SubsystemMasterClock;
-extern uint32_t loops_lf;
-extern uint32_t loops_hf;
 
 void callback1(void * arg) {
     // Convert the argument to a gpio pointer
