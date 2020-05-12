@@ -42,6 +42,8 @@ public:
     void setSpeed(uint32_t) override;
 
 private:
+    bool _initialized;
+    void initialize();
 
     //    void send_ADR_ACK();
     //    void send_ADR_NACK();
@@ -56,7 +58,7 @@ private:
     gpio_msp432_pin	_scl;
 
     EUSCI_B_Type * _EUSCI;
-
+    uint16_t       _mode;
 };
 
 #endif // _I2C_MSP432_H_

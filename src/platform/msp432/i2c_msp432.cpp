@@ -15,7 +15,7 @@ extern uint32_t SubsystemMasterClock __attribute__((weak,alias("I2C_CLK")));
 
 
 i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
-: _EUSCI(mod)
+: _initialized(false), _EUSCI(mod), _mode(mode)
 {
     // Configure hardware characteristics
     /////////////////////////////////////
@@ -33,33 +33,6 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
         _scl.setGpio (PORT_PIN(10, 3));
     }
     else yahal_assert(false);
-
-    // Reset CTLW0 register to default values
-    // (EUSCI is in reset state)
-    /////////////////////////////////////////
-    _EUSCI->CTLW0 = EUSCI_B_CTLW0_SWRST;
-
-    // Configure I2C port
-    /////////////////////
-    _EUSCI->CTLW0 |= (mode | EUSCI_B_CTLW0_MODE_3);
-    _EUSCI->CTLW1  = 0;
-
-    // Set i2c clock to default 100 kHz
-    ///////////////////////////////////
-    _EUSCI->BRW = SubsystemMasterClock / 100000;
-
-    // Disable interrupts
-    /////////////////////
-    _EUSCI->IE = 0;
-
-    // Configure the digital RX/TX lines
-    ////////////////////////////////////
-    _sda.setMode(GPIO::INPUT | GPIO::PULLUP); _sda.setSEL(1);
-    _scl.setMode(GPIO::INPUT | GPIO::PULLUP); _scl.setSEL(1);
-
-    // Finally enable EUSCI module
-    //////////////////////////////
-    _EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_SWRST;
 }
 
 
@@ -79,7 +52,41 @@ i2c_msp432::~i2c_msp432() {
     _scl.setSEL(0); _scl.setMode(GPIO::INPUT);
 }
 
+void i2c_msp432::initialize() {
+     // Reset CTLW0 register to default values
+     // (EUSCI is in reset state)
+     /////////////////////////////////////////
+     _EUSCI->CTLW0 = EUSCI_B_CTLW0_SWRST;
+
+     // Configure I2C port
+     /////////////////////
+     _EUSCI->CTLW0 |= (_mode | EUSCI_B_CTLW0_MODE_3);
+     _EUSCI->CTLW1  = 0;
+
+     // Set i2c clock to default 100 kHz
+     ///////////////////////////////////
+     _EUSCI->BRW = SubsystemMasterClock / 100000;
+
+     // Disable interrupts
+     /////////////////////
+     _EUSCI->IE = 0;
+
+     // Configure the digital RX/TX lines
+     ////////////////////////////////////
+     _sda.setMode(GPIO::INPUT | GPIO::PULLUP); _sda.setSEL(1);
+     _scl.setMode(GPIO::INPUT | GPIO::PULLUP); _scl.setSEL(1);
+
+     // Finally enable EUSCI module
+     //////////////////////////////
+     _EUSCI->CTLW0 &= ~EUSCI_B_CTLW0_SWRST;
+
+     // Set 'initialized' flag
+     /////////////////////////
+     _initialized = true;
+}
+
 int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint16_t len, bool sendStop) {
+    if (!_initialized) initialize();
     // Check for len 0 because the sendStart/Stop
     // routines might hang in this case.
     if (!len) return 0;
@@ -107,7 +114,9 @@ int16_t i2c_msp432::i2cRead (uint16_t addr, uint8_t *rxbuf, uint16_t len, bool s
     }
     return i;
 }
+
 int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint16_t len, bool sendStop) {
+    if (!_initialized) initialize();
     // Check for len 0 because the sendStart/Stop
     // routines might hang in this case.
     if (!len) return 0;
@@ -128,20 +137,12 @@ int16_t i2c_msp432::i2cWrite(uint16_t addr, uint8_t *txbuf, uint16_t len, bool s
             return i-1;
         }
     }
-    // Wait until a NACK after the last byte can be
-    // seen, and a send_STOP() is not discarded ...
-    uint32_t delay = 0;
-    while (!_scl.gpioRead()) delay++; // Wait until HIGH
-    while ( _scl.gpioRead()) delay++; // Wait until LOW
-    delay *= 128;
-    while (delay) delay--;
-    // Check NACK
-    if (_EUSCI->IFG & EUSCI_B_IFG_NACKIFG) i--;
     if (sendStop) send_STOP();
     return i;
 }
 
 void i2c_msp432::setSpeed(uint32_t baud) {
+    if (!_initialized) initialize();
     _EUSCI->BRW = SubsystemMasterClock / baud;
 }
 
