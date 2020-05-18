@@ -20,7 +20,8 @@ soft_i2c_master::soft_i2c_master(gpio_pin & sda, gpio_pin & scl,
       _sda(sda),
       _scl(scl),
       _delay(delay),
-      _pullup(pullup)
+      _pullup(pullup),
+      _us(0)
 {
 }
 
