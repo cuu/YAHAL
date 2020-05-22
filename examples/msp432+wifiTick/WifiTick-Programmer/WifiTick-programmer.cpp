@@ -111,7 +111,7 @@ private:
 
     // This handler is called when the
     // Reset button (S1) is released
-    static void button_s1_handler(gpio_pin_t, void *ptr) {
+    static void button_s1_handler(void *ptr) {
         Main * _this = (Main *)ptr;
         // Small delay for debounce
         for(int i=0; i < 200; ++i) ;

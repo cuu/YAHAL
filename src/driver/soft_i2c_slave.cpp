@@ -47,27 +47,27 @@ void soft_i2c_slave::init() {
     }
     _sda.gpioMode(mode);
     _scl.gpioMode(mode);
-    _sda.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, sda_handler, this);
-    _scl.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, scl_handler, this);
+
+    /////////////////////////////////////////////
+    // The event-generating interrupt handlers //
+    /////////////////////////////////////////////
+
+    _sda.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, [this](void *) {
+        // SDA interrupt handler
+        ////////////////////////
+        if (!_scl.gpioRead()) return;
+        _sda.gpioRead() ? _state->stop() : _state->start();
+    });
+
+    _scl.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, [this](void *) {
+        // SCL interrupt handler
+        ////////////////////////
+        if (_scl.gpioRead()) {
+            _sda.gpioRead() ? _state->high() : _state->low();
+        } else {
+            _state->scl_falling();
+        }
+    });
     _init = true;
-}
-
-/////////////////////////////////////////////
-// The event-generating interrupt handlers //
-/////////////////////////////////////////////
-
-void soft_i2c_slave::sda_handler(gpio_pin_t, void * arg) {
-    soft_i2c_slave * _this = (soft_i2c_slave *)arg;
-    if (!_this->_scl.gpioRead()) return;
-    _this->_sda.gpioRead() ? _this->_state->stop() : _this->_state->start();
-}
-
-void soft_i2c_slave::scl_handler(gpio_pin_t, void * arg) {
-    soft_i2c_slave * _this = (soft_i2c_slave *)arg;
-    if (_this->_scl.gpioRead()) {
-        _this->_sda.gpioRead() ? _this->_state->high() : _this->_state->low();
-    } else {
-        _this->_state->scl_falling();
-    }
 }
 

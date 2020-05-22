@@ -121,10 +121,6 @@ private:
         _state = s;
         if (_state) { _state->enter(); }
     }
-
-    // The interrupt handlers generating the events
-    static void sda_handler(gpio_pin_t, void *);
-    static void scl_handler(gpio_pin_t, void *);
 };
 
 #endif // _SOFT_I2C_SLAVE_H_

@@ -182,13 +182,13 @@ private:
 
 // Button S1 toggles the left LED on the Launchpad
 //////////////////////////////////////////////////
-void callback_LP_S1(gpio_pin_t, void *) {
+void callback_LP_S1(void *) {
     HW::inst()->red.gpioToggle();
 }
 
 // Button S2 toggles the RGB LED on the Launchpad
 /////////////////////////////////////////////////
-void callback_LP_S2(gpio_pin_t, void *) {
+void callback_LP_S2(void *) {
     static int i = 0;
     HW::inst()->rgb_red.gpioWrite(LOW);
     HW::inst()->rgb_green.gpioWrite(LOW);
@@ -205,7 +205,7 @@ void callback_LP_S2(gpio_pin_t, void *) {
 
 // Button S1 on EDU MKII toggles the EDU RGB LED
 ////////////////////////////////////////////////
-void callback_EDU_S1(gpio_pin_t, void *) {
+void callback_EDU_S1(void *) {
     static int i = 0;
     HW::inst()->edu_red.gpioWrite(LOW);
     HW::inst()->edu_green.gpioWrite(LOW);
@@ -222,7 +222,7 @@ void callback_EDU_S1(gpio_pin_t, void *) {
 
 // Button S2 on EDU MKII toggles speaker on/off
 ///////////////////////////////////////////////
-void callback_EDU_S2(gpio_pin_t, void *) {
+void callback_EDU_S2(void *) {
     static bool b = false;
     b = !b;
     HW::inst()->edu_speaker.setSEL(b);
@@ -231,7 +231,7 @@ void callback_EDU_S2(gpio_pin_t, void *) {
 // Joystick button changes the color of the
 // microphone signal
 ///////////////////////////////////////////
-void callback_EDU_joy(gpio_pin_t, void *) {
+void callback_EDU_joy(void *) {
     static int i = 0;
     i++;
     i %= 3;

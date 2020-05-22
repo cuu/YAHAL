@@ -66,7 +66,7 @@ public:
     /* Interrupt handling */
     void gpioAttachIrq (uint16_t gpio,
                         uint16_t mode,
-                        void (*)(gpio_pin_t, void *),
+                        function<void(void *)> handler,
                         void * arg = nullptr) override;
     void gpioDetachIrq (uint16_t gpio) override;
     void gpioEnableIrq (uint16_t gpio) override;
@@ -97,7 +97,7 @@ private:
     uint8_t _pwm_mask;
 
     // interrupt handler functions
-    void   (*intHandler[8][8])(gpio_pin_t, void *);
+    function<void(void *)> intHandler[8][8];
     uint16_t intMode[8][8];
     void *   intArg[8][8];
 

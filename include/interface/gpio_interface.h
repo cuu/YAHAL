@@ -28,6 +28,8 @@
 #define _GPIO_INTERFACE_H_
 
 #include <stdint.h>
+#include <functional>
+using std::function;
 
 #ifndef HIGH
 #define HIGH true
@@ -85,13 +87,20 @@ public:
     virtual void gpioWrite (gpio_pin_t gpio, bool value) = 0;
     virtual void gpioToggle(gpio_pin_t gpio) = 0;
 
-    // Interrupt handling
+    // Attach a interrupt handler to the GPIO pin 'gpio'.
+    // The irq_mode specifies the the signal edges to listen to.
+    // The handler will be called when the event occurs. The
+    // arg parameter will be passed into the handler when it
+    // is called.
     virtual void gpioAttachIrq (gpio_pin_t gpio,
                                 gpio_irq_t irq_mode,
-                                void (*handler)(gpio_pin_t, void *),
-                                void * arg = nullptr) = 0;
+                                function<void(void *)> handler,
+                                void *arg = nullptr) = 0;
+    // Remove the interrupt from the GPIO pin
     virtual void gpioDetachIrq (gpio_pin_t gpio) = 0;
+    // Enable the interrupt on the GPIO pin
     virtual void gpioEnableIrq (gpio_pin_t gpio) = 0;
+    // Disable the interrupt on the GPIO pin
     virtual void gpioDisableIrq(gpio_pin_t gpio) = 0;
 
 protected:
@@ -125,7 +134,7 @@ public:
         _interf.gpioToggle(_gpio);
     }
     inline void gpioAttachIrq (uint16_t irq_mode,
-                               void (*handler)(gpio_pin_t, void *),
+                               function<void(void *)> handler,
                                void * arg = nullptr)  {
         _interf.gpioAttachIrq(_gpio, irq_mode, handler, arg);
     }
