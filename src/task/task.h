@@ -77,11 +77,10 @@ public:
     // would never be given back after stop().
     void stop();
 
-    // Let the task sleep for a certain amount of time.
-    // Time is specified in milliseconds. If sleep() is
-    // called on the currently running task, a yield()
-    // is performed so that execution proceeds with the
-    // next ready task.
+    // Let the current task (the task entering this method)
+    // sleep for a certain amount of time. Time is specified
+    // in milliseconds. yield() will be called so that execution
+    // proceeds with the next ready task.
     void sleep(uint32_t ms);
 
     // Suspend a task execution. The task will only come

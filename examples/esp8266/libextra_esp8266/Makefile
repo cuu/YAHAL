@@ -48,5 +48,9 @@ INC_DIRS += $(ESP_LIB_DIR)/ESP8266mDNS/src
 SRC_DIRS += $(ESP_LIB_DIR)/SPI
 INC_DIRS += $(ESP_LIB_DIR)/SPI
 
+# SPI slave
+SRC_DIRS += $(ESP_LIB_DIR)/SPISlave/src
+INC_DIRS += $(ESP_LIB_DIR)/SPISlave/src
+
 include $(YAHAL_DIR)/makefiles/common.mk
 

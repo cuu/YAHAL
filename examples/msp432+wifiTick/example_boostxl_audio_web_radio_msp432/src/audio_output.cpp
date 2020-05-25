@@ -19,7 +19,7 @@ audio_output::audio_output()
       _audio_cs (PORT_PIN(5,2)),
       _audio_spi(EUSCI_B0_SPI, _audio_cs),
       _pcm_fifo (PCM_FIFO_SIZE),
-      _zero(0), _one(BIT2)
+      _zero(0), _one(BIT2), _offset(0)
 {
     // Configure BoostXL-audio objects
     _audio_en.gpioMode(GPIO::OUTPUT);
@@ -95,18 +95,12 @@ audio_output::audio_output()
 
 
 void audio_output::handler(void * data) {
-
     audio_output * _this = (audio_output *)data;
-
     if (_this->_pcm_fifo.get(_this->_pcm_value)) {
         // Trigger a DMA transfer ...
         dma_msp432::inst().ctrl_data[0].CTRL = _this->_dma_ctrl0_backup;
         DMA_Control->ENASET    = BIT0;
         DMA_Control->ALTCLR    = BIT0;
         DMA_Channel->SW_CHTRIG = BIT0;
-
-        // Send data via SPI ...
-//        uint16_t sample = __builtin_bswap16(_this->_pcm_value);
-//        _this->_audio_spi.spiTx((uint8_t *)&sample, 2);
     }
 }

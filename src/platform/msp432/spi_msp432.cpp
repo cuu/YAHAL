@@ -144,9 +144,8 @@ void spi_msp432::initialize() {
     // always 3 wire mode!
     _EUSCI_CTLW0 |= _mode;
 
-    // Enable the EUSCI irq and NVIC irq,
-    // we only need RX interrupt
-    /////////////////////////////////////
+    // Disable interrupts default
+    /////////////////////////////
     _EUSCI_IE = 0;
 
     // Finally enable EUSCI module

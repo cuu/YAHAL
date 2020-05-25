@@ -38,11 +38,19 @@ public:
     inline void stop()  { _pcm_timer.stop();  }
 
     inline void setRate(uint32_t kHz) {
-        _pcm_timer.setNanoPeriod(1000000000/kHz+1, TIMER::PERIODIC);
+//        _pcm_timer.setNanoPeriod(1000000000/kHz, TIMER::PERIODIC);
+        _pcm_timer.setNanoPeriod(1000000000/(kHz+_offset), TIMER::PERIODIC);
+//        _pcm_timer.setNanoPeriod(1000000000/(kHz-200), TIMER::PERIODIC);
     }
 
     inline int  fifo_available_put() { return _pcm_fifo.available_put(); }
     inline void fifo_put(uint16_t v) { _pcm_fifo.put(v); }
+
+    inline void  addToOffset(int v) {
+        _offset += v;
+        if (_offset >     0) _offset =     0;
+        if (_offset < -1000) _offset = -1000;
+    }
 
 private:
     // BoostXL-Audio Objects
@@ -55,7 +63,7 @@ private:
     static void handler(void * data);
 
     // PCM FIFO buffer
-    FIFO  <uint16_t> _pcm_fifo;
+    FIFO <uint16_t> _pcm_fifo;
     uint16_t _pcm_value;
 
     // DMA stuff
@@ -63,6 +71,8 @@ private:
     uint32_t _dma_ctrl0_backup;
     uint8_t  _zero;
     uint8_t  _one;
+
+    int _offset;
 };
 
 #endif // _AUDIO_OUTPUT_H_

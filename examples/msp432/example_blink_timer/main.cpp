@@ -20,14 +20,14 @@
 // mode (see timer_interface.h). In ONE_SHOT mode,
 // the timer is stopped after the time has expired,
 // and calls the callback method. In PERIODIC mode,
-// the timer is automatically reloaded to that the
-// callback method is called until someone calls
-// stop() on the timer instance.
+// the timer is automatically reloaded so that the
+// callback method is called in constant intervalls
+// until someone calls stop() on the timer instance.
 //
 // This example shows 2 applications of the timer:
 // One timer uses the callback method to toggle the
 // LED. The other timer is used to implement a delay-
-// method, which can be called in the user program.
+// method, which can be used in the user application.
 
 #include "gpio_msp432.h"
 #include "timer_msp432.h"

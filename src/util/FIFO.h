@@ -57,6 +57,11 @@ public:
         return _buffer_size - available_get() - 1;
     }
 
+    void clear() {
+        _get_ptr = _buffer;
+        _put_ptr = _buffer;
+    }
+
 private:
 
     int _buffer_size;
