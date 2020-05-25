@@ -52,7 +52,7 @@ public:
         // Wait for reset of ESP8266
         sleep(2000);
 
-        stream_reader.connectToWlan("TG WLAN EG", "7209142041838311");
+        stream_reader.connectToWlan("TG WLAN", "geheim");
 
         // KLARA
         stream_reader.connectToSrv ("icecast.vrtcdn.be", 80, "/klara-mid.mp3");
