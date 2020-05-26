@@ -81,7 +81,7 @@ public:
     // sleep for a certain amount of time. Time is specified
     // in milliseconds. yield() will be called so that execution
     // proceeds with the next ready task.
-    void sleep(uint32_t ms);
+    static void sleep(uint32_t ms);
 
     // Suspend a task execution. The task will only come
     // back to life if resume() is called from another
