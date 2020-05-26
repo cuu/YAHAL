@@ -139,7 +139,7 @@ void OS_start_scheduler(int Hz) {
     // Start the systick timer
     SysTick_Config(SystemCoreClock / Hz);
 
-    // Set the stack pointer of the first task
+    // Set the stack pointer of the first task and run that task
     register uint32_t * __attribute__((unused)) sp asm("sp");
     sp = run_ptr->sp;
     asm volatile("pop     {r4-r11}");  // restore R4-R11
@@ -150,6 +150,17 @@ void OS_start_scheduler(int Hz) {
     asm volatile("pop     {r1}    ");  // load PSR in R1 (is discarded)
     asm volatile("cpsie   i       ");  // run task with interrupts enabled
     asm volatile("bx      r0      ");  // branch to entry point
+
+    // Alternative implementation: Do not load values from stack,
+    // but simply set stack pointer to original location (before
+    // the register save operations), get function pointer and start
+    // first task.
+
+    // Set the stack pointer of the first task and run that task
+//    register uint32_t * __attribute__((unused)) sp asm("sp");
+//    sp = run_ptr->sp + 16;
+//    void (*task)(void) = (void(*)(void))sp[-2];
+//    task();
 }
 
 
