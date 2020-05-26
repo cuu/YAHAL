@@ -39,8 +39,8 @@ void drawGraph();
 void handleRoot();
 void handleNotFound();
 
-const char *ssid = "xxxx";
-const char *password = "xxxx";
+const char *ssid = "TG WLAN";
+const char *password = "Wanja&Mikesch2007";
 
 ESP8266WebServer server(80);
 
