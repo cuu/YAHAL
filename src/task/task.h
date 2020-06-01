@@ -167,6 +167,7 @@ private:
     ///////////////////////////////////////////////
     void        _setup_stack (bool priv);
     static void _context_switch();
+    static void _nonOS_sleep(uint32_t ms);
 
 public:
     static void start_scheduler();
