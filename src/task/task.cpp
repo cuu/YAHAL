@@ -96,10 +96,18 @@ void task::stop() {
 
 void task::sleep(uint32_t ms) {
     task * c = task::currentTask();
-    c->_sleep_until  = _up_ticks;
-    c->_sleep_until += (ms * TICK_FREQUENCY) / 1000;
-    c->_state = state_t::SLEEPING;
-    yield();
+    if (c) {
+        // Multitasking running: Sleep using
+        // TCB entry '_sleep_until'
+        c->_sleep_until  = _up_ticks;
+        c->_sleep_until += (ms * TICK_FREQUENCY) / 1000;
+        c->_state = state_t::SLEEPING;
+        yield();
+    } else {
+        // Multitasking not running: Call the
+        // nonOS-version of sleep
+        _nonOS_sleep(ms);
+    }
 }
 
 void task::suspend() {

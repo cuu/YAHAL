@@ -86,6 +86,18 @@ void task::_context_switch() {
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
+void task::_nonOS_sleep(uint32_t ms) {
+    // Configure SysTick as 1 ms timer
+    SysTick->LOAD = SystemCoreClock / 1000 - 1;
+    SysTick->VAL  = 0;
+    SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
+                    SysTick_CTRL_ENABLE_Msk;
+    for (uint32_t i=0; i < ms; ++i) {
+        while ( !(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) ) ;
+    }
+    SysTick->CTRL = 0;
+}
+
 void task::start_scheduler() {
     sys_call(SYS_START_SCHEDULER);
 }
