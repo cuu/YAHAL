@@ -16,6 +16,8 @@
 #include <cstring>
 #include "yahal_String.h"
 
+namespace YAHAL {
+
 String::String(const char * ptr)
    : _len(strlen(ptr)), _cap(_len), _ptr(new char[_cap+1]) {
     strcpy(_ptr, ptr);
@@ -221,3 +223,5 @@ String operator + (const String & lhs, const String & rhs) {
     String res(lhs);
     return res += rhs;
 }
+
+} // namespace YAHAL

@@ -15,10 +15,11 @@
 #######################
 CHIP        = esp8266
 BOARD       = generic
-SKETCH      = main.ino
+SKETCH      = WiFiAccessPoint.ino
 BUILD_DIR   = build
 UPLOAD_PORT = /dev/ttyACM0
 VERBOSE     = 1
+CPP_EXTRA   = -Ofast
 
 # YAHAL part
 ############
@@ -29,6 +30,7 @@ MY_LIBS    += $(YAHAL_DIR)/src/driver
 MY_LIBS    += $(YAHAL_DIR)/src/task
 MY_LIBS    += $(YAHAL_DIR)/src/util
 MY_LIBS    += $(YAHAL_DIR)/libYAHAL_esp8266.a
+
 
 
 __THIS_FILE := $(realpath $(lastword $(MAKEFILE_LIST)))

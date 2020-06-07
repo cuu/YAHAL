@@ -230,7 +230,7 @@ void SVC_Handler_C(uint32_t * args) {
             // Return to thread mode and use PSP
             _exec_ret = 0xfffffffd;
 
-            // Only restore regiters r0-PSR, because these
+            // Only restore registers r0-PSR, because these
             // will be restored on return of the SVC-handler
             __set_PSP((uint32_t)(task::_getStackPtr() + 36));
 

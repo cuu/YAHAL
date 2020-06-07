@@ -16,9 +16,12 @@
 // functionality of the standard std::string class.
 //
 
-#ifndef STRING_H
-#define STRING_H
+#ifndef _STRING_H
+#define _STRING_H
+
 #include <cstdint>
+
+namespace YAHAL {
 
 class String
 {
@@ -101,5 +104,10 @@ String to_String(int num, int base=10);
 // Global operators
 String operator + (const String & lhs, const String & rhs);
 
-#endif /* _YAHAL_STRING_H_ */
+} // namespace YAHAL
+
+using YAHAL::String;
+using YAHAL::to_String;
+
+#endif // _STRING_H
 
