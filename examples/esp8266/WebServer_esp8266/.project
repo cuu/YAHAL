@@ -3,8 +3,6 @@
 	<name>WebServer_esp8266</name>
 	<comment></comment>
 	<projects>
-		<project>libarduino_esp8266</project>
-		<project>libextra_esp8266</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

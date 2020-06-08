@@ -19,7 +19,7 @@ SKETCH      = WiFiAccessPoint.ino
 BUILD_DIR   = build
 UPLOAD_PORT = /dev/ttyACM0
 VERBOSE     = 1
-CPP_EXTRA   = -Ofast
+#CPP_EXTRA   = -Ofast
 
 # YAHAL part
 ############
@@ -459,6 +459,10 @@ list_flash_defs:
 list_lwip:
 	$(BOARD_OP) $(BOARD) list_lwip
 
+$(YAHAL_DIR)/libYAHAL_esp8266.a:
+	cd $(YAHAL_DIR)
+	make -C $(YAHAL_DIR) PLATFORM=esp8266 YAHAL_DIR=$(YAHAL_DIR) VERBOSE=1
+
 set_git_version:
 ifeq ($(REQ_GIT_VERSION),)
 	@echo == Error: Version tag must be specified via REQ_GIT_VERSION
@@ -559,7 +563,7 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 .PHONY: all
-all: $(BUILD_DIR) $(ARDUINO_MK) prebuild $(MAIN_EXE)
+all: $(YAHAL_DIR)/libYAHAL_esp8266.a $(BUILD_DIR) $(ARDUINO_MK) prebuild $(MAIN_EXE)
 
 prebuild:
 ifdef USE_PREBUILD
@@ -579,7 +583,7 @@ ifeq ($(OS), Darwin)
 else
   BUILD_THREADS ?= $(shell nproc)
 endif
-MAKEFLAGS += -j $(BUILD_THREADS)
+#MAKEFLAGS += -j $(BUILD_THREADS)
 
 ifndef VERBOSE
   # Set silent mode as default
