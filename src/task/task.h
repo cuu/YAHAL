@@ -140,7 +140,7 @@ private:
     lock_base_interface * _lock;    // pointer to lock if thread is blocked
 
     // stack-pointer related attributes
-    uint8_t *       _stack_base;    // stack base addr
+    uint8_t *       _stack_base;    // stack base address
     uint16_t        _stack_size;    // stack size in bytes
     uint8_t *       _stack_ptr;     // saved stack pointer of this task
 

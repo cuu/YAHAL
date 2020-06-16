@@ -95,6 +95,7 @@ void task::_nonOS_sleep(uint32_t ms) {
     for (uint32_t i=0; i < ms; ++i) {
         while ( !(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) ) ;
     }
+    // Disable SysTick
     SysTick->CTRL = 0;
 }
 
