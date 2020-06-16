@@ -59,7 +59,7 @@ extern "C" {
                 // The PCM values have a resolution of 14 bits.
                 // We have to scale them down to 9 bits, so we
                 // shift them accordingly!
-                TIMER_A0->CCR[4] = _this->_pcm_value >> 5;
+                TIMER_A0->CCR[4] = _this->_pcm_value;
             }
         }
     }

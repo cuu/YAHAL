@@ -46,80 +46,9 @@ void mp3_decoder_task::run() {
 // libmad input callback //
 ///////////////////////////
 enum mad_flow mp3_decoder_task::input(void *data, struct mad_stream *stream) {
-    // Cast user defined data. Here we get a pointer
-    // to the decoder task!
-    mp3_decoder_task * _this = (mp3_decoder_task *)data;
-
-    // The following code is inspired by this article:
-    // https://stackoverflow.com/questions/39803572/
-    int keep; // Number of bytes to keep from the previous buffer.
-    int len;  // Length of the new buffer.
-    int eof;  // Whether this is the last buffer that we can provide.
-
-    // Figure out how much data we need to move from the end of
-    // the previous buffer into the start of the new buffer.
-    if (stream->error != MAD_ERROR_BUFLEN) {
-        // All data has been consumed, or this is the first call.
-        keep = 0;
-    } else if (stream->next_frame != nullptr) {
-        // The previous buffer was consumed partially.
-        // Move the unconsumed portion into the new buffer.
-        keep = stream->bufend - stream->next_frame;
-    } else if ((stream->bufend - stream->buffer) < MP3_BUF_SIZE) {
-        // No data has been consumed at all, but our read buffer
-        // isn't full yet, so let's just read more data first.
-        keep = stream->bufend - stream->buffer;
-    } else {
-        // No data has been consumed at all, and our read buffer is already full.
-        // Shift the buffer to make room for more data, in such a way that any
-        // possible frame position in the file is completely in the buffer at least
-        // once.
-        keep = MP3_BUF_SIZE - MP3_FRAME_SIZE;
-    }
-
-    // Shift the end of the previous buffer to the start of the
-    // new buffer if we want to keep any bytes.
-    if (keep) {
-        memmove(_this->_mp3_buf, stream->bufend - keep, keep);
-    }
-
-    // Append new data to the buffer.
-    uint16_t br;
-    eof = 0;
-    for (br=0; br < (MP3_BUF_SIZE - keep); ++br) {
-        if ((bird_ptr - birds) >= sizeof(birds)) {
-            eof = 1;
-            break;
-        }
-        *(_this->_mp3_buf + keep + br) = *bird_ptr++;
-    }
-    _this->_led.gpioToggle();
-
-    if (eof) {
-        // End of file. Append MAD_BUFFER_GUARD zero bytes to make
-        // sure that the last frame is properly decoded.
-        if (keep + MAD_BUFFER_GUARD <= MP3_BUF_SIZE) {
-            // Append all guard bytes and stop decoding after this buffer.
-            memset(_this->_mp3_buf + keep, 0, MAD_BUFFER_GUARD);
-            len = keep + MAD_BUFFER_GUARD;
-            eof = 1;
-        } else {
-            // The guard bytes don't all fit in our buffer, so we need to continue
-            // decoding and write all of the guard bytes in the next call to input().
-            memset(_this->_mp3_buf + keep, 0, MP3_BUF_SIZE - keep);
-            len = MP3_BUF_SIZE;
-            eof = 0;
-        }
-    } else {
-        // New buffer length is amount of bytes that we kept from the
-        // previous buffer plus the bytes that we read just now.
-        len = keep + br;
-        eof = 0;
-    }
-
     // Pass the new buffer information to libmad
-    mad_stream_buffer(stream, _this->_mp3_buf, len);
-    return eof ? MAD_FLOW_STOP : MAD_FLOW_CONTINUE;
+    mad_stream_buffer(stream, birds, sizeof(birds));
+    return MAD_FLOW_CONTINUE;
 }
 
 enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * header) {
@@ -173,11 +102,11 @@ uint16_t mp3_decoder_task::scale(mad_fixed_t sample)
         sample = MAD_F_ONE - 1;
     else if (sample < -MAD_F_ONE)
         sample = -MAD_F_ONE;
-    // quantize to signed 14 bit value in
-    // the range of -8192...8191
-    sample >>= (MAD_F_FRACBITS + 1 - 14);
-    // Our DAC expects unsigned values from
-    // 0...16383, so we have to add a offset
-    sample += 8192;
+    // quantize to signed 9 bit value in
+    // the range of -256...255
+    sample >>= (MAD_F_FRACBITS - 8);
+    // Our PWM audio output expects unsigned values
+    // from 0...511, so we have to add a offset
+    sample += 256;
     return sample;
 }
