@@ -28,7 +28,7 @@
 
 #include "task.h"
 #include "audio_output.h"
-#include "mp3_decoder_task.h"
+#include "decoder_task.h"
 
 class main_task : public task
 {
@@ -39,7 +39,7 @@ public:
     void run() override {
 
         audio_output     audio_output;
-        mp3_decoder_task decoder(audio_output);
+        decoder_task decoder(audio_output);
         audio_output.start();
 
         // Start decoder tasks to play the MP3

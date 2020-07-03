@@ -12,13 +12,13 @@
 // ---------------------------------------------
 //
 
-#include <mp3_decoder_task.h>
+#include <decoder_task.h>
 #include <memory.h>
 
 extern const unsigned char birds[124524];
 const unsigned char * bird_ptr = birds;
 
-mp3_decoder_task::mp3_decoder_task(audio_output & ao) :
+decoder_task::decoder_task(audio_output & ao) :
     task("MP3 decoder", 8200),
     _audio_output(ao),
     _led(PORT_PIN(1,0))
@@ -26,7 +26,7 @@ mp3_decoder_task::mp3_decoder_task(audio_output & ao) :
     _led.gpioMode( GPIO::OUTPUT );
 }
 
-void mp3_decoder_task::run() {
+void decoder_task::run() {
 
     mad_decoder_init(&_decoder, // the decoder object
                      this,      // parameter for callback functions
@@ -45,14 +45,14 @@ void mp3_decoder_task::run() {
 ///////////////////////////
 // libmad input callback //
 ///////////////////////////
-enum mad_flow mp3_decoder_task::input(void *data, struct mad_stream *stream) {
+enum mad_flow decoder_task::input(void *data, struct mad_stream *stream) {
     // Pass the new buffer information to libmad
     mad_stream_buffer(stream, birds, sizeof(birds));
     return MAD_FLOW_CONTINUE;
 }
 
-enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * header) {
-    mp3_decoder_task * _this = (mp3_decoder_task *)data;
+enum mad_flow decoder_task::header(void *data, struct mad_header const * header) {
+    decoder_task * _this = (decoder_task *)data;
     _this->_audio_output.setRate( header->samplerate );
     return MAD_FLOW_CONTINUE;
 }
@@ -60,10 +60,10 @@ enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * hea
 ////////////////////////////
 // libmad output callback //
 ////////////////////////////
-enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad_pcm *pcm)
+enum mad_flow decoder_task::output(void *data, mad_header const *header, mad_pcm *pcm)
 {
     (void)(header);
-    mp3_decoder_task * _this = (mp3_decoder_task *)data;
+    decoder_task * _this = (decoder_task *)data;
 
     // Wait until the PCM result can be written
     while (_this->_audio_output.fifo_available_put() < pcm->length) {
@@ -84,7 +84,7 @@ enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad
 ///////////////////////////
 // libmad error callback //
 ///////////////////////////
-enum mad_flow mp3_decoder_task::error(void *data,mad_stream *stream, mad_frame *frame)
+enum mad_flow decoder_task::error(void *data,mad_stream *stream, mad_frame *frame)
 {
     (void)(data);
     (void)(stream);
@@ -93,7 +93,7 @@ enum mad_flow mp3_decoder_task::error(void *data,mad_stream *stream, mad_frame *
     return MAD_FLOW_CONTINUE;
 }
 
-uint16_t mp3_decoder_task::scale(mad_fixed_t sample)
+uint16_t decoder_task::scale(mad_fixed_t sample)
 {
     // round
     sample += (1L << (MAD_F_FRACBITS - 14));

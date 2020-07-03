@@ -24,10 +24,10 @@
 #define MP3_BUF_SIZE   4096
 #define MP3_FRAME_SIZE 2881
 
-class mp3_decoder_task : public task
+class decoder_task : public task
 {
 public:
-    mp3_decoder_task(audio_output & ao);
+    decoder_task(audio_output & ao);
 
     void run() override;
 
