@@ -20,7 +20,7 @@
 
 # Root folder CCS installation
 ifeq ($(FILE_UNIX_STYLE),1)
-CCS_ROOT = /opt/ti/ccs930/ccs
+CCS_ROOT = /opt/ti/ccs1020/ccs
 # Typical installation path for MacOS
 # CCS_ROOT = /Applications/ti/ccs1000/ccs
 else
