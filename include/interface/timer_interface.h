@@ -25,6 +25,8 @@
 #define _TIMER_INTERFACE_H_
 
 #include <stdint.h>
+#include <functional>
+using std::function;
 
 namespace TIMER {
 	enum timer_mode { ONE_SHOT, PERIODIC };
@@ -39,7 +41,7 @@ class timer_interface {
 
 	// set the callback function. The parameter
 	// arg will be forwarded to the callback
-	virtual void	 setCallback(void (*f)(void *), void * arg) = 0;
+	virtual void	 setCallback(function<void()> f) = 0;
 
 	// starting and stopping the timer
 	virtual void	 start() = 0;
@@ -54,7 +56,6 @@ class timer_interface {
 
   protected:
 	virtual ~timer_interface() = default;
-
 };
 
 #endif // _TIMER_INTERFACE_H_

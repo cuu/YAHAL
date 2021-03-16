@@ -180,69 +180,6 @@ private:
 };
 
 
-// Button S1 toggles the left LED on the Launchpad
-//////////////////////////////////////////////////
-void callback_LP_S1(void *) {
-    HW::inst()->red.gpioToggle();
-}
-
-// Button S2 toggles the RGB LED on the Launchpad
-/////////////////////////////////////////////////
-void callback_LP_S2(void *) {
-    static int i = 0;
-    HW::inst()->rgb_red.gpioWrite(LOW);
-    HW::inst()->rgb_green.gpioWrite(LOW);
-    HW::inst()->rgb_blue.gpioWrite(LOW);
-    switch(i) {
-        case 0: { HW::inst()->rgb_red.gpioWrite(HIGH);   break; }
-        case 1: { HW::inst()->rgb_green.gpioWrite(HIGH); break; }
-        case 2: { HW::inst()->rgb_blue.gpioWrite(HIGH);  break; }
-        case 3: break;
-    }
-    i++;
-    i %= 4;
-}
-
-// Button S1 on EDU MKII toggles the EDU RGB LED
-////////////////////////////////////////////////
-void callback_EDU_S1(void *) {
-    static int i = 0;
-    HW::inst()->edu_red.gpioWrite(LOW);
-    HW::inst()->edu_green.gpioWrite(LOW);
-    HW::inst()->edu_blue.gpioWrite(LOW);
-    switch(i) {
-        case 0: { HW::inst()->edu_red.gpioWrite(HIGH);   break; }
-        case 1: { HW::inst()->edu_green.gpioWrite(HIGH); break; }
-        case 2: { HW::inst()->edu_blue.gpioWrite(HIGH);  break; }
-    case 3: break;
-    }
-    i++;
-    i %= 4;
-}
-
-// Button S2 on EDU MKII toggles speaker on/off
-///////////////////////////////////////////////
-void callback_EDU_S2(void *) {
-    static bool b = false;
-    b = !b;
-    HW::inst()->edu_speaker.setSEL(b);
-}
-
-// Joystick button changes the color of the
-// microphone signal
-///////////////////////////////////////////
-void callback_EDU_joy(void *) {
-    static int i = 0;
-    i++;
-    i %= 3;
-    switch(i) {
-        case 0: { task_mic::mic_color = C_RED;    break; }
-        case 1: { task_mic::mic_color = C_YELLOW; break; }
-        case 2: { task_mic::mic_color = C_CYAN;   break; }
-    }
-}
-
-
 int main(void)
 {
     // Setup backchannel UART
@@ -267,12 +204,67 @@ int main(void)
     TIMER_A0->CCTL[4] = 0xe0;
     TIMER_A0->CTL     = 0x2d0;  // up-mode, divide by 8
 
-    // Setup interrupt handler
-    HW::inst()->sw1.gpioAttachIrq(GPIO::FALLING, callback_LP_S1);
-    HW::inst()->sw2.gpioAttachIrq(GPIO::FALLING, callback_LP_S2);
-    HW::inst()->edu_sw1.gpioAttachIrq(GPIO::FALLING, callback_EDU_S1);
-    HW::inst()->edu_sw2.gpioAttachIrq(GPIO::FALLING, callback_EDU_S2);
-    HW::inst()->edu_joy_sw.gpioAttachIrq(GPIO::FALLING, callback_EDU_joy);
+    // Button S1 toggles the left LED on the Launchpad
+    //////////////////////////////////////////////////
+    HW::inst()->sw1.gpioAttachIrq(GPIO::FALLING, []() {
+        HW::inst()->red.gpioToggle();
+    });
+
+    // Button S2 toggles the RGB LED on the Launchpad
+    /////////////////////////////////////////////////
+    HW::inst()->sw2.gpioAttachIrq(GPIO::FALLING, []() {
+        static int i = 0;
+        HW::inst()->rgb_red.gpioWrite(LOW);
+        HW::inst()->rgb_green.gpioWrite(LOW);
+        HW::inst()->rgb_blue.gpioWrite(LOW);
+        switch(i) {
+            case 0: { HW::inst()->rgb_red.gpioWrite(HIGH);   break; }
+            case 1: { HW::inst()->rgb_green.gpioWrite(HIGH); break; }
+            case 2: { HW::inst()->rgb_blue.gpioWrite(HIGH);  break; }
+            case 3: break;
+        }
+        i++;
+        i %= 4;
+    });
+
+    // Button S1 on EDU MKII toggles the EDU RGB LED
+    ////////////////////////////////////////////////
+    HW::inst()->edu_sw1.gpioAttachIrq(GPIO::FALLING, []() {
+        static int i = 0;
+        HW::inst()->edu_red.gpioWrite(LOW);
+        HW::inst()->edu_green.gpioWrite(LOW);
+        HW::inst()->edu_blue.gpioWrite(LOW);
+        switch(i) {
+            case 0: { HW::inst()->edu_red.gpioWrite(HIGH);   break; }
+            case 1: { HW::inst()->edu_green.gpioWrite(HIGH); break; }
+            case 2: { HW::inst()->edu_blue.gpioWrite(HIGH);  break; }
+        case 3: break;
+        }
+        i++;
+        i %= 4;
+    });
+
+    // Button S2 on EDU MKII toggles speaker on/off
+    ///////////////////////////////////////////////
+    HW::inst()->edu_sw2.gpioAttachIrq(GPIO::FALLING, []() {
+        static bool b = false;
+        b = !b;
+        HW::inst()->edu_speaker.setSEL(b);
+    });
+
+    // Joystick button changes the color of the
+    // microphone signal
+    ///////////////////////////////////////////
+    HW::inst()->edu_joy_sw.gpioAttachIrq(GPIO::FALLING, []() {
+        static int i = 0;
+        i++;
+        i %= 3;
+        switch(i) {
+            case 0: { task_mic::mic_color = C_RED;    break; }
+            case 1: { task_mic::mic_color = C_YELLOW; break; }
+            case 2: { task_mic::mic_color = C_CYAN;   break; }
+        }
+    });
 
     // Draw static elements on the display
     gui.DrawLine( 0, 64, 127, 64, C_GREEN);

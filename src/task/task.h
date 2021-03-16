@@ -24,6 +24,7 @@
 #define _TASK_H_
 
 #include <cstdint>
+#include <functional>
 #include "yahal_config.h"
 #include "circular_list.h"
 #include "lock_base_interface.h"

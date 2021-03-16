@@ -1,4 +1,16 @@
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
 // Example showing how to operate the OPT3001
 // with interrupts. GPIO 4.6 is connected to
 // the (open drain) IRQ output of the OPT3001.
@@ -29,23 +41,20 @@ int main(void)
 
     // Initialize GPIOs
     opt_irq.gpioMode(GPIO::INPUT);
-    opt_irq.gpioAttachIrq(GPIO::FALLING,
-        // Interrupt handler
-        ////////////////////
-        [&](void *) {
-            // Read the Result register
-            txbuf[0] = 0x00;
-            opt3001.i2cWrite(0x44, txbuf, 1);
-            opt3001.i2cRead (0x44, rxbuf, 2);
-            uint16_t raw = (rxbuf[0] << 8) + rxbuf[1];
-            printf("Raw light value: %x\n", raw);
-            // Read the Configuration register
-            // to reset the IRQ line
-            txbuf[0] = 0x01;
-            opt3001.i2cWrite(0x44, txbuf, 1);
-            opt3001.i2cRead (0x44, rxbuf, 2);
-        }
-    );
+    // Interrupt handler
+    opt_irq.gpioAttachIrq(GPIO::FALLING, [&]() {
+        // Read the Result register
+        txbuf[0] = 0x00;
+        opt3001.i2cWrite(0x44, txbuf, 1);
+        opt3001.i2cRead (0x44, rxbuf, 2);
+        uint16_t raw = (rxbuf[0] << 8) + rxbuf[1];
+        printf("Raw light value: %x\n", raw);
+        // Read the Configuration register
+        // to reset the IRQ line
+        txbuf[0] = 0x01;
+        opt3001.i2cWrite(0x44, txbuf, 1);
+        opt3001.i2cRead (0x44, rxbuf, 2);
+    });
 
     // Reset OPT3001
     txbuf[0] = 0x06;

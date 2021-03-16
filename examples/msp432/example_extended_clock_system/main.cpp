@@ -21,24 +21,6 @@
 // example (MCLK driven by 48MHz XTAL), you will notice that
 // the blinking is more precise (compare with the seconds-
 // tick of a wristwatch for example).
-//
-// A simple blink example using a 32-bit timer.
-// The msp432 CPU contains 2 high-resolution
-// 32-bit timer, which can be used to measure
-// time or to run some code in specified intervals.
-// The timers have a resolution of 1 microsecond!
-// The timers operate in a ONE_SHOT or PERIODIC
-// mode (see timer_interface.h). In ONE_SHOT mode,
-// the timer is stopped after the time has expired,
-// and calls the callback method. In PERIODIC mode,
-// the timer is automatically reloaded to that the
-// callback method is called until someone calls
-// stop() on the timer instance.
-//
-// This example shows 2 applications of the timer:
-// One timer uses the callback method to toggle the
-// LED. The other timer is used to implement a delay-
-// method, which can be called in the user program.
 
 #include <cstdio>
 
@@ -50,32 +32,12 @@
 extern uint32_t SystemCoreClock;
 extern uint32_t SubsystemMasterClock;
 
-void callback1(void * arg) {
-    // Convert the argument to a gpio pointer
-    gpio_msp432_pin * gpio = static_cast<gpio_msp432_pin *>(arg);
-    // toggle the LED
-    gpio->gpioToggle();
-}
-
-void callback2(void * arg) {
-    (*static_cast<bool *>(arg)) = true;
-}
-
 void delay(int us) {
-    // Setup the second time in ONE_SHOT mode
-    // and simply wait until the callback
-    // method has changed the 'expired' variable.
-    // The pointer to this variable (which is
-    // located on the stack!) is passed as an
-    // argument to the callback method, so the
-    // callback method can modify this variable
-    // (see above).
     bool expired = false;
     timer_msp432 timer2(TIMER32_2);
     timer2.setPeriod(us, TIMER::ONE_SHOT);
-    timer2.setCallback(callback2, &expired);
+    timer2.setCallback([&]() { expired = true; });
     timer2.start();
-
     // Now wait until the callback method
     // has changed the 'expired' variable...
     while(!expired) ;
@@ -234,7 +196,7 @@ int main(void)
     // method, so it can call methods of the class.
     timer_msp432 timer1;
     timer1.setPeriod(500000, TIMER::PERIODIC);
-    timer1.setCallback(callback1, &led1);
+    timer1.setCallback([&]() { led1.gpioToggle(); });
     timer1.start();
 
     // The second timer is used within the

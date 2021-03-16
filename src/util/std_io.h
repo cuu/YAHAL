@@ -29,7 +29,7 @@ public:
     void setBaudrate(uint32_t) override {}
 
     // Interrupt handling
-    void uartAttachIrq (void (*)(char, void *), void *) override {};
+    void uartAttachIrq (function<void(char)>) override {};
     void uartDetachIrq () override {};
     void uartEnableIrq () override {};
     void uartDisableIrq() override {};

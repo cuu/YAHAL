@@ -40,7 +40,6 @@ private:
 	static const uint16_t	T		= 10000;	// T is 10ms according to data sheet
 	static const uint16_t	DELAY	= 230;		// Delay before ADC measurement
 
-	friend void callback_helper(void * arg);
 	void  process_state();
 	float voltage_to_dust(float VO);
 

@@ -46,7 +46,7 @@
 									<listOptionValue builtIn="false" value="__ARM_ARCH_7EM__=1"/>
 									<listOptionValue builtIn="false" value="__MSP432P401R__"/>
 								</option>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.649172109" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.649172109" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ccs_base_root}/arm/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ccs_base_root}/arm/include/CMSIS&quot;"/>
 								</option>
@@ -57,7 +57,7 @@
 									<listOptionValue builtIn="false" value="__ARM_ARCH_7EM__=1"/>
 									<listOptionValue builtIn="false" value="__MSP432P401R__"/>
 								</option>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.553405325" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.553405325" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ccs_base_root}/arm/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ccs_base_root}/arm/include/CMSIS&quot;"/>
 								</option>
@@ -72,7 +72,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1726537721" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.cross.assembler.458244870" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.both.asm.option.include.paths.940313207" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.both.asm.option.include.paths.940313207" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ccs_base_root}/arm/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ccs_base_root}/arm/include/CMSIS&quot;"/>
 								</option>

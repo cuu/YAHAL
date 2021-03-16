@@ -24,7 +24,7 @@
 #define I2C_ADDR 0x55
 
 void __attribute__((optimize("O0"))) delay(uint32_t us) {
-    for(int i=0; i < 150; ++i) ;
+    for(int i=0; i < 300; ++i) ;
 }
 
 void __attribute__((optimize("O0"))) delay1(uint32_t us) {
@@ -46,7 +46,7 @@ stream_reader_task::stream_reader_task(audio_output & ao) : task("MP3 stream", 5
     _audio_output(ao),
     _eof(false)
 {
-    _esp_spi.setSpeed(10000000);
+    _esp_spi.setSpeed(6000000);
     _esp_spi.generateCS(false);
     _i2c.init();
 }

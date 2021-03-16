@@ -74,7 +74,7 @@ public:
     void generateCS(bool val) override;
     void setCS(bool val) override;
 
-    void spiAttachRxIrq(void (*)(uint8_t data)) override;
+    void spiAttachRxIrq(function<void(uint8_t data)> f) override;
 
     // IRQ handlers are our best friends
     ////////////////////////////////////
@@ -112,7 +112,7 @@ private:
     gpio_pin & _cs; // pointer to currently selected CS pin
     IRQn_Type  _irq;
 
-    static void (*_intHandler[8])(uint8_t);
+    static function<void(uint8_t)> _intHandler[8];
 };
 
 #endif // _SPI_MSP432_H_

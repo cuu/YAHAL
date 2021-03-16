@@ -33,7 +33,7 @@ public:
 
     // Interrupt handling
     void gpioAttachIrq (gpio_pin_t gpio, gpio_mode_t mode,
-                        function<void(void *)> handler, void * arg = nullptr);
+                        function<void()> handler);
     void gpioDetachIrq (gpio_pin_t gpio);
     void gpioEnableIrq (gpio_pin_t gpio);
     void gpioDisableIrq(gpio_pin_t gpio);
@@ -56,7 +56,7 @@ private:
     gpio_msp432() { }
 
     void handleIrq(uint8_t port, uint8_t pin);
-    function<void(void *)> _intHandler[6][8];
+    function<void()> _intHandler[6][8];
     void * _arg[6][8];
     bool   _both[6][8];
 

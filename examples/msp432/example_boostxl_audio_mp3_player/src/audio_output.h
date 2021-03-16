@@ -52,7 +52,6 @@ private:
 
     // The PCM output timer
     timer_msp432 _pcm_timer;
-    static void handler(void * data);
 
     // PCM FIFO buffer
     FIFO  <uint16_t> _pcm_fifo;

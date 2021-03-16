@@ -32,15 +32,14 @@ class task_timer : public task, public timer_interface
         _priority   = priority;
         _privileged = privileged;
 
-        _mode    = TIMER::ONE_SHOT;
-        _running = false;
+        _mode     = TIMER::ONE_SHOT;
+        _running  = false;
 
         _start_ms = 0;
         _delta_ms = 0;
         _next_ms  = 0;
 
-        _callback     = nullptr;
-        _callback_arg = nullptr;
+        _callback = nullptr;
     }
 
     virtual ~task_timer() = default;
@@ -59,9 +58,8 @@ class task_timer : public task, public timer_interface
         return _delta_ms * 1000;
     }
 
-    void setCallback(void (*f)(void *), void * arg) override {
+    void setCallback(function<void()> f) override {
         _callback     = f;
-        _callback_arg = arg;
         _running      = false;
     }
 
@@ -101,7 +99,7 @@ class task_timer : public task, public timer_interface
                 int64_t diff = _next_ms - now;
                 sleep(diff);
             } else {
-                _callback(_callback_arg);
+                _callback();
                 _start_ms = _next_ms;
                 _next_ms += _delta_ms;
                 if (_mode == TIMER::ONE_SHOT) {
@@ -124,9 +122,7 @@ class task_timer : public task, public timer_interface
     uint64_t _delta_ms;
     uint64_t _next_ms;
 
-    void (* _callback)(void *);
-    void  * _callback_arg;
-
+    function<void()> _callback;
 };
 
 #endif /* _TASK_TIMER_H_ */

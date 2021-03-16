@@ -193,11 +193,11 @@ void task::_scheduler(void) {
 }
 
 void task::_tick_handler() {
-    // Increment the global millisecond timer ...
+    // Increment the global tick counter ...
     ++(_up_ticks);
-    // and the millisecond ticks of the running Task
+    // ... and the ticks of the running task.
     ++(_run_ptr->_ticks);
-    // find new task to execute
+    // Find new task to execute
     _scheduler();
 }
 

@@ -89,13 +89,10 @@ public:
 
     // Attach a interrupt handler to the GPIO pin 'gpio'.
     // The irq_mode specifies the the signal edges to listen to.
-    // The handler will be called when the event occurs. The
-    // arg parameter will be passed into the handler when it
-    // is called.
-    virtual void gpioAttachIrq (gpio_pin_t gpio,
-                                gpio_irq_t irq_mode,
-                                function<void(void *)> handler,
-                                void *arg = nullptr) = 0;
+    // The handler will be called when the event occurs.
+    virtual void gpioAttachIrq (gpio_pin_t        gpio,
+                                gpio_irq_t        irq_mode,
+                                function<void()>  handler) = 0;
     // Remove the interrupt from the GPIO pin
     virtual void gpioDetachIrq (gpio_pin_t gpio) = 0;
     // Enable the interrupt on the GPIO pin
@@ -133,10 +130,9 @@ public:
     inline void gpioToggle() {
         _interf.gpioToggle(_gpio);
     }
-    inline void gpioAttachIrq (uint16_t irq_mode,
-                               function<void(void *)> handler,
-                               void * arg = nullptr)  {
-        _interf.gpioAttachIrq(_gpio, irq_mode, handler, arg);
+    inline void gpioAttachIrq (uint16_t         irq_mode,
+                               function<void()> handler) {
+        _interf.gpioAttachIrq(_gpio, irq_mode, handler);
     }
     inline void gpioDetachIrq() {
         _interf.gpioDetachIrq(_gpio);

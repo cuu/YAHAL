@@ -10,10 +10,9 @@
 
 extern uint32_t SystemCoreClock;
 
-void (* timer_msp432::_intHandler1)(void *) = 0;
-void (* timer_msp432::_intHandler2)(void *) = 0;
-void  * timer_msp432::_arg1 = 0;
-void  * timer_msp432::_arg2 = 0;
+function<void()> timer_msp432::_intHandler1 = 0;
+function<void()> timer_msp432::_intHandler2 = 0;
+
 
 // We use the TIMER32 instances here (they might not
 // be used for other purposes anyway...)
@@ -53,13 +52,11 @@ uint32_t timer_msp432::getPeriod() {
 	return _period_us;
 }
 
-void timer_msp432::setCallback(void (*f)(void *), void * arg) {
+void timer_msp432::setCallback(function<void()> f) {
     if (_timer == TIMER32_1) {
         timer_msp432::_intHandler1 = f;
-        timer_msp432::_arg1 = arg;
     } else {
         timer_msp432::_intHandler2 = f;
-        timer_msp432::_arg2 = arg;
     }
 }
 
@@ -111,7 +108,7 @@ void T32_INT1_IRQHandler(void) {
         TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE;
     // call the user handler
     if (timer_msp432::_intHandler1) {
-        timer_msp432::_intHandler1(timer_msp432::_arg1);
+        timer_msp432::_intHandler1();
     }
 }
 void T32_INT2_IRQHandler(void) {
@@ -122,7 +119,7 @@ void T32_INT2_IRQHandler(void) {
         TIMER32_2->CONTROL &= ~TIMER32_CONTROL_ENABLE;
     // call the user handler
     if (timer_msp432::_intHandler2) {
-        timer_msp432::_intHandler2(timer_msp432::_arg2);
+        timer_msp432::_intHandler2();
     }
 }
 

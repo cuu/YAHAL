@@ -22,7 +22,7 @@ class timer_msp432 : public timer_interface {
 	void	 setPeriod(uint32_t us, TIMER::timer_mode mode = TIMER::ONE_SHOT);
 	uint32_t getPeriod();
 
-	void	 setCallback(void (*f)(void *), void * arg);
+	void	 setCallback(function<void()> f);
 
 	void	 start();
 	void	 stop();
@@ -41,10 +41,8 @@ class timer_msp432 : public timer_interface {
 
   private:
 
-    static void (* _intHandler1)(void *);
-    static void (* _intHandler2)(void *);
-    static void  * _arg1;
-    static void  * _arg2;
+    static function<void()> _intHandler1;
+    static function<void()> _intHandler2;
 
 	Timer32_Type * _timer;
 	uint32_t _factor;     // count for one us

@@ -53,8 +53,6 @@ private:
     void    writeData(uint8_t data);
     uint8_t reverseByte(uint8_t data);
 
-    static void refresh_handler(void *);
-
     spi_interface   & _spi;
     gpio_pin        & _disp_on_pin;
     gpio_pin        & _pwr_pin;

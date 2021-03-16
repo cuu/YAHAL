@@ -29,7 +29,15 @@ audio_output::audio_output()
     // Configure PCM timer. Set a default time of
     // 1 ms. The correct value will be set via
     // the setRate() method by libmad.
-    _pcm_timer.setCallback(audio_output::handler, this);
+    _pcm_timer.setCallback([this]() {
+        if (_pcm_fifo.get(_pcm_value)) {
+            // Trigger a DMA transfer ...
+            dma_msp432::inst().ctrl_data[0].CTRL = _dma_ctrl0_backup;
+            DMA_Control->ENASET    = BIT0;
+            DMA_Control->ALTCLR    = BIT0;
+            DMA_Channel->SW_CHTRIG = BIT0;
+        }
+    });
     _pcm_timer.setPeriod(1000, TIMER::PERIODIC);
 
     // Setup DMA configuration
@@ -91,16 +99,4 @@ audio_output::audio_output()
 
     DMA_Channel->CH_SRCCFG[0] = 0;
     DMA_Control->CFG          = DMA_CFG_MASTEN;
-}
-
-
-void audio_output::handler(void * data) {
-    audio_output * _this = (audio_output *)data;
-    if (_this->_pcm_fifo.get(_this->_pcm_value)) {
-        // Trigger a DMA transfer ...
-        dma_msp432::inst().ctrl_data[0].CTRL = _this->_dma_ctrl0_backup;
-        DMA_Control->ENASET    = BIT0;
-        DMA_Control->ALTCLR    = BIT0;
-        DMA_Channel->SW_CHTRIG = BIT0;
-    }
 }
