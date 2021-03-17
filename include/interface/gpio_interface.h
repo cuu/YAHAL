@@ -28,6 +28,8 @@
 #define _GPIO_INTERFACE_H_
 
 #include <stdint.h>
+#include <functional>
+using std::function;
 
 #ifndef HIGH
 #define HIGH true
@@ -85,13 +87,17 @@ public:
     virtual void gpioWrite (gpio_pin_t gpio, bool value) = 0;
     virtual void gpioToggle(gpio_pin_t gpio) = 0;
 
-    // Interrupt handling
-    virtual void gpioAttachIrq (gpio_pin_t gpio,
-                                gpio_irq_t irq_mode,
-                                void (*handler)(gpio_pin_t, void *),
-                                void * arg = nullptr) = 0;
+    // Attach a interrupt handler to the GPIO pin 'gpio'.
+    // The irq_mode specifies the the signal edges to listen to.
+    // The handler will be called when the event occurs.
+    virtual void gpioAttachIrq (gpio_pin_t        gpio,
+                                gpio_irq_t        irq_mode,
+                                function<void()>  handler) = 0;
+    // Remove the interrupt from the GPIO pin
     virtual void gpioDetachIrq (gpio_pin_t gpio) = 0;
+    // Enable the interrupt on the GPIO pin
     virtual void gpioEnableIrq (gpio_pin_t gpio) = 0;
+    // Disable the interrupt on the GPIO pin
     virtual void gpioDisableIrq(gpio_pin_t gpio) = 0;
 
 protected:
@@ -124,10 +130,9 @@ public:
     inline void gpioToggle() {
         _interf.gpioToggle(_gpio);
     }
-    inline void gpioAttachIrq (uint16_t irq_mode,
-                               void (*handler)(gpio_pin_t, void *),
-                               void * arg = nullptr)  {
-        _interf.gpioAttachIrq(_gpio, irq_mode, handler, arg);
+    inline void gpioAttachIrq (uint16_t         irq_mode,
+                               function<void()> handler) {
+        _interf.gpioAttachIrq(_gpio, irq_mode, handler);
     }
     inline void gpioDetachIrq() {
         _interf.gpioDetachIrq(_gpio);
@@ -138,11 +143,12 @@ public:
     inline void gpioDisableIrq() {
         _interf.gpioDisableIrq(_gpio);
     }
-
+    inline void operator = (bool b) {
+        gpioWrite(b);
+    }
 protected:
     gpio_interface & _interf;
     gpio_pin_t       _gpio;
 };
 
 #endif // _GPIO_INTERFACE_H_
-

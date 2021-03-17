@@ -11,7 +11,7 @@
 #
 # ---------------------------------------------
 #
-YAHAL_DIR = ../../..
+YAHAL_DIR = /home/student/git/YAHAL
 # fixed target platform: esp8266
 PLATFORM = esp8266
 
@@ -54,7 +54,7 @@ LINK_LIBS += ../../esp8266/libextra_esp8266/libextra_esp8266.a
 LINK_LIBS += $(YAHAL_DIR)/libYAHAL_$(PLATFORM).a
 
 # Optimization settings 
-FLAGS_OPT = -Ofast
+FLAGS_OPT = -O3 -Ofast
 
 # serial port configuration
 ESP_PORT = /dev/ttyACM0

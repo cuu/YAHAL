@@ -27,7 +27,7 @@ uint32_t SPI_CLK = SystemCoreClock;
 extern uint32_t SubsystemMasterClock __attribute__((weak,alias("SPI_CLK")));
 
 
-void (*spi_msp432::_intHandler[8])(uint8_t);
+function<void(uint8_t)> spi_msp432::_intHandler[8];
 
 spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
                        const bool spi_master, uint16_t mode) :
@@ -277,9 +277,9 @@ void spi_msp432::setCS(bool val) {
     _cs.gpioWrite(val);
 }
 
-void spi_msp432::spiAttachRxIrq(void (*handler)(uint8_t)) {
+void spi_msp432::spiAttachRxIrq(function<void(uint8_t data)> f) {
     // Register handler
-    _intHandler[_irq-16] = handler;
+    _intHandler[_irq-16] = f;
     // Enable receive IRQ
     _EUSCI_IE = EUSCI_A_IE_RXIE;
     // Enable IRQ in NVIC

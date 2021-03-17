@@ -33,7 +33,9 @@ sharp96_drv::sharp96_drv(spi_interface   & spi,
 
     // Initialize timer
     _timer.setPeriod(50000, TIMER::PERIODIC);
-    _timer.setCallback(refresh_handler, this);
+    _timer.setCallback([this]() {
+        flush();
+    });
     _timer.start();
 }
 
@@ -130,9 +132,4 @@ uint8_t sharp96_drv::reverseByte(uint8_t data)
     }
     return y;
 #endif
-}
-
-void sharp96_drv::refresh_handler(void * ptr) {
-    sharp96_drv * _this = (sharp96_drv *)ptr;
-    _this->flush();
 }

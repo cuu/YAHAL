@@ -19,6 +19,8 @@
 #define _SPI_INTERFACE_H_
 
 #include <stdint.h>
+#include <functional>
+using std::function;
 
 class spi_interface {
 public:
@@ -52,7 +54,7 @@ public:
 
     // In SPI client mode, attach a RX handler which
     // is called for every received byte.
-    virtual void spiAttachRxIrq(void (*)(uint8_t data)) = 0;
+    virtual void spiAttachRxIrq(function<void(uint8_t data)> f) = 0;
 
 protected:
     virtual ~spi_interface() = default;

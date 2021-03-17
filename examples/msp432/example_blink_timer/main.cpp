@@ -21,7 +21,7 @@
 // the timer is stopped after the time has expired,
 // and calls the callback method. In PERIODIC mode,
 // the timer is automatically reloaded so that the
-// callback method is called in constant intervalls
+// callback method is called in constant intervals
 // until someone calls stop() on the timer instance.
 //
 // This example shows 2 applications of the timer:
@@ -32,34 +32,20 @@
 #include "gpio_msp432.h"
 #include "timer_msp432.h"
 
-void callback1(void * arg) {
-    // Convert the argument to a gpio pointer
-    gpio_msp432_pin * gpio = static_cast<gpio_msp432_pin *>(arg);
-    // toggle the LED
-    gpio->gpioToggle();
-}
-
-void callback2(void * arg) {
-    (*static_cast<bool *>(arg)) = true;
-}
-
 void delay(int us) {
     // Setup the second time in ONE_SHOT mode
     // and simply wait until the callback
     // method has changed the 'expired' variable.
-    // The pointer to this variable (which is
-    // located on the stack!) is passed as an
-    // argument to the callback method, so the
-    // callback method can modify this variable
-    // (see above).
+    // The interrupt handler is realized as a
+    // lambda expression, which can access this
+    // variable (capture [&]).
     bool expired = false;
     timer_msp432 timer2(TIMER32_2);
     timer2.setPeriod(us, TIMER::ONE_SHOT);
-    timer2.setCallback(callback2, &expired);
+    timer2.setCallback([&]() { expired = true; });
     timer2.start();
-
-    // Now wait until the callback method
-    // has changed the 'expired' variable...
+    // Now (actively) wait until the callback
+    // method has changed the 'expired' variable...
     while(!expired) ;
 }
 
@@ -71,15 +57,12 @@ int main(void)
     led1.gpioMode( GPIO::OUTPUT );
     led2.gpioMode( GPIO::OUTPUT );
 
-    // Setup the first timer with a timeout
-    // of 500ms. As an example, a pointer to the
-    // gpio_pin is passed as the callback argument.
-    // When a timer is e.g. used within a class, the
-    // this-pointer could be passed to the callback
-    // method, so it can call methods of the class.
+    // Setup the first timer with a timeout of 500ms
+    // in periodic mode
     timer_msp432 timer1;
     timer1.setPeriod(500000, TIMER::PERIODIC);
-    timer1.setCallback(callback1, &led1);
+    // Set the callback method to toggle the LED
+    timer1.setCallback([&]() { led1.gpioToggle(); });
     timer1.start();
 
     // The second timer is used within the

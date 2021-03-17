@@ -93,7 +93,7 @@ PLATFORM_FILE = $(YAHAL_DIR)/makefiles/platform-$(PLATFORM).mk
 ifneq ("$(wildcard $(PLATFORM_FILE))","")
   include $(PLATFORM_FILE)
 else
-  $(error Platform file makefiles/platform-$(PLATFORM).mk not existing!)
+  $(error Platform file $(YAHAL_DIR)/makefiles/platform-$(PLATFORM).mk not existing!)
 endif
 
 #####################

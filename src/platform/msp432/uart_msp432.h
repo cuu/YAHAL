@@ -32,7 +32,7 @@ public:
     void setBaudrate(uint32_t) override;
 
     // Interrupt handling
-    void uartAttachIrq (void (*)(char, void*), void *ptr = nullptr) override;
+    void uartAttachIrq (function<void(char)> f) override;
     void uartDetachIrq () override;
     void uartEnableIrq () override;
     void uartDisableIrq() override;
@@ -48,8 +48,7 @@ private:
     void init();
 
     static void handleIrq(EUSCI_A_Type *);
-    static void (*_intHandler[4])(char, void*);
-    static void  *_intData[4];
+    static function<void(char)> _intHandler[4];
 
     EUSCI_A_Type  * _EUSCI;
     uint32_t        _baud;

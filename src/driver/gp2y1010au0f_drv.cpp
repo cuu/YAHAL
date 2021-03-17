@@ -8,11 +8,6 @@
 #include "gp2y1010au0f_drv.h"
 #include "yahal_assert.h"
 
-void callback_helper(void * arg) {
-	gp2y1010au0f_drv * sensor = static_cast<gp2y1010au0f_drv *>(arg);
-	sensor->process_state();
-}
-
 gp2y1010au0f_drv::gp2y1010au0f_drv(adc_channel  & adc,
 				   gpio_pin & led,
 				   timer_interface & timer,
@@ -21,7 +16,9 @@ gp2y1010au0f_drv::gp2y1010au0f_drv(adc_channel  & adc,
 
 	// HW initialization
 	_ir_led.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
-	_timer.setCallback(callback_helper, this);
+	_timer.setCallback([this](){
+	    process_state();
+	});
 
 	// initialize members
 	_raw_sum      = 0;

@@ -26,11 +26,11 @@ int main(void)
     // This loop will never end ...
     while(1) {
         // switch on the LED
-        led.gpioWrite( HIGH ); // HIGH == true
+        led = HIGH;
         // delay
         for(int i=0; i < 100000; ++i) ;
         // switch off the LED
-        led.gpioWrite( LOW ); // LOW == false
+        led = LOW;
         // delay
         for(int i=0; i < 100000; ++i) ;
     }

@@ -96,4 +96,3 @@ protected:
 };
 
 #endif // _ADC_INTERFACE_H_
-

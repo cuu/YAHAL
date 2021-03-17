@@ -14,15 +14,24 @@
 // A simple blink example using the red LED on
 // Port 1 pin 0 and the green LED on Port 2 pin 1.
 // This program uses the multitasking kernel of YAHAL.
-// A task can be defined by deriving a class from
-// class 'task'. This class has an abstract method
-// run(), which will contain the code to execute.
-// So the derived class has to implement run().
-// When run() ends, the task is removed from the
-// scheduling process.
-// The base class 'task' also provides functions
-// like sleep() to delay the execution (parameter is
-// the delay time in milliseconds).
+// A task can be defined in two different ways:
+//
+// 1.) You specify the code to run as the first
+//     parameter (a std::function) in the task constructor.
+//     The second and third parameters are the task name
+//     and the optional stack size in bytes.
+//
+// 2.) You can derive from class task and implement
+//     the task code in the virtual method void run().
+//     The (base class) constructor of task has to be
+//     called with the task name as the first parameter
+//     and the optional stack size as the second parameter.
+//
+// When the task code ends, the task is automatically
+// removed from the list of active tasks and deleted.
+// The class 'task' also provides functions like sleep()
+// to delay the execution (parameter is the delay time
+// in milliseconds). See file task.h for more details.
 // This program also redirects stdout to the backchannel
 // UART and start a task monitor, so task statistics
 // can be seen on the terminal.
@@ -79,10 +88,25 @@ int main(void)
     uart_msp432 uart;
     std_io::inst.redirect_stdout(uart);
 
-    // Instantiate two tasks with two
-    // different delays (500ms and 300ms).
-    blink_task t1("red blinker",   RED_LED,   500 );
-    blink_task t2("green blinker", GREEN_LED, 300 );
+    // Instantiate the tasks to blink the red LED.
+    // The class is derived from task.
+    blink_task t1("red blinker", RED_LED, 500 );
+
+    // Instantiate the tasks to blink the green LED.
+    // Here the code is provided as the first parameter
+    // (in this case a lambda expression) to task.
+    // The GPIO is defined outside of task to
+    // demonstrate the capture of external variables.
+    gpio_msp432_pin led( PORT_PIN(2,1) );
+    led.gpioMode( GPIO::OUTPUT );
+
+    task t2([&]() {
+        // Endless loop
+        while(true) {
+            led.gpioToggle();
+            task::sleep(500);
+        }
+    }, "green blinker");
 
     // Start both tasks. This means that
     // the tasks are put into a circular

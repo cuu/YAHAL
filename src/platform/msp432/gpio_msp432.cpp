@@ -97,8 +97,7 @@ void gpio_msp432::gpioToggle(uint16_t gpio) {
 
 void gpio_msp432::gpioAttachIrq (gpio_pin_t  gpio,
                                  gpio_mode_t mode,
-                                 void (*handler)(uint16_t, void *),
- 							     void * arg) {
+                                 function<void()> handler) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
 	yahal_assert((port > 0) && (port < 7) && (pin < 8));
@@ -123,7 +122,6 @@ void gpio_msp432::gpioAttachIrq (gpio_pin_t  gpio,
 	}
 	// store handler addr
 	_intHandler[port-1][pin] = handler;
-	_arg[port-1][pin] = arg;
 
 	// Reset all pending IRQs
 	for (uint32_t i=0; i < 8; ++i) {
@@ -158,7 +156,7 @@ void gpio_msp432::gpioDisableIrq(uint16_t gpio) {
 }
 
 void gpio_msp432::handleIrq(uint8_t port, uint8_t pin) {
-	_intHandler[port-1][pin](PORT_PIN(port, pin), _arg[port-1][pin]);
+	_intHandler[port-1][pin]();
     if (_both[port-1][pin]) {
         DIO_BIT(port, pin, PORT_IES_OFS) = DIO_BIT(port, pin, PORT_IN_OFS);
         // Make sure we don't accidently trigger a irq!

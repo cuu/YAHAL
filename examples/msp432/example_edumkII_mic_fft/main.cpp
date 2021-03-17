@@ -65,20 +65,6 @@ q15_t data_result[FFT_SIZE];     // magnitudes of FFT result
 // buffers gets filled by the ADC
 bool fill_data_adc0 = true;
 
-void timer_irq(void * param) {
-    static int index = 0;
-    // Read in ADC value
-    uint16_t val = adc14_msp432::inst.adcReadScan(10);
-    // Copy value to correct buffer
-    q15_t * data_adc = fill_data_adc0 ? data_adc0 : data_adc1;
-    data_adc[index++] = (val - 8192) << 2;
-    // Check if all samples have been recorded
-    if (index == FFT_SIZE) {
-        timer_msp432 * timer = (timer_msp432 *)param;
-        timer->stop();
-        index = 0;
-    }
-}
 
 int main(void)
 {
@@ -94,7 +80,19 @@ int main(void)
     // T[us] = 1E6[us] / f (result is 125us for f=8kHz)
     timer_msp432 timer;
     timer.setPeriod(1000000/SAMPLE_FREQUENCY, TIMER::PERIODIC);
-    timer.setCallback(timer_irq, &timer);
+    timer.setCallback([&]() {
+        static int index = 0;
+        // Read in ADC value
+        uint16_t val = adc14_msp432::inst.adcReadScan(10);
+        // Copy value to correct buffer
+        q15_t * data_adc = fill_data_adc0 ? data_adc0 : data_adc1;
+        data_adc[index++] = (val - 8192) << 2;
+        // Check if all samples have been recorded
+        if (index == FFT_SIZE) {
+            timer.stop();
+            index = 0;
+        }
+    });
 
     // Setup SPI interface
     gpio_msp432_pin lcd_cs (PORT_PIN(5, 0));

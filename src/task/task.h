@@ -24,22 +24,31 @@
 #define _TASK_H_
 
 #include <cstdint>
+#include <functional>
 #include "yahal_config.h"
 #include "circular_list.h"
 #include "lock_base_interface.h"
 #include "yahal_assert.h"
 
 class task {
-protected:
-    // CTOR/DTOR
-    task(const char * n, uint16_t stack_size=DEFAULT_STACK_SIZE);
+public:
+    // Public CTOR to create a task based on some std::function.
+    // f can be a function, a lambda expression, a function object ...
+    task(std::function<void()> f,
+         const char * n, uint16_t stack_size=DEFAULT_STACK_SIZE);
     virtual ~task();
+
     // No copy, no assignment
     task             (const task &) = delete;
     task & operator= (const task &) = delete;
 
+protected:
+    // Protected CTOR which will be called by a derived class.
+    // The run()-Method has to be implemented in the derived class!
+    task(const char * n, uint16_t stack_size=DEFAULT_STACK_SIZE);
+
     // The method containing the task code
-    virtual void run(void) = 0;
+    virtual void run(void) { _f(); }
 
 public:
     // enum type for the different task states and
@@ -160,6 +169,7 @@ private:
 
     // Helper method for calling the virtual run() method
     void _run(void);
+    std::function<void(void)> _f;   // Function to execute if provided in CTOR
 
     ///////////////////////////////////////////////
     // CPU-specific interface, which needs to be //
@@ -191,7 +201,6 @@ public:
     static uint8_t * _getStackBase()          { return _run_ptr->_stack_base; }
     static uint8_t * _getStackPtr()           { return _run_ptr->_stack_ptr;  }
     static void      _setStackPtr(uint8_t *s) { _run_ptr->_stack_ptr = s;     }
-
 };
 
 #endif // _TASK_H

@@ -17,7 +17,7 @@ public:
 
     // Interrupt handling
     void gpioAttachIrq(uint16_t gpio, uint16_t irq_mode,
-                       void (*handler)(uint16_t gpio, void *), void *);
+                       function<void()> handler);
     void gpioDetachIrq(uint16_t gpio);
     void gpioEnableIrq(uint16_t gpio);
     void gpioDisableIrq(uint16_t gpio);
@@ -30,9 +30,8 @@ public:
 private:
     gpio_esp8266();
 
-    void (*intHandler[16])(uint16_t gpio, void *ptr);
-    uint16_t intMode[16];
-    void * intPtr[16];
+    function<void()> intHandler[16];
+    uint16_t         intMode[16];
 };
 
 void gpio_irq_handler(gpio_esp8266 *);

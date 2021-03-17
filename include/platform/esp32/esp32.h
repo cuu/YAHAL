@@ -19,47 +19,47 @@
 ////////////////
 #define PERI_BASE	((uint32_t)0x3ff00000)	// Base of all memory mapped peripherals
 
-#define DPORT_BASE	(PERI_BASE + 0x00000000)	// Base address of DPort Registers
+#define DPORT_BASE	    (PERI_BASE + 0x00000000)	// Base address of DPort Registers
 #define AES_ACCEL_BASE	(PERI_BASE + 0x00001000)	// Base address of AES Accelerator
 #define RSA_ACCEL_BASE	(PERI_BASE + 0x00002000)	// Base address of RSA Accelerator
 #define SHA_ACCEL_BASE	(PERI_BASE + 0x00003000)	// Base address of SHA Accelerator
 #define SEC_BOOT_BASE	(PERI_BASE + 0x00004000)	// Base address of Secure Boot
 #define CACHE_MMU_BASE	(PERI_BASE + 0x00010000)	// Base address of Cache MMU Table
 #define PID_CTRL_BASE	(PERI_BASE + 0x0001f000)	// Base address of PID Controller
-#define UART0_BASE	(PERI_BASE + 0x00040000)	// Base address of UART0
-#define SPI1_BASE	(PERI_BASE + 0x00042000)	// Base address of SPI1
-#define SPI0_BASE	(PERI_BASE + 0x00043000)	// Base address of SPI0
-#define GPIO_BASE	(PERI_BASE + 0x00044000)	// Base address of GPIO
-#define RTC_BASE	(PERI_BASE + 0x00048000)	// Base address of RTC
-#define IO_MUX_BASE	(PERI_BASE + 0x00049000)	// Base address of IO MUX
+#define UART0_BASE	    (PERI_BASE + 0x00040000)	// Base address of UART0
+#define SPI1_BASE	    (PERI_BASE + 0x00042000)	// Base address of SPI1
+#define SPI0_BASE	    (PERI_BASE + 0x00043000)	// Base address of SPI0
+#define GPIO_BASE	    (PERI_BASE + 0x00044000)	// Base address of GPIO
+#define RTC_BASE	    (PERI_BASE + 0x00048000)	// Base address of RTC
+#define IO_MUX_BASE	    (PERI_BASE + 0x00049000)	// Base address of IO MUX
 #define SDIO_SLV1_BASE	(PERI_BASE + 0x0004b000)	// Base address of SDIO Slave 1
-#define UDMA1_BASE	(PERI_BASE + 0x0004c000)	// Base address of UDMA1
-#define I2S0_BASE	(PERI_BASE + 0x0004f000)	// Base address of I2S0
-#define UART1_BASE	(PERI_BASE + 0x00050000)	// Base address of UART1
-#define I2C0_BASE	(PERI_BASE + 0x00053000)	// Base address of I2C0
-#define UDMA0_BASE	(PERI_BASE + 0x00054000)	// Base address of UDMA0
+#define UDMA1_BASE	    (PERI_BASE + 0x0004c000)	// Base address of UDMA1
+#define I2S0_BASE	    (PERI_BASE + 0x0004f000)	// Base address of I2S0
+#define UART1_BASE	    (PERI_BASE + 0x00050000)	// Base address of UART1
+#define I2C0_BASE	    (PERI_BASE + 0x00053000)	// Base address of I2C0
+#define UDMA0_BASE	    (PERI_BASE + 0x00054000)	// Base address of UDMA0
 #define SDIO_SLV2_BASE	(PERI_BASE + 0x00055000)	// Base address of SDIO Slave 2
-#define RMT_BASE	(PERI_BASE + 0x00056000)	// Base address of RMT
-#define PCNT_BASE	(PERI_BASE + 0x00057000)	// Base address of PCNT
+#define RMT_BASE	    (PERI_BASE + 0x00056000)	// Base address of RMT
+#define PCNT_BASE	    (PERI_BASE + 0x00057000)	// Base address of PCNT
 #define SDIO_SLV3_BASE	(PERI_BASE + 0x00058000)	// Base address of SDIO Slave 3
 #define LED_PWM_BASE	(PERI_BASE + 0x00059000)	// Base address of LED PWM
-#define EFUSE_BASE	(PERI_BASE + 0x0005a000)	// Base address of Efuse Controller
+#define EFUSE_BASE	    (PERI_BASE + 0x0005a000)	// Base address of Efuse Controller
 #define FLASH_ENC_BASE	(PERI_BASE + 0x0005b000)	// Base address of Flash Encryption
-#define PWM0_BASE	(PERI_BASE + 0x0005e000)	// Base address of PWM0
-#define TIMG0_BASE	(PERI_BASE + 0x0005f000)	// Base address of TIMG0
-#define TIMG1_BASE	(PERI_BASE + 0x00060000)	// Base address of TIMG1
-#define SPI2_BASE	(PERI_BASE + 0x00064000)	// Base address of SPI2
-#define SPI3_BASE	(PERI_BASE + 0x00065000)	// Base address of SPI3
-#define SYSCON_BASE	(PERI_BASE + 0x00066000)	// Base address of SYSCON
-#define I2C1_BASE	(PERI_BASE + 0x00067000)	// Base address of I2C1
-#define SDMMC_BASE	(PERI_BASE + 0x00068000)	// Base address of SDMMC
-#define EMAC_BASE	(PERI_BASE + 0x00069000)	// Base address of EMAC
-#define PWM1_BASE	(PERI_BASE + 0x0006c000)	// Base address of PWM1
-#define I2S1_BASE	(PERI_BASE + 0x0006d000)	// Base address of I2S1
-#define UART2_BASE	(PERI_BASE + 0x0006e000)	// Base address of UART2
-#define PWM2_BASE	(PERI_BASE + 0x0006f000)	// Base address of PWM2
-#define PWM3_BASE	(PERI_BASE + 0x00070000)	// Base address of PWM3
-#define RNG_BASE	(PERI_BASE + 0x00075000)	// Base address of RNG
+#define PWM0_BASE	    (PERI_BASE + 0x0005e000)	// Base address of PWM0
+#define TIMG0_BASE	    (PERI_BASE + 0x0005f000)	// Base address of TIMG0
+#define TIMG1_BASE	    (PERI_BASE + 0x00060000)	// Base address of TIMG1
+#define SPI2_BASE	    (PERI_BASE + 0x00064000)	// Base address of SPI2
+#define SPI3_BASE	    (PERI_BASE + 0x00065000)	// Base address of SPI3
+#define SYSCON_BASE	    (PERI_BASE + 0x00066000)	// Base address of SYSCON
+#define I2C1_BASE	    (PERI_BASE + 0x00067000)	// Base address of I2C1
+#define SDMMC_BASE	    (PERI_BASE + 0x00068000)	// Base address of SDMMC
+#define EMAC_BASE	    (PERI_BASE + 0x00069000)	// Base address of EMAC
+#define PWM1_BASE	    (PERI_BASE + 0x0006c000)	// Base address of PWM1
+#define I2S1_BASE	    (PERI_BASE + 0x0006d000)	// Base address of I2S1
+#define UART2_BASE	    (PERI_BASE + 0x0006e000)	// Base address of UART2
+#define PWM2_BASE	    (PERI_BASE + 0x0006f000)	// Base address of PWM2
+#define PWM3_BASE	    (PERI_BASE + 0x00070000)	// Base address of PWM3
+#define RNG_BASE	    (PERI_BASE + 0x00075000)	// Base address of RNG
 
 
 //////////////////////////////

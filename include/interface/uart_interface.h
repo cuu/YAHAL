@@ -19,6 +19,8 @@
 #define _UART_INTERFACE_H_
 
 #include <cstdint>
+#include <functional>
+using std::function;
 
 typedef uint16_t uart_mode_t;
 
@@ -50,7 +52,7 @@ public:
     virtual void setBaudrate(uint32_t) = 0;
 
     // Interrupt handling
-    virtual void uartAttachIrq (void (*handler)(char, void *), void *) = 0;
+    virtual void uartAttachIrq (function<void(char)> f) = 0;
     virtual void uartDetachIrq () = 0;
     virtual void uartEnableIrq () = 0;
     virtual void uartDisableIrq() = 0;
