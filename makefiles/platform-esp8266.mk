@@ -14,7 +14,7 @@ TOOLCHAIN_PATH   = $(ESP8266_PACKAGE)/tools/xtensa-lx106-elf-gcc/2.5.0-4-b40a506
 TOOLCHAIN_PREFIX = xtensa-lx106-elf
 
 # Various path variables
-ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/2.7.1
+ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/2.7.4
 ESP_CORE_DIR    = $(ESP_SRC_DIR)/cores/esp8266
 ESP_LIB_DIR     = $(ESP_SRC_DIR)/libraries
 ESP_VARIANTS_DIR= $(ESP_SRC_DIR)/variants

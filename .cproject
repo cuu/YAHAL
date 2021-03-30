@@ -61,6 +61,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ccs_base_root}/arm/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ccs_base_root}/arm/include/CMSIS&quot;"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.dialect.std.1792712345" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.657446138" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.2038992597" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>

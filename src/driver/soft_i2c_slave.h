@@ -12,7 +12,7 @@
 // ---------------------------------------------
 //
 //  This is a I2C slave driver  implemented in SW.
-//  The I2C protocol is decoded with 2 GPIO line,
+//  The I2C protocol is decoded with 2 GPIO lines,
 //  which need support for edge interrupts. The
 //  interrupt handlers generate 5 events (start, stop,
 //  high, low, SCL falling), which in turn are processed
