@@ -84,6 +84,7 @@ public:
         gpio_msp432::inst.setMode(_gpio, mode);
     }
     using gpio_pin::operator =;
+    using gpio_pin::operator bool;
 };
 
 #endif // _GPIO_MSP432_H_

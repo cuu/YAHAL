@@ -41,7 +41,15 @@ int main()
     s2.gpioMode(GPIO::INPUT | GPIO::PULLUP);
 
     while(true) {
+        // Set the red and blue LEDs to the
+        // inverted values of button s1 and s2
+        // using the YAHAL gpio methods:
         red_led.gpioWrite ( ! s1.gpioRead() );
         blue_led.gpioWrite( ! s2.gpioRead() );
+
+        // Same as above, but using
+        // (syntactic sugar) C++ operators:
+        red_led  = !s1;
+        blue_led = !s2;
     }
 }

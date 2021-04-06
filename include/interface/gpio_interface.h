@@ -146,6 +146,9 @@ public:
     inline void operator = (bool b) {
         gpioWrite(b);
     }
+    inline operator bool () {
+        return gpioRead();
+    }
 protected:
     gpio_interface & _interf;
     gpio_pin_t       _gpio;

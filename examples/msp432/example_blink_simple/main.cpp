@@ -16,6 +16,7 @@
 // a simple for-loop.
 
 #include "gpio_msp432.h"
+#include "task.h"
 
 int main(void)
 {
@@ -27,11 +28,16 @@ int main(void)
     while(1) {
         // switch on the LED
         led = HIGH;
-        // delay
+        // Simple delay using an empty loop.
+        // This will only work if the compiler does
+        // not optimize away this code ...
         for(int i=0; i < 100000; ++i) ;
         // switch off the LED
         led = LOW;
-        // delay
-        for(int i=0; i < 100000; ++i) ;
+        // Delay using the non-multitasking version
+        // of sleep. This delay uses the SysTick timer,
+        // and is independent from the CPU clock
+        // frequency and compiler optimizations!
+        task::sleep(500);
     }
 }
