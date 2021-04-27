@@ -30,6 +30,7 @@ INC_DIRS += $(YAHAL_DIR)/src/platform/$(PLATFORM)
 INC_DIRS += $(YAHAL_DIR)/include/interface
 INC_DIRS += $(YAHAL_DIR)/src/driver
 INC_DIRS += $(YAHAL_DIR)/src/util
+INC_DIRS += $(YAHAL_DIR)/src/task
 
 # linked in libraries
 LINK_LIBS = $(YAHAL_DIR)/libYAHAL_msp432.a 
