@@ -229,7 +229,7 @@ void SVC_Handler_C(uint32_t * args) {
             SysTick_Config(SystemCoreClock / TICK_FREQUENCY);
 
             // Return to thread mode and use PSP
-            _exec_ret = 0xfffffffd;
+            _exec_ret = EXC_RETURN_THREAD_PSP;
 
             // Only restore registers r0-PSR, because these
             // will be restored on return of the SVC-handler
