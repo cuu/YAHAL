@@ -39,8 +39,7 @@ class timer_interface {
     virtual void	 setPeriod(uint32_t us, TIMER::timer_mode mode) = 0;
 	virtual uint32_t getPeriod() = 0;
 
-	// set the callback function. The parameter
-	// arg will be forwarded to the callback
+	// set the callback function
 	virtual void	 setCallback(function<void()> f) = 0;
 
 	// starting and stopping the timer
