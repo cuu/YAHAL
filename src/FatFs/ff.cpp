@@ -20,6 +20,13 @@
 
 #include "ff.h"            /* Declarations of FatFs API */
 
+/* For Posix Adapter */
+#include <cerrno>
+#include <malloc.h>
+#include <fcntl.h>
+#include <cassert>
+#include <cstdio>
+
 /*--------------------------------------------------------------------------
 
  Module Private Definitions
@@ -7025,4 +7032,126 @@ FatFs::FRESULT FatFs::setcp (
     return FR_OK;
 }
 #endif    /* FF_CODE_PAGE == 0 */
+
+////////////////////////
+// Posix File IO adapter
+////////////////////////
+
+int FatFs::_read  (int file, char *buf, int len) {
+    uint16_t br;
+    FRESULT res = this->read(_f_ptrs[file-16], (void *)buf, (uint16_t)len, &br);
+    set_errno(res);
+    return res ? -1 : br;
+}
+
+int FatFs::_write (int file, const char *buf, int len) {
+    uint16_t bw;
+    FRESULT res = this->write(_f_ptrs[file-16], (void *)buf, (uint16_t)len, &bw);
+    set_errno(res);
+    return res ? -1 : bw;
+}
+
+int FatFs::_open (const char *name, int flags, int mode) {
+    (void)(mode);
+    // Handle open flags
+    uint8_t fl = 0;
+    switch(flags & 0x3) {
+        case 0: fl = FA_READ;  break;
+        case 1: fl = FA_WRITE; break;
+        case 2: fl = FA_READ | FA_WRITE; break;
+        case 3: fl = FA_READ | FA_WRITE; break;
+    }
+    if (flags & O_EXCL  ) fl |= FA_CREATE_NEW;
+    if (flags & O_TRUNC ) fl |= FA_CREATE_ALWAYS;
+    if (flags & O_CREAT ) fl |= FA_OPEN_ALWAYS;
+    if (flags & O_APPEND) fl |= FA_OPEN_APPEND;
+
+    // Allocate new FILE handle
+    FatFs::FILE * file = (FatFs::FILE *)malloc(sizeof(FatFs::FILE));
+    // Look for free slot
+    int i;
+    for(i=0; i < 10; ++i) {
+        if (_f_ptrs[i] == NULL) break;
+    }
+    if (i==10) {
+        errno = ENFILE;
+        return -1;
+    }
+    // Store new pointer
+    _f_ptrs[i] = file;
+    FRESULT res = this->open(file, name, fl);
+    set_errno(res);
+    return res ? -1 : i+16;
+}
+
+int FatFs::_close (int file) {
+    // Call FatFs
+    FRESULT res = this->close(_f_ptrs[file-16]);
+    free(_f_ptrs[file-16]);
+    _f_ptrs[file-16] = 0;
+    set_errno(res);
+    return res ? -1 : 0;
+}
+
+int FatFs::_link  (char *old_name, char *new_name) {
+    FRESULT res = this->rename(old_name, new_name);
+    set_errno(res);
+    return res ? -1 : 0;
+}
+
+int FatFs::_unlink(char *name) {
+    FRESULT res = this->unlink(name);
+    set_errno(res);
+    return res ? -1 : 0;
+}
+
+int FatFs::_stat  (char *name, struct stat *st) {
+    (void)(name);
+    (void)(st);
+    return -1;
+}
+
+int FatFs::_fstat (int file, struct stat *st) {
+    (void)(file);
+    (void)(st);
+    return -1;
+}
+
+int FatFs::_lseek (int file, int offset, int whence) {
+    assert(whence == SEEK_SET);
+    FRESULT res = this->lseek(_f_ptrs[file-16], offset);
+    set_errno(res);
+    return res ? -1 : offset;
+}
+
+int FatFs::_isatty(int file) {
+    (void)(file);
+    // We handle files, so we are no TTY...
+    return 0;
+}
+
+void FatFs::set_errno(FRESULT r) {
+    switch(r) {
+    case FR_OK:                  {                 break; } /* (0) Succeeded */
+    case FR_DISK_ERR:            { errno = EIO;    break; } /* (1) A hard error occurred in the low level disk I/O layer */
+    case FR_INT_ERR:             { errno = EFAULT; break; } /* (2) Assertion failed */
+    case FR_NOT_READY:           { errno = EBUSY;  break; } /* (3) The physical drive cannot work */
+    case FR_NO_FILE:             { errno = ENOENT; break; } /* (4) Could not find the file */
+    case FR_NO_PATH:             { errno = ENOTDIR;break; } /* (5) Could not find the path */
+    case FR_INVALID_NAME:        { errno = EINVAL; break; } /* (6) The path name format is invalid */
+    case FR_DENIED:              { errno = EACCES; break; } /* (7) Access denied due to prohibited access or directory full */
+    case FR_EXIST:               { errno = EEXIST; break; } /* (8) Access denied due to prohibited access */
+    case FR_INVALID_OBJECT:      { errno = EBADF;  break; } /* (9) The file/directory object is invalid */
+    case FR_WRITE_PROTECTED:     { errno = EROFS;  break; } /* (10) The physical drive is write protected */
+    case FR_INVALID_DRIVE:       { errno = ENODEV; break; } /* (11) The logical drive number is invalid */
+    case FR_NOT_ENABLED:         { errno = EXDEV;  break; } /* (12) The volume has no work area */
+    case FR_NO_FILESYSTEM:       { errno = ENXIO;  break; } /* (13) There is no valid FAT volume */
+    case FR_MKFS_ABORTED:        { errno = ENOSPC; break; } /* (14) The f_mkfs() aborted due to any problem */
+    case FR_TIMEOUT:             { errno = ETIME;  break; } /* (15) Could not get a grant to access the volume within defined period */
+    case FR_LOCKED:              { errno = EINTR;  break; } /* (16) The operation is rejected according to the file sharing policy */
+    case FR_NOT_ENOUGH_CORE:     { errno = ENOMEM; break; } /* (17) LFN working buffer could not be allocated */
+    case FR_TOO_MANY_OPEN_FILES: { errno = ENFILE; break; } /* (18) Number of open files > FF_FS_LOCK */
+    case FR_INVALID_PARAMETER:   { errno = ERANGE; break; } /* (19) Given parameter is invalid */
+    }
+}
 

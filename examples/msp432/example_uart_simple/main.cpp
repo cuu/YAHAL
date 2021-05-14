@@ -39,15 +39,16 @@
 
 #include <cstdio>
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "yahal_String.h"
 
 int main(void)
 {
 	uart_msp432 uart; // default is backchannel UART!
 
-    std_io::inst.redirect_stdin ( uart );
-    std_io::inst.redirect_stdout( uart );
+    posix_io::inst.register_stdin ( uart );
+    posix_io::inst.register_stdout( uart );
+    posix_io::inst.register_stderr( uart );
 
     // Print out a simple ASCII table
     printf(VT100_COLOR, BLACK);

@@ -76,7 +76,7 @@ private:
         servo.      gpioMode(GPIO::OUTPUT);
         servo.      setSEL(1);
         // Set up SPI & I2C interface
-        lcd_spi.setSpeed(24000000);
+        lcd_spi.setSpeed(12000000);
         sen_i2c.setSpeed(100000);
         // Set up sensors
         sen_light.start_measure(OPT3001::CONF_100MS_CONT);

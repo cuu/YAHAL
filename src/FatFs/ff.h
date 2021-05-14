@@ -24,6 +24,7 @@
 #include "stdint.h"         // Standard integer types
 #include "ffconf.h"         // FatFs configuration options
 #include "block_io_interface.h"
+#include "posix_io_interface.h"
 
 #if FF_DEFINED != FFCONF_DEF
 #error Wrong configuration file (ffconf.h).
@@ -103,7 +104,7 @@ typedef uint64_t FSIZE_t;
 typedef uint32_t FSIZE_t;
 #endif
 
-class FatFs
+class FatFs : public posix_io_interface
 {
 
 public:
@@ -251,13 +252,13 @@ public:
     FRESULT expand   (FILE* fp, FSIZE_t szf, uint8_t opt); /* Allocate a contiguous block to the file */
     FRESULT mount    (uint8_t partition=0); /* Mount a logical drive */
     FRESULT umount   (); /* Unmount a logical drive */
-    FRESULT mkfs     (const TCHAR* path, uint8_t opt, uint32_t au, void* work, uint16_t len); /* Create a FAT volume */
-    FRESULT fdisk    (uint8_t pdrv, const uint32_t* szt, void* work); /* Divide a physical drive into some partitions */
-    FRESULT setcp    (uint16_t cp); /* Set current code page */
-    int     putc     (TCHAR c, FILE* fp); /* Put a character to the file */
-    int     puts     (const TCHAR* str, FILE* cp); /* Put a string to the file */
-    int     printf   (FILE* fp, const TCHAR* str, ...); /* Put a formatted string to the file */
-    TCHAR*  gets     (TCHAR* buff, int len, FILE* fp); /* Get a string from the file */
+//    FRESULT mkfs     (const TCHAR* path, uint8_t opt, uint32_t au, void* work, uint16_t len); /* Create a FAT volume */
+//    FRESULT fdisk    (uint8_t pdrv, const uint32_t* szt, void* work); /* Divide a physical drive into some partitions */
+//    FRESULT setcp    (uint16_t cp); /* Set current code page */
+//    int     putc     (TCHAR c, FILE* fp); /* Put a character to the file */
+//    int     puts     (const TCHAR* str, FILE* cp); /* Put a string to the file */
+//    int     printf   (FILE* fp, const TCHAR* str, ...); /* Put a formatted string to the file */
+//    TCHAR*  gets     (TCHAR* buff, int len, FILE* fp); /* Get a string from the file */
 
 private:
 
@@ -384,6 +385,25 @@ private:
     uint8_t  _partition; /* 0=auto, 1...4 primary partition */
 
     block_io_interface & _io;
+
+    FatFs::FILE * _f_ptrs[10] = { 0 }; // File handles for Posix adapter
+
+public:
+    // Posix File IO adapter
+    ////////////////////////
+    int _read  (int file, char *buf, int len) override;
+    int _write (int file, const char *buf, int len) override;
+    int _open  (const char *name, int flags, int mode) override;
+    int _close (int file) override;
+    int _link  (char *old_name, char *new_name) override;
+    int _unlink(char *name) override;
+    int _stat  (char *name, struct stat *st) override;
+    int _fstat (int file, struct stat *st) override;
+    int _lseek (int file, int offset, int whence) override;
+    int _isatty(int file) override;
+
+    void set_errno(FRESULT r);
+
 };
 
 #define f_eof(fp) ((int)((fp)->fptr == (fp)->obj.objsize))
