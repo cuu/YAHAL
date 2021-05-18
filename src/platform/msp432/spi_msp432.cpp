@@ -20,6 +20,7 @@
 #include "spi_msp432.h"
 #include "yahal_assert.h"
 #include "irq_dispatcher.h"
+#include "msp.h"
 
 // If existing, use the global SubsystemMasterClock. If not, use our own
 // copy of the SystemCoreClock, assuming that MCLK equals SMCLK ...

@@ -307,7 +307,7 @@ uint8_t sd_spi_drv::sd_get_r37(uint32_t *r37) {
 
 int sd_spi_drv::sd_get_data(uint8_t *buf, int len)
 {
-    int tries = 20000;
+    int tries = 50000;
     uint8_t r;
     uint16_t _crc16;
     uint16_t calc_crc;
