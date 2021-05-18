@@ -12,7 +12,6 @@
 // ---------------------------------------------
 //
 
-#include "msp.h"
 #undef PC
 
 #include "yahal_assert.h"
@@ -72,9 +71,7 @@ void Device_TTO::processPulse(unsigned int pulse, CPU & cpu) {
     case 4: {
         char c = cpu.getAC() & 0177;
         if (c == 127) c = 7;
-        if (c !=  12) UCA0TXBUF = c;
-        // Wait until character is sent
-        while (!(UCA0IFG & UCTXIFG)) ;
+        if (c !=  12) _uart.putc(c);
         // Ready to receive the next character
         FLAG=true;
         break;

@@ -17,11 +17,13 @@
 #ifndef DEVICETTO_H_
 #define DEVICETTO_H_
 #include "Device_Base.h"
+#include "uart_interface.h"
+
 
 class Device_TTO : public Device_Base {
 public:
 
-    Device_TTO() : FLAG(false) { }
+    Device_TTO(uart_interface & uart) : FLAG(false), _uart(uart) { }
     unsigned short getDeviceNumber();
     void processPulse(unsigned int pulse, CPU & cpu);
     void cycle();
@@ -32,6 +34,7 @@ public:
 
 private:
     bool FLAG;
+    uart_interface & _uart;
 };
 
 #endif /* DEVICETTO_H_ */

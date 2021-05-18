@@ -12,7 +12,6 @@
 // ---------------------------------------------
 //
 
-#include "msp.h"
 #undef PC
 #include "yahal_assert.h"
 
@@ -31,9 +30,9 @@ char Device_TTI::toUpper(char c) {
 }
 
 void Device_TTI::cycle() {
-    if (!FLAG && (UCA0IFG & UCRXIFG)) {
+    if (!FLAG && _uart.available()) {
         FLAG = true;
-        c = toUpper(UCA0RXBUF);
+        c = toUpper(_uart.getc());
         // Use CTRL-D as RUBOUT
         if (c==4) c = 0x7f;
     }
