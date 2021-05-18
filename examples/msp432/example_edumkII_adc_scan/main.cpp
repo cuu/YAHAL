@@ -30,7 +30,7 @@
 #include "gpio_msp432.h"
 #include "adc14_msp432.h"
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 
 #define CLEAR_SCREEN "%c[H%c[J",27,27
 
@@ -39,8 +39,8 @@ int main()
     // Initialize the backchannel UART
     // and redirect stdin and stdout
     uart_msp432 uart;
-    std_io::inst.redirect_stdin ( uart );
-    std_io::inst.redirect_stdout( uart );
+    posix_io::inst.register_stdin ( uart );
+    posix_io::inst.register_stdout( uart );
 
     // Instantiate ADC channels
     adc14_msp432_channel joy_Y( 9);

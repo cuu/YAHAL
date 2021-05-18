@@ -25,7 +25,7 @@
 
 #include <cstdint>
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "main_task.h"
 #include "task_monitor.h"
 
@@ -34,7 +34,7 @@ int main(void)
     // Redirect stdout to our backchannel UART, so
     // we can see the output of the task monitor
     uart_msp432 uart;
-    std_io::inst.redirect_stdout(uart);
+    posix_io::inst.register_stdout(uart);
 
     // Start Main task as privileged task, because
     // it has to initialize the DMA stuff...

@@ -22,14 +22,14 @@
 #include "gpio_msp432.h"
 #include "adc14_msp432.h"
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "stdio.h"
 
 int main()
 {
     // Redirect stdout so printf is working
     uart_msp432 uart;
-    std_io::inst.redirect_stdout(uart);
+    posix_io::inst.register_stdout(uart);
 
     // GPIO Pins with LEDs
     gpio_msp432_pin red_led  (PORT_PIN(2, 0));

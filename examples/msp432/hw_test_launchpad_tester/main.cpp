@@ -19,7 +19,7 @@
 #include "i2c_msp432.h"
 #include "cy8c95xxa_drv.h"
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include <cstdio>
 
 struct gpio_pair {
@@ -78,8 +78,8 @@ int main(void)
     // Use backchannel UART for stdin/stdout
     ////////////////////////////////////////
     uart_msp432 uart;
-    std_io::inst.redirect_stdin ( uart );
-    std_io::inst.redirect_stdout( uart );
+    posix_io::inst.register_stdin ( uart );
+    posix_io::inst.register_stdout( uart );
 
     // Set up I2C connection
     ////////////////////////

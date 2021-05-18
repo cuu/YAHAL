@@ -18,7 +18,7 @@
 // on the backchannel uart.
 
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "i2c_msp432.h"
 #include <cstdio>
 
@@ -26,7 +26,7 @@ int main()
 {
     // Initialize backchannel UART
     uart_msp432 uart;
-    std_io::inst.redirect_stdout(uart);
+    posix_io::inst.register_stdout(uart);
 
     // Initialize I2C port
     i2c_msp432 i2c(EUSCI_B1);

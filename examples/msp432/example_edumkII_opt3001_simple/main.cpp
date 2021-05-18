@@ -1,6 +1,6 @@
 
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "i2c_msp432.h"
 #include <cstdio>
 
@@ -8,7 +8,7 @@ int main(void)
 {
     // Initialize backchannel UART
     uart_msp432 uart;
-    std_io::inst.redirect_stdout( uart );
+    posix_io::inst.register_stdout( uart );
 
     // Our OPT3001 is connected to EUSCI_B1
     // with i2c adress 0x44

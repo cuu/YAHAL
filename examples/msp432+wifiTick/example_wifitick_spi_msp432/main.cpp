@@ -35,7 +35,7 @@
 #include <cstdio>
 
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "gpio_msp432.h"
 #include "spi_msp432.h"
 
@@ -43,8 +43,8 @@ uart_msp432 uart; // default is backchannel UART!
 
 int main(void)
 {
-    std_io::inst.redirect_stdin ( uart );
-    std_io::inst.redirect_stdout( uart );
+    posix_io::inst.register_stdin ( uart );
+    posix_io::inst.register_stdout( uart );
 
     gpio_msp432_pin esp_reset( PORT_PIN(10, 5) );
     esp_reset.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);

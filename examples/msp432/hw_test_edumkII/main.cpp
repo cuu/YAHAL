@@ -22,7 +22,7 @@
 
 // YAHAL includes
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "yahal_String.h"
 
 #include "uGUI.h"
@@ -184,7 +184,7 @@ int main(void)
 {
     // Setup backchannel UART
     uart_msp432 uart;
-    std_io::inst.redirect_stdout(uart);
+    posix_io::inst.register_stdout(uart);
 
     // Setup uGUI
     uGUI gui(HW::inst()->lcd);

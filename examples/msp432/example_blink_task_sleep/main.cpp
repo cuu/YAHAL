@@ -38,7 +38,7 @@
 
 #include "gpio_msp432.h"
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "task.h"
 #include "task_monitor.h"
 
@@ -86,7 +86,7 @@ int main(void)
     // Redirect stdout to our backchannel UART,
     // so we can see the output of the task monitor
     uart_msp432 uart;
-    std_io::inst.redirect_stdout(uart);
+    posix_io::inst.register_stdout(uart);
 
     // Instantiate the tasks to blink the red LED.
     // The class is derived from task.

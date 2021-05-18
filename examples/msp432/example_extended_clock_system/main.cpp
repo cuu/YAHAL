@@ -27,7 +27,7 @@
 #include "gpio_msp432.h"
 #include "uart_msp432.h"
 #include "timer_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 
 extern uint32_t SystemCoreClock;
 extern uint32_t SubsystemMasterClock;
@@ -47,7 +47,7 @@ int main(void)
 {
     // Setup backchannel UART for stdout
     uart_msp432 uart;
-    std_io::inst.redirect_stdout(uart);
+    posix_io::inst.register_stdout(uart);
 
     printf("************ DCO configuration ************\n");
     const char * dco_f = "";

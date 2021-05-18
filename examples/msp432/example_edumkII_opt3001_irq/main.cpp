@@ -23,7 +23,7 @@
 
 #include "gpio_msp432.h"
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 #include "i2c_msp432.h"
 #include <cstdio>
 
@@ -37,7 +37,7 @@ int main(void)
 
     // Initialize backchannel UART
     uart_msp432 uart;
-    std_io::inst.redirect_stdout( uart );
+    posix_io::inst.register_stdout( uart );
 
     // Initialize GPIOs
     opt_irq.gpioMode(GPIO::INPUT);

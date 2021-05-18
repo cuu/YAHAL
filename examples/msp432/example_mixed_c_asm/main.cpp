@@ -15,7 +15,7 @@
 
 #include <cstdio>
 #include "uart_msp432.h"
-#include "std_io.h"
+#include "posix_io.h"
 
 // Standard version of a simple add function.
 int add1(int a, int b) {
@@ -68,8 +68,8 @@ int add4(int a, int b) {
 int main(void)
 {
     uart_msp432 uart; // default is backchannel UART!
-    std_io::inst.redirect_stdin ( uart );
-    std_io::inst.redirect_stdout( uart );
+    posix_io::inst.register_stdin ( uart );
+    posix_io::inst.register_stdout( uart );
 
     int i = 78;
     int j = 102;
