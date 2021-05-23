@@ -7,6 +7,7 @@
 
 #include "st7735s_drv.h"
 #include "pixel_stream_const.h"
+#include "task.h"
 
 // Hardware Configurations
 //////////////////////////
@@ -80,13 +81,6 @@ st7735s_drv::config st7735s_drv::Crystalfontz_128x128(
 #define CMD_GAMCTRN1    0xE1    // Gamma ('-' polarity) Correction Characteristics Setting
 #define CMD_GCV         0xFC    // Gate Pump Clock Frequency Variable
 
-void delay(int t)
-{
-    int j = 0;
-    for (int i = 0; i < t * 1000; ++i)
-        j++;
-}
-
 st7735s_drv::st7735s_drv(spi_interface & spi, gpio_pin & rst_pin,
                          gpio_pin & dc_pin, config & lcd,
                          mutex_interface * mutex)
@@ -95,18 +89,18 @@ st7735s_drv::st7735s_drv(spi_interface & spi, gpio_pin & rst_pin,
 
     // Initialize Reset & D/C pins
     _rst_pin.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
-    _dc_pin.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
+    _dc_pin. gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
 
     // Make a HW-reset
     _rst_pin.gpioWrite(LOW);
-    delay(200);
+    task::sleep(10);
     _rst_pin.gpioWrite(HIGH);
-    delay(200);
+    task::sleep(300);
 
     //    if (_mutex) _mutex->lock();
 
     writeCommand(CMD_SLPOUT);	// Wake up ...
-    delay(200);
+    task::sleep(150);
 
     writeCommand(CMD_GAMSET);
     writeData(0x03);
