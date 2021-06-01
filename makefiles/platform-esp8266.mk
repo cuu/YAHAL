@@ -10,11 +10,11 @@ ESP8266_PACKAGE  = $(HOME_DIR)/AppData/Local/Arduino15/packages/esp8266
 endif
 
 # Toolchain helpers
-TOOLCHAIN_PATH   = $(ESP8266_PACKAGE)/tools/xtensa-lx106-elf-gcc/2.5.0-4-b40a506
+TOOLCHAIN_PATH   = $(ESP8266_PACKAGE)/tools/xtensa-lx106-elf-gcc/3.0.0-newlib4.0.0-gnu23-48f7b08
 TOOLCHAIN_PREFIX = xtensa-lx106-elf
 
 # Various path variables
-ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/2.7.4
+ESP_SRC_DIR     = $(ESP8266_PACKAGE)/hardware/esp8266/3.0.0
 ESP_CORE_DIR    = $(ESP_SRC_DIR)/cores/esp8266
 ESP_LIB_DIR     = $(ESP_SRC_DIR)/libraries
 ESP_VARIANTS_DIR= $(ESP_SRC_DIR)/variants
@@ -33,7 +33,7 @@ FLAGS_WARN      = -w
 # -Wall -Wextra
 FLAGS_OPT       = -Os
 
-FLAGS_CXX       = -fno-exceptions -fno-rtti -std=c++11
+FLAGS_CXX       = -fno-exceptions -fno-rtti -std=c++17
 FLAGS_C         = -Wpointer-arith -Wno-implicit-function-declaration 
 FLAGS_C        += -Wl,-EL -fno-inline-functions -nostdlib -std=gnu99
 FLAGS_ASM       = -x assembler-with-cpp
@@ -54,10 +54,12 @@ FLAGS_LD       += -L$(QUOTE)$(ESP_SDK_DIR)/libc/xtensa-lx106-elf/lib$(QUOTE)
 DEFINES  = -D__ets__
 DEFINES += -DICACHE_FLASH
 DEFINES += -U__STRICT_ANSI__
+DEFINES += -DMMU_IRAM_SIZE=0x8000
+DEFINES += -DMMU_ICACHE_SIZE=0x8000
 DEFINES += -DNONOSDK22x_190703=1
 DEFINES += -DF_CPU=80000000L
 DEFINES += -DLWIP_OPEN_SRC -DTCP_MSS=536 -DLWIP_FEATURES=1 -DLWIP_IPV6=0 
-DEFINES += -DARDUINO=10808
+DEFINES += -DARDUINO=10813
 DEFINES += -DARDUINO_ESP8266_GENERIC
 DEFINES += -DARDUINO_ARCH_ESP8266
 DEFINES += -DARDUINO_BOARD=\"ESP8266_GENERIC\"
@@ -69,7 +71,8 @@ DEFINES += -DESP8266
 PLATFORM_INC_DIRS  = $(ESP_SDK_DIR)/include
 PLATFORM_INC_DIRS += $(ESP_SDK_DIR)/lwip2/include
 PLATFORM_INC_DIRS += $(ESP_VARIANTS_DIR)/generic
-PLATFORM_INC_DIRS += $(ESP_SDK_DIR)/libc/xtensa-lx106-elf/include 
+PLATFORM_INC_DIRS += $(ESP_SDK_DIR)/libc/xtensa-lx106-elf/include
+PLATFORM_INC_DIRS += $(TOOLCHAIN_PATH)/include 
 
 #################################################
 # The following variables are used by common.mk #
@@ -90,7 +93,7 @@ CFLAGS   = $(FLAGS_F) $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLA
 ASMFLAGS = $(FLAGS_M) $(FLAGS_DEBUG) $(FLAGS_ASM)
 LDFLAGS  = $(FLAGS_DEBUG) $(FLAGS_WARN) $(FLAGS_OPT) $(FLAGS_LD)
 LIBS     = -lhal -lphy -lpp -lnet80211 -llwip2-536-feat -lwpa -lcrypto -lmain -lwps \
-           -lbearssl -laxtls -lespnow -lsmartconfig -lairkiss -lwpa2 -lstdc++ -lm -lc -lgcc
+           -lbearssl -lespnow -lsmartconfig -lairkiss -lwpa2 -lstdc++ -lm -lc -lgcc
 
 # Add linker script source file
 LINK_DEPS += $(BUILD_DIR)/local.eagle.app.v6.common.ld
@@ -102,7 +105,7 @@ define PLATFORM_RULES
 # Generate ld script
 $(BUILD_DIR)/local.eagle.app.v6.common.ld : $(ESP_SDK_DIR)/ld/eagle.app.v6.common.ld.h
 	@echo "LDS $$(notdir $$<)"
-	$(HIDE) $(CC) -CC -E -P -DVTABLES_IN_FLASH $$< -o $$@
+	$(HIDE) $(CC) -CC -E -P -DVTABLES_IN_FLASH -DMMU_IRAM_SIZE=0x8000 -DMMU_ICACHE_SIZE=0x8000 $$< -o $$@
 
 # Generate SPIFFS binary
 $(BUILD_DIR)/spiffs.bin: $(wildcard $(SPIFFS_DIR)/*) 
