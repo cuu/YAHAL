@@ -18,20 +18,48 @@
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.1679651776.2128528175" name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.827441522" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1873285720" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix" value="xtensa-lx106-elf-" valueType="string"/>
-							<option id="cdt.managedbuild.option.gnu.cross.path.1315889176" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="/home/student/.arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/2.5.0-4-b40a506/bin" valueType="string"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.1315889176" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="/home/student/.arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.0.0-newlib4.0.0-gnu23-48f7b08/bin" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.494267461" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
 							<builder id="cdt.managedbuild.builder.gnu.cross.588672020" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.231146456" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="gnu.c.compiler.option.include.paths.1684806935" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.1684806935" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/interface}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/FatFs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/driver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/libmad}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/task}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/uGUI}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/uGUI/fonts}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432/DSP/Include}&quot;"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.preprocessor.def.symbols.238731879" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="ARM_MATH_CM4"/>
+									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.969415176" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1797846969" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="gnu.cpp.compiler.option.include.paths.377696625" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.377696625" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/interface}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/FatFs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/driver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/libmad}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/task}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/uGUI}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/uGUI/fonts}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432/DSP/Include}&quot;"/>
+								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.2058698582" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1031332011" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=c++11" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.other.other.529772256" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0" valueType="string"/>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.undef.57147217" name="Undefined symbols (-U)" superClass="gnu.cpp.compiler.option.preprocessor.undef" useByScannerDiscovery="false" valueType="undefDefinedSymbols">
-									<listOptionValue builtIn="false" value="__STRICT_ANSI__"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="gnu.cpp.compiler.option.preprocessor.undef.57147217" name="Undefined symbols (-U)" superClass="gnu.cpp.compiler.option.preprocessor.undef" useByScannerDiscovery="false" valueType="undefDefinedSymbols"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.493258599" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="ARM_MATH_CM4"/>
+									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.885492708" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -41,6 +69,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.libs.2065799236" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="YAHAL_msp432"/>
 									<listOptionValue builtIn="false" value="yahal_esp8266"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2072169092" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -50,14 +79,44 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1497988251" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.797977200" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="gnu.both.asm.option.include.paths.336608753" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.both.asm.option.include.paths.336608753" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/include/interface}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/FatFs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/driver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/libmad}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/task}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/uGUI}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/uGUI/fonts}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/util}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/YAHAL/src/platform/msp432/DSP/Include}&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1748252582" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 				</configuration>
 			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
+				<externalSettings containerId="YAHAL;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/include/interface"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/FatFs"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/driver"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/libmad"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/task"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/uGUI/fonts"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/util"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/YAHAL/src/platform/msp432/DSP/Include"/>
+						<entry flags="NONE" kind="macro" name="ARM_MATH_CM4" value=""/>
+						<entry flags="NONE" kind="macro" name="__FPU_PRESENT" value="1"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/YAHAL"/>
+						<entry flags="NONE" kind="libraryFile" name="YAHAL_msp432" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+			</storageModule>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -82,8 +141,23 @@
 		<buildTargets>
 			<target name="upload" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>make</buildCommand>
-				<buildArguments/>
 				<buildTarget>upload</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="clean" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments/>
+				<buildTarget>clean</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="all" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments/>
+				<buildTarget>all</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>

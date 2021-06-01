@@ -3,6 +3,7 @@
 	<name>AccessPoint_esp8266</name>
 	<comment></comment>
 	<projects>
+		<project>YAHAL</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

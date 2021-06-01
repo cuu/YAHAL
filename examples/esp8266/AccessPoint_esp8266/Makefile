@@ -7,7 +7,7 @@
 # General and full license information is available at:
 #    https://github.com/plerup/makeEspArduino
 #
-# Copyright (c) 2016-2020 Peter Lerup. All rights reserved.
+# Copyright (c) 2016-2021 Peter Lerup. All rights reserved.
 #
 #====================================================================================
 
@@ -23,13 +23,13 @@ VERBOSE     = 1
 
 # YAHAL part
 ############
-YAHAL_DIR   = ~/git/YAHAL
-MY_LIBS    += $(YAHAL_DIR)/src/platform/esp8266
-MY_LIBS    += $(YAHAL_DIR)/include/interface
-MY_LIBS    += $(YAHAL_DIR)/src/driver
-MY_LIBS    += $(YAHAL_DIR)/src/task
-MY_LIBS    += $(YAHAL_DIR)/src/util
-MY_LIBS    += $(YAHAL_DIR)/libYAHAL_esp8266.a
+YAHAL_DIR     = /home/student/git/YAHAL
+INCLUDE_DIRS += $(YAHAL_DIR)/src/platform/esp8266
+INCLUDE_DIRS += $(YAHAL_DIR)/include/interface
+INCLUDE_DIRS += $(YAHAL_DIR)/src/driver
+INCLUDE_DIRS += $(YAHAL_DIR)/src/task
+INCLUDE_DIRS += $(YAHAL_DIR)/src/util
+LIBS         += $(YAHAL_DIR)/libYAHAL_esp8266.a
 
 
 
@@ -62,6 +62,8 @@ endif
 #=== Default values not available in the Arduino configuration files
 
 CHIP ?= esp8266
+UC_CHIP := $(shell perl -e "print uc $(CHIP)")
+IS_ESP32 := $(if $(filter-out esp32,$(CHIP)),,1)
 
 # Serial flashing parameters
 UPLOAD_PORT ?= $(shell ls -1tr /dev/tty*USB* 2>/dev/null | tail -1)
@@ -73,7 +75,7 @@ MONITOR_COM ?= python -m serial.tools.miniterm --rts=0 --dtr=0 $(UPLOAD_PORT) $(
 
 # OTA parameters
 OTA_ADDR ?=
-OTA_PORT ?= $(if $(filter $(CHIP), esp32),3232,8266)
+OTA_PORT ?= $(if $(IS_ESP32),3232,8266)
 OTA_PWD ?=
 
 OTA_ARGS = --progress --ip="$(OTA_ADDR)" --port="$(OTA_PORT)"
@@ -97,9 +99,6 @@ BUILD_DIR ?= $(BUILD_ROOT)/$(MAIN_NAME)_$(BOARD)
 FS_TYPE ?= spiffs
 FS_DIR ?= $(dir $(SKETCH))data
 FS_RESTORE_DIR ?= $(BUILD_DIR)/file_system
-
-# Bootloader
-BOOT_LOADER ?= $(ESP_ROOT)/bootloaders/eboot/eboot.elf
 
 #====================================================================================
 # Standard build logic and values
@@ -171,11 +170,14 @@ ifneq ($(ESPTOOL),)
 endif
 ESPTOOL_PATTERN = echo Using: $(UPLOAD_PORT) @ $(UPLOAD_SPEED) && "$(ESPTOOL_COM)" --baud=$(UPLOAD_SPEED) --port $(UPLOAD_PORT) --chip $(CHIP)
 
-ifneq ($(filter $(MAKECMDGOALS), help set_git_version install tools_dir),)
-  DEMO=1
+GOALS := $(if $(MAKECMDGOALS),$(MAKECMDGOALS),all)
+BUILDING := $(if $(filter $(GOALS), monitor list_boards list_flash_defs list_lwip set_git_version install help tools_dir preproc),,1)
+
+ifeq ($(BUILDING),)
+  DEMO = 1
 endif
 ifdef DEMO
-  SKETCH := $(if $(filter $(CHIP), esp32),$(ESP_LIBS)/WiFi/examples/WiFiScan/WiFiScan.ino,$(ESP_LIBS)/ESP8266WiFi/examples/WiFiScan/WiFiScan.ino)
+  SKETCH := $(if $(IS_ESP32),$(ESP_LIBS)/WiFi/examples/WiFiScan/WiFiScan.ino,$(ESP_LIBS)/ESP8266WiFi/examples/WiFiScan/WiFiScan.ino)
 endif
 SKETCH ?= $(realpath $(wildcard *.ino *.pde))
 ifeq ($(SKETCH),)
@@ -219,40 +221,19 @@ CORE_OBJ := $(patsubst %,$(BUILD_DIR)/%$(OBJ_EXT),$(notdir $(CORE_SRC)))
 CORE_LIB = $(BUILD_DIR)/arduino.ar
 USER_OBJ_LIB = $(BUILD_DIR)/user_obj.ar
 
-SKETCH_DIR = $(dir $(SKETCH))
-# User defined compilation units and directories
-ifeq ($(LIBS),)
-  # Automatically find directories with header files used by the sketch and siblings
-  LIBS := $(shell perl $(__TOOLS_DIR)/find_inc.pl "$(CUSTOM_LIBS) $(ESP_LIBS) $(ARDUINO_LIBS)" $(SKETCH) $(call find_files,S|c|cpp|h|hpp,$(SKETCH_DIR)))
-  ifneq ($(findstring /examples/,$(realpath $(SKETCH))),)
-    # Assume library example sketch, add the library directory unless it is an Arduino basic example
-    EX_LIB := $(shell perl -e 'print $$ARGV[0] if $$ARGV[0] =~ s/\/examples\/(?!\d\d\.).+//' $(realpath $(SKETCH)))
-    ifneq ($(EX_LIB),)
-      ifneq ($(wildcard $(EX_LIB)/src),)
-        # Library in src sub directory
-        EX_LIB := $(EX_LIB)/src
-      else
-        # Library at root. Avoid getting files from other examples
-        EXCLUDE_DIRS ?= $(EX_LIB)/examples
-      endif
-#      LIBS += $(EX_LIB)
-    endif
-  endif
-endif
+# Find project specific source files and include directories
+SRC_LIST = $(BUILD_DIR)/src_list.mk
+FIND_SRC_CMD = $(__TOOLS_DIR)/find_src.pl
+$(SRC_LIST): $(MAKEFILE_LIST) $(FIND_SRC_CMD) | $(BUILD_DIR)
+	perl $(FIND_SRC_CMD) "$(EXCLUDE_DIRS)" $(SKETCH) "$(CUSTOM_LIBS)" "$(LIBS)" $(ESP_LIBS) $(ARDUINO_LIBS) >$(SRC_LIST)
 
-LIBS += $(MY_LIBS)
+-include $(SRC_LIST)
 
-IGNORE_PATTERN := $(foreach dir,$(EXCLUDE_DIRS),$(dir)/%)
-USER_INC := $(filter-out $(IGNORE_PATTERN),$(call find_files,h|hpp,$(SKETCH_DIR) $(dir $(LIBS))))
-USER_SRC := $(SKETCH) $(filter-out $(IGNORE_PATTERN),$(call find_files,S|c|cpp$(USER_SRC_PATTERN),$(SKETCH_DIR) $(LIBS)))
 # Object file suffix seems to be significant for the linker...
 USER_OBJ := $(subst .ino,_.cpp,$(patsubst %,$(BUILD_DIR)/%$(OBJ_EXT),$(notdir $(USER_SRC))))
 USER_DIRS := $(sort $(dir $(USER_SRC)))
-USER_INC_DIRS := $(sort $(dir $(USER_INC)))
-USER_LIBS := $(filter-out $(IGNORE_PATTERN),$(call find_files,a,$(SKETCH_DIR) $(LIBS)))
 
 # Use first flash definition for the board as default
-FLASH_DEF_MATCH = $(if $(filter $(CHIP), esp32),build\.flash_size=(\S+),menu\.(?:FlashSize|eesz)\.([^\.]+)=(.+))
 FLASH_DEF ?= $(shell $(BOARD_OP) $(BOARD) first_flash)
 # Same method for LwIPVariant
 LWIP_VARIANT ?= $(shell $(BOARD_OP) $(BOARD) first_lwip)
@@ -263,7 +244,7 @@ ifeq ($(OS), Darwin)
 else
   CMD_LINE := $(shell tr "\0" " " </proc/$$PPID/cmdline)
 endif
-IGNORE_STATE ?= $(if $(filter $(MAKECMDGOALS), help clean dump_flash restore_flash list_boards set_git_version, install tools_dir),1,)
+IGNORE_STATE ?= $(if $(BUILDING),,1)
 ifeq ($(IGNORE_STATE),)
   STATE_LOG := $(BUILD_DIR)/state.txt
   STATE_INF := $(strip $(foreach par,$(CMD_LINE),$(if $(findstring =,$(par)),$(par),))) \
@@ -275,12 +256,12 @@ ifeq ($(IGNORE_STATE),)
     $(info * Build state has changed, doing a full rebuild *)
     $(shell rm -rf "$(BUILD_DIR)")
   endif
-  STATE_SAVE := $(shell mkdir -p $(BUILD_DIR)/core ; echo '$(STATE_INF)' >$(STATE_LOG))
+  STATE_SAVE := $(shell mkdir -p $(BUILD_DIR) ; echo '$(STATE_INF)' >$(STATE_LOG))
 endif
 
 # The actual build commands are to be extracted from the Arduino description files
 ARDUINO_DESC := $(shell find -L $(ESP_ROOT) -maxdepth 1 -name "*.txt" | sort)
-$(ARDUINO_MK): $(ARDUINO_DESC) $(MAKEFILE_LIST) | $(BUILD_DIR)
+$(ARDUINO_MK): $(ARDUINO_DESC) $(MAKEFILE_LIST) $(__TOOLS_DIR)/parse_arduino.pl | $(BUILD_DIR)
 	perl $(__TOOLS_DIR)/parse_arduino.pl $(BOARD) '$(FLASH_DEF)' '$(OS)' '$(LWIP_VARIANT)' $(ARDUINO_EXTRA_DESC) $(ARDUINO_DESC) >$(ARDUINO_MK)
 
 -include $(ARDUINO_MK)
@@ -345,19 +326,25 @@ ifdef USER_RULES
 include $(USER_RULES)
 endif
 
+ifneq ($(NO_USER_OBJ_LIB),)
+  USER_OBJ_DEP = $(USER_OBJ)
+else
+  USER_OBJ_DEP = $(USER_OBJ_LIB)
+endif
+
 BUILD_DATE = $(call time_string,"%Y-%m-%d")
 BUILD_TIME = $(call time_string,"%H:%M:%S")
 
-$(MAIN_EXE): $(CORE_LIB) $(USER_LIBS) $(USER_OBJ_LIB)
+$(MAIN_EXE): $(CORE_LIB) $(USER_LIBS) $(USER_OBJ_DEP)
 	@echo Linking $(MAIN_EXE)
-	$(LINK_PREBUILD)
+	$(PRELINK)
 	@echo "  Versions: $(SRC_GIT_VERSION), $(ESP_ARDUINO_VERSION)"
 	@echo 	'#include <buildinfo.h>' >$(BUILD_INFO_CPP)
 	@echo '_tBuildInfo _BuildInfo = {"$(BUILD_DATE)","$(BUILD_TIME)","$(SRC_GIT_VERSION)","$(ESP_ARDUINO_VERSION)"};' >>$(BUILD_INFO_CPP)
 	$(CPP_COM) $(BUILD_INFO_CPP) -o $(BUILD_INFO_OBJ)
 	$(LD_COM) $(LD_EXTRA)
 	$(GEN_PART_COM)
-	$(ELF2BIN_COM)
+	$(OBJCOPY)
 	$(SIZE_COM) | perl $(__TOOLS_DIR)/mem_use.pl "$(MEM_FLASH)" "$(MEM_RAM)"
 ifneq ($(LWIP_INFO),)
 	@printf "LwIPVariant: $(LWIP_INFO)\n"
@@ -450,7 +437,7 @@ clean:
 list_boards:
 	$(BOARD_OP) $(BOARD) list_names
 
-list_lib:
+list_lib: $(SRC_LIST)
 	perl -e 'foreach (@ARGV) {print "$$_\n"}' "===== Include directories =====" $(USER_INC_DIRS)  "===== Source files =====" $(USER_SRC)
 
 list_flash_defs:
@@ -484,7 +471,7 @@ else
   _SCRIPT = espmake
 endif
 vscode: all
-	perl $(__TOOLS_DIR)/vscode.pl -n $(MAIN_NAME) -m "$(_MAKE_COM)" -w "$(VS_CODE_DIR)" $(CPP_COM)
+	perl $(__TOOLS_DIR)/vscode.pl -n $(MAIN_NAME) -m "$(_MAKE_COM)" -w "$(VS_CODE_DIR)" -i "$(VSCODE_INC_EXTRA)" -p "$(VSCODE_PROJ_NAME)" $(CPP_COM)
 
 install:
 	@echo Creating command \"$(_SCRIPT)\" in $(BIN_DIR)
@@ -496,6 +483,20 @@ tools_dir:
 
 ram_usage: $(MAIN_EXE)
 	$(shell find $(TOOLS_ROOT) | grep 'gcc-nm') -Clrtd --size-sort $(BUILD_DIR)/$(MAIN_NAME).elf | grep -i ' [b] '
+
+OBJ_INFO_FORM ?= 0
+OBJ_INFO_SORT ?= 1
+obj_info: $(MAIN_EXE)
+	perl $(__TOOLS_DIR)/obj_info.pl "$(shell find $(TOOLS_ROOT) | grep 'elf-size$$')" "$(OBJ_INFO_FORM)" "$(OBJ_INFO_SORT)" $(BUILD_DIR)/*.o
+
+crash: $(MAIN_EXE)
+	perl $(__TOOLS_DIR)/crash_tool.pl $(ESP_ROOT) $(BUILD_DIR)/$(MAIN_NAME).elf
+
+preproc:
+ifeq ($(SRC_FILE),)
+	$(error SRC_FILE must be defined)
+endif
+	$(CPP_COM) -E $(SRC_FILE)
 
 help: $(ARDUINO_MK)
 	@echo
@@ -517,23 +518,25 @@ help: $(ARDUINO_MK)
 	@echo "  restore_flash        Restore flash memory from a previously dumped file"
 	@echo "  dump_fs              Extract all files from the flash file system"
 	@echo "                         Params: FS_DUMP_DIR"
-	@echo "  erase_flash          Erase the whole flash"
-	@echo "  list_lib             Show a list of used library files and include paths"
+	@echo "  erase_flash          Erase the whole flash (use with care!)"
+	@echo "  list_lib             Show a list of used solurce files and include directories"
 	@echo "  set_git_version      Setup ESP Arduino git repo to a the tag version"
 	@echo "                         specified via REQ_GIT_VERSION"
 	@echo "  install              Create the commands \"espmake\" and \"espmake32\""
 	@echo "  vscode               Create config file for Visual Studio Code and launch"
 	@echo "  ram_usage            Show global variables RAM usage"
+	@echo "  obj_info             Show memory usage per object file"
 	@echo "  monitor              Start serial monitor on the upload port"
 	@echo "  run                  Build flash and start serial monitor"
+	@echo "  crash                Analyze stack trace from a crash"
+	@echo "  preproc              Run compiler preprocessor on source file"
+	@echo "                         specified via SRC_FILE"
 	@echo "Configurable parameters:"
 	@echo "  SKETCH               Main source file"
 	@echo "                         If not specified the first sketch in current"
 	@echo "                         directory will be used."
-	@echo "  LIBS                 Includes in the sketch file of libraries from within"
-	@echo "                         the ESP Arduino directories are automatically"
-	@echo "                         detected. If this is not enough, define this"
-	@echo "                         variable with all libraries or directories needed."
+	@echo "  LIBS                 Use this variable to declare additional directories"
+	@echo "                         and/or files which should be included in the build"
 	@echo "  CHIP                 Set to esp8266 or esp32. Default: '$(CHIP)'"
 	@echo "  BOARD                Name of the target board. Default: '$(BOARD)'"
 	@echo "                         Use 'list_boards' to get list of available ones"
@@ -557,6 +560,7 @@ help: $(ARDUINO_MK)
 	@echo "  BUILD_THREADS        Number of parallel build threads"
 	@echo "                         Default: Maximum possible, based on number of CPUs"
 	@echo "  USE_CCACHE           Set to 1 to use ccache in the build"
+	@echo "  NO_USER_OBJ_LIB      Set to 1 to disable putting all object files into an archive"
 	@echo
 
 $(BUILD_DIR):
@@ -565,11 +569,12 @@ $(BUILD_DIR):
 .PHONY: all
 all: $(YAHAL_DIR)/libYAHAL_esp8266.a $(BUILD_DIR) $(ARDUINO_MK) prebuild $(MAIN_EXE)
 
+# Prebuild is currently only mandatory for esp32
+USE_PREBUILD ?= $(if $(IS_ESP32),1,)
 prebuild:
-ifdef USE_PREBUILD
-	$(CORE_PREBUILD)
+ifneq ($(USE_PREBUILD),)
+	$(PREBUILD)
 endif
-	$(SKETCH_PREBUILD)
 
 # Include all available dependencies
 -include $(wildcard $(BUILD_DIR)/*$(DEP_EXT))
