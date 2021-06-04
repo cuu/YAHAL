@@ -74,7 +74,7 @@ int main(void)
     /////////////////////////////////////////////////////////////////
 
     // Switch on LED so we see that SD card is written
-    led.gpioWrite(1);
+    led = 1;
     // Open file for reading and writing
     FILE * f = fopen("test.dat", "w+");
     yahal_assert(f != NULL);
@@ -83,7 +83,7 @@ int main(void)
         fprintf(f, "%d\n", i);
     }
     // Switch off LED
-    led.gpioWrite(0);
+    led = 0;
 
     // Go back to beginning of file
     fseek(f, 0, SEEK_SET);
