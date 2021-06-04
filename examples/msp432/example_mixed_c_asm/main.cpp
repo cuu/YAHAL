@@ -56,8 +56,8 @@ int add3(int a, int b) {
 // to access this variable in a inline assembly
 // statement. C variables can simply by referenced
 // just like the parameter variables. In this special
-// case, the compiler will notice that variabe 'result'
-// can be mapped to R0, and optimize this variabe away...
+// case, the compiler will notice that variable 'result'
+// can be mapped to R0, and optimize this variable away...
 int add4(int a, int b) {
     int result;
     //    ----code---       :    -output-   :     -input-
