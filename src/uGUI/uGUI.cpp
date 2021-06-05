@@ -1109,7 +1109,7 @@ void uGUI::Update(void)
 void uGUI::WaitForUpdate(void)
 {
     _state |= UG_SATUS_WAIT_FOR_UPDATE;
-    while ((volatile uint8_t) _state & UG_SATUS_WAIT_FOR_UPDATE)
+    while (_state & UG_SATUS_WAIT_FOR_UPDATE)
     {
     };
 }

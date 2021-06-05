@@ -88,7 +88,7 @@ public:
         // Forward any chars from the ESP to the back-channel UART
         hw.uart_esp.uartAttachIrq([this](char c) {
             static char magic_prgm[] = "\r\n\r\n";
-            static char magic_run[]  = "~ld\n";
+            static char magic_run[]  = "~ld\r";
             static uint8_t cnt  = 0;
 
             hw.uart_bc.putc(c);

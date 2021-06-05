@@ -57,5 +57,6 @@ endif
 
 # Optimization settings 
 # FLAGS_OPT = -Ofast
+# VERBOSE = 1
 
 include makefiles/common.mk

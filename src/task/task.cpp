@@ -66,7 +66,7 @@ void task::start(uint16_t priority, bool priv) {
     yahal_assert((priority > 0) && !_linked_in);
 
     // Initialize the stack with a magic number
-    for(register uint16_t i=0; i < _stack_size; ++i) {
+    for(uint16_t i=0; i < _stack_size; ++i) {
         _stack_base[i] = STACK_MAGIC;
     }
 
@@ -157,13 +157,13 @@ void task::_run(void) {
 // methods which will be called by IRQ handlers
 ///////////////////////////////////////////////
 void task::_scheduler(void) {
-    register task *     cur_ptr  = _run_ptr->_next;
-    register task *     next_ptr = nullptr;
-    register uint16_t   max_prio = 0;
+    task *   cur_ptr  = _run_ptr->_next;
+    task *   next_ptr = nullptr;
+    uint16_t max_prio = 0;
 
     for(uint16_t i=0; i < _list.getSize(); ++i) {
-        register state_t & state = cur_ptr->_state;
-        register uint16_t  prio  = cur_ptr->_priority;
+        state_t & state = cur_ptr->_state;
+        uint16_t  prio  = cur_ptr->_priority;
 
         // Handle sleeping Tasks
         if (state == state_t::SLEEPING) {

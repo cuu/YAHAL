@@ -28,7 +28,7 @@ CCS_ROOT = C:/ti/ccsv10
 endif
 
 # Toolchain location
-TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major
+TOOLCHAIN_PATH   = $(CCS_ROOT)/tools/compiler/gcc-arm-none-eabi-9-2019-q4-major
 TOOLCHAIN_PREFIX = arm-none-eabi
 
 # Various path variables
@@ -45,7 +45,7 @@ FLAGS_DEBUG    += -g -gdwarf-3 -gstrict-dwarf
 FLAGS_WARN     += -Wall -Wextra
 FLAGS_OPT      += # -Ofast
 
-FLAGS_CXX       = -fno-threadsafe-statics -fno-exceptions -std=c++11
+FLAGS_CXX       = -fno-threadsafe-statics -fno-exceptions -std=c++17
 FLAGS_C         =
 FLAGS_ASM       =
 

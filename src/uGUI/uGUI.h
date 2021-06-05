@@ -608,7 +608,7 @@ private:
     UG_COLOR _fore_color;
     UG_COLOR _back_color;
     UG_COLOR _desktop_color;
-    uint8_t _state;
+    volatile uint8_t _state;
 };
 
 #endif
