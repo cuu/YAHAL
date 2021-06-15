@@ -10,7 +10,7 @@
 class WifiTick
 {
 public:
-    WifiTick(std::function<void(uint32_t ms)> delay);
+    WifiTick();
 
     // Set the LED on the WifiTick-board
     inline void led(bool v) {
@@ -34,8 +34,6 @@ private:
     gpio_msp432_pin _reset;
     gpio_msp432_pin _powerUp;
     gpio_msp432_pin _led;
-
-    std::function<void(uint32_t ms)> _delay;
 };
 
 #endif // _WIFI_TICK_H_

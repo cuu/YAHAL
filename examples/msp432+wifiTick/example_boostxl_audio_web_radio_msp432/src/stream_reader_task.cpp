@@ -32,7 +32,6 @@ void __attribute__((optimize("O0"))) delay1(uint32_t us) {
 }
 
 stream_reader_task::stream_reader_task(audio_output & ao) : task("MP3 stream", 500),
-    _wifi_tick( [this] (uint32_t ms) { sleep(ms); } ),
     _sda(PORT_PIN(7,4)),
     _scl(PORT_PIN(7,5)),
     _i2c(_sda, _scl, delay),
@@ -111,7 +110,7 @@ void stream_reader_task::connectToSrv(const char *host, int port, const char *pa
 
     // Wait until ESP8266 is connected to server
     do {
-        sleep(500);
+        sleep(100);
         res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
         if (res != 1) continue;
     } while (buff[1]);

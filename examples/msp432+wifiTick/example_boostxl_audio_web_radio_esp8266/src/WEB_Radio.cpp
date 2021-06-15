@@ -161,7 +161,7 @@ void WEB_Radio::loop(void)
     }
 
     // Small delay to give WLAN and I2C slave a chance
-    delay(5);
+    delay(20);
 }
 
 

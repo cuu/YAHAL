@@ -1,13 +1,13 @@
 #include "WifiTick.h"
+#include "task.h"
 
-WifiTick::WifiTick(std::function<void(uint32_t ms)> delay)
+WifiTick::WifiTick()
 : _gpio0  (PORT_PIN( 7, 4)),
   _gpio2  (PORT_PIN( 7, 5)),
   _gpio15 (PORT_PIN(10, 0)),
   _reset  (PORT_PIN(10, 5)),
   _powerUp(PORT_PIN( 9, 5)),
-  _led    (PORT_PIN( 8, 0)),
-  _delay(delay)
+  _led    (PORT_PIN( 8, 0))
 {
     // We only set the modes for the GPIOs which we control.
     // gpio0/2/15 might be used for other purposes, so we
@@ -30,9 +30,9 @@ void WifiTick::reset(bool boot_from_uart)
     _gpio0. gpioWrite(!boot_from_uart);
     _gpio2. gpioWrite(HIGH);
     _gpio15.gpioWrite(LOW);
-    _delay(100);
+    task::sleep(100);
     _reset.gpioWrite(HIGH);
-    _delay(100);
+    task::sleep(100);
     // Restore the GPIOs to their original state,
     // if they have been used as OUTPUT
     if (gpio0 == boot_from_uart) {
