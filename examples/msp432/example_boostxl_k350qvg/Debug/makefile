@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /opt/ti/ccs930/ccs/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major
+CG_TOOL_ROOT := /opt/ti/ccs1020/ccs/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -147,14 +147,14 @@ all: $(OBJS) $(LDS_SRCS) $(GEN_CMDS)
 example_boostxl_k350qvg.out: $(OBJS) $(LDS_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: GNU Linker'
-	"/opt/ti/ccs930/ccs/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-gcc-7.2.1" -DARM_MATH_CM4 -D__FPU_PRESENT=1 -D__MSP432P401R__ -Dgcc -Og -g -gdwarf-3 -gstrict-dwarf -Wall -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wl,-Map,"example_boostxl_k350qvg.map" -L"/home/student/git/YAHAL" -mthumb -g -gstrict-dwarf -Wall -o"example_boostxl_k350qvg.out" $(ORDERED_OBJS)
+	"/opt/ti/ccs1020/ccs/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-gcc-7.2.1" -DARM_MATH_CM4 -D__FPU_PRESENT=1 -D__MSP432P401R__ -Dgcc -Og -g -gdwarf-3 -gstrict-dwarf -Wall -march=armv7e-m -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wl,-Map,"example_boostxl_k350qvg.map" -L"/home/student/git/YAHAL" -mthumb -g -gstrict-dwarf -Wall -o"example_boostxl_k350qvg.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 example_boostxl_k350qvg.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: GNU Objcopy Utility'
-	"/opt/ti/ccs930/ccs/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-objcopy"  $(EXE_OUTPUTS__QUOTED) "example_boostxl_k350qvg.hex"
+	"/opt/ti/ccs1020/ccs/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-objcopy"  $(EXE_OUTPUTS__QUOTED) "example_boostxl_k350qvg.hex"
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 

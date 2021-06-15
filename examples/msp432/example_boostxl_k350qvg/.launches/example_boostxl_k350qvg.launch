@@ -4,7 +4,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROGRAM.MSP432P401R.ccxml.Texas Instruments XDS110 USB Debug Probe/CORTEX_M4_0" value="${build_artifact:example_boostxl_k350qvg}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.MSP432P401R.ccxml.Texas Instruments XDS110 USB Debug Probe/CORTEX_M4_0" value="example_boostxl_k350qvg"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:example_boostxl_k350qvg}"/>
-<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.MSP432P401R.ccxml.Texas Instruments XDS110 USB Debug Probe/CORTEX_M4_0" value="/home/student/mct_workspace/example_boostxl_k350qvg/Debug/example_boostxl_k350qvg.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.MSP432P401R.ccxml.Texas Instruments XDS110 USB Debug Probe/CORTEX_M4_0" value="/home/student/git/YAHAL/examples/msp432/example_boostxl_k350qvg/Debug/example_boostxl_k350qvg.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/example_boostxl_k350qvg"/>
 </listAttribute>
