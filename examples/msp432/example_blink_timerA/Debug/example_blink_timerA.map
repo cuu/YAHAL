@@ -1378,22 +1378,22 @@ OUTPUT(example_blink_timerA.out elf32-littlearm)
  .debug_line    0x0000000000004434       0x4c /home/student/git/YAHAL/libYAHAL_msp432.a(cpp_support.cpp.o)
  .debug_line    0x0000000000004480      0x376 /home/student/git/YAHAL/libYAHAL_msp432.a(irq_dispatcher.cpp.o)
 
-.debug_str      0x0000000000000000     0xf487
- .debug_str     0x0000000000000000     0x258d ./main.o
-                                       0x2959 (size before relaxing)
- .debug_str     0x000000000000258d      0x14e ./startup_msp432p401r_gcc.o
-                                        0x21d (size before relaxing)
- .debug_str     0x00000000000026db      0x881 ./system_msp432p401r.o
-                                        0xab0 (size before relaxing)
- .debug_str     0x0000000000002f5c     0xb3ee /home/student/git/YAHAL/libYAHAL_msp432.a(gpio_msp432.cpp.o)
+.debug_str      0x0000000000000000     0xf493
+ .debug_str     0x0000000000000000     0x2599 ./main.o
+                                       0x2965 (size before relaxing)
+ .debug_str     0x0000000000002599      0x14e ./startup_msp432p401r_gcc.o
+                                        0x229 (size before relaxing)
+ .debug_str     0x00000000000026e7      0x881 ./system_msp432p401r.o
+                                        0xabc (size before relaxing)
+ .debug_str     0x0000000000002f68     0xb3ee /home/student/git/YAHAL/libYAHAL_msp432.a(gpio_msp432.cpp.o)
                                        0xd71a (size before relaxing)
- .debug_str     0x000000000000e34a      0x5a2 /home/student/git/YAHAL/libYAHAL_msp432.a(timerA_msp432.cpp.o)
+ .debug_str     0x000000000000e356      0x5a2 /home/student/git/YAHAL/libYAHAL_msp432.a(timerA_msp432.cpp.o)
                                        0xd62e (size before relaxing)
- .debug_str     0x000000000000e8ec      0xa4e /home/student/git/YAHAL/libYAHAL_msp432.a(uart_msp432.cpp.o)
+ .debug_str     0x000000000000e8f8      0xa4e /home/student/git/YAHAL/libYAHAL_msp432.a(uart_msp432.cpp.o)
                                        0xd828 (size before relaxing)
- .debug_str     0x000000000000f33a       0x33 /home/student/git/YAHAL/libYAHAL_msp432.a(cpp_support.cpp.o)
+ .debug_str     0x000000000000f346       0x33 /home/student/git/YAHAL/libYAHAL_msp432.a(cpp_support.cpp.o)
                                         0x1ae (size before relaxing)
- .debug_str     0x000000000000f36d      0x11a /home/student/git/YAHAL/libYAHAL_msp432.a(irq_dispatcher.cpp.o)
+ .debug_str     0x000000000000f379      0x11a /home/student/git/YAHAL/libYAHAL_msp432.a(irq_dispatcher.cpp.o)
                                         0x41c (size before relaxing)
 
 .debug_frame    0x0000000000000000     0x1780
