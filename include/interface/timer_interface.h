@@ -29,32 +29,32 @@
 using std::function;
 
 namespace TIMER {
-	enum timer_mode { ONE_SHOT, PERIODIC };
+enum timer_mode { ONE_SHOT, PERIODIC };
 }
 
 class timer_interface {
 
-  public:
+public:
     // set the timeout period and the mode of the timer
-    virtual void	 setPeriod(uint32_t us, TIMER::timer_mode mode) = 0;
-	virtual uint32_t getPeriod() = 0;
+    virtual void     setPeriod(uint32_t us, TIMER::timer_mode mode) = 0;
+    virtual uint32_t getPeriod() = 0;
 
-	// set the callback function
-	virtual void	 setCallback(function<void()> f) = 0;
+    // set the callback function
+    virtual void	 setCallback(function<void()> f) = 0;
 
-	// starting and stopping the timer
-	virtual void	 start() = 0;
-	virtual void	 stop()  = 0;
-	virtual bool	 isRunning() = 0;
+    // starting and stopping the timer
+    virtual void     start() = 0;
+    virtual void     stop()  = 0;
+    virtual bool     isRunning() = 0;
 
-	// getter for the internal counter (counting up).
-	// By resetting the counter the defined time period
-	// starts from the beginning
-	virtual uint32_t getCounter()   = 0;
-	virtual void	 resetCounter() = 0;
+    // getter for the internal counter (counting up).
+    // By resetting the counter the defined time period
+    // starts from the beginning
+    virtual uint32_t getCounter()   = 0;
+    virtual void     resetCounter() = 0;
 
-  protected:
-	virtual ~timer_interface() = default;
+protected:
+    virtual ~timer_interface() = default;
 };
 
 #endif // _TIMER_INTERFACE_H_
