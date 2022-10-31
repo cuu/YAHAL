@@ -93,7 +93,7 @@ public:
     virtual void gpioAttachIrq (gpio_pin_t        gpio,
                                 gpio_irq_t        irq_mode,
                                 function<void()>  handler) = 0;
-    // Remove the interrupt from the GPIO pin
+    // Remove the interrupt handler from the GPIO pin
     virtual void gpioDetachIrq (gpio_pin_t gpio) = 0;
     // Enable the interrupt on the GPIO pin
     virtual void gpioEnableIrq (gpio_pin_t gpio) = 0;
