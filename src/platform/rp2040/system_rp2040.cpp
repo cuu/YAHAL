@@ -36,7 +36,7 @@ extern "C" {
 /*---------------------------------------------------------------------------
   System Core Clock Variable
  *---------------------------------------------------------------------------*/
-uint32_t SystemCoreClock; /* System Clock Frequency (Core Clock)*/
+uint32_t SystemCoreClock = 125000000; /* System Clock Frequency (Core Clock)*/
 
 /*---------------------------------------------------------------------------
   System Core Clock function

@@ -175,7 +175,7 @@ void gpio_rp2040::setMode (uint16_t gpio, uint16_t mode) {
         pad_ctrl->SLEWFAST = 1;
     }
     if ((mode & GPIO::DRIVE_4mA) || (mode & GPIO::DRIVE_8mA)) {
-        pad_ctrl->DRIVE = (mode >> 10);
+        pad_ctrl->DRIVE = (mode >> 10) & 0x3;
     }
     if (mode & GPIO::INIT_HIGH) {
         gpioWrite (gpio, HIGH);
