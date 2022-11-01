@@ -37,10 +37,10 @@
 // can be seen on the terminal.
 
 #include "gpio_rp2040.h"
-//#include "uart_rp2040.h"
-//#include "posix_io.h"
+#include "uart_rp2040.h"
+#include "posix_io.h"
 #include "task.h"
-//#include "task_monitor.h"
+#include "task_monitor.h"
 
 // Use macros to define the ports
 // and pins of the LEDs to use
@@ -85,8 +85,8 @@ int main(void)
 {
     // Redirect stdout to our backchannel UART,
     // so we can see the output of the task monitor
-//    uart_rp2040 uart;
-//    posix_io::inst.register_stdout(uart);
+    uart_rp2040 uart;
+    posix_io::inst.register_stdout(uart);
 
     // Instantiate the tasks to blink the red LED.
     // The class is derived from task.
@@ -120,8 +120,8 @@ int main(void)
     // Start the task monitor. When a terminal
     // is connected to /dev/ttyACM0, then the
     // task status can be seen!
-//    task_monitor monitor;
-//    monitor.start();
+    task_monitor monitor;
+    monitor.start();
 
     // Start the multitasking kernel.
     // This call is blocking (it will

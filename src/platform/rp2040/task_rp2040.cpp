@@ -24,7 +24,7 @@ using namespace _PPB_;
 #include "task.h"
 #include "task_idle.h"
 
-uint32_t SystemCoreClk = 125000000;
+extern uint32_t SystemCoreClock;
 
 //////////////////
 // System call API
@@ -93,7 +93,7 @@ void task::_context_switch() {
 
 void task::_nonOS_sleep(uint32_t ms) {
     // Configure SysTick as 1 ms timer
-    SysTick->LOAD = SystemCoreClk / 1000 - 1;
+    SysTick->LOAD = SystemCoreClock / 1000 - 1;
     SysTick->VAL  = 0;
     SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                     SysTick_CTRL_ENABLE_Msk;
@@ -245,7 +245,7 @@ void SVC_Handler_C(uint32_t * args) {
             NVIC_SetPriority(PendSV_IRQn, 0xff);
 
             // set SysTick to TICK_FREQUENCY
-            SysTick_Config(SystemCoreClk / TICK_FREQUENCY);
+            SysTick_Config(SystemCoreClock / TICK_FREQUENCY);
 
             // Return to thread mode and use PSP
             _exec_ret = EXC_RETURN_THREAD_PSP;

@@ -13,25 +13,26 @@
 //
 //  This is a I2C slave driver  implemented in SW.
 //  The I2C protocol is decoded with 2 GPIO lines,
-//  which need support for edge interrupts. The
+//  which need support for both edge interrupts. The
 //  interrupt handlers generate 5 events (start, stop,
 //  high, low, SCL falling), which in turn are processed
-//  by a state machine. The user code has to provide 3 callback methods,
-//  which are used within the state machine:
+//  by a state machine. The user code has to provide 3
+//  callback methods, which are used within the state
+//  machine:
 //
-//      bool receive(uint8_t index, uint8_t data, void *)
+//      bool receive(uint8_t index, uint8_t data)
 //
 //  This method is called when the state machine has
 //  received a complete byte. The index is a number
 //  being incremented within one Start sequence, starting
 //  from 0.
 //
-//     uint8_t transmit(uint8_t index, void *)
+//     uint8_t transmit(uint8_t index)
 //
 //  This method is called when the state machine needs
 //  a new byte to send.
 //
-//     void stop(void *)
+//     void stop()
 //
 //  This method is called when a stop-condition is detected.
 //  It can be used to recognize restart conditions.
@@ -40,8 +41,10 @@
 #define _SOFT_I2C_SLAVE_H_
 
 #include <gpio_interface.h>
-#include <cstdint>
 #include "soft_i2c_slave_states.h"
+
+#include <cstdint>
+#include <functional>
 
 class soft_i2c_slave {
 
@@ -64,12 +67,12 @@ public:
     // The transmit() handler asks for new user data to be sent. The
     // index is the save as for read operations (0 for the first byte
     // after the I2C address).
-    soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
-                   bool    (*receive) (uint16_t index, uint8_t data, void *),
-                   uint8_t (*transmit)(uint16_t index, void *),
-                   void    (*stop)(void *),
-                   void     *user_ptr,
-                   bool     pullup = false);
+    soft_i2c_slave(gpio_pin & sda, gpio_pin & scl, bool pullup = false);
+
+    void set_callbacks(std::function<bool(uint16_t index, uint8_t data)> receive,
+                       std::function<uint8_t(uint16_t index)> transmit,
+                       std::function<void()> stop);
+
     virtual ~soft_i2c_slave();
 
     // Getter/Setter for slaves I2C address it listens to
@@ -93,10 +96,9 @@ private:
     bool       _pullup;
 
     // callback methods
-    bool     (*_receive) (uint16_t index, uint8_t data, void *);
-    uint8_t  (*_transmit)(uint16_t index, void *);
-    void     (*_stop)    (void *);
-    void *     _user_ptr;
+    std::function<bool   (uint16_t index, uint8_t data)>  _receive;
+    std::function<uint8_t(uint16_t index)>                _transmit;
+    std::function<void()> _stop;
 
     uint8_t    _i2c_address; // the I2C address of the slave
 

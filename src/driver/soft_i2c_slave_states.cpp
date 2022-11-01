@@ -29,7 +29,7 @@ void STATE::start() {
 }
 void STATE::stop() {
     _context.setState(&_context._idle);
-    _context._stop(_context._user_ptr);
+    _context._stop();
 }
 
 ////////////////
@@ -107,8 +107,7 @@ void READ_DATA::low() {
 }
 void READ_DATA::scl_falling() {
     if (!_bit_mask) {
-        _context._ack =  _context._receive(_context._byte_index++, _data,
-                                           _context._user_ptr);
+        _context._ack =  _context._receive(_context._byte_index++, _data);
         _context.setState(&_context._write_ack);
     }
 }
@@ -120,7 +119,7 @@ void WRITE_DATA::enter() {
     // We are controlling the SDA line now, so no interrupts
     _context._sda.gpioDisableIrq();
     // Read in the byte to send
-    _data = _context._transmit(_context._byte_index++, _context._user_ptr);
+    _data = _context._transmit(_context._byte_index++);
     // send first bit
     _bit_mask = 0x80;
     _context._sda.gpioWrite(_data & _bit_mask);
