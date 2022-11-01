@@ -15,13 +15,8 @@
 #include "soft_i2c_slave.h"
 
 soft_i2c_slave::soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
-                               bool    (*r)(uint16_t index, uint8_t data, void *),
-                               uint8_t (*t)(uint16_t index, void *),
-                               void    (*s)(void *),
-                               void     * user_ptr,
-                               bool       pullup)
-    : _sda(sda), _scl(scl), _init(false), _pullup(pullup),
-      _receive(r), _transmit(t), _stop(s),_user_ptr(user_ptr),
+                               bool pullup)
+    : _sda(sda), _scl(scl),  _init(false), _pullup(pullup),
       _i2c_address(0),
       _state     (nullptr),
       _idle      (*this), _read_addr (*this), _write_ack (*this),
@@ -38,6 +33,15 @@ soft_i2c_slave::~soft_i2c_slave() {
     _scl.gpioMode(GPIO::INPUT);
     _sda.gpioDetachIrq();
     _scl.gpioDetachIrq();
+}
+
+void soft_i2c_slave::set_callbacks(
+        std::function<bool(uint16_t index, uint8_t data)> receive,
+        std::function<uint8_t(uint16_t index)> transmit,
+        std::function<void()> stop) {
+    _receive  = receive;
+    _transmit = transmit;
+    _stop     = stop;
 }
 
 void soft_i2c_slave::init() {

@@ -137,10 +137,10 @@ SECTIONS
     /********/
     .heap (NOLOAD): {
         __heap_start__ = .;
+        __HeapBase = .;
         *(.heap*)
-        . = ORIGIN(RAM) + LENGTH(RAM);
         __heap_end__ = .;
-        __HeapLimit = .;
+        __HeapLimit = ORIGIN(RAM) + LENGTH(RAM) - 1;
     } > RAM
 
     /*********/
@@ -157,8 +157,8 @@ SECTIONS
     /* Lower stack limit */
     __StackLimit = ORIGIN(RAM) + LENGTH(RAM);
     /* Higher stack limits */
-    __Stack1Top  = ORIGIN(SCRATCH_X) + LENGTH(SCRATCH_X);
-    __StackTop   = ORIGIN(SCRATCH_Y) + LENGTH(SCRATCH_Y);
-
+    __StackXTop = ORIGIN(SCRATCH_X) + LENGTH(SCRATCH_X);
+    __StackYTop = ORIGIN(SCRATCH_Y) + LENGTH(SCRATCH_Y);
+    __StackTop  = __StackYTop;
     PROVIDE(__stack = __StackTop);
 }
