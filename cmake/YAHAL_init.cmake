@@ -39,15 +39,15 @@ list(APPEND CMAKE_MODULE_PATH ${YAHAL_DIR}/cmake)
 include(boards/${YAHAL_BOARD})
 
 
-string(TOLOWER "${CMAKE_CURRENT_LIST_DIR}" __list_dir)
-string(TOLOWER "${CMAKE_SOURCE_DIR}/cmake" __source_dir)
-message(${CMAKE_CURRENT_LIST_DIR})
-message(${CMAKE_SOURCE_DIR})
-if (__source_dir STREQUAL __list_dir)
-    message("****** Root build *******")
-else()
-    message("****** App build *******")
-endif()
+#string(TOLOWER "${CMAKE_CURRENT_LIST_DIR}" __list_dir)
+#string(TOLOWER "${CMAKE_SOURCE_DIR}/cmake" __source_dir)
+#message(${CMAKE_CURRENT_LIST_DIR})
+#message(${CMAKE_SOURCE_DIR})
+#if (__source_dir STREQUAL __list_dir)
+#    message("****** Root build *******")
+#else()
+#    message("****** App build *******")
+#endif()
 
 
 #
