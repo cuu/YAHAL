@@ -24,6 +24,7 @@ file(GLOB         PLATFORM_SRC src/platform/msp432/*.cpp)
 file(GLOB_RECURSE DSP_SRC      src/platform/msp432/DSP/*.c)
 file(GLOB         FATFS_SRC    src/FatFs/*.cpp)
 file(GLOB         TASK_SRC     src/task/*.cpp)
+file(GLOB         UTIL_SRC     src/util/*.cpp)
 
 
 add_library(YAHAL
@@ -32,6 +33,7 @@ add_library(YAHAL
     ${DSP_SRC}
     ${FATFS_SRC}
     ${TASK_SRC}
+    ${UTIL_SRC}
 )
 
 target_include_directories(YAHAL PUBLIC
