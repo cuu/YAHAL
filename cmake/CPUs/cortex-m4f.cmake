@@ -1,0 +1,15 @@
+####################################
+# Configuration for ARM Cortex M4F #
+####################################
+
+# Architecture flags
+set(CORTEX_FLAGS "-mcpu=cortex-m4 -march=armv7e-m -mthumb")
+
+# FPU flags
+set(CORTEX_FLAGS "${CORTEX_FLAGS} -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mabi=aapcs")
+
+# Add flags
+foreach(LANG IN ITEMS C CXX ASM)
+    set(CMAKE_${LANG}_FLAGS_INIT "${CMAKE_${LANG}_FLAGS_INIT} ${CORTEX_FLAGS}")
+endforeach()
+
