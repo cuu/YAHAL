@@ -1,6 +1,6 @@
-#######################################
-# Configuration for GCC ARM toolchain #
-#######################################
+##############################
+# Toolchain file for GCC ARM #
+##############################
 
 message("Using toolchain ARM GCC")
 
@@ -35,7 +35,7 @@ set(ARM_GCC_COMMON_FLAGS  "${ARM_GCC_COMMON_FLAGS} -Wall -Wextra")
 
 set(ARM_GCC_DEBUG_FLAGS   "-O0 -g -gdwarf-3 -gstrict-dwarf -DDEBUG")
 set(ARM_GCC_RELEASE_FLAGS "-O3")
-set(ARM_GCC_LINK_FLAGS    "-Wl,--gc-sections --specs=nosys.specs") 
+set(ARM_GCC_LINK_FLAGS    "-Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs --specs=nano.specs")
 
 foreach(LANG IN ITEMS C CXX ASM)
     set(CMAKE_${LANG}_FLAGS_INIT         "${ARM_GCC_COMMON_FLAGS}")
