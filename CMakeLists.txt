@@ -8,8 +8,8 @@ include(cmake/YAHAL_init.cmake)
 project(YAHAL C CXX ASM)
 
 file(GLOB         DRIVER_SRC   src/driver/*.cpp)
-file(GLOB         PLATFORM_SRC src/platform/msp432/*.cpp)
-file(GLOB_RECURSE DSP_SRC      src/platform/msp432/DSP/*.c)
+file(GLOB         PLATFORM_SRC src/platform/rp2040/*.cpp)
+# file(GLOB_RECURSE DSP_SRC      src/platform/rp2040/DSP/*.c)
 file(GLOB         FATFS_SRC    src/FatFs/*.cpp)
 file(GLOB         TASK_SRC     src/task/*.cpp)
 file(GLOB         UTIL_SRC     src/util/*.cpp)
@@ -25,11 +25,11 @@ add_library(YAHAL
 )
 
 target_include_directories(YAHAL PUBLIC
-    src/platform/msp432
-    src/platform/msp432/DSP/Include
+    src/platform/rp2040
+#     src/platform/rp2040/DSP/Include
     include/interface
-    include/platform/msp432
-    include/platform/msp432/CMSIS
+    include/platform/rp2040
+    include/platform/rp2040/CMSIS
     src/driver
     src/util
     src/task
