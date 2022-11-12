@@ -70,20 +70,22 @@ int _write (int file, const char *buf, int len) {
         // Set color to red (CT100 code)
         if (posix_io::inst._uart_err) {
             // Set red color (VT100 code)
-            posix_io::inst._uart_err->putc(27);
-            posix_io::inst._uart_err->putc('[');
-            posix_io::inst._uart_err->putc('3');
-            posix_io::inst._uart_err->putc('1');
-            posix_io::inst._uart_err->putc('m');
-        }
-        for (int i=0; i < len; ++i) {
-            if (posix_io::inst._uart_err) {
-                posix_io::inst._uart_err->putc(buf[i]);
-                // Handle CR mode
-                if (posix_io::inst._add_CR_err && buf[i]=='\n') {
-                    posix_io::inst._uart_err->putc('\r');
+            const char red[]   = "\e[31m";
+            const char reset[] = "\e[0m";
+            const char * p = red;
+            while (*p) posix_io::inst._uart_err->putc(*p++);
+
+            for (int i=0; i < len; ++i) {
+                if (posix_io::inst._uart_err) {
+                    posix_io::inst._uart_err->putc(buf[i]);
+                    // Handle CR mode
+                    if (posix_io::inst._add_CR_err && buf[i]=='\n') {
+                        posix_io::inst._uart_err->putc('\r');
+                    }
                 }
             }
+            p = reset;
+            while (*p) posix_io::inst._uart_err->putc(*p++);
         }
         count = len;
     } else {
