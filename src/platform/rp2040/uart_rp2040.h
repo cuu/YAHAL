@@ -6,6 +6,8 @@
 #include "uart_interface.h"
 #include "RP2040.h"
 
+using namespace _UART0_;
+
 extern "C" {
 void UART0_IRQ_Handler(void);
 void UART1_IRQ_Handler(void);
@@ -49,9 +51,11 @@ private:
     int8_t _uart_tx_pins[2][5] = { { 0, 12, 16, 28 },
                                    { 4,  8, 20, 24 } };
 
-    static void handleIrq();
     static function<void(char)> _intHandler[2];
 
+    UART0_t *       _uart;
+    UART0_t *       _uart_set;
+    UART0_t *       _uart_clr;
     int             _index;
     uint8_t         _tx_pin;
     uint8_t         _rx_pin;
