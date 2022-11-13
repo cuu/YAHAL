@@ -13,6 +13,7 @@ file(GLOB         PLATFORM_SRC src/platform/rp2040/*.cpp)
 file(GLOB         FATFS_SRC    src/FatFs/*.cpp)
 file(GLOB         TASK_SRC     src/task/*.cpp)
 file(GLOB         UTIL_SRC     src/util/*.cpp)
+file(GLOB_RECURSE  UGUI_SRC     src/uGUI/*.cpp)
 
 
 add_library(YAHAL
@@ -22,6 +23,7 @@ add_library(YAHAL
     ${FATFS_SRC}
     ${TASK_SRC}
     ${UTIL_SRC}
+    ${UGUI_SRC}
 )
 
 target_include_directories(YAHAL PUBLIC
@@ -31,9 +33,14 @@ target_include_directories(YAHAL PUBLIC
     include/platform/rp2040
     include/platform/rp2040/CMSIS
     src/driver
+    src/FatFs
     src/util
     src/task
+    src/uGUI
+    src/uGUI/fonts
 )
+
+add_subdirectory(tools)
 
 endif()
 
