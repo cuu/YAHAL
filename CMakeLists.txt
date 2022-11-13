@@ -39,5 +39,8 @@ target_include_directories(YAHAL PUBLIC
 # Add ARM DSP as a separate library 
 add_subdirectory(src/platform/msp432/DSP ARM_DSP)
 
+# Add various tools
+add_subdirectory(tools)
+
 endif()
 

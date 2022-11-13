@@ -32,6 +32,7 @@ message("YAHAL_DIR is ${YAHAL_DIR}")
 # Add YAHAL's cmake folder to the known paths of cmake modules
 #
 list(APPEND CMAKE_MODULE_PATH ${YAHAL_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${YAHAL_DIR}/cmake/packages)
 
 #
 # Load board definition
