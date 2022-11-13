@@ -6,10 +6,11 @@
 
 using namespace _IO_BANK0_;
 using namespace _RESETS_;
-using namespace _UART0_;
-using namespace _UART1_;
 
 function<void(char)> uart_rp2040::_intHandler[2];
+
+int8_t uart_rp2040::_uart_tx_pins[2][5] =
+    { { 0, 12, 16, 28 }, { 4,  8, 20, 24 } };
 
 uart_rp2040::uart_rp2040(uint8_t index,
                          gpio_pin_t  tx_pin, gpio_pin_t  rx_pin,
@@ -36,16 +37,15 @@ void uart_rp2040::init() {
     else         RESETS_CLR.RESET.uart0 = 1;
     // Configure GPIO pins
     gpio_rp2040::inst.setSEL( _tx_pin, GPIO0_CTRL_FUNCSEL__uart0_tx);
-    gpio_rp2040::inst.setSEL( _rx_pin, GPIO0_CTRL_FUNCSEL__uart0_tx);
+    gpio_rp2040::inst.setSEL( _rx_pin, GPIO1_CTRL_FUNCSEL__uart0_rx);
     // Configure UART protocol (default 8N1)
     uartMode(_mode);
     // Set baud rate
     setBaudrate(_baud);
-    // Enable UART
+    // Enable UART & FIFOs
     _uart_set->UARTCR.UARTEN = 1;
-    _init = true;
-    // Enable FIFOs
     _uart_set->UARTLCR_H.FEN = 1;
+    _init = true;
 }
 
 uart_rp2040::~uart_rp2040() {
