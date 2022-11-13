@@ -1,4 +1,0 @@
-stty -F /dev/ttyACM0 nl 2> /dev/null
-stty -F /dev/ttyACM1 nl 2> /dev/null
-stty -F /dev/ttyACM2 nl 2> /dev/null
-stty -F /dev/ttyACM3 nl 2> /dev/null

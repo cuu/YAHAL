@@ -7,6 +7,7 @@
 #include "RP2040.h"
 
 using namespace _UART0_;
+using namespace _UART1_;
 
 extern "C" {
 void UART0_IRQ_Handler(void);
@@ -48,8 +49,7 @@ private:
     bool _init;
     void init();
 
-    int8_t _uart_tx_pins[2][5] = { { 0, 12, 16, 28 },
-                                   { 4,  8, 20, 24 } };
+    static int8_t _uart_tx_pins[2][5];
 
     static function<void(char)> _intHandler[2];
 

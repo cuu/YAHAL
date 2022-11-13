@@ -21,7 +21,6 @@ int _read (int file, char *buf, int len) {
     char c;
     if (file == STDIN_FILENO) {
         // Handle STDIN
-        ///////////////
         for (; count < len; ++count) {
              if (posix_io::inst._uart_in) {
                  c = posix_io::inst._uart_in->getc();

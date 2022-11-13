@@ -27,7 +27,8 @@
 // understands these escape sequences.
 //
 
-#define VT100_COLOR "%c[%dm",27
+#define VT100_COLOR "\e[%dm"
+#define RESET_COLOR 0
 #define BLACK 30
 #define RED 31
 #define GREEN 32
@@ -51,7 +52,6 @@ int main(void)
     posix_io::inst.register_stderr( uart );
 
     // Print out a simple ASCII table
-    printf(VT100_COLOR, BLACK);
     printf("ASCII Tabelle\n\n");
     for (char c=33; c < 127; ++c) {
         String dec = to_String(c);
@@ -70,6 +70,9 @@ int main(void)
     printf(VT100_COLOR, RED);
     printf("\nHello %s %s. Nice to meet you!\n\n", buf1, buf2);
 
+    // Finally reset the color so new text is
+    // shown correctly on the terminal.
+    printf(VT100_COLOR"\n", RESET_COLOR);
     return 0;
 }
 
