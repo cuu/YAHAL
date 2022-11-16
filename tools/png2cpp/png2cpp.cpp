@@ -1,3 +1,19 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Small program to convert a PNG file into a C/C++ struct
+// or a raw binary file with 16bpp (RGB565).
+//
 #include "lodepng.h"
 #include <iostream>
 #include <iomanip>
@@ -12,138 +28,178 @@
 
 using namespace std;
 
-int main(int argc, char *argv[])
-{
-	// Process the command line arguments
-	/////////////////////////////////////
-	string infile;
-	string bg_str;
-	int opt;
-	while ((opt = getopt (argc, argv, "f:b:")) != -1)
-	{
-		switch (opt)
-		{
-		case 'f': infile = optarg;
-		break;
-		case 'b': bg_str = optarg;
-		break;
-		}
-	}
+void usage() {
+    cout << "Usage: png2cpp [-r] [-o outfile] [-b 0xrrggbb] file.png"<< endl;
+    cout << endl;
+    cout << "-r          : Generate raw binary data (16bpp)"         << endl;
+    cout << "-o outfile  : The output filename. Default is file.cpp" << endl;
+    cout << "-b 0xrrggbb : The optional background color as 6 digit" << endl;
+    cout << "              RGB hex number. Default is black (0x0)."  << endl;
+    cout << "file.png    : A valid PNG file" << endl;
+    exit(1);
+}
 
-	if (infile.size()==0) {
-		cout << "Usage: png2cpp -f <file.png> [-b 0xrrggbb]" << endl << endl;
-		cout << "-f <file.png> : A valid PNG file" << endl;
-		cout << "-b 0xrrggbb   : The optional background color as 6 digit hex number." << endl;
-		cout << "                Default is black (0x000000)." << endl;
-		exit(1);
-	}
+int main(int argc, char *argv[]) {
+    // Process the command line arguments
+    string infile;
+    string outfile;
+    string bg_str;
+    bool   raw = false; // Default is cpp output
+    int opt;
+    while ((opt = getopt(argc, argv, ":b:o:r")) != -1) {
+        switch (opt) {
+            case 'b': {
+                bg_str = optarg;
+                break;
+            }
+            case 'o': {
+                outfile = optarg;
+                break;
+            }
+            case 'r': {
+                raw = true;
+                break;
+            }
+            case ':': {
+                cerr << "Option needs a value!" << endl;
+                usage();
+                break;
+            }
+            case '?': {
+                cerr << "Unknown option '" << (char)optopt << "'" << endl;
+                usage();
+                break;
+            }
+        }
+    }
+    if (optind == (argc-1)) {
+        infile = argv[optind];
+    } else {
+        cerr << "No or too many filenames given!" << endl;
+        usage();
+    }
 
-	// Process background color
-	///////////////////////////
-	uint32_t bg_int = 0;
-	if (bg_str.size()) {
-		istringstream iss(bg_str);
-		iss >> hex >> bg_int;
-		cout << "Background color set to 0x" << hex << setw(6) << setfill('0') << bg_int << endl;
-	}
+    // Process background color
+    uint32_t bg_int = 0;
+    if (bg_str.size()) {
+        istringstream iss(bg_str);
+        iss >> hex >> bg_int;
+        cout << "Background color set to 0x";
+        cout << hex << setw(6) << setfill('0') << bg_int << endl;
+    }
 
-	// Process the file name
-	////////////////////////
-	size_t i = infile.find('.');
-	string filename = infile;
-	if (i != string::npos) filename = infile.substr(0, i);
-	string outfile = filename + ".cpp";
+    // Process the file name
+    size_t dot = infile.find_last_of('.');
+    string name_we;
+    if (dot != string::npos) {
+        name_we = infile.substr(0, dot);
+    } else {
+        name_we = infile;
+    }
+    if (outfile.size()==0) {
+        // Set the default output name
+        outfile = name_we;
+        if (raw) outfile += ".bin";
+        else     outfile += ".cpp";
+    }
+    string base = basename( (char*)name_we.c_str() );
+    // Dashes are not valid in variable names, so replace them
+    std::replace(base.begin(), base.end(), '-', '_');
 
-	// Load and decode image
-	////////////////////////
-	std::vector<unsigned char> image;
-	unsigned width, height;
-	unsigned error = lodepng::decode(image, width, height, infile);
-	// If there's an error, display it
-	if (error) {
-		cerr << "decoder error " << error << ": " << lodepng_error_text(error) << endl;
-		exit(1);
-	}
+    // Load and decode image
+    std::vector<unsigned char> image;
+    unsigned width, height;
+    unsigned error = lodepng::decode(image, width, height, infile);
+    // If there's an error, display it
+    if (error) {
+        cerr << "Decoder error " << error << " for file '" << infile << ": "
+             << lodepng_error_text(error) << endl;
+        exit(1);
+    }
 
-	// The pixels are now in the vector "image", 4 bytes per pixel, ordered RGBARGBA
-	cout << "File '" << infile << "' successfully read in ";
-	cout << "(size " << dec << width << "x" << height << " pixels)!" << endl;
+    // The pixels are now in the vector "image", 4 bytes per pixel, ordered RGBARGBA
+    cout << "File '" << infile << "' successfully decoded ";
+    cout << "(size " << dec << width << "x" << height << " pixels)!" << endl;
 
-	// Generate output file
-	///////////////////////
-	cout << "Generating file '" << outfile << "' ..." << endl;
-	ofstream ofs(outfile.c_str());
-	if (!ofs) {
-		cerr << "Problem creating output file '" << outfile << "'" << endl;
-		exit(1);
-	}
+    // Generate output file
+    cout << "Generating file '" << outfile << "' ..." << endl;
+    ofstream ofs(outfile.c_str());
+    if (!ofs) {
+        cerr << "Problem creating output file '" << outfile << "'" << endl;
+        exit(1);
+    }
 
-	std::replace( filename.begin(), filename.end(), '-', '_'); // replace all dashes
-	filename = basename( (char *)filename.c_str() );
-	
-	size_t outsize = image.size() / 4;
-	ofs << "//" << endl;
-	ofs << "// This file was generated by png2cpp, a small" << endl;
-	ofs << "// program to convert a PNG image file into"    << endl;
-	ofs << "// a C/C++ struct of uint16_t values (RGB565)." << endl;
-	ofs << "// (c) 2018 Andreas Terstegge" << endl;
-	ofs << "//" << endl;
-	ofs << "//  Source file was: " << infile << endl;
-	ofs << "//" << endl << endl;
-	ofs << "#include <cstdint>" << endl << endl;
-	ofs << "extern const uint16_t " << filename << "[" << outsize << "] = {" << endl;
+    size_t outsize = image.size() / 4;
 
-	float bg_red   = (bg_int & 0x00ff0000) >> 16;
-	float bg_green = (bg_int & 0x0000ff00) >>  8;
-	float bg_blue  = (bg_int & 0x000000ff);
+    if (!raw) {
+        ofs << "//" << endl;
+        ofs << "// This file was generated by png2cpp, a small" << endl;
+        ofs << "// program to convert a PNG image file into" << endl;
+        ofs << "// a C/C++ struct of uint16_t values (RGB565)." << endl;
+        ofs << "//" << endl;
+        ofs << "//  Source file was: " << infile << endl;
+        ofs << "//" << endl << endl;
+        ofs << "#include <cstdint>" << endl;
+        ofs << endl;
+        ofs << "extern const uint16_t " << base << "[" << outsize << "] = {"
+            << endl;
+    }
 
-	for (size_t i=0; i < outsize; ++i) {
-//		if (i%width == 0) ofs << endl << "// Row" << dec << i/width << endl;
-//		//if (i==0)//
-//		//ofs << endl;
+    float bg_red   = (bg_int & 0x00ff0000) >> 16;
+    float bg_green = (bg_int & 0x0000ff00) >> 8;
+    float bg_blue  = (bg_int & 0x000000ff);
 
-		if ((i % 8) == 0 && (i != 0)) {
-			ofs << endl;
-		}
+    // Loop over all pixels
+    for (size_t i = 0; i < outsize; ++i) {
 
-		float img_red   = image[4*i];
-		float img_green = image[4*i+1];
-		float img_blue  = image[4*i+2];
-		float alpha     = image[4*i+3];
-		alpha /= 255.; // Scale alpha channel to 0...1
+        if (!raw) {
+            // Check if we need to start a new line
+            if ((i % 8) == 0 && (i != 0)) {
+                ofs << endl;
+            }
+        }
 
-		float res_red   = alpha * img_red   + (1.0-alpha) * bg_red;
-		float res_green = alpha * img_green + (1.0-alpha) * bg_green;
-		float res_blue  = alpha * img_blue  + (1.0-alpha) * bg_blue;
+        // Calculate pixel color
+        float img_red   = image[4 * i];
+        float img_green = image[4 * i + 1];
+        float img_blue  = image[4 * i + 2];
+        float alpha     = image[4 * i + 3];
+        alpha /= 255.; // Scale alpha channel to 0...1
 
-		uint16_t red   = res_red;
-		uint16_t green = res_green;
-		uint16_t blue  = res_blue;
+        float res_red   = alpha * img_red   + (1.0 - alpha) * bg_red;
+        float res_green = alpha * img_green + (1.0 - alpha) * bg_green;
+        float res_blue  = alpha * img_blue  + (1.0 - alpha) * bg_blue;
 
-		if (red   > 255) red   = 255;
-		if (green > 255) green = 255;
-		if (blue  > 255) blue  = 255;
+        uint16_t red   = res_red;
+        uint16_t green = res_green;
+        uint16_t blue  = res_blue;
 
-		// Calculate RGB565 data
-		red    &= 0xf8; // mask out higher 5 bits
-		red   <<= 8;    // and shift
-		green  &= 0xfc; // mask out higher 6 bits
-		green <<= 3;
-		blue   &= 0xf8; // mask out higher 5 bits
-		blue  >>= 3;
+        if (red   > 255) red = 255;
+        if (green > 255) green = 255;
+        if (blue  > 255) blue = 255;
 
-		uint16_t rgb565 = red | green | blue;
+        // Calculate RGB565 data
+        red    &= 0xf8; // mask out higher 5 bits
+        red   <<= 8;    // and shift
+        green  &= 0xfc; // mask out higher 6 bits
+        green <<= 3;
+        blue   &= 0xf8; // mask out higher 5 bits
+        blue  >>= 3;
 
-		ofs << "0x" << hex << setw(4) << setfill('0') << rgb565;
-		if (i != (outsize-1)) ofs << ", ";
+        uint16_t rgb565 = red | green | blue;
 
-	}
-	ofs << endl << "};" << endl;
+        if (!raw) {
+            ofs << "0x" << hex << setw(4) << setfill('0') << rgb565;
+            if (i != (outsize - 1)) ofs << ", ";
+        } else {
+            ofs.write((char*) &rgb565, sizeof(uint16_t));
+        }
+    }
 
-	// Close output file
-	////////////////////
-	ofs.close();
-	return 0;
+    if (!raw) ofs << endl << "};" << endl;
 
+    // Close output file
+    ofs.close();
+    return 0;
 }
 

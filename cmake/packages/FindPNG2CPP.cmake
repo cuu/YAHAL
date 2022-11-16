@@ -39,7 +39,6 @@ if (NOT PNG2CPP_FOUND)
         )
     endif()
 
-    
     if(NOT TARGET ${PNG2CPP_TARGET})
         add_executable(${PNG2CPP_TARGET} IMPORTED)
     endif()

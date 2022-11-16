@@ -98,8 +98,8 @@ function(yahal_add_dis_output TARGET)
     set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
 
     add_custom_command(TARGET ${TARGET} POST_BUILD 
-        COMMAND ${CMAKE_OBJDUMP} ${TF} -h > ${TN}.dis
-        COMMAND ${CMAKE_OBJDUMP} ${TF} -d >>${TN}.dis
+        COMMAND ${CMAKE_OBJDUMP} ${TF} -h    > ${TN}.dis
+        COMMAND ${CMAKE_OBJDUMP} ${TF} -d -C >>${TN}.dis
     )
 endfunction()
 
