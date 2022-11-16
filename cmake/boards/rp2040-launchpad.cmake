@@ -14,4 +14,3 @@ include(MCUs/rp2040)
 set(OPENOCD_CONFIG 
     "-f" "interface/picoprobe.cfg" "-f" "target/rp2040.cfg"
     CACHE STRING "OpenOCD configuration")
-

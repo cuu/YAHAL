@@ -1,6 +1,8 @@
 ####################################
 # Configuration for ARM Cortex M4F #
 ####################################
+# Set CPU name
+set(YAHAL_CPU "cortex-m4f")
 
 # Architecture flags
 set(CORTEX_FLAGS "-mcpu=cortex-m4 -march=armv7e-m -mthumb")

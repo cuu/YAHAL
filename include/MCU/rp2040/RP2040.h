@@ -77,7 +77,7 @@ typedef enum
 //===  Configuration of the ARM Cortex-M0+ Processor and Core Peripherals  ==
 #define __CM0PLUS_REV           0x0001U     // CM0PLUS Core Revision
 #define __NVIC_PRIO_BITS        2           // Bits used for NVIC priorities
-#define __Vendor_SysTickConfig  0           // Nonstandard SysTick Config
+#define __Vendor_SysTickConfig  0           // Nonstandard SysTick config
 #define __VTOR_PRESENT          1           // CPU supports VTOR Register
 #define __MPU_PRESENT           1           // MPU present
 

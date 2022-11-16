@@ -13,16 +13,36 @@
 //////////////////////////////
 // Helper templates and macros
 //////////////////////////////
+
+template <typename T>
+T getBitMask(const volatile T & value, int Offset, int Bits) {
+    T maskl = (T(1) << Bits) - T(1);
+    return (value >> Offset) & maskl;
+}
+
+template <typename T>
+void setBitMask(volatile T & value, T v, int Offset, int Bits) {
+    T maskl = (T(1) << Bits) - T(1);
+    T masks = maskl << Offset;
+    value = (value & ~masks) | ((v & maskl) << Offset);
+}
+
+template <typename T>
+void orBitMask(volatile T & value, T v, int Offset, int Bits) {
+    T maskl = (T(1) << Bits) - T(1);
+    value |= (v & maskl) << Offset;
+}
+
+
 template <typename T, int Offset, int Bits>
 struct BitFieldMember_RO
 {
   private:
     volatile T value;  // This is the value which is 'mirrored' by the union
-    static const T max  = (T(1) << Bits) - T(1);
 
   public:
     inline operator T() const {
-        return (value >> Offset) & max;
+        return getBitMask<T>(value, Offset, Bits);
     }
 };
 
@@ -31,15 +51,13 @@ struct BitFieldMember_WO
 {
   private:
     volatile T value;  // This is the value which is 'mirrored' by the union
-    static const T max  = (T(1) << Bits) - T(1);
-    static const T mask = max << Offset;
 
   public:
     inline void operator = (T v) {
-        value = (value & ~mask) | ((v & max) << Offset);
+        setBitMask<T>(value, v, Offset, Bits);
     }
     inline void operator |= (T v) {
-        value = (v & max) << Offset;
+        orBitMask<T>(value, v, Offset, Bits);
     }
 };
 
@@ -48,18 +66,16 @@ struct BitFieldMember_RW
 {
   private:
     volatile T value;  // This is the value which is 'mirrored' by the union
-    static const T max  = (T(1) << Bits) - T(1);
-    static const T mask = max << Offset;
 
   public:
     inline operator T() const {
-        return (value >> Offset) & max;
+        return getBitMask<T>(value, Offset, Bits);
     }
-    inline void operator=(T v) {
-        value = (value & ~mask) | ((v & max) << Offset);
+    inline void operator = (T v) {
+        setBitMask<T>(value, v, Offset, Bits);
     }
     inline void operator |= (T v) {
-        value = (v & max) << Offset;
+        orBitMask<T>(value, v, Offset, Bits);
     }
 };
 

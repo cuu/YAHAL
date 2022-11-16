@@ -1,8 +1,10 @@
-########################################
-# Configuration for TI MSP432P401R MCU #
-########################################
+################################
+# Configuration for RP2040 MCU #
+################################
+message("Using MCU RP2040")
 
-message("Using MCU TI MSP432P401R")
+# Set MCU name
+set(YAHAL_MCU "rp2040")
 
 # MSP432 has a cortex M4F
 include(CPUs/cortex-m0+)
