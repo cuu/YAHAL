@@ -104,9 +104,8 @@ endfunction()
 
 function(yahal_rename_mapfile TARGET)
     set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
-
     add_custom_command(TARGET ${TARGET} POST_BUILD 
-        COMMAND mv mapfile ${TN}.map
+        COMMAND ${CMAKE_COMMAND} -E rename mapfile ${TN}.map
     )
 endfunction()
 
