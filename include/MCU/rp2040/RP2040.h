@@ -84,7 +84,7 @@ typedef enum
 #include "core_cm0plus.h"   // ARM Cortex-M0+ processor and core peripherals
 
 // ==========================================================================
-// =======================  Target specific section  ========================
+// =======================  MCU Peripheral Section ==========================
 // ==========================================================================
 
 #include "RP2040_regs.h"    // RP2040 peripherals and registers

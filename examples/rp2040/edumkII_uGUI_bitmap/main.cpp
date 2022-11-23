@@ -29,6 +29,10 @@
 // top. See the doc folder in YAHAL/src/uGUI for more
 // information on the uGUI API.
 
+// Board definitions
+#include "rp2040-launchpad.h"
+#include "boostxl-eduMKII.h"
+
 #include "gpio_rp2040.h"
 #include "spi_rp2040.h"
 #include "st7735s_drv.h"
@@ -36,25 +40,15 @@
 
 extern const uint16_t angry_bird[16384];
 
-#define SPI_IF   0
-#define MISO     4
-#define MOSI     7
-#define SCLK    22
-
-#define LCD_BL  13
-#define LCD_CS   5
-#define LCD_RST  9
-#define LCD_DC   2
-
 int main(void)
 {
     // Switch on backlight
-    gpio_rp2040_pin lcd_bl (LCD_BL);
+    gpio_rp2040_pin lcd_bl(LCD_BL);
     lcd_bl.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
 
     // Setup SPI interface
-    gpio_rp2040_pin lcd_cs (LCD_CS);
-    spi_rp2040  spi(SPI_IF, MISO, MOSI, SCLK, lcd_cs);
+    gpio_rp2040_pin lcd_cs(LCD_CS);
+    spi_rp2040  spi(0, LCD_MISO, LCD_MOSI, LCD_SCLK, lcd_cs);
     spi.setSpeed(30000000);
 
     // Setup LCD driver

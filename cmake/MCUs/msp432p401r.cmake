@@ -13,6 +13,7 @@ include(CPUs/cortex-m4f)
 add_compile_definitions(__MSP432P401R__)
 
 # Linker script
-set(LINKER_SCRIPT_FLAGS    "-Wl,-T ${CMAKE_CURRENT_LIST_DIR}/msp432p401r.ld")
+set(LINKER_SCRIPT_PATH     "${CMAKE_CURRENT_LIST_DIR}/msp432p401r.ld" CACHE FILEPATH "Linker Script")
+set(LINKER_SCRIPT_FLAGS    "-Wl,-T \"${LINKER_SCRIPT_PATH}\"")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINKER_SCRIPT_FLAGS}")
 

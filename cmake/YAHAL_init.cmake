@@ -62,35 +62,38 @@ macro(yahal_add_me)
 
 endmacro()
 
+
 macro (yahal_add_custom_targets TARGET)
     if (OPENOCD_CONFIG)
         set(TF $<TARGET_FILE:${TARGET}>)
         add_custom_target(upload 
-            openocd ${OPENOCD_CONFIG} -c \"program ${TF} verify reset exit\"
+            openocd ${OPENOCD_CONFIG} -c "program \"${TF}\" verify reset exit"
             DEPENDS ${TF}
+            VERBATIM
         )
     endif()
 endmacro()
+
 
 function(yahal_add_hex_output TARGET)
     set(TF $<TARGET_FILE:${TARGET}>)
     set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
     set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
-
     add_custom_command(TARGET ${TARGET} POST_BUILD 
         COMMAND ${CMAKE_OBJCOPY} -Oihex ${TF} ${TN}.hex
     )
 endfunction()
 
+
 function(yahal_add_bin_output TARGET)
     set(TF $<TARGET_FILE:${TARGET}>)
     set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
     set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
-
     add_custom_command(TARGET ${TARGET} POST_BUILD 
         COMMAND ${CMAKE_OBJCOPY} -Obinary ${TF} ${TN}.bin
     )
 endfunction()
+
 
 function(yahal_add_dis_output TARGET)
     set(TF $<TARGET_FILE:${TARGET}>)
@@ -103,13 +106,14 @@ function(yahal_add_dis_output TARGET)
     )
 endfunction()
 
+
 function(yahal_rename_mapfile TARGET)
     set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
-
     add_custom_command(TARGET ${TARGET} POST_BUILD 
-        COMMAND mv mapfile ${TN}.map
+        COMMAND ${CMAKE_COMMAND} -E rename mapfile ${TN}.map
     )
 endfunction()
+
 
 function(yahal_add_extra_outputs TARGET)
     set_property(TARGET ${TARGET} PROPERTY SUFFIX .elf)

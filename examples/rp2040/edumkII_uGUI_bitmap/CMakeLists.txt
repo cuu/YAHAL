@@ -9,21 +9,21 @@ set(YAHAL_BOARD "rp2040-launchpad")
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(edumkII_uGUI_bitmap C CXX ASM)
+project(uGUI_bitmap C CXX ASM)
 
-# Pull in YAHAL as subdirectory
+# Pull in YAHAL
 yahal_add_me()
 
-add_executable(edumkII_uGUI_bitmap
+add_executable(uGUI_bitmap
     main.cpp
     angry-bird.cpp
 )
 
 # Generate cpp-file from png
-png_to_cpp(edumkII_uGUI_bitmap angry-bird.png 0x002040)
+png_to_cpp(uGUI_bitmap angry-bird.png 0x00a0a0)
 
-target_link_libraries(edumkII_uGUI_bitmap YAHAL)
+target_link_libraries(uGUI_bitmap YAHAL)
 
-yahal_add_custom_targets(edumkII_uGUI_bitmap)
-yahal_add_extra_outputs(edumkII_uGUI_bitmap)
+yahal_add_custom_targets(uGUI_bitmap)
+yahal_add_extra_outputs(uGUI_bitmap)
 
