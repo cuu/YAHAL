@@ -32,6 +32,7 @@ message("YAHAL_DIR is ${YAHAL_DIR}")
 # Add YAHAL's cmake folder to the known paths of cmake modules
 #
 list(APPEND CMAKE_MODULE_PATH ${YAHAL_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${YAHAL_DIR}/cmake/packages)
 
 #
 # Load board definition
@@ -58,6 +59,7 @@ macro(yahal_add_me)
         message(WARNING "yahal_add_me() should be called after the project is created (and languages added)")
     endif()
     add_subdirectory(${YAHAL_DIR} YAHAL)
+
 endmacro()
 
 
@@ -99,8 +101,8 @@ function(yahal_add_dis_output TARGET)
     set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
 
     add_custom_command(TARGET ${TARGET} POST_BUILD 
-        COMMAND ${CMAKE_OBJDUMP} ${TF} -h > ${TN}.dis
-        COMMAND ${CMAKE_OBJDUMP} ${TF} -d >>${TN}.dis
+        COMMAND ${CMAKE_OBJDUMP} ${TF} -h    > ${TN}.dis
+        COMMAND ${CMAKE_OBJDUMP} ${TF} -d -C >>${TN}.dis
     )
 endfunction()
 
