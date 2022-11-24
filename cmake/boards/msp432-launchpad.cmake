@@ -6,7 +6,7 @@ message("Using board TI MSP432 Lauchpad")
 
 # Toolchain and MCU configuration
 include(toolchains/arm-gcc)
-include(MCUs/msp432p401r)
+include(MCU/msp432p401r)
 
 # Debug interface: The MSP432 LP has a
 # build-in XDS110 debug probe, which is

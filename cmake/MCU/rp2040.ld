@@ -33,7 +33,6 @@ SECTIONS
     /* Code */
     /********/
     .text : {
-
         KEEP (*(.isr_vector))
         *(.text.*)
 
@@ -56,6 +55,7 @@ SECTIONS
         __fini_array_start = .;
         KEEP (*(.fini_array*))
         __fini_array_end = .;
+
     } > FLASH
 
     /*************************/

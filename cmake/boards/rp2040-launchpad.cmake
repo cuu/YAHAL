@@ -6,7 +6,7 @@ message("Using board RP2040 Lauchpad")
 
 # Toolchain and MCU configuration
 include(toolchains/arm-gcc)
-include(MCUs/rp2040)
+include(MCU/rp2040)
 
 # Debug interface: The MSP432 LP has a
 # build-in XDS110 debug probe, which is

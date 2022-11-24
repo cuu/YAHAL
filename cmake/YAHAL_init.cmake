@@ -59,11 +59,11 @@ macro(yahal_add_me)
         message(WARNING "yahal_add_me() should be called after the project is created (and languages added)")
     endif()
     add_subdirectory(${YAHAL_DIR} YAHAL)
-
 endmacro()
 
 
 macro (yahal_add_custom_targets TARGET)
+    # Add a upload target using openocd if configuration was given
     if (OPENOCD_CONFIG)
         set(TF $<TARGET_FILE:${TARGET}>)
         add_custom_target(upload 
@@ -79,6 +79,7 @@ function(yahal_add_hex_output TARGET)
     set(TF $<TARGET_FILE:${TARGET}>)
     set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
     set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
+
     add_custom_command(TARGET ${TARGET} POST_BUILD 
         COMMAND ${CMAKE_OBJCOPY} -Oihex ${TF} ${TN}.hex
     )
@@ -89,6 +90,7 @@ function(yahal_add_bin_output TARGET)
     set(TF $<TARGET_FILE:${TARGET}>)
     set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
     set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
+
     add_custom_command(TARGET ${TARGET} POST_BUILD 
         COMMAND ${CMAKE_OBJCOPY} -Obinary ${TF} ${TN}.bin
     )

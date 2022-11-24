@@ -4,7 +4,8 @@ cmake_minimum_required(VERSION 3.16)
 #set(CMAKE_BUILD_TYPE RELEASE)
 
 # Set the target board
-set(YAHAL_BOARD "rp2040-launchpad")
+#set(YAHAL_BOARD "rp2040-launchpad")
+#set(YAHAL_BOARD "msp432-launchpad")
 
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
@@ -20,7 +21,7 @@ add_executable(uGUI_bitmap
 )
 
 # Generate cpp-file from png
-png_to_cpp(uGUI_bitmap angry-bird.png 0x00a0a0)
+png_to_cpp(uGUI_bitmap angry-bird.png 0x40a040)
 
 target_link_libraries(uGUI_bitmap YAHAL)
 

@@ -7,7 +7,7 @@ message("Using MCU RP2040")
 set(YAHAL_MCU "rp2040")
 
 # MSP432 has a cortex M4F
-include(CPUs/cortex-m0+)
+include(CPU/cortex-m0+)
 
 # Linker script
 set(LINKER_SCRIPT_FLAGS    "-Wl,-T ${CMAKE_CURRENT_LIST_DIR}/rp2040.ld ${CMAKE_CURRENT_LIST_DIR}/bs2_default_padded_checksummed.S")

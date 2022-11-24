@@ -1,40 +1,25 @@
-/****************************/
-/* RP2040 GCC linker script */
-/****************************/
+/*********************************/
+/* MSP432P401R GCC linker script */
+/*********************************/
 
 MEMORY
 {
-    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 4096k
-    RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 256k
-    SCRATCH_X(rwx) : ORIGIN = 0x20040000, LENGTH = 4k
-    SCRATCH_Y(rwx) : ORIGIN = 0x20041000, LENGTH = 4k
+    FLASH(rx) : ORIGIN = 0x00000000, LENGTH = 0x00040000
+    RAM  (rw) : ORIGIN = 0x20000000, LENGTH = 0x00010000
 }
 
 /********************/
 /* ELF entry point. */
 /********************/
-ENTRY(_elf_entry_point)
+ENTRY(Reset_Handler)
 
-SECTIONS
-{
-    /***************************/
-    /* Second stage bootloader */
-    /***************************/
-    .boot2 : {
-        __boot2_start__ = .;
-        KEEP (*(.boot2))
-        __boot2_end__ = .;
-    } > FLASH
-
-    ASSERT(__boot2_end__ - __boot2_start__ == 256,
-        "ERROR: Pico second stage bootloader must be 256 bytes in size")
+SECTIONS {
 
     /********/
     /* Code */
     /********/
     .text : {
-
-        KEEP (*(.isr_vector))
+        KEEP (*(.intvecs))
         *(.text.*)
 
         *(SORT(.ctors.*))
@@ -43,7 +28,7 @@ SECTIONS
         *(.dtors)
 
         KEEP (*(.init))
-        KEEP (*(.fini))
+        KEEP (*(.fini*))
 
         __preinit_array_start = .;
         KEEP (*(.preinit_array*))
@@ -56,6 +41,7 @@ SECTIONS
         __fini_array_start = .;
         KEEP (*(.fini_array*))
         __fini_array_end = .;
+
     } > FLASH
 
     /*************************/
@@ -70,7 +56,7 @@ SECTIONS
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end = .;
     } > FLASH
-
+    
     /******************/
     /* Read-only data */
     /******************/
@@ -78,7 +64,7 @@ SECTIONS
         *(.rodata)
         *(.rodata.*)
     } > FLASH
-    
+
     /***********************************/
     /* .copy.table used by cmsis_gcc.h */
     /***********************************/
@@ -131,7 +117,7 @@ SECTIONS
 
     __end__ = .;    /* end of written RAM */
     end = __end__;
-
+    
     /********/
     /* heap */
     /********/
@@ -146,19 +132,11 @@ SECTIONS
     /*********/
     /* stack */
     /*********/
-    .stack1 (NOLOAD): {
-        *(.stack1*)
-    } > SCRATCH_X
+    .stack (NOLOAD) : ALIGN(0x8) {
+        _stack = .;
+        *(.stack)
+    } > RAM
 
-    .stack (NOLOAD): {
-        *(.stack*)
-    } > SCRATCH_Y
-
-    /* Lower stack limit */
-    __StackLimit = ORIGIN(RAM) + LENGTH(RAM);
-    /* Higher stack limits */
-    __StackXTop = ORIGIN(SCRATCH_X) + LENGTH(SCRATCH_X);
-    __StackYTop = ORIGIN(SCRATCH_Y) + LENGTH(SCRATCH_Y);
-    __StackTop  = __StackYTop;
+    __StackTop = ORIGIN(RAM) + LENGTH(RAM);
     PROVIDE(__stack = __StackTop);
 }

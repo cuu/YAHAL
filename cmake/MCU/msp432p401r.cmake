@@ -7,7 +7,7 @@ message("Using MCU TI MSP432P401R")
 set(YAHAL_MCU "msp432p401r")
 
 # MSP432 has a cortex M4F
-include(CPUs/cortex-m4f)
+include(CPU/cortex-m4f)
 
 # For msp.h
 add_compile_definitions(__MSP432P401R__)

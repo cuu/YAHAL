@@ -29,32 +29,26 @@
 // top. See the doc folder in YAHAL/src/uGUI for more
 // information on the uGUI API.
 
-// Board definitions
-#include "rp2040-launchpad.h"
-#include "boostxl-eduMKII.h"
-
-#include "gpio_rp2040.h"
-#include "spi_rp2040.h"
+// Board includes
+#include "boostxl_eduMKII.h"
+// Driver includes
 #include "st7735s_drv.h"
 #include "uGUI.h"
 
 extern const uint16_t angry_bird[16384];
 
-int main(void)
-{
+int main(void) {
+    
+    boostxl_eduMKII & edu = boostxl_eduMKII::inst();
+    
     // Switch on backlight
-    gpio_rp2040_pin lcd_bl(LCD_BL);
-    lcd_bl.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
-
+    edu.lcd_bl.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
     // Setup SPI interface
-    gpio_rp2040_pin lcd_cs(LCD_CS);
-    spi_rp2040  spi(0, LCD_MISO, LCD_MOSI, LCD_SCLK, lcd_cs);
-    spi.setSpeed(30000000);
+    edu.lcd_spi.setSpeed(30000000);
 
     // Setup LCD driver
-    gpio_rp2040_pin lcd_rst(LCD_RST);
-    gpio_rp2040_pin lcd_dc (LCD_DC);
-    st7735s_drv lcd(spi, lcd_rst, lcd_dc, st7735s_drv::Crystalfontz_128x128);
+    st7735s_drv lcd(edu.lcd_spi, edu.lcd_rst, edu.lcd_dc,
+                    st7735s_drv::Crystalfontz_128x128);
 
     // Setup uGUI
     uGUI gui(lcd);
@@ -76,6 +70,6 @@ int main(void)
     // for HW-scrolling...
     while (1) {
         lcd.scroll(-1);
-        for (int i=0; i < 200000; i++) ;
+        for (int i=0; i < 80000; i++) ;
     }
 }
