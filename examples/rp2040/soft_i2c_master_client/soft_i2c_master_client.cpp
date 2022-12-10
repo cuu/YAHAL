@@ -36,8 +36,13 @@
 #include "i2c_device.h"
 #include "yahal_String.h"
 
+using namespace _TIMER_;
+
 // Simple us-delay (assuming 48MHz clock)
 void delay(uint32_t us) {
+    volatile uint32_t start = TIMER.TIMERAWL;
+    uint32_t  end  = start + us;
+    while (TIMER.TIMERAWL < end) ;
 //    for (uint32_t i=0; i < us; ++i);
 }
 
@@ -72,7 +77,7 @@ int main(void)
         uart.puts("Using SW I2C master\r\n");
         master = new soft_i2c_master(m_sda, m_scl, delay, true);
         // SW master can run as fast as possible
-        master->setSpeed(1000000);
+        master->setSpeed(100000);
     }
 
     // create I2C slave instance for address 0x55

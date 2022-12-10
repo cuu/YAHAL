@@ -38,16 +38,19 @@
 extern const uint16_t angry_bird[16384];
 
 int main(void) {
-    
-    boostxl_eduMKII & edu = boostxl_eduMKII::inst();
+
+    boostxl_eduMKII edu;
+    edu.need_led_rgb = true;
+    edu.need_lcd     = true;
+    edu.inject();
     
     // Switch on backlight
-    edu.lcd_bl.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
+    edu.led_red().gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
     // Setup SPI interface
-    edu.lcd_spi.setSpeed(30000000);
+    edu.lcd_spi().setSpeed(30000000);
 
     // Setup LCD driver
-    st7735s_drv lcd(edu.lcd_spi, edu.lcd_rst, edu.lcd_dc,
+    st7735s_drv lcd(edu.lcd_spi(), edu.lcd_rst(), edu.lcd_dc(),
                     st7735s_drv::Crystalfontz_128x128);
 
     // Setup uGUI

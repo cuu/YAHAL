@@ -17,14 +17,11 @@
 
 #include "gpio_rp2040.h"
 #include "task.h"
-#include "RP2040.h"
-
-using namespace _SIO_;
 
 int main(void)
 {
     // Use P1.0 as output
-    gpio_rp2040_pin led( 2 );
+    gpio_rp2040_pin led( 29 );
     led.gpioMode( GPIO::OUTPUT );
 
     // This loop will never end ...

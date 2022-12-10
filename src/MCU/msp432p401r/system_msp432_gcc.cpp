@@ -15,15 +15,6 @@
 extern "C" {
 #endif
 
-////////////////////////////
-// Hardware configuration //
-////////////////////////////
-
-// Defines the HFXT frequency in Hz (e.g. 48000000)
-#define TARGET_HFXT_HZ 48000000
-
-// Defines the LFXT frequency in Hz (e.g. 32768)
-#define TARGET_LFXT_HZ 32768
 
 ///////////////////////////
 // Configuration section //
@@ -34,25 +25,47 @@ extern "C" {
 
 // Defines the DCO center frequency (3/6/12/24/48 MHz)
 // DCO_1500kHz|DCO_3MHz|DCO_6MHz|DCO_12MHz|DCO_24MHz|DCO_48MHz
+#ifndef TARGET_DCO_RSEL
 #define TARGET_DCO_RSEL DCO_3MHz
+#endif
 
 // Defines the DCO tuning value (-512...511)
 // Use with caution! Too high values might brick the board...
+#ifndef TARGET_DCO_TUNE
 #define TARGET_DCO_TUNE 0
+#endif
 
 // Selects the MCLK source: LFXT, VLO, REFO, DCO, MOD, HFXT
+#ifndef TARGET_MCLK_SELECT
 #define TARGET_MCLK_SELECT HFXT
+#endif
 
 // Selects the MCLK divider (1/2/4/8/16/32/64/128)
 // DIV1, DIV2, DIV4, DIV8, DIV16, DIV32, DIV64, DIV128
+#ifndef TARGET_MCLK_DIV
 #define TARGET_MCLK_DIV DIV1
+#endif
 
 // Selects the SMCLK source:  LFXT, VLO, REFO, DCO, MOD, HFXT
+#ifndef TARGET_SMCLK_SELECT
 #define TARGET_SMCLK_SELECT HFXT
+#endif
 
 // Selects the SMCLK divider (1/2/4/8/16/32/64/128)
 // DIV1, DIV2, DIV4, DIV8, DIV16, DIV32, DIV64, DIV128
+#ifndef TARGET_SMCLK_DIV
 #define TARGET_SMCLK_DIV DIV2
+#endif
+
+////////////////////////////
+// Hardware configuration //
+////////////////////////////
+
+// Defines the HFXT frequency in Hz (e.g. 48000000)
+#define TARGET_HFXT_HZ 48000000
+
+// Defines the LFXT frequency in Hz (e.g. 32768)
+#define TARGET_LFXT_HZ 32768
 
 //////////////////////////////////////
 // Defines for configuration values //

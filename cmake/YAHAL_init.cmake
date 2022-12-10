@@ -118,10 +118,18 @@ endfunction()
 
 
 function(yahal_add_extra_outputs TARGET)
-    set_property(TARGET ${TARGET} PROPERTY SUFFIX .elf)
+    set_property(TARGET  ${TARGET} PROPERTY SUFFIX .elf)
+
+    # Add hex, bin and disassembly outputs
     yahal_add_hex_output(${TARGET})
     yahal_add_bin_output(${TARGET})
     yahal_add_dis_output(${TARGET})
+
+    # Add uf2 output for rp2040
+    if (${YAHAL_MCU} STREQUAL rp2040)
+        yahal_add_uf2_output(${TARGET})
+    endif()
+
     yahal_rename_mapfile(${TARGET})
 endfunction()
 

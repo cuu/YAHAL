@@ -39,7 +39,7 @@ int main(void)
 {
     // Set up the red LED as an indicator
     /////////////////////////////////////
-    gpio_rp2040_pin led(24);
+    gpio_rp2040_pin led(29);
     led.gpioMode(GPIO::OUTPUT);
 
     // Set up UART and enable stdin/stdout
@@ -85,7 +85,7 @@ int main(void)
     FILE * f = fopen("test.dat", "w+");
     yahal_assert(f != NULL);
     // Write numbers 0..99 to file
-    for (int i=0; i < 100; ++i) {
+    for (int i=0; i < 10000; ++i) {
         fprintf(f, "%d\n", i);
     }
     // Switch off LED

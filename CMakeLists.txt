@@ -9,7 +9,7 @@ project(YAHAL C CXX ASM)
 
 file(GLOB         DRIVER_SRC   src/driver/*.cpp)
 file(GLOB         MCU_SRC      src/MCU/${YAHAL_MCU}/*.cpp)
-file(GLOB         BOARD_SRC    src/board/${YAHAL_BOARD}/*.cpp)
+file(GLOB         BOARD_SRC    src/board/*.cpp src/board/${YAHAL_BOARD}/*.cpp)
 file(GLOB         FATFS_SRC    src/FatFs/*.cpp)
 file(GLOB         TASK_SRC     src/task/*.cpp)
 file(GLOB         UTIL_SRC     src/util/*.cpp)

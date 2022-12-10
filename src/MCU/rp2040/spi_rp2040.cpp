@@ -96,7 +96,7 @@ int16_t spi_rp2040::spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
 
     for (int i = 0; i < len; ++i)
     {
-        // Wait if next byte can be written
+        // Wait until next byte can be written
         while(_spi->SSPSR.TNF == 0) ;
         // Transfer single char to TX buffer
         _spi->SSPDR = (uint16_t) (txbuf[i]);
@@ -165,7 +165,7 @@ int16_t spi_rp2040::spiRx(uint8_t tx_byte, uint8_t *rxbuf, uint16_t len) {
 
     for (int i = 0; i < len; ++i)
     {
-        // Wait if next byte can be written
+        // Wait until next byte can be written
         while(_spi->SSPSR.TNF == 0) ;
         // Transfer single char to TX buffer
         _spi->SSPDR = tx_byte;

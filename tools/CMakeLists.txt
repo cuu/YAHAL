@@ -1,5 +1,67 @@
 cmake_minimum_required(VERSION 3.16)
 
+function(yahal_add_uf2_output TARGET)
+    set(TF $<TARGET_FILE:${TARGET}>)
+    set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
+    set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
+    if (NOT ELF2UF2_FOUND)
+        find_package(ELF2UF2)
+    endif()
+    if (ELF2UF2_FOUND)
+        add_custom_command(TARGET ${TARGET} POST_BUILD
+            COMMAND ELF2UF2 ${TF} ${TN}.uf2 
+        )
+    endif()
+endfunction()
+
+
+function(generate_pio_header TARGET PIO)
+    # Load package if not already loaded
+    if (NOT PIOASM_FOUND)
+        find_package(PIOASM REQUIRED)
+    endif()
+
+    cmake_parse_arguments(generate_pio_header "" "OUTPUT_FORMAT;OUTPUT_DIR" "" ${ARGN} )
+
+    # Output format default is c-sdk
+    if (generate_pio_header_OUTPUT_FORMAT)
+        set(OUTPUT_FORMAT "${generate_pio_header_OUTPUT_FORMAT}")
+    else()
+        set(OUTPUT_FORMAT "c-sdk")
+    endif()
+
+    # Output directory default is cmake's binary dir
+    if (generate_pio_header_OUTPUT_DIR)
+        get_filename_component(HEADER_DIR ${generate_pio_header_OUTPUT_DIR} ABSOLUTE)
+    else()
+        set(HEADER_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+    endif()
+
+    # Calculate header file name (same as pio file)
+    get_filename_component(PIO_NAME ${PIO} NAME)
+    set(HEADER "${HEADER_DIR}/${PIO_NAME}.h")
+
+    get_filename_component(HEADER_GEN_TARGET ${PIO} NAME_WE)
+    set(HEADER_GEN_TARGET "${TARGET}_${HEADER_GEN_TARGET}_pio_h")
+
+    add_custom_target(${HEADER_GEN_TARGET} DEPENDS ${HEADER})
+
+    add_custom_command(OUTPUT ${HEADER}
+        DEPENDS ${PIO}
+        COMMAND PIOASM -o ${OUTPUT_FORMAT} ${PIO} ${HEADER}
+    )
+    add_dependencies(${TARGET} ${HEADER_GEN_TARGET})
+
+    get_target_property(target_type ${TARGET} TYPE)
+
+    if ("INTERFACE_LIBRARY" STREQUAL "${target_type}")
+        target_include_directories(${TARGET} INTERFACE ${HEADER_DIR})
+    else()
+        target_include_directories(${TARGET} PUBLIC ${HEADER_DIR})
+    endif()
+endfunction()
+
+
 function(png_to_cpp TARGET PNG BG_COLOR)
     # Load package if not already loaded
     if (NOT PNG2CPP_FOUND)

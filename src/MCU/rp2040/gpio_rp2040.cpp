@@ -134,7 +134,7 @@ void gpio_rp2040::setSEL (uint16_t gpio, uint8_t sel) {
 void gpio_rp2040::setMode (uint16_t gpio, uint16_t mode) {
     yahal_assert(gpio < 30);
     uint32_t mask = 1 << gpio;
-    GPIO0_t *pad_ctrl = &PADS_BANK0.GPIO0 + gpio;
+    GPIO_t *pad_ctrl = &PADS_BANK0.GPIO[gpio];
 
     // Reset open drain/source
     _open_drain  &= ~(1 << gpio);
@@ -145,7 +145,7 @@ void gpio_rp2040::setMode (uint16_t gpio, uint16_t mode) {
     // Reset pad configuration
     pad_ctrl->OD       = 0;
     pad_ctrl->IE       = 1;
-    pad_ctrl->DRIVE    = GPIO0_DRIVE__2mA;
+    pad_ctrl->DRIVE    = GPIO_DRIVE__2mA;
     pad_ctrl->PUE      = 0;
     pad_ctrl->PDE      = 0;
     pad_ctrl->SCHMITT  = 1;

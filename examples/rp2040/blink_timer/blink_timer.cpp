@@ -52,7 +52,7 @@ void delay(int us) {
 int main(void)
 {
     // Setup two LEDs on the launchpad for blinking
-    gpio_rp2040_pin led1( 2 ); // Left red LED
+    gpio_rp2040_pin led1( 29); // Left red LED
     gpio_rp2040_pin led2( 3 ); // red RGB LED
     led1.gpioMode( GPIO::OUTPUT );
     led2.gpioMode( GPIO::OUTPUT );

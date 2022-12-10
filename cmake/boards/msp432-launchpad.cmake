@@ -9,7 +9,7 @@ include(toolchains/arm-gcc)
 include(MCU/msp432p401r)
 
 # Debug interface: The MSP432 LP has a
-# build-in XDS110 debug probe, which is
+# buildin XDS110 debug probe, which is
 # supported by OpenOCD.
 set(OPENOCD_CONFIG 
     "-f" "board/ti_msp432_launchpad.cfg" 

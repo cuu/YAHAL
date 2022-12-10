@@ -44,7 +44,7 @@
 
 // Use macros to define the ports
 // and pins of the LEDs to use
-#define RED_LED   2
+#define RED_LED   29
 #define GREEN_LED 3
 
 // This class defines a new task class. The task

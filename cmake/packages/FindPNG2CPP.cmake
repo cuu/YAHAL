@@ -15,7 +15,7 @@ if (NOT PNG2CPP_FOUND)
     # Location of tool source code
     set(PNG2CPP_SOURCE_DIR ${YAHAL_DIR}/tools/png2cpp)
 
-    # Location of tool binay
+    # Location of tool binary
     set(PNG2CPP_BINARY_DIR ${CMAKE_BINARY_DIR}/png2cpp)
 
     # The tool binary

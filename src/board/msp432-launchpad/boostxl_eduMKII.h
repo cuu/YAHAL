@@ -22,7 +22,6 @@
 #define LCD_CS          PORT_PIN(5,0)
 #define LCD_RST         PORT_PIN(5,7)
 #define LCD_DC          PORT_PIN(3,7)
-#define LCD_BL          PORT_PIN(2,6)
 // I2C sensors
 #define SENSOR_SDA
 #define SENSOR_SCL
@@ -39,42 +38,11 @@
 #define ACC_Y           13
 #define ACC_Z           11
 
-#include "gpio_msp432.h"
-#include "spi_msp432.h"
 #include "boostxl_eduMKII_base.h"
 
-class boostxl_eduMKII : public boostxl_eduMKII_base {
-public:
-
-    static boostxl_eduMKII & inst();
-
-private:
+struct boostxl_eduMKII : public boostxl_eduMKII_base {
     boostxl_eduMKII();
-    static boostxl_eduMKII * _inst;
-
-    gpio_msp432_pin     _button1;
-    gpio_msp432_pin     _button2;
-    gpio_msp432_pin     _led_red;
-    gpio_msp432_pin     _led_green;
-    gpio_msp432_pin     _led_blue;
-    gpio_msp432_pin     _buzzer;
-    gpio_msp432_pin     _gator;
-    gpio_msp432_pin     _servo;
-    spi_msp432          _lcd_spi;
-    gpio_msp432_pin     _lcd_cs;
-    gpio_msp432_pin     _lcd_rst;
-    gpio_msp432_pin     _lcd_dc;
-    gpio_msp432_pin     _lcd_bl;
-//    i2c_interface &     _sensor_i2c;
-    gpio_msp432_pin     _opt3001_int;
-    gpio_msp432_pin     _tmp006_int;
-//    adc_channel &       _joy_x;
-//    adc_channel &       _joy_y;
-    gpio_msp432_pin     _joy_button;
-//    adc_channel &       _mic;
-//    adc_channel &       _acc_x;
-//    adc_channel &       _acc_y;
-//    adc_channel &       _acc_z;
+    void inject();
 };
 
 #endif // _MSP432_LAUNCHPAD_BOOSTXL_EDUMKII_H_
