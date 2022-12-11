@@ -10,8 +10,8 @@ if (DEFINED ENV{YAHAL_DIR} AND (NOT YAHAL_DIR))
     message("Using YAHAL_DIR from environment ('${YAHAL_DIR}')")
 else()
     # For most examples YAHAL is located three directories ahead
-    message("Trying to find YAHAL at ../../..")
-    set(YAHAL_DIR "../../..")
+    message("Trying to find YAHAL ...")
+    find_path(YAHAL_DIR .yahal_version . .. ../.. ../../..)
 endif ()
 
 #

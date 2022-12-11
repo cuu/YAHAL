@@ -11,19 +11,17 @@ include(YAHAL_import.cmake)
 
 project(multitasking_simple C CXX ASM)
 
-# Pull in YAHAL as subdirectory
-yahal_add_me()
-
 add_executable(multitasking_simple
     multitasking_simple.cpp
     OS.cpp
 )
 
+# Add YAHAL to target
+yahal_add_me(multitasking_simple.cpp)
+
 target_include_directories(multitasking_simple
     PRIVATE .
 )
-
-target_link_libraries(multitasking_simple YAHAL)
 
 yahal_add_custom_targets(multitasking_simple)
 yahal_add_extra_outputs(multitasking_simple)

@@ -52,20 +52,15 @@ void soft_i2c_slave::init() {
     _sda.gpioMode(mode);
     _scl.gpioMode(mode);
 
-    /////////////////////////////////////////////
     // The event-generating interrupt handlers //
-    /////////////////////////////////////////////
-
     _sda.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, [this]() {
         // SDA interrupt handler
-        ////////////////////////
         if (!_scl.gpioRead()) return;
         _sda.gpioRead() ? _state->stop() : _state->start();
     });
 
     _scl.gpioAttachIrq(GPIO::FALLING | GPIO::RISING, [this]() {
         // SCL interrupt handler
-        ////////////////////////
         if (_scl.gpioRead()) {
             _sda.gpioRead() ? _state->high() : _state->low();
         } else {

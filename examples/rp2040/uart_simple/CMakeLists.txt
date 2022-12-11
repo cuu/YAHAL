@@ -11,13 +11,12 @@ include(YAHAL_import.cmake)
 
 project(uart_simple C CXX ASM)
 
-# Pull in YAHAL as subdirectory
-yahal_add_me()
-
 add_executable(uart_simple
     uart_simple.cpp
 )
-target_link_libraries(uart_simple YAHAL)
+
+# Add YAHAL to target
+yahal_add_me(uart_simple)
 
 yahal_add_custom_targets(uart_simple)
 yahal_add_extra_outputs(uart_simple)

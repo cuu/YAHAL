@@ -11,14 +11,12 @@ include(YAHAL_import.cmake)
 
 project(edumkII_uGUI_simple C CXX ASM)
 
-# Pull in YAHAL as subdirectory
-yahal_add_me()
-
 add_executable(edumkII_uGUI_simple
     main.cpp
 )
 
-target_link_libraries(edumkII_uGUI_simple YAHAL)
+# Add YAHAL to target
+yahal_add_me(edumkII_uGUI_simple)
 
 yahal_add_custom_targets(edumkII_uGUI_simple)
 yahal_add_extra_outputs(edumkII_uGUI_simple)

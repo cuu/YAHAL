@@ -9,15 +9,14 @@ set(YAHAL_BOARD "rp2040-launchpad")
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(uart_interrupt C CXX ASM)
-
-# Pull in YAHAL as subdirectory
-yahal_add_me()
+project(uart_interrupt)
 
 add_executable(uart_interrupt
     uart_interrupt.cpp
 )
-target_link_libraries(uart_interrupt YAHAL)
+
+# Add YAHAL to target
+yahal_add_me(uart_interrupt)
 
 yahal_add_custom_targets(uart_interrupt)
 yahal_add_extra_outputs(uart_interrupt)

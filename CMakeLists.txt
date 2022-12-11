@@ -5,46 +5,35 @@ add_library(yahal_list_guard INTERFACE)
 
 include(cmake/YAHAL_init.cmake)
 
-project(YAHAL C CXX ASM)
+project(YAHAL)
 
+file(GLOB         BOARD_SRC    src/board/*.cpp src/board/${YAHAL_BOARD}/*.cpp)
 file(GLOB         DRIVER_SRC   src/driver/*.cpp)
 file(GLOB         MCU_SRC      src/MCU/${YAHAL_MCU}/*.cpp)
-file(GLOB         BOARD_SRC    src/board/*.cpp src/board/${YAHAL_BOARD}/*.cpp)
-file(GLOB         FATFS_SRC    src/FatFs/*.cpp)
 file(GLOB         TASK_SRC     src/task/*.cpp)
 file(GLOB         UTIL_SRC     src/util/*.cpp)
-file(GLOB_RECURSE UGUI_SRC     src/uGUI/*.cpp)
 
 add_library(YAHAL
+    ${BOARD_SRC}
     ${DRIVER_SRC}
     ${MCU_SRC}
-    ${BOARD_SRC}
-    ${FATFS_SRC}
     ${TASK_SRC}
     ${UTIL_SRC}
-    ${UGUI_SRC}
 )
 
 target_include_directories(YAHAL PUBLIC
-    include/MCU/${YAHAL_MCU}
-    include/CPU/${YAHAL_CPU}
     include/interface
     src/board
     src/board/${YAHAL_BOARD}
-    src/MCU/${YAHAL_MCU}
     src/driver
-    src/FatFs
-    src/util
+    include/CPU/${YAHAL_CPU}
+    src/MCU/${YAHAL_MCU}
+    include/MCU/${YAHAL_MCU}
     src/task
-    src/uGUI
-    src/uGUI/fonts
+    src/util
 )
-
-# Add ARM DSP as a separate library 
-# add_subdirectory(src/platform/msp432/DSP ARM_DSP)
 
 # Add various tools
 add_subdirectory(tools)
 
 endif()
-

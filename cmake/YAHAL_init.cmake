@@ -54,15 +54,21 @@ include(boards/${YAHAL_BOARD})
 #
 # Macro to add YAHAL as a subdirectory to a project
 #
-macro(yahal_add_me)
+function(yahal_add_me TARGET)
     if (NOT CMAKE_PROJECT_NAME)
-        message(WARNING "yahal_add_me() should be called after the project is created (and languages added)")
+        message(WARNING "add_lib_yahal() should be called after the project is created (and languages added)")
     endif()
     add_subdirectory(${YAHAL_DIR} YAHAL)
-endmacro()
+    target_link_libraries(${TARGET} YAHAL)
+endfunction()
+
+function(yahal_add_library TARGET LIB)
+    add_subdirectory(${YAHAL_DIR}/lib/${LIB} ${LIB})
+    target_link_libraries(${TARGET} ${LIB})
+endfunction()
 
 
-macro (yahal_add_custom_targets TARGET)
+function(yahal_add_custom_targets TARGET)
     # Add a upload target using openocd if configuration was given
     if (OPENOCD_CONFIG)
         set(TF $<TARGET_FILE:${TARGET}>)
@@ -72,7 +78,7 @@ macro (yahal_add_custom_targets TARGET)
             VERBATIM
         )
     endif()
-endmacro()
+endfunction()
 
 
 function(yahal_add_hex_output TARGET)

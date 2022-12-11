@@ -11,13 +11,12 @@ include(YAHAL_import.cmake)
 
 project(blink_simple C CXX ASM)
 
-# Pull in YAHAL as subdirectory
-yahal_add_me()
-
 add_executable(blink_simple
     blink_simple.cpp
 )
-target_link_libraries(blink_simple YAHAL)
+
+# Add YAHAL to target
+yahal_add_me(blink_simple)
 
 yahal_add_custom_targets(blink_simple)
 yahal_add_extra_outputs(blink_simple)

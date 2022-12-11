@@ -11,13 +11,12 @@ include(YAHAL_import.cmake)
 
 project(gpio_interrupt C CXX ASM)
 
-# Pull in YAHAL as subdirectory
-yahal_add_me()
-
 add_executable(gpio_interrupt
     gpio_interrupt.cpp
 )
-target_link_libraries(gpio_interrupt YAHAL)
+
+# Add YAHAL to target
+yahal_add_me(gpio_interrupt)
 
 yahal_add_custom_targets(gpio_interrupt)
 yahal_add_extra_outputs(gpio_interrupt)

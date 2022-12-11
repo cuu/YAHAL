@@ -9,10 +9,7 @@ set(YAHAL_BOARD "rp2040-launchpad")
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(soft_i2c_master_client C CXX ASM)
-
-# Pull in YAHAL as subdirectory
-yahal_add_me()
+project(soft_i2c_master_client)
 
 add_executable(soft_i2c_master_client
     soft_i2c_master_client.cpp
@@ -20,10 +17,11 @@ add_executable(soft_i2c_master_client
 )
 
 target_include_directories(soft_i2c_master_client
-    PRIVATE .
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(soft_i2c_master_client YAHAL)
+# Add YAHAL to target
+yahal_add_me(soft_i2c_master_client)
 
 yahal_add_custom_targets(soft_i2c_master_client)
 yahal_add_extra_outputs(soft_i2c_master_client)

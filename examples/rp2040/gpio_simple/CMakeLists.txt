@@ -11,13 +11,12 @@ include(YAHAL_import.cmake)
 
 project(gpio_simple C CXX ASM)
 
-# Pull in YAHAL as subdirectory
-yahal_add_me()
-
 add_executable(gpio_simple
     gpio_simple.cpp
 )
-target_link_libraries(gpio_simple YAHAL)
+
+# Add YAHAL to target
+yahal_add_me(gpio_simple)
 
 yahal_add_custom_targets(gpio_simple)
 yahal_add_extra_outputs(gpio_simple)
