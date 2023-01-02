@@ -19,7 +19,7 @@ gpio_rp2040 gpio_rp2040::inst;
 void
 gpio_rp2040::gpioMode (uint16_t gpio, uint16_t mode) {
     yahal_assert(gpio < 30);
-    setSEL  (gpio, GPIO0_CTRL_FUNCSEL__sio_0);
+    setSEL  (gpio, GPIO_CTRL_FUNCSEL__sio);
     setMode (gpio, mode);
 }
 
@@ -122,7 +122,7 @@ gpio_rp2040::gpioDisableIrq (uint16_t gpio) {
 
 void gpio_rp2040::setSEL (uint16_t gpio, uint8_t sel) {
     yahal_assert(gpio < 30);
-    GPIO0_CTRL_t *io_ctrl = &IO_BANK0.GPIO0_CTRL + (gpio << 1);
+    GPIO_CTRL_t *io_ctrl = &IO_BANK0.GPIO0_CTRL + (gpio << 1);
     // Set the pad function and reset all other bits
     io_ctrl->FUNCSEL = sel;
     io_ctrl->OUTOVER = 0;

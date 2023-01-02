@@ -38,8 +38,27 @@ std::ostream& indent(std::ostream& os) {
     return os;
 }
 
+string pad_str(string val, int size) {
+    string res = val;
+    while (res.size() < size) res += ' ';
+    return res;
+}
+
+string named_register(string val, string index) {
+    string res = val;
+    size_t pos = res.find("[%s]");
+    if (pos != string::npos) {
+        res.replace(pos, 4, index);
+    }
+    return res;
+}
+
+
 class svd2cpp {
 public:
+    // MCU name
+    string MCU;
+
     // The output file
     ofstream _ofs;
 
@@ -58,9 +77,33 @@ public:
         int size;          // Size of register in bytes
         int dim;           // Dimension (array if > 1)
         int dimInc;        // Increment for dim elements in bytes
+        bool userIndex;    // User-defined Index names
+        vector<string> dimIndices; // Specific index names
         uint32_t offset;   // Offset from base address in bytes
     };
-    vector<register_info_t> register_info;
+
+    class register_vector : public vector<register_info_t> {
+      public:
+        bool registers_left() {
+            for (auto & e : *this) {
+                if(e.dim > 0) return true;
+            }
+            return false;
+        }
+
+        register_info_t * next_register() {
+            uint32_t min = 0xffffffff;
+            register_info_t * res = nullptr;
+            for (auto & e : *this) {
+                if ((e.dim > 0) && (e.offset < min)) {
+                    min = e.offset;
+                    res = &e;
+                }
+            }
+            return res;
+        }
+    };
+    register_vector register_info;
 
     // List of enum value properties
     struct enum_info_t {
@@ -300,8 +343,9 @@ public:
         }
 
         register_info_t ri;
-
-        // Handle arrays
+        ri.userIndex = false;
+        
+        // Handle dimensions
         const char *dim          = getChildElement(register_, "dim");
         const char *dimIncrement = getChildElement(register_, "dimIncrement");
         if (dim) {
@@ -312,15 +356,22 @@ public:
             }
             ri.dim    = parseNumber(dim);
             ri.dimInc = parseNumber(dimIncrement);
-            if (ri.dimInc != regByteSize) {
-                cerr << "dimIncrement != register size for register " << name
-                     << ". Exit." << endl;
-                exit(1);
+            // Check if we have a specific register naming
+            const char *dimIndex = getChildElement(register_, "dimIndex");
+            istringstream iss;
+            string index;
+            string indices;
+            if (dimIndex) {
+                ri.userIndex = 1;
+                indices = dimIndex;
+                // Replace all commas by blanks
+                for (char & c : indices) if (c==',') c = ' ';
+                iss.str(indices);
             }
-            // Erase the [%s] in the register name
-            size_t p = name.find('[');
-            if (p != string::npos) {
-                name.erase(p);
+            for(int i=0; i < ri.dim; ++i) {
+                if (dimIndex) iss >> index;
+                else index = to_string(i);
+                ri.dimIndices.push_back(index);
             }
         } else {
             ri.dim = 1; // Default is one element
@@ -329,7 +380,7 @@ public:
         currentRegister = name;
 
         if (childExists(register_, "fields")) {
-            _ofs << indent << "BEGIN_TYPE(" << name
+            _ofs << indent << "BEGIN_TYPE(" << named_register(name, "")
                  << "_t, uint" << dec << regByteSize*8 << "_t)" << endl;
             indentRight();
             XMLElement *fields = register_->FirstChildElement("fields");
@@ -344,8 +395,8 @@ public:
             //        ri.type = "uint" + to_string(regBitSize) + "_t";
             ri.type = name + "_t";
             _ofs << indent;
-            _ofs << "typedef " << "uint" << dec << regByteSize*8 << "_t " << name
-                 << "_t" << ";" << endl << endl;
+            _ofs << "typedef " << "uint" << dec << regByteSize*8 << "_t "
+                 << named_register(name, "") << "_t" << ";" << endl << endl;
             //        _ofs << "// Register: " << ri.type << " " << name;
             //        _ofs << endl << endl;
         }
@@ -360,8 +411,9 @@ public:
             for (auto &ei : enum_info) {
                 outputAsComment(ei.desc);
                 _ofs << indent << "static const uint32_t "
-                        << currentRegister << "_" << ei.field << "__" << ei.name
-                        << " = " << ei.value << ";" << endl;
+                     << named_register(currentRegister, "")
+                     << "_" << ei.field << "__"  << ei.name
+                     << " = " << ei.value << ";" << endl;
             }
             enum_info.clear();
             _ofs << endl;
@@ -382,7 +434,7 @@ public:
             cerr << "Can not find base address for peripheral. Exit." << endl;
             exit(1);
         }
-        int baseAddr_int = parseNumber(baseAddr);
+        uint32_t baseAddr_int = parseNumber(baseAddr);
         if (size) {
             currentRegByteSize = parseNumber(size) / 8;
         }
@@ -406,8 +458,7 @@ public:
         // Print out description if available
         outputAsComment(desc);
 
-        _ofs << indent << "namespace _" << name << "_  {"
-                << endl << endl;
+        _ofs << indent << "namespace _" << name << "_  {" << endl << endl;
         indentRight();
 
         XMLElement *registers = peripheral->FirstChildElement("registers");
@@ -420,30 +471,61 @@ public:
 
         string periType;
         if (derivedFrom.size() == 0) {
-            _ofs << indent << "struct " << name << "_t {"
-                 << endl;
+            _ofs << indent << "struct " << name << "_t {" << endl;
             indentRight();
-            uint32_t off = 0;
-            int res_index    = 1;
+            uint32_t curr_off = 0;
+            int res_index     = 0;
             string tmp;
-            for (auto &ri : register_info) {
-                if (off != ri.offset) {
-                    tmp = "uint32_t ";
-                    while (tmp.size() < 30) tmp += ' ';
+
+            while(register_info.registers_left()) {
+                // Get next register
+                register_info_t * reg = register_info.next_register();
+                // Check if we have to fill a gap with 'reserved'
+                if (curr_off != reg->offset) {
+                    int diff  = reg->offset - curr_off;
+                    int typelen = 1;
+                    // Try to use same int length as register
+                    if ((diff % reg->size) == 0) {
+                        diff   /= reg->size;
+                        typelen = reg->size;
+                    }
+                    string type = "uint" + to_string(typelen * 8) + "_t";
+                    tmp = pad_str(type, 30);
                     _ofs << indent << tmp << "reserved"
-                         << res_index++ << "[" << (ri.offset - off) / 4 << "];"
-                         << endl;
-                    off = ri.offset;
+                         << to_string(res_index++);
+                    if (diff > 1) {
+                        _ofs << "[" << diff << "]";
+                    }
+                    _ofs << ";" << endl;
+                    curr_off = reg->offset;
                 }
-                tmp = ri.type;
-                while (tmp.size() < 30) tmp += ' ';
-                _ofs << indent << tmp << ri.name;
-                if (ri.dim > 1) {
-                    _ofs << "[" << ri.dim << "]";
+                // Check if we have an array
+                int dim_size = 0;
+                do {
+                    dim_size++;
+                    curr_off += reg->size;
+                    reg->dim--;
+                    reg->offset += reg->dimInc;
+                    if (reg->dim == 0) break;
+                    if (reg->userIndex) break;
+                } while(curr_off == reg->offset);
+                // Output the register
+                tmp = pad_str( named_register(reg->type, ""), 30);
+                _ofs << indent << tmp;
+                if (dim_size > 1) {
+                    _ofs << named_register(reg->name, "");
+                    _ofs << "[" << dim_size << "]";
+                } else {
+                    string index;
+                    if (reg->dimIndices.size()) {
+                        index = reg->dimIndices[0];
+                        reg->dimIndices.erase(reg->dimIndices.begin());
+                    }
+                    _ofs << named_register(reg->name, index);
                 }
                 _ofs << ";" << endl;
-                off += ri.size * ri.dim;
             }
+
             register_info.clear();
 
             indentLeft();
@@ -457,7 +539,7 @@ public:
         _ofs << indent << "static "  << periType << " & "
              << name << "     = (*(" << periType << " *)0x" << hex
              << baseAddr_int << ");" << endl;
-        if (string(name) != "SIO") {
+        if (MCU == "RP2040" && ((baseAddr_int >> 28) <= 5)) {
             _ofs << indent << "static " << periType << " & "
                  << name << "_XOR = (*(" << periType << " *)0x" << hex
                  << baseAddr_int + 0x1000 << ");" << endl;
@@ -540,6 +622,14 @@ public:
                  << endl;
             exit(1);
         }
+
+        // Get the MCU name
+        if (!childExists(elem, "name")) {
+            cerr << "Can not find MCU name in file " << infile
+                 << endl;
+            exit(1);
+        }
+        MCU = getChildElement(elem, "name");
 
         // Open out file
         cout << "Writing file " << outfile << endl;

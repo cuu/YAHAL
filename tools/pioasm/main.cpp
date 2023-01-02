@@ -7,7 +7,7 @@
 #include <iostream>
 #include "pio_assembler.h"
 
-#define DEFAULT_OUTPUT_FORMAT "c-sdk"
+#define DEFAULT_OUTPUT_FORMAT "yahal"
 
 void usage() {
     std::cerr << "usage: pioasm <options> <input> (<output>)\n\n";

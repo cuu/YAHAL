@@ -506,7 +506,7 @@ namespace _XIP_SSI_  {
         IDR_t                         IDR;
         SSI_VERSION_ID_t              SSI_VERSION_ID;
         DR0_t                         DR0;
-        uint32_t                      reserved1[35];
+        uint32_t                      reserved0[35];
         RX_SAMPLE_DLY_t               RX_SAMPLE_DLY;
         SPI_CTRLR0_t                  SPI_CTRLR0;
         TXD_DRIVE_EDGE_t              TXD_DRIVE_EDGE;
@@ -543,7 +543,7 @@ namespace _SYSINFO_  {
     struct SYSINFO_t {
         CHIP_ID_t                     CHIP_ID;
         PLATFORM_t                    PLATFORM;
-        uint32_t                      reserved1[14];
+        uint32_t                      reserved0[14];
         GITREF_RP2040_t               GITREF_RP2040;
     };
 
@@ -1348,7 +1348,7 @@ namespace _CLOCKS_  {
         CLK_SYS_DIV_t                 CLK_SYS_DIV;
         CLK_SYS_SELECTED_t            CLK_SYS_SELECTED;
         CLK_PERI_CTRL_t               CLK_PERI_CTRL;
-        uint32_t                      reserved1[1];
+        uint32_t                      reserved0;
         CLK_PERI_SELECTED_t           CLK_PERI_SELECTED;
         CLK_USB_CTRL_t                CLK_USB_CTRL;
         CLK_USB_DIV_t                 CLK_USB_DIV;
@@ -1601,7 +1601,7 @@ namespace _IO_BANK0_  {
 
     // GPIO status
     // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO0_STATUS_t, uint32_t)
+    BEGIN_TYPE(GPIO_STATUS_t, uint32_t)
         // interrupt to processors, after override is applied
         ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
         // interrupt from pad before override is applied
@@ -1622,7 +1622,7 @@ namespace _IO_BANK0_  {
 
     // GPIO control including function select and overrides.
     // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO0_CTRL_t, uint32_t)
+    BEGIN_TYPE(GPIO_CTRL_t, uint32_t)
         ADD_BITFIELD_RW(IRQOVER, 28, 2)
         ADD_BITFIELD_RW(INOVER, 16, 2)
         ADD_BITFIELD_RW(OEOVER, 12, 2)
@@ -1633,2242 +1633,48 @@ namespace _IO_BANK0_  {
     END_TYPE()
 
     // don't invert the interrupt
-    static const uint32_t GPIO0_CTRL_IRQOVER__NORMAL = 0;
+    static const uint32_t GPIO_CTRL_IRQOVER__NORMAL = 0;
     // invert the interrupt
-    static const uint32_t GPIO0_CTRL_IRQOVER__INVERT = 1;
+    static const uint32_t GPIO_CTRL_IRQOVER__INVERT = 1;
     // drive interrupt low
-    static const uint32_t GPIO0_CTRL_IRQOVER__LOW = 2;
+    static const uint32_t GPIO_CTRL_IRQOVER__LOW = 2;
     // drive interrupt high
-    static const uint32_t GPIO0_CTRL_IRQOVER__HIGH = 3;
+    static const uint32_t GPIO_CTRL_IRQOVER__HIGH = 3;
     // don't invert the peri input
-    static const uint32_t GPIO0_CTRL_INOVER__NORMAL = 0;
+    static const uint32_t GPIO_CTRL_INOVER__NORMAL = 0;
     // invert the peri input
-    static const uint32_t GPIO0_CTRL_INOVER__INVERT = 1;
+    static const uint32_t GPIO_CTRL_INOVER__INVERT = 1;
     // drive peri input low
-    static const uint32_t GPIO0_CTRL_INOVER__LOW = 2;
+    static const uint32_t GPIO_CTRL_INOVER__LOW = 2;
     // drive peri input high
-    static const uint32_t GPIO0_CTRL_INOVER__HIGH = 3;
+    static const uint32_t GPIO_CTRL_INOVER__HIGH = 3;
     // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO0_CTRL_OEOVER__NORMAL = 0;
+    static const uint32_t GPIO_CTRL_OEOVER__NORMAL = 0;
     // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO0_CTRL_OEOVER__INVERT = 1;
+    static const uint32_t GPIO_CTRL_OEOVER__INVERT = 1;
     // disable output
-    static const uint32_t GPIO0_CTRL_OEOVER__DISABLE = 2;
+    static const uint32_t GPIO_CTRL_OEOVER__DISABLE = 2;
     // enable output
-    static const uint32_t GPIO0_CTRL_OEOVER__ENABLE = 3;
+    static const uint32_t GPIO_CTRL_OEOVER__ENABLE = 3;
     // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO0_CTRL_OUTOVER__NORMAL = 0;
+    static const uint32_t GPIO_CTRL_OUTOVER__NORMAL = 0;
     // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO0_CTRL_OUTOVER__INVERT = 1;
+    static const uint32_t GPIO_CTRL_OUTOVER__INVERT = 1;
     // drive output low
-    static const uint32_t GPIO0_CTRL_OUTOVER__LOW = 2;
+    static const uint32_t GPIO_CTRL_OUTOVER__LOW = 2;
     // drive output high
-    static const uint32_t GPIO0_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__jtag_tck = 0;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__spi0_rx = 1;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__uart0_tx = 2;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__i2c0_sda = 3;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__pwm_a_0 = 4;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__sio_0 = 5;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__pio0_0 = 6;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__pio1_0 = 7;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO0_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO1_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO1_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO1_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO1_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO1_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO1_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO1_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO1_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO1_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO1_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO1_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO1_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO1_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO1_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO1_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO1_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO1_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO1_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__jtag_tms = 0;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__spi0_ss_n = 1;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__uart0_rx = 2;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__i2c0_scl = 3;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__pwm_b_0 = 4;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__sio_1 = 5;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__pio0_1 = 6;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__pio1_1 = 7;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO1_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO2_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO2_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO2_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO2_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO2_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO2_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO2_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO2_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO2_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO2_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO2_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO2_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO2_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO2_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO2_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO2_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO2_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO2_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__jtag_tdi = 0;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__spi0_sclk = 1;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__uart0_cts = 2;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__i2c1_sda = 3;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__pwm_a_1 = 4;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__sio_2 = 5;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__pio0_2 = 6;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__pio1_2 = 7;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO2_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO3_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO3_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO3_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO3_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO3_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO3_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO3_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO3_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO3_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO3_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO3_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO3_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO3_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO3_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO3_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO3_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO3_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO3_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__jtag_tdo = 0;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__spi0_tx = 1;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__uart0_rts = 2;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__i2c1_scl = 3;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__pwm_b_1 = 4;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__sio_3 = 5;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__pio0_3 = 6;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__pio1_3 = 7;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO3_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO4_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO4_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO4_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO4_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO4_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO4_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO4_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO4_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO4_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO4_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO4_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO4_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO4_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO4_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO4_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO4_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO4_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO4_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__spi0_rx = 1;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__uart1_tx = 2;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__i2c0_sda = 3;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__pwm_a_2 = 4;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__sio_4 = 5;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__pio0_4 = 6;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__pio1_4 = 7;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO4_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO5_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO5_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO5_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO5_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO5_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO5_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO5_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO5_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO5_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO5_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO5_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO5_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO5_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO5_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO5_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO5_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO5_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO5_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__spi0_ss_n = 1;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__uart1_rx = 2;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__i2c0_scl = 3;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__pwm_b_2 = 4;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__sio_5 = 5;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__pio0_5 = 6;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__pio1_5 = 7;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO5_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO6_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO6_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO6_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO6_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO6_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO6_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO6_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO6_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO6_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO6_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO6_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO6_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO6_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO6_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO6_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO6_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO6_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO6_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__spi0_sclk = 1;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__uart1_cts = 2;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__i2c1_sda = 3;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__pwm_a_3 = 4;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__sio_6 = 5;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__pio0_6 = 6;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__pio1_6 = 7;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__usb_muxing_extphy_softcon = 8;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO6_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO7_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO7_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO7_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO7_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO7_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO7_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO7_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO7_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO7_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO7_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO7_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO7_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO7_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO7_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO7_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO7_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO7_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO7_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__spi0_tx = 1;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__uart1_rts = 2;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__i2c1_scl = 3;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__pwm_b_3 = 4;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__sio_7 = 5;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__pio0_7 = 6;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__pio1_7 = 7;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__usb_muxing_extphy_oe_n = 8;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO7_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO8_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO8_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO8_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO8_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO8_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO8_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO8_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO8_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO8_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO8_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO8_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO8_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO8_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO8_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO8_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO8_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO8_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO8_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__spi1_rx = 1;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__uart1_tx = 2;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__i2c0_sda = 3;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__pwm_a_4 = 4;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__sio_8 = 5;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__pio0_8 = 6;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__pio1_8 = 7;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__usb_muxing_extphy_rcv = 8;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO8_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO9_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO9_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO9_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO9_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO9_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO9_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO9_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO9_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO9_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO9_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO9_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO9_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO9_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO9_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO9_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO9_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO9_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO9_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__spi1_ss_n = 1;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__uart1_rx = 2;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__i2c0_scl = 3;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__pwm_b_4 = 4;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__sio_9 = 5;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__pio0_9 = 6;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__pio1_9 = 7;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__usb_muxing_extphy_vp = 8;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO9_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO10_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO10_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO10_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO10_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO10_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO10_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO10_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO10_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO10_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO10_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO10_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO10_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO10_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO10_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO10_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO10_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO10_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO10_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__spi1_sclk = 1;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__uart1_cts = 2;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__i2c1_sda = 3;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__pwm_a_5 = 4;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__sio_10 = 5;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__pio0_10 = 6;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__pio1_10 = 7;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__usb_muxing_extphy_vm = 8;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO10_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO11_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO11_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO11_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO11_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO11_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO11_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO11_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO11_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO11_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO11_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO11_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO11_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO11_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO11_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO11_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO11_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO11_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO11_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__spi1_tx = 1;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__uart1_rts = 2;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__i2c1_scl = 3;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__pwm_b_5 = 4;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__sio_11 = 5;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__pio0_11 = 6;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__pio1_11 = 7;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__usb_muxing_extphy_suspnd = 8;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO11_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO12_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO12_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO12_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO12_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO12_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO12_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO12_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO12_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO12_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO12_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO12_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO12_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO12_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO12_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO12_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO12_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO12_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO12_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__spi1_rx = 1;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__uart0_tx = 2;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__i2c0_sda = 3;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__pwm_a_6 = 4;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__sio_12 = 5;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__pio0_12 = 6;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__pio1_12 = 7;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__usb_muxing_extphy_speed = 8;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO12_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO13_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO13_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO13_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO13_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO13_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO13_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO13_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO13_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO13_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO13_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO13_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO13_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO13_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO13_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO13_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO13_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO13_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO13_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__spi1_ss_n = 1;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__uart0_rx = 2;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__i2c0_scl = 3;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__pwm_b_6 = 4;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__sio_13 = 5;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__pio0_13 = 6;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__pio1_13 = 7;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__usb_muxing_extphy_vpo = 8;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO13_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO14_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO14_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO14_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO14_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO14_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO14_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO14_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO14_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO14_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO14_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO14_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO14_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO14_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO14_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO14_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO14_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO14_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO14_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__spi1_sclk = 1;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__uart0_cts = 2;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__i2c1_sda = 3;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__pwm_a_7 = 4;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__sio_14 = 5;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__pio0_14 = 6;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__pio1_14 = 7;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__usb_muxing_extphy_vmo = 8;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO14_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO15_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO15_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO15_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO15_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO15_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO15_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO15_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO15_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO15_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO15_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO15_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO15_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO15_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO15_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO15_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO15_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO15_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO15_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__spi1_tx = 1;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__uart0_rts = 2;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__i2c1_scl = 3;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__pwm_b_7 = 4;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__sio_15 = 5;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__pio0_15 = 6;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__pio1_15 = 7;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__usb_muxing_digital_dp = 8;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO15_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO16_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO16_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO16_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO16_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO16_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO16_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO16_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO16_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO16_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO16_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO16_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO16_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO16_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO16_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO16_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO16_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO16_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO16_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__spi0_rx = 1;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__uart0_tx = 2;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__i2c0_sda = 3;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__pwm_a_0 = 4;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__sio_16 = 5;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__pio0_16 = 6;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__pio1_16 = 7;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__usb_muxing_digital_dm = 8;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO16_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO17_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO17_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO17_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO17_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO17_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO17_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO17_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO17_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO17_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO17_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO17_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO17_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO17_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO17_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO17_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO17_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO17_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO17_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__spi0_ss_n = 1;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__uart0_rx = 2;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__i2c0_scl = 3;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__pwm_b_0 = 4;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__sio_17 = 5;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__pio0_17 = 6;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__pio1_17 = 7;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO17_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO18_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO18_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO18_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO18_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO18_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO18_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO18_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO18_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO18_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO18_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO18_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO18_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO18_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO18_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO18_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO18_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO18_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO18_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__spi0_sclk = 1;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__uart0_cts = 2;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__i2c1_sda = 3;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__pwm_a_1 = 4;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__sio_18 = 5;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__pio0_18 = 6;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__pio1_18 = 7;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO18_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO19_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO19_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO19_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO19_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO19_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO19_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO19_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO19_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO19_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO19_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO19_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO19_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO19_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO19_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO19_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO19_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO19_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO19_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__spi0_tx = 1;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__uart0_rts = 2;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__i2c1_scl = 3;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__pwm_b_1 = 4;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__sio_19 = 5;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__pio0_19 = 6;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__pio1_19 = 7;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO19_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO20_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO20_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO20_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO20_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO20_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO20_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO20_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO20_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO20_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO20_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO20_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO20_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO20_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO20_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO20_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO20_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO20_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO20_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__spi0_rx = 1;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__uart1_tx = 2;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__i2c0_sda = 3;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__pwm_a_2 = 4;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__sio_20 = 5;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__pio0_20 = 6;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__pio1_20 = 7;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__clocks_gpin_0 = 8;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO20_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO21_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO21_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO21_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO21_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO21_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO21_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO21_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO21_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO21_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO21_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO21_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO21_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO21_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO21_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO21_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO21_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO21_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO21_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__spi0_ss_n = 1;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__uart1_rx = 2;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__i2c0_scl = 3;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__pwm_b_2 = 4;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__sio_21 = 5;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__pio0_21 = 6;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__pio1_21 = 7;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__clocks_gpout_0 = 8;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO21_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO22_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO22_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO22_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO22_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO22_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO22_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO22_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO22_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO22_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO22_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO22_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO22_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO22_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO22_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO22_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO22_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO22_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO22_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__spi0_sclk = 1;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__uart1_cts = 2;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__i2c1_sda = 3;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__pwm_a_3 = 4;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__sio_22 = 5;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__pio0_22 = 6;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__pio1_22 = 7;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__clocks_gpin_1 = 8;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO22_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO23_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO23_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO23_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO23_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO23_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO23_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO23_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO23_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO23_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO23_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO23_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO23_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO23_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO23_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO23_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO23_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO23_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO23_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__spi0_tx = 1;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__uart1_rts = 2;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__i2c1_scl = 3;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__pwm_b_3 = 4;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__sio_23 = 5;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__pio0_23 = 6;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__pio1_23 = 7;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__clocks_gpout_1 = 8;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO23_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO24_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO24_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO24_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO24_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO24_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO24_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO24_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO24_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO24_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO24_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO24_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO24_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO24_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO24_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO24_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO24_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO24_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO24_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__spi1_rx = 1;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__uart1_tx = 2;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__i2c0_sda = 3;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__pwm_a_4 = 4;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__sio_24 = 5;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__pio0_24 = 6;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__pio1_24 = 7;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__clocks_gpout_2 = 8;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO24_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO25_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO25_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO25_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO25_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO25_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO25_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO25_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO25_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO25_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO25_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO25_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO25_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO25_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO25_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO25_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO25_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO25_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO25_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__spi1_ss_n = 1;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__uart1_rx = 2;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__i2c0_scl = 3;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__pwm_b_4 = 4;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__sio_25 = 5;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__pio0_25 = 6;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__pio1_25 = 7;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__clocks_gpout_3 = 8;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO25_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO26_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO26_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO26_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO26_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO26_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO26_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO26_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO26_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO26_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO26_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO26_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO26_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO26_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO26_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO26_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO26_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO26_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO26_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__spi1_sclk = 1;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__uart1_cts = 2;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__i2c1_sda = 3;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__pwm_a_5 = 4;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__sio_26 = 5;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__pio0_26 = 6;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__pio1_26 = 7;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO26_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO27_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO27_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO27_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO27_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO27_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO27_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO27_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO27_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO27_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO27_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO27_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO27_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO27_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO27_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO27_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO27_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO27_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO27_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__spi1_tx = 1;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__uart1_rts = 2;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__i2c1_scl = 3;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__pwm_b_5 = 4;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__sio_27 = 5;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__pio0_27 = 6;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__pio1_27 = 7;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__usb_muxing_overcurr_detect = 9;
-    static const uint32_t GPIO27_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO28_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO28_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO28_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO28_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO28_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO28_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO28_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO28_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO28_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO28_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO28_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO28_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO28_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO28_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO28_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO28_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO28_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO28_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__spi1_rx = 1;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__uart0_tx = 2;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__i2c0_sda = 3;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__pwm_a_6 = 4;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__sio_28 = 5;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__pio0_28 = 6;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__pio1_28 = 7;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__usb_muxing_vbus_detect = 9;
-    static const uint32_t GPIO28_CTRL_FUNCSEL__null = 31;
-
-    // GPIO status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(GPIO29_STATUS_t, uint32_t)
-        // interrupt to processors, after override is applied
-        ADD_BITFIELD_RO(IRQTOPROC, 26, 1)
-        // interrupt from pad before override is applied
-        ADD_BITFIELD_RO(IRQFROMPAD, 24, 1)
-        // input signal to peripheral, after override is applied
-        ADD_BITFIELD_RO(INTOPERI, 19, 1)
-        // input signal from pad, before override is applied
-        ADD_BITFIELD_RO(INFROMPAD, 17, 1)
-        // output enable to pad after register override is applied
-        ADD_BITFIELD_RO(OETOPAD, 13, 1)
-        // output enable from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OEFROMPERI, 12, 1)
-        // output signal to pad after register override is applied
-        ADD_BITFIELD_RO(OUTTOPAD, 9, 1)
-        // output signal from selected peripheral, before register override is applied
-        ADD_BITFIELD_RO(OUTFROMPERI, 8, 1)
-    END_TYPE()
-
-    // GPIO control including function select and overrides.
-    // Reset value: 0x0000001f
-    BEGIN_TYPE(GPIO29_CTRL_t, uint32_t)
-        ADD_BITFIELD_RW(IRQOVER, 28, 2)
-        ADD_BITFIELD_RW(INOVER, 16, 2)
-        ADD_BITFIELD_RW(OEOVER, 12, 2)
-        ADD_BITFIELD_RW(OUTOVER, 8, 2)
-        // 0-31 -> selects pin function according to the gpio table
-        // 31 == NULL
-        ADD_BITFIELD_RW(FUNCSEL, 0, 5)
-    END_TYPE()
-
-    // don't invert the interrupt
-    static const uint32_t GPIO29_CTRL_IRQOVER__NORMAL = 0;
-    // invert the interrupt
-    static const uint32_t GPIO29_CTRL_IRQOVER__INVERT = 1;
-    // drive interrupt low
-    static const uint32_t GPIO29_CTRL_IRQOVER__LOW = 2;
-    // drive interrupt high
-    static const uint32_t GPIO29_CTRL_IRQOVER__HIGH = 3;
-    // don't invert the peri input
-    static const uint32_t GPIO29_CTRL_INOVER__NORMAL = 0;
-    // invert the peri input
-    static const uint32_t GPIO29_CTRL_INOVER__INVERT = 1;
-    // drive peri input low
-    static const uint32_t GPIO29_CTRL_INOVER__LOW = 2;
-    // drive peri input high
-    static const uint32_t GPIO29_CTRL_INOVER__HIGH = 3;
-    // drive output enable from peripheral signal selected by funcsel
-    static const uint32_t GPIO29_CTRL_OEOVER__NORMAL = 0;
-    // drive output enable from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO29_CTRL_OEOVER__INVERT = 1;
-    // disable output
-    static const uint32_t GPIO29_CTRL_OEOVER__DISABLE = 2;
-    // enable output
-    static const uint32_t GPIO29_CTRL_OEOVER__ENABLE = 3;
-    // drive output from peripheral signal selected by funcsel
-    static const uint32_t GPIO29_CTRL_OUTOVER__NORMAL = 0;
-    // drive output from inverse of peripheral signal selected by funcsel
-    static const uint32_t GPIO29_CTRL_OUTOVER__INVERT = 1;
-    // drive output low
-    static const uint32_t GPIO29_CTRL_OUTOVER__LOW = 2;
-    // drive output high
-    static const uint32_t GPIO29_CTRL_OUTOVER__HIGH = 3;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__spi1_ss_n = 1;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__uart0_rx = 2;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__i2c0_scl = 3;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__pwm_b_6 = 4;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__sio_29 = 5;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__pio0_29 = 6;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__pio1_29 = 7;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__usb_muxing_vbus_en = 9;
-    static const uint32_t GPIO29_CTRL_FUNCSEL__null = 31;
+    static const uint32_t GPIO_CTRL_OUTOVER__HIGH = 3;
+    static const uint32_t GPIO_CTRL_FUNCSEL__jtag = 0;
+    static const uint32_t GPIO_CTRL_FUNCSEL__spi = 1;
+    static const uint32_t GPIO_CTRL_FUNCSEL__uart = 2;
+    static const uint32_t GPIO_CTRL_FUNCSEL__i2c = 3;
+    static const uint32_t GPIO_CTRL_FUNCSEL__pwm = 4;
+    static const uint32_t GPIO_CTRL_FUNCSEL__sio = 5;
+    static const uint32_t GPIO_CTRL_FUNCSEL__pio0 = 6;
+    static const uint32_t GPIO_CTRL_FUNCSEL__pio1 = 7;
+    static const uint32_t GPIO_CTRL_FUNCSEL__clock = 8;
+    static const uint32_t GPIO_CTRL_FUNCSEL__usb = 9;
+    static const uint32_t GPIO_CTRL_FUNCSEL__null = 31;
 
     // Raw Interrupts
     // Reset value: 0x00000000
@@ -5271,66 +3077,66 @@ namespace _IO_BANK0_  {
     END_TYPE()
 
     struct IO_BANK0_t {
-        GPIO0_STATUS_t                GPIO0_STATUS;
-        GPIO0_CTRL_t                  GPIO0_CTRL;
-        GPIO1_STATUS_t                GPIO1_STATUS;
-        GPIO1_CTRL_t                  GPIO1_CTRL;
-        GPIO2_STATUS_t                GPIO2_STATUS;
-        GPIO2_CTRL_t                  GPIO2_CTRL;
-        GPIO3_STATUS_t                GPIO3_STATUS;
-        GPIO3_CTRL_t                  GPIO3_CTRL;
-        GPIO4_STATUS_t                GPIO4_STATUS;
-        GPIO4_CTRL_t                  GPIO4_CTRL;
-        GPIO5_STATUS_t                GPIO5_STATUS;
-        GPIO5_CTRL_t                  GPIO5_CTRL;
-        GPIO6_STATUS_t                GPIO6_STATUS;
-        GPIO6_CTRL_t                  GPIO6_CTRL;
-        GPIO7_STATUS_t                GPIO7_STATUS;
-        GPIO7_CTRL_t                  GPIO7_CTRL;
-        GPIO8_STATUS_t                GPIO8_STATUS;
-        GPIO8_CTRL_t                  GPIO8_CTRL;
-        GPIO9_STATUS_t                GPIO9_STATUS;
-        GPIO9_CTRL_t                  GPIO9_CTRL;
-        GPIO10_STATUS_t               GPIO10_STATUS;
-        GPIO10_CTRL_t                 GPIO10_CTRL;
-        GPIO11_STATUS_t               GPIO11_STATUS;
-        GPIO11_CTRL_t                 GPIO11_CTRL;
-        GPIO12_STATUS_t               GPIO12_STATUS;
-        GPIO12_CTRL_t                 GPIO12_CTRL;
-        GPIO13_STATUS_t               GPIO13_STATUS;
-        GPIO13_CTRL_t                 GPIO13_CTRL;
-        GPIO14_STATUS_t               GPIO14_STATUS;
-        GPIO14_CTRL_t                 GPIO14_CTRL;
-        GPIO15_STATUS_t               GPIO15_STATUS;
-        GPIO15_CTRL_t                 GPIO15_CTRL;
-        GPIO16_STATUS_t               GPIO16_STATUS;
-        GPIO16_CTRL_t                 GPIO16_CTRL;
-        GPIO17_STATUS_t               GPIO17_STATUS;
-        GPIO17_CTRL_t                 GPIO17_CTRL;
-        GPIO18_STATUS_t               GPIO18_STATUS;
-        GPIO18_CTRL_t                 GPIO18_CTRL;
-        GPIO19_STATUS_t               GPIO19_STATUS;
-        GPIO19_CTRL_t                 GPIO19_CTRL;
-        GPIO20_STATUS_t               GPIO20_STATUS;
-        GPIO20_CTRL_t                 GPIO20_CTRL;
-        GPIO21_STATUS_t               GPIO21_STATUS;
-        GPIO21_CTRL_t                 GPIO21_CTRL;
-        GPIO22_STATUS_t               GPIO22_STATUS;
-        GPIO22_CTRL_t                 GPIO22_CTRL;
-        GPIO23_STATUS_t               GPIO23_STATUS;
-        GPIO23_CTRL_t                 GPIO23_CTRL;
-        GPIO24_STATUS_t               GPIO24_STATUS;
-        GPIO24_CTRL_t                 GPIO24_CTRL;
-        GPIO25_STATUS_t               GPIO25_STATUS;
-        GPIO25_CTRL_t                 GPIO25_CTRL;
-        GPIO26_STATUS_t               GPIO26_STATUS;
-        GPIO26_CTRL_t                 GPIO26_CTRL;
-        GPIO27_STATUS_t               GPIO27_STATUS;
-        GPIO27_CTRL_t                 GPIO27_CTRL;
-        GPIO28_STATUS_t               GPIO28_STATUS;
-        GPIO28_CTRL_t                 GPIO28_CTRL;
-        GPIO29_STATUS_t               GPIO29_STATUS;
-        GPIO29_CTRL_t                 GPIO29_CTRL;
+        GPIO_STATUS_t                 GPIO0_STATUS;
+        GPIO_CTRL_t                   GPIO0_CTRL;
+        GPIO_STATUS_t                 GPIO1_STATUS;
+        GPIO_CTRL_t                   GPIO1_CTRL;
+        GPIO_STATUS_t                 GPIO2_STATUS;
+        GPIO_CTRL_t                   GPIO2_CTRL;
+        GPIO_STATUS_t                 GPIO3_STATUS;
+        GPIO_CTRL_t                   GPIO3_CTRL;
+        GPIO_STATUS_t                 GPIO4_STATUS;
+        GPIO_CTRL_t                   GPIO4_CTRL;
+        GPIO_STATUS_t                 GPIO5_STATUS;
+        GPIO_CTRL_t                   GPIO5_CTRL;
+        GPIO_STATUS_t                 GPIO6_STATUS;
+        GPIO_CTRL_t                   GPIO6_CTRL;
+        GPIO_STATUS_t                 GPIO7_STATUS;
+        GPIO_CTRL_t                   GPIO7_CTRL;
+        GPIO_STATUS_t                 GPIO8_STATUS;
+        GPIO_CTRL_t                   GPIO8_CTRL;
+        GPIO_STATUS_t                 GPIO9_STATUS;
+        GPIO_CTRL_t                   GPIO9_CTRL;
+        GPIO_STATUS_t                 GPIO10_STATUS;
+        GPIO_CTRL_t                   GPIO10_CTRL;
+        GPIO_STATUS_t                 GPIO11_STATUS;
+        GPIO_CTRL_t                   GPIO11_CTRL;
+        GPIO_STATUS_t                 GPIO12_STATUS;
+        GPIO_CTRL_t                   GPIO12_CTRL;
+        GPIO_STATUS_t                 GPIO13_STATUS;
+        GPIO_CTRL_t                   GPIO13_CTRL;
+        GPIO_STATUS_t                 GPIO14_STATUS;
+        GPIO_CTRL_t                   GPIO14_CTRL;
+        GPIO_STATUS_t                 GPIO15_STATUS;
+        GPIO_CTRL_t                   GPIO15_CTRL;
+        GPIO_STATUS_t                 GPIO16_STATUS;
+        GPIO_CTRL_t                   GPIO16_CTRL;
+        GPIO_STATUS_t                 GPIO17_STATUS;
+        GPIO_CTRL_t                   GPIO17_CTRL;
+        GPIO_STATUS_t                 GPIO18_STATUS;
+        GPIO_CTRL_t                   GPIO18_CTRL;
+        GPIO_STATUS_t                 GPIO19_STATUS;
+        GPIO_CTRL_t                   GPIO19_CTRL;
+        GPIO_STATUS_t                 GPIO20_STATUS;
+        GPIO_CTRL_t                   GPIO20_CTRL;
+        GPIO_STATUS_t                 GPIO21_STATUS;
+        GPIO_CTRL_t                   GPIO21_CTRL;
+        GPIO_STATUS_t                 GPIO22_STATUS;
+        GPIO_CTRL_t                   GPIO22_CTRL;
+        GPIO_STATUS_t                 GPIO23_STATUS;
+        GPIO_CTRL_t                   GPIO23_CTRL;
+        GPIO_STATUS_t                 GPIO24_STATUS;
+        GPIO_CTRL_t                   GPIO24_CTRL;
+        GPIO_STATUS_t                 GPIO25_STATUS;
+        GPIO_CTRL_t                   GPIO25_CTRL;
+        GPIO_STATUS_t                 GPIO26_STATUS;
+        GPIO_CTRL_t                   GPIO26_CTRL;
+        GPIO_STATUS_t                 GPIO27_STATUS;
+        GPIO_CTRL_t                   GPIO27_CTRL;
+        GPIO_STATUS_t                 GPIO28_STATUS;
+        GPIO_CTRL_t                   GPIO28_CTRL;
+        GPIO_STATUS_t                 GPIO29_STATUS;
+        GPIO_CTRL_t                   GPIO29_CTRL;
         INTR0_t                       INTR0;
         INTR1_t                       INTR1;
         INTR2_t                       INTR2;
@@ -6461,7 +4267,7 @@ namespace _XOSC_  {
         STATUS_t                      STATUS;
         DORMANT_t                     DORMANT;
         STARTUP_t                     STARTUP;
-        uint32_t                      reserved1[3];
+        uint32_t                      reserved0[3];
         COUNT_t                       COUNT;
     };
 
@@ -7056,9 +4862,9 @@ namespace _UART0_  {
     struct UART0_t {
         UARTDR_t                      UARTDR;
         UARTRSR_t                     UARTRSR;
-        uint32_t                      reserved1[4];
+        uint32_t                      reserved0[4];
         UARTFR_t                      UARTFR;
-        uint32_t                      reserved2[1];
+        uint32_t                      reserved1;
         UARTILPR_t                    UARTILPR;
         UARTIBRD_t                    UARTIBRD;
         UARTFBRD_t                    UARTFBRD;
@@ -7070,7 +4876,7 @@ namespace _UART0_  {
         UARTMIS_t                     UARTMIS;
         UARTICR_t                     UARTICR;
         UARTDMACR_t                   UARTDMACR;
-        uint32_t                      reserved3[997];
+        uint32_t                      reserved2[997];
         UARTPERIPHID0_t               UARTPERIPHID0;
         UARTPERIPHID1_t               UARTPERIPHID1;
         UARTPERIPHID2_t               UARTPERIPHID2;
@@ -7284,7 +5090,7 @@ namespace _SPI0_  {
         SSPMIS_t                      SSPMIS;
         SSPICR_t                      SSPICR;
         SSPDMACR_t                    SSPDMACR;
-        uint32_t                      reserved1[1006];
+        uint32_t                      reserved0[1006];
         SSPPERIPHID0_t                SSPPERIPHID0;
         SSPPERIPHID1_t                SSPPERIPHID1;
         SSPPERIPHID2_t                SSPPERIPHID2;
@@ -8597,13 +6403,13 @@ namespace _I2C0_  {
         IC_CON_t                      IC_CON;
         IC_TAR_t                      IC_TAR;
         IC_SAR_t                      IC_SAR;
-        uint32_t                      reserved1[1];
+        uint32_t                      reserved0;
         IC_DATA_CMD_t                 IC_DATA_CMD;
         IC_SS_SCL_HCNT_t              IC_SS_SCL_HCNT;
         IC_SS_SCL_LCNT_t              IC_SS_SCL_LCNT;
         IC_FS_SCL_HCNT_t              IC_FS_SCL_HCNT;
         IC_FS_SCL_LCNT_t              IC_FS_SCL_LCNT;
-        uint32_t                      reserved2[2];
+        uint32_t                      reserved1[2];
         IC_INTR_STAT_t                IC_INTR_STAT;
         IC_INTR_MASK_t                IC_INTR_MASK;
         IC_RAW_INTR_STAT_t            IC_RAW_INTR_STAT;
@@ -8634,9 +6440,9 @@ namespace _I2C0_  {
         IC_ACK_GENERAL_CALL_t         IC_ACK_GENERAL_CALL;
         IC_ENABLE_STATUS_t            IC_ENABLE_STATUS;
         IC_FS_SPKLEN_t                IC_FS_SPKLEN;
-        uint32_t                      reserved3[1];
+        uint32_t                      reserved2;
         IC_CLR_RESTART_DET_t          IC_CLR_RESTART_DET;
-        uint32_t                      reserved4[18];
+        uint32_t                      reserved3[18];
         IC_COMP_PARAM_1_t             IC_COMP_PARAM_1;
         IC_COMP_VERSION_t             IC_COMP_VERSION;
         IC_COMP_TYPE_t                IC_COMP_TYPE;
@@ -8794,7 +6600,7 @@ namespace _PWM_  {
 
     // Control and status register
     // Reset value: 0x00000000
-    BEGIN_TYPE(CH0_CSR_t, uint32_t)
+    BEGIN_TYPE(CH_CSR_t, uint32_t)
         // Advance the phase of the counter by 1 count, while it is running.
         // Self-clearing. Write a 1, and poll until low. Counter must be running
         // at less than full speed (div_int + div_frac / 16 > 1)
@@ -8814,446 +6620,40 @@ namespace _PWM_  {
     END_TYPE()
 
     // Free-running counting at rate dictated by fractional divider
-    static const uint32_t CH0_CSR_DIVMODE__div = 0;
+    static const uint32_t CH_CSR_DIVMODE__div = 0;
     // Fractional divider operation is gated by the PWM B pin.
-    static const uint32_t CH0_CSR_DIVMODE__level = 1;
+    static const uint32_t CH_CSR_DIVMODE__level = 1;
     // Counter advances with each rising edge of the PWM B pin.
-    static const uint32_t CH0_CSR_DIVMODE__rise = 2;
+    static const uint32_t CH_CSR_DIVMODE__rise = 2;
     // Counter advances with each falling edge of the PWM B pin.
-    static const uint32_t CH0_CSR_DIVMODE__fall = 3;
+    static const uint32_t CH_CSR_DIVMODE__fall = 3;
 
     // INT and FRAC form a fixed-point fractional number.
     // Counting rate is system clock frequency divided by this number.
     // Fractional division uses simple 1st-order sigma-delta.
     // Reset value: 0x00000010
-    BEGIN_TYPE(CH0_DIV_t, uint32_t)
+    BEGIN_TYPE(CH_DIV_t, uint32_t)
         ADD_BITFIELD_RW(INT, 4, 8)
         ADD_BITFIELD_RW(FRAC, 0, 4)
     END_TYPE()
 
     // Direct access to the PWM counter
     // Reset value: 0x00000000
-    BEGIN_TYPE(CH0_CTR_t, uint32_t)
-        ADD_BITFIELD_RW(CH0_CTR, 0, 16)
+    BEGIN_TYPE(CH_CTR_t, uint32_t)
+        ADD_BITFIELD_RW(CTR, 0, 16)
     END_TYPE()
 
     // Counter compare values
     // Reset value: 0x00000000
-    BEGIN_TYPE(CH0_CC_t, uint32_t)
+    BEGIN_TYPE(CH_CC_t, uint32_t)
         ADD_BITFIELD_RW(B, 16, 16)
         ADD_BITFIELD_RW(A, 0, 16)
     END_TYPE()
 
     // Counter wrap value
     // Reset value: 0x0000ffff
-    BEGIN_TYPE(CH0_TOP_t, uint32_t)
-        ADD_BITFIELD_RW(CH0_TOP, 0, 16)
-    END_TYPE()
-
-    // Control and status register
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH1_CSR_t, uint32_t)
-        // Advance the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running
-        // at less than full speed (div_int + div_frac / 16 > 1)
-        ADD_BITFIELD_RW(PH_ADV, 7, 1)
-        // Retard the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running.
-        ADD_BITFIELD_RW(PH_RET, 6, 1)
-        ADD_BITFIELD_RW(DIVMODE, 4, 2)
-        // Invert output B
-        ADD_BITFIELD_RW(B_INV, 3, 1)
-        // Invert output A
-        ADD_BITFIELD_RW(A_INV, 2, 1)
-        // 1: Enable phase-correct modulation. 0: Trailing-edge
-        ADD_BITFIELD_RW(PH_CORRECT, 1, 1)
-        // Enable the PWM channel.
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Free-running counting at rate dictated by fractional divider
-    static const uint32_t CH1_CSR_DIVMODE__div = 0;
-    // Fractional divider operation is gated by the PWM B pin.
-    static const uint32_t CH1_CSR_DIVMODE__level = 1;
-    // Counter advances with each rising edge of the PWM B pin.
-    static const uint32_t CH1_CSR_DIVMODE__rise = 2;
-    // Counter advances with each falling edge of the PWM B pin.
-    static const uint32_t CH1_CSR_DIVMODE__fall = 3;
-
-    // INT and FRAC form a fixed-point fractional number.
-    // Counting rate is system clock frequency divided by this number.
-    // Fractional division uses simple 1st-order sigma-delta.
-    // Reset value: 0x00000010
-    BEGIN_TYPE(CH1_DIV_t, uint32_t)
-        ADD_BITFIELD_RW(INT, 4, 8)
-        ADD_BITFIELD_RW(FRAC, 0, 4)
-    END_TYPE()
-
-    // Direct access to the PWM counter
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH1_CTR_t, uint32_t)
-        ADD_BITFIELD_RW(CH1_CTR, 0, 16)
-    END_TYPE()
-
-    // Counter compare values
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH1_CC_t, uint32_t)
-        ADD_BITFIELD_RW(B, 16, 16)
-        ADD_BITFIELD_RW(A, 0, 16)
-    END_TYPE()
-
-    // Counter wrap value
-    // Reset value: 0x0000ffff
-    BEGIN_TYPE(CH1_TOP_t, uint32_t)
-        ADD_BITFIELD_RW(CH1_TOP, 0, 16)
-    END_TYPE()
-
-    // Control and status register
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH2_CSR_t, uint32_t)
-        // Advance the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running
-        // at less than full speed (div_int + div_frac / 16 > 1)
-        ADD_BITFIELD_RW(PH_ADV, 7, 1)
-        // Retard the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running.
-        ADD_BITFIELD_RW(PH_RET, 6, 1)
-        ADD_BITFIELD_RW(DIVMODE, 4, 2)
-        // Invert output B
-        ADD_BITFIELD_RW(B_INV, 3, 1)
-        // Invert output A
-        ADD_BITFIELD_RW(A_INV, 2, 1)
-        // 1: Enable phase-correct modulation. 0: Trailing-edge
-        ADD_BITFIELD_RW(PH_CORRECT, 1, 1)
-        // Enable the PWM channel.
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Free-running counting at rate dictated by fractional divider
-    static const uint32_t CH2_CSR_DIVMODE__div = 0;
-    // Fractional divider operation is gated by the PWM B pin.
-    static const uint32_t CH2_CSR_DIVMODE__level = 1;
-    // Counter advances with each rising edge of the PWM B pin.
-    static const uint32_t CH2_CSR_DIVMODE__rise = 2;
-    // Counter advances with each falling edge of the PWM B pin.
-    static const uint32_t CH2_CSR_DIVMODE__fall = 3;
-
-    // INT and FRAC form a fixed-point fractional number.
-    // Counting rate is system clock frequency divided by this number.
-    // Fractional division uses simple 1st-order sigma-delta.
-    // Reset value: 0x00000010
-    BEGIN_TYPE(CH2_DIV_t, uint32_t)
-        ADD_BITFIELD_RW(INT, 4, 8)
-        ADD_BITFIELD_RW(FRAC, 0, 4)
-    END_TYPE()
-
-    // Direct access to the PWM counter
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH2_CTR_t, uint32_t)
-        ADD_BITFIELD_RW(CH2_CTR, 0, 16)
-    END_TYPE()
-
-    // Counter compare values
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH2_CC_t, uint32_t)
-        ADD_BITFIELD_RW(B, 16, 16)
-        ADD_BITFIELD_RW(A, 0, 16)
-    END_TYPE()
-
-    // Counter wrap value
-    // Reset value: 0x0000ffff
-    BEGIN_TYPE(CH2_TOP_t, uint32_t)
-        ADD_BITFIELD_RW(CH2_TOP, 0, 16)
-    END_TYPE()
-
-    // Control and status register
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH3_CSR_t, uint32_t)
-        // Advance the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running
-        // at less than full speed (div_int + div_frac / 16 > 1)
-        ADD_BITFIELD_RW(PH_ADV, 7, 1)
-        // Retard the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running.
-        ADD_BITFIELD_RW(PH_RET, 6, 1)
-        ADD_BITFIELD_RW(DIVMODE, 4, 2)
-        // Invert output B
-        ADD_BITFIELD_RW(B_INV, 3, 1)
-        // Invert output A
-        ADD_BITFIELD_RW(A_INV, 2, 1)
-        // 1: Enable phase-correct modulation. 0: Trailing-edge
-        ADD_BITFIELD_RW(PH_CORRECT, 1, 1)
-        // Enable the PWM channel.
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Free-running counting at rate dictated by fractional divider
-    static const uint32_t CH3_CSR_DIVMODE__div = 0;
-    // Fractional divider operation is gated by the PWM B pin.
-    static const uint32_t CH3_CSR_DIVMODE__level = 1;
-    // Counter advances with each rising edge of the PWM B pin.
-    static const uint32_t CH3_CSR_DIVMODE__rise = 2;
-    // Counter advances with each falling edge of the PWM B pin.
-    static const uint32_t CH3_CSR_DIVMODE__fall = 3;
-
-    // INT and FRAC form a fixed-point fractional number.
-    // Counting rate is system clock frequency divided by this number.
-    // Fractional division uses simple 1st-order sigma-delta.
-    // Reset value: 0x00000010
-    BEGIN_TYPE(CH3_DIV_t, uint32_t)
-        ADD_BITFIELD_RW(INT, 4, 8)
-        ADD_BITFIELD_RW(FRAC, 0, 4)
-    END_TYPE()
-
-    // Direct access to the PWM counter
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH3_CTR_t, uint32_t)
-        ADD_BITFIELD_RW(CH3_CTR, 0, 16)
-    END_TYPE()
-
-    // Counter compare values
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH3_CC_t, uint32_t)
-        ADD_BITFIELD_RW(B, 16, 16)
-        ADD_BITFIELD_RW(A, 0, 16)
-    END_TYPE()
-
-    // Counter wrap value
-    // Reset value: 0x0000ffff
-    BEGIN_TYPE(CH3_TOP_t, uint32_t)
-        ADD_BITFIELD_RW(CH3_TOP, 0, 16)
-    END_TYPE()
-
-    // Control and status register
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH4_CSR_t, uint32_t)
-        // Advance the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running
-        // at less than full speed (div_int + div_frac / 16 > 1)
-        ADD_BITFIELD_RW(PH_ADV, 7, 1)
-        // Retard the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running.
-        ADD_BITFIELD_RW(PH_RET, 6, 1)
-        ADD_BITFIELD_RW(DIVMODE, 4, 2)
-        // Invert output B
-        ADD_BITFIELD_RW(B_INV, 3, 1)
-        // Invert output A
-        ADD_BITFIELD_RW(A_INV, 2, 1)
-        // 1: Enable phase-correct modulation. 0: Trailing-edge
-        ADD_BITFIELD_RW(PH_CORRECT, 1, 1)
-        // Enable the PWM channel.
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Free-running counting at rate dictated by fractional divider
-    static const uint32_t CH4_CSR_DIVMODE__div = 0;
-    // Fractional divider operation is gated by the PWM B pin.
-    static const uint32_t CH4_CSR_DIVMODE__level = 1;
-    // Counter advances with each rising edge of the PWM B pin.
-    static const uint32_t CH4_CSR_DIVMODE__rise = 2;
-    // Counter advances with each falling edge of the PWM B pin.
-    static const uint32_t CH4_CSR_DIVMODE__fall = 3;
-
-    // INT and FRAC form a fixed-point fractional number.
-    // Counting rate is system clock frequency divided by this number.
-    // Fractional division uses simple 1st-order sigma-delta.
-    // Reset value: 0x00000010
-    BEGIN_TYPE(CH4_DIV_t, uint32_t)
-        ADD_BITFIELD_RW(INT, 4, 8)
-        ADD_BITFIELD_RW(FRAC, 0, 4)
-    END_TYPE()
-
-    // Direct access to the PWM counter
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH4_CTR_t, uint32_t)
-        ADD_BITFIELD_RW(CH4_CTR, 0, 16)
-    END_TYPE()
-
-    // Counter compare values
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH4_CC_t, uint32_t)
-        ADD_BITFIELD_RW(B, 16, 16)
-        ADD_BITFIELD_RW(A, 0, 16)
-    END_TYPE()
-
-    // Counter wrap value
-    // Reset value: 0x0000ffff
-    BEGIN_TYPE(CH4_TOP_t, uint32_t)
-        ADD_BITFIELD_RW(CH4_TOP, 0, 16)
-    END_TYPE()
-
-    // Control and status register
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH5_CSR_t, uint32_t)
-        // Advance the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running
-        // at less than full speed (div_int + div_frac / 16 > 1)
-        ADD_BITFIELD_RW(PH_ADV, 7, 1)
-        // Retard the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running.
-        ADD_BITFIELD_RW(PH_RET, 6, 1)
-        ADD_BITFIELD_RW(DIVMODE, 4, 2)
-        // Invert output B
-        ADD_BITFIELD_RW(B_INV, 3, 1)
-        // Invert output A
-        ADD_BITFIELD_RW(A_INV, 2, 1)
-        // 1: Enable phase-correct modulation. 0: Trailing-edge
-        ADD_BITFIELD_RW(PH_CORRECT, 1, 1)
-        // Enable the PWM channel.
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Free-running counting at rate dictated by fractional divider
-    static const uint32_t CH5_CSR_DIVMODE__div = 0;
-    // Fractional divider operation is gated by the PWM B pin.
-    static const uint32_t CH5_CSR_DIVMODE__level = 1;
-    // Counter advances with each rising edge of the PWM B pin.
-    static const uint32_t CH5_CSR_DIVMODE__rise = 2;
-    // Counter advances with each falling edge of the PWM B pin.
-    static const uint32_t CH5_CSR_DIVMODE__fall = 3;
-
-    // INT and FRAC form a fixed-point fractional number.
-    // Counting rate is system clock frequency divided by this number.
-    // Fractional division uses simple 1st-order sigma-delta.
-    // Reset value: 0x00000010
-    BEGIN_TYPE(CH5_DIV_t, uint32_t)
-        ADD_BITFIELD_RW(INT, 4, 8)
-        ADD_BITFIELD_RW(FRAC, 0, 4)
-    END_TYPE()
-
-    // Direct access to the PWM counter
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH5_CTR_t, uint32_t)
-        ADD_BITFIELD_RW(CH5_CTR, 0, 16)
-    END_TYPE()
-
-    // Counter compare values
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH5_CC_t, uint32_t)
-        ADD_BITFIELD_RW(B, 16, 16)
-        ADD_BITFIELD_RW(A, 0, 16)
-    END_TYPE()
-
-    // Counter wrap value
-    // Reset value: 0x0000ffff
-    BEGIN_TYPE(CH5_TOP_t, uint32_t)
-        ADD_BITFIELD_RW(CH5_TOP, 0, 16)
-    END_TYPE()
-
-    // Control and status register
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH6_CSR_t, uint32_t)
-        // Advance the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running
-        // at less than full speed (div_int + div_frac / 16 > 1)
-        ADD_BITFIELD_RW(PH_ADV, 7, 1)
-        // Retard the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running.
-        ADD_BITFIELD_RW(PH_RET, 6, 1)
-        ADD_BITFIELD_RW(DIVMODE, 4, 2)
-        // Invert output B
-        ADD_BITFIELD_RW(B_INV, 3, 1)
-        // Invert output A
-        ADD_BITFIELD_RW(A_INV, 2, 1)
-        // 1: Enable phase-correct modulation. 0: Trailing-edge
-        ADD_BITFIELD_RW(PH_CORRECT, 1, 1)
-        // Enable the PWM channel.
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Free-running counting at rate dictated by fractional divider
-    static const uint32_t CH6_CSR_DIVMODE__div = 0;
-    // Fractional divider operation is gated by the PWM B pin.
-    static const uint32_t CH6_CSR_DIVMODE__level = 1;
-    // Counter advances with each rising edge of the PWM B pin.
-    static const uint32_t CH6_CSR_DIVMODE__rise = 2;
-    // Counter advances with each falling edge of the PWM B pin.
-    static const uint32_t CH6_CSR_DIVMODE__fall = 3;
-
-    // INT and FRAC form a fixed-point fractional number.
-    // Counting rate is system clock frequency divided by this number.
-    // Fractional division uses simple 1st-order sigma-delta.
-    // Reset value: 0x00000010
-    BEGIN_TYPE(CH6_DIV_t, uint32_t)
-        ADD_BITFIELD_RW(INT, 4, 8)
-        ADD_BITFIELD_RW(FRAC, 0, 4)
-    END_TYPE()
-
-    // Direct access to the PWM counter
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH6_CTR_t, uint32_t)
-        ADD_BITFIELD_RW(CH6_CTR, 0, 16)
-    END_TYPE()
-
-    // Counter compare values
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH6_CC_t, uint32_t)
-        ADD_BITFIELD_RW(B, 16, 16)
-        ADD_BITFIELD_RW(A, 0, 16)
-    END_TYPE()
-
-    // Counter wrap value
-    // Reset value: 0x0000ffff
-    BEGIN_TYPE(CH6_TOP_t, uint32_t)
-        ADD_BITFIELD_RW(CH6_TOP, 0, 16)
-    END_TYPE()
-
-    // Control and status register
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH7_CSR_t, uint32_t)
-        // Advance the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running
-        // at less than full speed (div_int + div_frac / 16 > 1)
-        ADD_BITFIELD_RW(PH_ADV, 7, 1)
-        // Retard the phase of the counter by 1 count, while it is running.
-        // Self-clearing. Write a 1, and poll until low. Counter must be running.
-        ADD_BITFIELD_RW(PH_RET, 6, 1)
-        ADD_BITFIELD_RW(DIVMODE, 4, 2)
-        // Invert output B
-        ADD_BITFIELD_RW(B_INV, 3, 1)
-        // Invert output A
-        ADD_BITFIELD_RW(A_INV, 2, 1)
-        // 1: Enable phase-correct modulation. 0: Trailing-edge
-        ADD_BITFIELD_RW(PH_CORRECT, 1, 1)
-        // Enable the PWM channel.
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Free-running counting at rate dictated by fractional divider
-    static const uint32_t CH7_CSR_DIVMODE__div = 0;
-    // Fractional divider operation is gated by the PWM B pin.
-    static const uint32_t CH7_CSR_DIVMODE__level = 1;
-    // Counter advances with each rising edge of the PWM B pin.
-    static const uint32_t CH7_CSR_DIVMODE__rise = 2;
-    // Counter advances with each falling edge of the PWM B pin.
-    static const uint32_t CH7_CSR_DIVMODE__fall = 3;
-
-    // INT and FRAC form a fixed-point fractional number.
-    // Counting rate is system clock frequency divided by this number.
-    // Fractional division uses simple 1st-order sigma-delta.
-    // Reset value: 0x00000010
-    BEGIN_TYPE(CH7_DIV_t, uint32_t)
-        ADD_BITFIELD_RW(INT, 4, 8)
-        ADD_BITFIELD_RW(FRAC, 0, 4)
-    END_TYPE()
-
-    // Direct access to the PWM counter
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH7_CTR_t, uint32_t)
-        ADD_BITFIELD_RW(CH7_CTR, 0, 16)
-    END_TYPE()
-
-    // Counter compare values
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH7_CC_t, uint32_t)
-        ADD_BITFIELD_RW(B, 16, 16)
-        ADD_BITFIELD_RW(A, 0, 16)
-    END_TYPE()
-
-    // Counter wrap value
-    // Reset value: 0x0000ffff
-    BEGIN_TYPE(CH7_TOP_t, uint32_t)
-        ADD_BITFIELD_RW(CH7_TOP, 0, 16)
+    BEGIN_TYPE(CH_TOP_t, uint32_t)
+        ADD_BITFIELD_RW(TOP, 0, 16)
     END_TYPE()
 
     // This register aliases the CSR_EN bits for all channels.
@@ -9326,46 +6726,46 @@ namespace _PWM_  {
     END_TYPE()
 
     struct PWM_t {
-        CH0_CSR_t                     CH0_CSR;
-        CH0_DIV_t                     CH0_DIV;
-        CH0_CTR_t                     CH0_CTR;
-        CH0_CC_t                      CH0_CC;
-        CH0_TOP_t                     CH0_TOP;
-        CH1_CSR_t                     CH1_CSR;
-        CH1_DIV_t                     CH1_DIV;
-        CH1_CTR_t                     CH1_CTR;
-        CH1_CC_t                      CH1_CC;
-        CH1_TOP_t                     CH1_TOP;
-        CH2_CSR_t                     CH2_CSR;
-        CH2_DIV_t                     CH2_DIV;
-        CH2_CTR_t                     CH2_CTR;
-        CH2_CC_t                      CH2_CC;
-        CH2_TOP_t                     CH2_TOP;
-        CH3_CSR_t                     CH3_CSR;
-        CH3_DIV_t                     CH3_DIV;
-        CH3_CTR_t                     CH3_CTR;
-        CH3_CC_t                      CH3_CC;
-        CH3_TOP_t                     CH3_TOP;
-        CH4_CSR_t                     CH4_CSR;
-        CH4_DIV_t                     CH4_DIV;
-        CH4_CTR_t                     CH4_CTR;
-        CH4_CC_t                      CH4_CC;
-        CH4_TOP_t                     CH4_TOP;
-        CH5_CSR_t                     CH5_CSR;
-        CH5_DIV_t                     CH5_DIV;
-        CH5_CTR_t                     CH5_CTR;
-        CH5_CC_t                      CH5_CC;
-        CH5_TOP_t                     CH5_TOP;
-        CH6_CSR_t                     CH6_CSR;
-        CH6_DIV_t                     CH6_DIV;
-        CH6_CTR_t                     CH6_CTR;
-        CH6_CC_t                      CH6_CC;
-        CH6_TOP_t                     CH6_TOP;
-        CH7_CSR_t                     CH7_CSR;
-        CH7_DIV_t                     CH7_DIV;
-        CH7_CTR_t                     CH7_CTR;
-        CH7_CC_t                      CH7_CC;
-        CH7_TOP_t                     CH7_TOP;
+        CH_CSR_t                      CH0_CSR;
+        CH_DIV_t                      CH0_DIV;
+        CH_CTR_t                      CH0_CTR;
+        CH_CC_t                       CH0_CC;
+        CH_TOP_t                      CH0_TOP;
+        CH_CSR_t                      CH1_CSR;
+        CH_DIV_t                      CH1_DIV;
+        CH_CTR_t                      CH1_CTR;
+        CH_CC_t                       CH1_CC;
+        CH_TOP_t                      CH1_TOP;
+        CH_CSR_t                      CH2_CSR;
+        CH_DIV_t                      CH2_DIV;
+        CH_CTR_t                      CH2_CTR;
+        CH_CC_t                       CH2_CC;
+        CH_TOP_t                      CH2_TOP;
+        CH_CSR_t                      CH3_CSR;
+        CH_DIV_t                      CH3_DIV;
+        CH_CTR_t                      CH3_CTR;
+        CH_CC_t                       CH3_CC;
+        CH_TOP_t                      CH3_TOP;
+        CH_CSR_t                      CH4_CSR;
+        CH_DIV_t                      CH4_DIV;
+        CH_CTR_t                      CH4_CTR;
+        CH_CC_t                       CH4_CC;
+        CH_TOP_t                      CH4_TOP;
+        CH_CSR_t                      CH5_CSR;
+        CH_DIV_t                      CH5_DIV;
+        CH_CTR_t                      CH5_CTR;
+        CH_CC_t                       CH5_CC;
+        CH_TOP_t                      CH5_TOP;
+        CH_CSR_t                      CH6_CSR;
+        CH_DIV_t                      CH6_DIV;
+        CH_CTR_t                      CH6_CTR;
+        CH_CC_t                       CH6_CC;
+        CH_TOP_t                      CH6_TOP;
+        CH_CSR_t                      CH7_CSR;
+        CH_DIV_t                      CH7_DIV;
+        CH_CTR_t                      CH7_CTR;
+        CH_CC_t                       CH7_CC;
+        CH_TOP_t                      CH7_TOP;
         EN_t                          EN;
         INTR_t                        INTR;
         INTE_t                        INTE;
@@ -9570,35 +6970,7 @@ namespace _WATCHDOG_  {
 
     // Scratch register. Information persists through soft reset of the chip.
     // Reset value: 0x00000000
-    typedef uint32_t SCRATCH0_t;
-
-    // Scratch register. Information persists through soft reset of the chip.
-    // Reset value: 0x00000000
-    typedef uint32_t SCRATCH1_t;
-
-    // Scratch register. Information persists through soft reset of the chip.
-    // Reset value: 0x00000000
-    typedef uint32_t SCRATCH2_t;
-
-    // Scratch register. Information persists through soft reset of the chip.
-    // Reset value: 0x00000000
-    typedef uint32_t SCRATCH3_t;
-
-    // Scratch register. Information persists through soft reset of the chip.
-    // Reset value: 0x00000000
-    typedef uint32_t SCRATCH4_t;
-
-    // Scratch register. Information persists through soft reset of the chip.
-    // Reset value: 0x00000000
-    typedef uint32_t SCRATCH5_t;
-
-    // Scratch register. Information persists through soft reset of the chip.
-    // Reset value: 0x00000000
-    typedef uint32_t SCRATCH6_t;
-
-    // Scratch register. Information persists through soft reset of the chip.
-    // Reset value: 0x00000000
-    typedef uint32_t SCRATCH7_t;
+    typedef uint32_t SCRATCH_t;
 
     // Controls the tick generator
     // Reset value: 0x00000200
@@ -9617,14 +6989,7 @@ namespace _WATCHDOG_  {
         CTRL_t                        CTRL;
         LOAD_t                        LOAD;
         REASON_t                      REASON;
-        SCRATCH0_t                    SCRATCH0;
-        SCRATCH1_t                    SCRATCH1;
-        SCRATCH2_t                    SCRATCH2;
-        SCRATCH3_t                    SCRATCH3;
-        SCRATCH4_t                    SCRATCH4;
-        SCRATCH5_t                    SCRATCH5;
-        SCRATCH6_t                    SCRATCH6;
-        SCRATCH7_t                    SCRATCH7;
+        SCRATCH_t                     SCRATCH[8];
         TICK_t                        TICK;
     };
 
@@ -10063,12 +7428,12 @@ namespace _DMA_  {
     // DMA Channel 0 Read Address pointer
     // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
     // Reset value: 0x00000000
-    typedef uint32_t CH0_READ_ADDR_t;
+    typedef uint32_t CH_READ_ADDR_t;
 
     // DMA Channel 0 Write Address pointer
     // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
     // Reset value: 0x00000000
-    typedef uint32_t CH0_WRITE_ADDR_t;
+    typedef uint32_t CH_WRITE_ADDR_t;
 
     // DMA Channel 0 Transfer Count
     // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
@@ -10079,11 +7444,11 @@ namespace _DMA_  {
     // 
     // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
     // Reset value: 0x00000000
-    typedef uint32_t CH0_TRANS_COUNT_t;
+    typedef uint32_t CH_TRANS_COUNT_t;
 
     // DMA Channel 0 Control and Status
     // Reset value: 0x00000000
-    BEGIN_TYPE(CH0_CTRL_TRIG_t, uint32_t)
+    BEGIN_TYPE(CH_CTRL_TRIG_t, uint32_t)
         // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
         ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
         // If 1, the channel received a read bus error. Write one to clear.
@@ -10140,1701 +7505,73 @@ namespace _DMA_  {
     END_TYPE()
 
     // Select Timer 0 as TREQ
-    static const uint32_t CH0_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
+    static const uint32_t CH_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
     // Select Timer 1 as TREQ
-    static const uint32_t CH0_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
+    static const uint32_t CH_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
     // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH0_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
+    static const uint32_t CH_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
     // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH0_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
+    static const uint32_t CH_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
     // Permanent request, for unpaced transfers.
-    static const uint32_t CH0_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH0_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH0_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH0_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH0_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
+    static const uint32_t CH_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
+    static const uint32_t CH_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
+    static const uint32_t CH_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
+    static const uint32_t CH_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
+    static const uint32_t CH_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
 
     // Alias for channel 0 CTRL register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL1_CTRL_t;
+    typedef uint32_t CH_AL1_CTRL_t;
 
     // Alias for channel 0 READ_ADDR register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL1_READ_ADDR_t;
+    typedef uint32_t CH_AL1_READ_ADDR_t;
 
     // Alias for channel 0 WRITE_ADDR register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL1_WRITE_ADDR_t;
+    typedef uint32_t CH_AL1_WRITE_ADDR_t;
 
     // Alias for channel 0 TRANS_COUNT register
     // This is a trigger register (0xc). Writing a nonzero value will
     // reload the channel counter and start the channel.
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL1_TRANS_COUNT_TRIG_t;
+    typedef uint32_t CH_AL1_TRANS_COUNT_TRIG_t;
 
     // Alias for channel 0 CTRL register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL2_CTRL_t;
+    typedef uint32_t CH_AL2_CTRL_t;
 
     // Alias for channel 0 TRANS_COUNT register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL2_TRANS_COUNT_t;
+    typedef uint32_t CH_AL2_TRANS_COUNT_t;
 
     // Alias for channel 0 READ_ADDR register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL2_READ_ADDR_t;
+    typedef uint32_t CH_AL2_READ_ADDR_t;
 
     // Alias for channel 0 WRITE_ADDR register
     // This is a trigger register (0xc). Writing a nonzero value will
     // reload the channel counter and start the channel.
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL2_WRITE_ADDR_TRIG_t;
+    typedef uint32_t CH_AL2_WRITE_ADDR_TRIG_t;
 
     // Alias for channel 0 CTRL register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL3_CTRL_t;
+    typedef uint32_t CH_AL3_CTRL_t;
 
     // Alias for channel 0 WRITE_ADDR register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL3_WRITE_ADDR_t;
+    typedef uint32_t CH_AL3_WRITE_ADDR_t;
 
     // Alias for channel 0 TRANS_COUNT register
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL3_TRANS_COUNT_t;
+    typedef uint32_t CH_AL3_TRANS_COUNT_t;
 
     // Alias for channel 0 READ_ADDR register
     // This is a trigger register (0xc). Writing a nonzero value will
     // reload the channel counter and start the channel.
     // Reset value: 0x00000000
-    typedef uint32_t CH0_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 1 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_READ_ADDR_t;
-
-    // DMA Channel 1 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_WRITE_ADDR_t;
-
-    // DMA Channel 1 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_TRANS_COUNT_t;
-
-    // DMA Channel 1 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH1_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH1_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH1_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH1_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH1_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH1_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH1_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH1_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH1_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH1_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 1 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL1_CTRL_t;
-
-    // Alias for channel 1 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL1_READ_ADDR_t;
-
-    // Alias for channel 1 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 1 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 1 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL2_CTRL_t;
-
-    // Alias for channel 1 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 1 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL2_READ_ADDR_t;
-
-    // Alias for channel 1 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 1 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL3_CTRL_t;
-
-    // Alias for channel 1 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 1 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 1 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 2 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_READ_ADDR_t;
-
-    // DMA Channel 2 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_WRITE_ADDR_t;
-
-    // DMA Channel 2 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_TRANS_COUNT_t;
-
-    // DMA Channel 2 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH2_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH2_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH2_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH2_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH2_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH2_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH2_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH2_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH2_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH2_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 2 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL1_CTRL_t;
-
-    // Alias for channel 2 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL1_READ_ADDR_t;
-
-    // Alias for channel 2 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 2 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 2 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL2_CTRL_t;
-
-    // Alias for channel 2 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 2 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL2_READ_ADDR_t;
-
-    // Alias for channel 2 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 2 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL3_CTRL_t;
-
-    // Alias for channel 2 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 2 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 2 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 3 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_READ_ADDR_t;
-
-    // DMA Channel 3 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_WRITE_ADDR_t;
-
-    // DMA Channel 3 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_TRANS_COUNT_t;
-
-    // DMA Channel 3 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH3_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH3_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH3_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH3_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH3_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH3_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH3_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH3_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH3_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH3_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 3 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL1_CTRL_t;
-
-    // Alias for channel 3 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL1_READ_ADDR_t;
-
-    // Alias for channel 3 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 3 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 3 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL2_CTRL_t;
-
-    // Alias for channel 3 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 3 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL2_READ_ADDR_t;
-
-    // Alias for channel 3 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 3 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL3_CTRL_t;
-
-    // Alias for channel 3 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 3 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 3 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 4 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_READ_ADDR_t;
-
-    // DMA Channel 4 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_WRITE_ADDR_t;
-
-    // DMA Channel 4 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_TRANS_COUNT_t;
-
-    // DMA Channel 4 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH4_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH4_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH4_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH4_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH4_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH4_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH4_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH4_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH4_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH4_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 4 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL1_CTRL_t;
-
-    // Alias for channel 4 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL1_READ_ADDR_t;
-
-    // Alias for channel 4 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 4 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 4 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL2_CTRL_t;
-
-    // Alias for channel 4 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 4 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL2_READ_ADDR_t;
-
-    // Alias for channel 4 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 4 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL3_CTRL_t;
-
-    // Alias for channel 4 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 4 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 4 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 5 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_READ_ADDR_t;
-
-    // DMA Channel 5 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_WRITE_ADDR_t;
-
-    // DMA Channel 5 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_TRANS_COUNT_t;
-
-    // DMA Channel 5 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH5_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH5_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH5_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH5_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH5_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH5_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH5_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH5_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH5_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH5_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 5 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL1_CTRL_t;
-
-    // Alias for channel 5 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL1_READ_ADDR_t;
-
-    // Alias for channel 5 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 5 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 5 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL2_CTRL_t;
-
-    // Alias for channel 5 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 5 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL2_READ_ADDR_t;
-
-    // Alias for channel 5 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 5 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL3_CTRL_t;
-
-    // Alias for channel 5 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 5 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 5 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 6 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_READ_ADDR_t;
-
-    // DMA Channel 6 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_WRITE_ADDR_t;
-
-    // DMA Channel 6 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_TRANS_COUNT_t;
-
-    // DMA Channel 6 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH6_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH6_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH6_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH6_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH6_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH6_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH6_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH6_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH6_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH6_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 6 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL1_CTRL_t;
-
-    // Alias for channel 6 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL1_READ_ADDR_t;
-
-    // Alias for channel 6 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 6 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 6 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL2_CTRL_t;
-
-    // Alias for channel 6 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 6 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL2_READ_ADDR_t;
-
-    // Alias for channel 6 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 6 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL3_CTRL_t;
-
-    // Alias for channel 6 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 6 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 6 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 7 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_READ_ADDR_t;
-
-    // DMA Channel 7 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_WRITE_ADDR_t;
-
-    // DMA Channel 7 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_TRANS_COUNT_t;
-
-    // DMA Channel 7 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH7_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH7_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH7_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH7_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH7_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH7_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH7_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH7_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH7_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH7_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 7 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL1_CTRL_t;
-
-    // Alias for channel 7 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL1_READ_ADDR_t;
-
-    // Alias for channel 7 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 7 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 7 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL2_CTRL_t;
-
-    // Alias for channel 7 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 7 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL2_READ_ADDR_t;
-
-    // Alias for channel 7 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 7 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL3_CTRL_t;
-
-    // Alias for channel 7 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 7 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 7 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 8 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_READ_ADDR_t;
-
-    // DMA Channel 8 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_WRITE_ADDR_t;
-
-    // DMA Channel 8 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_TRANS_COUNT_t;
-
-    // DMA Channel 8 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH8_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH8_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH8_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH8_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH8_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH8_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH8_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH8_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH8_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH8_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 8 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL1_CTRL_t;
-
-    // Alias for channel 8 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL1_READ_ADDR_t;
-
-    // Alias for channel 8 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 8 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 8 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL2_CTRL_t;
-
-    // Alias for channel 8 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 8 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL2_READ_ADDR_t;
-
-    // Alias for channel 8 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 8 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL3_CTRL_t;
-
-    // Alias for channel 8 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 8 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 8 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 9 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_READ_ADDR_t;
-
-    // DMA Channel 9 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_WRITE_ADDR_t;
-
-    // DMA Channel 9 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_TRANS_COUNT_t;
-
-    // DMA Channel 9 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH9_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH9_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH9_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH9_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH9_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH9_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH9_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH9_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH9_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH9_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 9 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL1_CTRL_t;
-
-    // Alias for channel 9 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL1_READ_ADDR_t;
-
-    // Alias for channel 9 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 9 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 9 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL2_CTRL_t;
-
-    // Alias for channel 9 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 9 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL2_READ_ADDR_t;
-
-    // Alias for channel 9 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 9 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL3_CTRL_t;
-
-    // Alias for channel 9 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 9 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 9 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 10 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_READ_ADDR_t;
-
-    // DMA Channel 10 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_WRITE_ADDR_t;
-
-    // DMA Channel 10 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_TRANS_COUNT_t;
-
-    // DMA Channel 10 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH10_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH10_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH10_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH10_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH10_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH10_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH10_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH10_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH10_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH10_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 10 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL1_CTRL_t;
-
-    // Alias for channel 10 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL1_READ_ADDR_t;
-
-    // Alias for channel 10 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 10 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 10 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL2_CTRL_t;
-
-    // Alias for channel 10 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 10 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL2_READ_ADDR_t;
-
-    // Alias for channel 10 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 10 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL3_CTRL_t;
-
-    // Alias for channel 10 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 10 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 10 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_AL3_READ_ADDR_TRIG_t;
-
-    // DMA Channel 11 Read Address pointer
-    // This register updates automatically each time a read completes. The current value is the next address to be read by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_READ_ADDR_t;
-
-    // DMA Channel 11 Write Address pointer
-    // This register updates automatically each time a write completes. The current value is the next address to be written by this channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_WRITE_ADDR_t;
-
-    // DMA Channel 11 Transfer Count
-    // Program the number of bus transfers a channel will perform before halting. Note that, if transfers are larger than one byte in size, this is not equal to the number of bytes transferred (see CTRL_DATA_SIZE).
-    // 
-    // When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.
-    // 
-    // Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.
-    // 
-    // The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_TRANS_COUNT_t;
-
-    // DMA Channel 11 Control and Status
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH11_CTRL_TRIG_t, uint32_t)
-        // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
-        ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
-        // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
-        ADD_BITFIELD_RW(READ_ERROR, 30, 1)
-        // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
-        ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
-        // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
-        // 
-        // To terminate a sequence early (and clear the BUSY flag), see CHAN_ABORT.
-        ADD_BITFIELD_RO(BUSY, 24, 1)
-        // If 1, this channel's data transfers are visible to the sniff hardware, and each transfer will advance the state of the checksum. This only applies if the sniff hardware is enabled, and has this channel selected.
-        // 
-        // This allows checksum to be enabled or disabled on a per-control- block basis.
-        ADD_BITFIELD_RW(SNIFF_EN, 23, 1)
-        // Apply byte-swap transformation to DMA data.
-        // For byte data, this has no effect. For halfword data, the two bytes of each halfword are swapped. For word data, the four bytes of each word are swapped to reverse order.
-        ADD_BITFIELD_RW(BSWAP, 22, 1)
-        // In QUIET mode, the channel does not generate IRQs at the end of every transfer block. Instead, an IRQ is raised when NULL is written to a trigger register, indicating the end of a control block chain.
-        // 
-        // This reduces the number of interrupts to be serviced by the CPU when transferring a DMA chain of many small control blocks.
-        ADD_BITFIELD_RW(IRQ_QUIET, 21, 1)
-        // Select a Transfer Request signal.
-        // The channel uses the transfer request signal to pace its data transfer rate. Sources for TREQ signals are internal (TIMERS) or external (DREQ, a Data Request from the system).
-        // 0x0 to 0x3a -> select DREQ n as TREQ
-        ADD_BITFIELD_RW(TREQ_SEL, 15, 6)
-        // When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.
-        ADD_BITFIELD_RW(CHAIN_TO, 11, 4)
-        // Select whether RING_SIZE applies to read or write addresses.
-        // If 0, read addresses are wrapped on a (1 << RING_SIZE) boundary. If 1, write addresses are wrapped.
-        ADD_BITFIELD_RW(RING_SEL, 10, 1)
-        // Size of address wrap region. If 0, don't wrap. For values n > 0, only the lower n bits of the address will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned ring buffers.
-        // 
-        // Ring sizes between 2 and 32768 bytes are possible. This can apply to either read or write addresses, based on value of RING_SEL.
-        ADD_BITFIELD_RW(RING_SIZE, 6, 4)
-        // If 1, the write address increments with each transfer. If 0, each write is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for memory-to-peripheral transfers.
-        ADD_BITFIELD_RW(INCR_WRITE, 5, 1)
-        // If 1, the read address increments with each transfer. If 0, each read is directed to the same, initial address.
-        // 
-        // Generally this should be disabled for peripheral-to-memory transfers.
-        ADD_BITFIELD_RW(INCR_READ, 4, 1)
-        // Set the size of each bus transfer (byte/halfword/word). READ_ADDR and WRITE_ADDR advance by this amount (1/2/4 bytes) with each transfer.
-        ADD_BITFIELD_RW(DATA_SIZE, 2, 2)
-        // HIGH_PRIORITY gives a channel preferential treatment in issue scheduling: in each scheduling round, all high priority channels are considered first, and then only a single low priority channel, before returning to the high priority channels.
-        // 
-        // This only affects the order in which the DMA schedules channels. The DMA's bus priority is not changed. If the DMA is not saturated then a low priority channel will see no loss of throughput.
-        ADD_BITFIELD_RW(HIGH_PRIORITY, 1, 1)
-        // DMA Channel Enable.
-        // When 1, the channel will respond to triggering events, which will cause it to become BUSY and start transferring data. When 0, the channel will ignore triggers, stop issuing transfers, and pause the current transfer sequence (i.e. BUSY will remain high if already high)
-        ADD_BITFIELD_RW(EN, 0, 1)
-    END_TYPE()
-
-    // Select Timer 0 as TREQ
-    static const uint32_t CH11_CTRL_TRIG_TREQ_SEL__TIMER0 = 59;
-    // Select Timer 1 as TREQ
-    static const uint32_t CH11_CTRL_TRIG_TREQ_SEL__TIMER1 = 60;
-    // Select Timer 2 as TREQ (Optional)
-    static const uint32_t CH11_CTRL_TRIG_TREQ_SEL__TIMER2 = 61;
-    // Select Timer 3 as TREQ (Optional)
-    static const uint32_t CH11_CTRL_TRIG_TREQ_SEL__TIMER3 = 62;
-    // Permanent request, for unpaced transfers.
-    static const uint32_t CH11_CTRL_TRIG_TREQ_SEL__PERMANENT = 63;
-    static const uint32_t CH11_CTRL_TRIG_RING_SIZE__RING_NONE = 0;
-    static const uint32_t CH11_CTRL_TRIG_DATA_SIZE__SIZE_BYTE = 0;
-    static const uint32_t CH11_CTRL_TRIG_DATA_SIZE__SIZE_HALFWORD = 1;
-    static const uint32_t CH11_CTRL_TRIG_DATA_SIZE__SIZE_WORD = 2;
-
-    // Alias for channel 11 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL1_CTRL_t;
-
-    // Alias for channel 11 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL1_READ_ADDR_t;
-
-    // Alias for channel 11 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL1_WRITE_ADDR_t;
-
-    // Alias for channel 11 TRANS_COUNT register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL1_TRANS_COUNT_TRIG_t;
-
-    // Alias for channel 11 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL2_CTRL_t;
-
-    // Alias for channel 11 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL2_TRANS_COUNT_t;
-
-    // Alias for channel 11 READ_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL2_READ_ADDR_t;
-
-    // Alias for channel 11 WRITE_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL2_WRITE_ADDR_TRIG_t;
-
-    // Alias for channel 11 CTRL register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL3_CTRL_t;
-
-    // Alias for channel 11 WRITE_ADDR register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL3_WRITE_ADDR_t;
-
-    // Alias for channel 11 TRANS_COUNT register
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL3_TRANS_COUNT_t;
-
-    // Alias for channel 11 READ_ADDR register
-    // This is a trigger register (0xc). Writing a nonzero value will
-    // reload the channel counter and start the channel.
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_AL3_READ_ADDR_TRIG_t;
+    typedef uint32_t CH_AL3_READ_ADDR_TRIG_t;
 
     // Interrupt Status (raw)
     // Reset value: 0x00000000
@@ -11896,37 +7633,7 @@ namespace _DMA_  {
     // Pacing (X/Y) Fractional Timer
     // The pacing timer produces TREQ assertions at a rate set by ((X/Y) * sys_clk). This equation is evaluated every sys_clk cycles and therefore can only generate TREQs at a rate of 1 per sys_clk (i.e. permanent TREQ) or less.
     // Reset value: 0x00000000
-    BEGIN_TYPE(TIMER0_t, uint32_t)
-        // Pacing Timer Dividend. Specifies the X value for the (X/Y) fractional timer.
-        ADD_BITFIELD_RW(X, 16, 16)
-        // Pacing Timer Divisor. Specifies the Y value for the (X/Y) fractional timer.
-        ADD_BITFIELD_RW(Y, 0, 16)
-    END_TYPE()
-
-    // Pacing (X/Y) Fractional Timer
-    // The pacing timer produces TREQ assertions at a rate set by ((X/Y) * sys_clk). This equation is evaluated every sys_clk cycles and therefore can only generate TREQs at a rate of 1 per sys_clk (i.e. permanent TREQ) or less.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(TIMER1_t, uint32_t)
-        // Pacing Timer Dividend. Specifies the X value for the (X/Y) fractional timer.
-        ADD_BITFIELD_RW(X, 16, 16)
-        // Pacing Timer Divisor. Specifies the Y value for the (X/Y) fractional timer.
-        ADD_BITFIELD_RW(Y, 0, 16)
-    END_TYPE()
-
-    // Pacing (X/Y) Fractional Timer
-    // The pacing timer produces TREQ assertions at a rate set by ((X/Y) * sys_clk). This equation is evaluated every sys_clk cycles and therefore can only generate TREQs at a rate of 1 per sys_clk (i.e. permanent TREQ) or less.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(TIMER2_t, uint32_t)
-        // Pacing Timer Dividend. Specifies the X value for the (X/Y) fractional timer.
-        ADD_BITFIELD_RW(X, 16, 16)
-        // Pacing Timer Divisor. Specifies the Y value for the (X/Y) fractional timer.
-        ADD_BITFIELD_RW(Y, 0, 16)
-    END_TYPE()
-
-    // Pacing (X/Y) Fractional Timer
-    // The pacing timer produces TREQ assertions at a rate set by ((X/Y) * sys_clk). This equation is evaluated every sys_clk cycles and therefore can only generate TREQs at a rate of 1 per sys_clk (i.e. permanent TREQ) or less.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(TIMER3_t, uint32_t)
+    BEGIN_TYPE(TIMER_t, uint32_t)
         // Pacing Timer Dividend. Specifies the X value for the (X/Y) fractional timer.
         ADD_BITFIELD_RW(X, 16, 16)
         // Pacing Timer Divisor. Specifies the Y value for the (X/Y) fractional timer.
@@ -12004,373 +7711,260 @@ namespace _DMA_  {
 
     // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
     // Reset value: 0x00000000
-    BEGIN_TYPE(CH0_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH0_DBG_CTDREQ, 0, 6)
+    BEGIN_TYPE(CH_DBG_CTDREQ_t, uint32_t)
+        ADD_BITFIELD_RW(DBG_CTDREQ, 0, 6)
     END_TYPE()
 
     // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
     // Reset value: 0x00000000
-    typedef uint32_t CH0_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH1_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH1_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH1_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH2_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH2_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH2_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH3_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH3_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH3_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH4_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH4_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH4_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH5_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH5_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH5_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH6_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH6_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH6_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH7_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH7_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH7_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH8_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH8_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH8_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH9_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH9_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH9_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH10_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH10_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH10_DBG_TCR_t;
-
-    // Read: get channel DREQ counter (i.e. how many accesses the DMA expects it can perform on the peripheral without overflow/underflow. Write any value: clears the counter, and cause channel to re-initiate DREQ handshake.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(CH11_DBG_CTDREQ_t, uint32_t)
-        ADD_BITFIELD_RW(CH11_DBG_CTDREQ, 0, 6)
-    END_TYPE()
-
-    // Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer
-    // Reset value: 0x00000000
-    typedef uint32_t CH11_DBG_TCR_t;
+    typedef uint32_t CH_DBG_TCR_t;
 
     struct DMA_t {
-        CH0_READ_ADDR_t               CH0_READ_ADDR;
-        CH0_WRITE_ADDR_t              CH0_WRITE_ADDR;
-        CH0_TRANS_COUNT_t             CH0_TRANS_COUNT;
-        CH0_CTRL_TRIG_t               CH0_CTRL_TRIG;
-        CH0_AL1_CTRL_t                CH0_AL1_CTRL;
-        CH0_AL1_READ_ADDR_t           CH0_AL1_READ_ADDR;
-        CH0_AL1_WRITE_ADDR_t          CH0_AL1_WRITE_ADDR;
-        CH0_AL1_TRANS_COUNT_TRIG_t    CH0_AL1_TRANS_COUNT_TRIG;
-        CH0_AL2_CTRL_t                CH0_AL2_CTRL;
-        CH0_AL2_TRANS_COUNT_t         CH0_AL2_TRANS_COUNT;
-        CH0_AL2_READ_ADDR_t           CH0_AL2_READ_ADDR;
-        CH0_AL2_WRITE_ADDR_TRIG_t     CH0_AL2_WRITE_ADDR_TRIG;
-        CH0_AL3_CTRL_t                CH0_AL3_CTRL;
-        CH0_AL3_WRITE_ADDR_t          CH0_AL3_WRITE_ADDR;
-        CH0_AL3_TRANS_COUNT_t         CH0_AL3_TRANS_COUNT;
-        CH0_AL3_READ_ADDR_TRIG_t      CH0_AL3_READ_ADDR_TRIG;
-        CH1_READ_ADDR_t               CH1_READ_ADDR;
-        CH1_WRITE_ADDR_t              CH1_WRITE_ADDR;
-        CH1_TRANS_COUNT_t             CH1_TRANS_COUNT;
-        CH1_CTRL_TRIG_t               CH1_CTRL_TRIG;
-        CH1_AL1_CTRL_t                CH1_AL1_CTRL;
-        CH1_AL1_READ_ADDR_t           CH1_AL1_READ_ADDR;
-        CH1_AL1_WRITE_ADDR_t          CH1_AL1_WRITE_ADDR;
-        CH1_AL1_TRANS_COUNT_TRIG_t    CH1_AL1_TRANS_COUNT_TRIG;
-        CH1_AL2_CTRL_t                CH1_AL2_CTRL;
-        CH1_AL2_TRANS_COUNT_t         CH1_AL2_TRANS_COUNT;
-        CH1_AL2_READ_ADDR_t           CH1_AL2_READ_ADDR;
-        CH1_AL2_WRITE_ADDR_TRIG_t     CH1_AL2_WRITE_ADDR_TRIG;
-        CH1_AL3_CTRL_t                CH1_AL3_CTRL;
-        CH1_AL3_WRITE_ADDR_t          CH1_AL3_WRITE_ADDR;
-        CH1_AL3_TRANS_COUNT_t         CH1_AL3_TRANS_COUNT;
-        CH1_AL3_READ_ADDR_TRIG_t      CH1_AL3_READ_ADDR_TRIG;
-        CH2_READ_ADDR_t               CH2_READ_ADDR;
-        CH2_WRITE_ADDR_t              CH2_WRITE_ADDR;
-        CH2_TRANS_COUNT_t             CH2_TRANS_COUNT;
-        CH2_CTRL_TRIG_t               CH2_CTRL_TRIG;
-        CH2_AL1_CTRL_t                CH2_AL1_CTRL;
-        CH2_AL1_READ_ADDR_t           CH2_AL1_READ_ADDR;
-        CH2_AL1_WRITE_ADDR_t          CH2_AL1_WRITE_ADDR;
-        CH2_AL1_TRANS_COUNT_TRIG_t    CH2_AL1_TRANS_COUNT_TRIG;
-        CH2_AL2_CTRL_t                CH2_AL2_CTRL;
-        CH2_AL2_TRANS_COUNT_t         CH2_AL2_TRANS_COUNT;
-        CH2_AL2_READ_ADDR_t           CH2_AL2_READ_ADDR;
-        CH2_AL2_WRITE_ADDR_TRIG_t     CH2_AL2_WRITE_ADDR_TRIG;
-        CH2_AL3_CTRL_t                CH2_AL3_CTRL;
-        CH2_AL3_WRITE_ADDR_t          CH2_AL3_WRITE_ADDR;
-        CH2_AL3_TRANS_COUNT_t         CH2_AL3_TRANS_COUNT;
-        CH2_AL3_READ_ADDR_TRIG_t      CH2_AL3_READ_ADDR_TRIG;
-        CH3_READ_ADDR_t               CH3_READ_ADDR;
-        CH3_WRITE_ADDR_t              CH3_WRITE_ADDR;
-        CH3_TRANS_COUNT_t             CH3_TRANS_COUNT;
-        CH3_CTRL_TRIG_t               CH3_CTRL_TRIG;
-        CH3_AL1_CTRL_t                CH3_AL1_CTRL;
-        CH3_AL1_READ_ADDR_t           CH3_AL1_READ_ADDR;
-        CH3_AL1_WRITE_ADDR_t          CH3_AL1_WRITE_ADDR;
-        CH3_AL1_TRANS_COUNT_TRIG_t    CH3_AL1_TRANS_COUNT_TRIG;
-        CH3_AL2_CTRL_t                CH3_AL2_CTRL;
-        CH3_AL2_TRANS_COUNT_t         CH3_AL2_TRANS_COUNT;
-        CH3_AL2_READ_ADDR_t           CH3_AL2_READ_ADDR;
-        CH3_AL2_WRITE_ADDR_TRIG_t     CH3_AL2_WRITE_ADDR_TRIG;
-        CH3_AL3_CTRL_t                CH3_AL3_CTRL;
-        CH3_AL3_WRITE_ADDR_t          CH3_AL3_WRITE_ADDR;
-        CH3_AL3_TRANS_COUNT_t         CH3_AL3_TRANS_COUNT;
-        CH3_AL3_READ_ADDR_TRIG_t      CH3_AL3_READ_ADDR_TRIG;
-        CH4_READ_ADDR_t               CH4_READ_ADDR;
-        CH4_WRITE_ADDR_t              CH4_WRITE_ADDR;
-        CH4_TRANS_COUNT_t             CH4_TRANS_COUNT;
-        CH4_CTRL_TRIG_t               CH4_CTRL_TRIG;
-        CH4_AL1_CTRL_t                CH4_AL1_CTRL;
-        CH4_AL1_READ_ADDR_t           CH4_AL1_READ_ADDR;
-        CH4_AL1_WRITE_ADDR_t          CH4_AL1_WRITE_ADDR;
-        CH4_AL1_TRANS_COUNT_TRIG_t    CH4_AL1_TRANS_COUNT_TRIG;
-        CH4_AL2_CTRL_t                CH4_AL2_CTRL;
-        CH4_AL2_TRANS_COUNT_t         CH4_AL2_TRANS_COUNT;
-        CH4_AL2_READ_ADDR_t           CH4_AL2_READ_ADDR;
-        CH4_AL2_WRITE_ADDR_TRIG_t     CH4_AL2_WRITE_ADDR_TRIG;
-        CH4_AL3_CTRL_t                CH4_AL3_CTRL;
-        CH4_AL3_WRITE_ADDR_t          CH4_AL3_WRITE_ADDR;
-        CH4_AL3_TRANS_COUNT_t         CH4_AL3_TRANS_COUNT;
-        CH4_AL3_READ_ADDR_TRIG_t      CH4_AL3_READ_ADDR_TRIG;
-        CH5_READ_ADDR_t               CH5_READ_ADDR;
-        CH5_WRITE_ADDR_t              CH5_WRITE_ADDR;
-        CH5_TRANS_COUNT_t             CH5_TRANS_COUNT;
-        CH5_CTRL_TRIG_t               CH5_CTRL_TRIG;
-        CH5_AL1_CTRL_t                CH5_AL1_CTRL;
-        CH5_AL1_READ_ADDR_t           CH5_AL1_READ_ADDR;
-        CH5_AL1_WRITE_ADDR_t          CH5_AL1_WRITE_ADDR;
-        CH5_AL1_TRANS_COUNT_TRIG_t    CH5_AL1_TRANS_COUNT_TRIG;
-        CH5_AL2_CTRL_t                CH5_AL2_CTRL;
-        CH5_AL2_TRANS_COUNT_t         CH5_AL2_TRANS_COUNT;
-        CH5_AL2_READ_ADDR_t           CH5_AL2_READ_ADDR;
-        CH5_AL2_WRITE_ADDR_TRIG_t     CH5_AL2_WRITE_ADDR_TRIG;
-        CH5_AL3_CTRL_t                CH5_AL3_CTRL;
-        CH5_AL3_WRITE_ADDR_t          CH5_AL3_WRITE_ADDR;
-        CH5_AL3_TRANS_COUNT_t         CH5_AL3_TRANS_COUNT;
-        CH5_AL3_READ_ADDR_TRIG_t      CH5_AL3_READ_ADDR_TRIG;
-        CH6_READ_ADDR_t               CH6_READ_ADDR;
-        CH6_WRITE_ADDR_t              CH6_WRITE_ADDR;
-        CH6_TRANS_COUNT_t             CH6_TRANS_COUNT;
-        CH6_CTRL_TRIG_t               CH6_CTRL_TRIG;
-        CH6_AL1_CTRL_t                CH6_AL1_CTRL;
-        CH6_AL1_READ_ADDR_t           CH6_AL1_READ_ADDR;
-        CH6_AL1_WRITE_ADDR_t          CH6_AL1_WRITE_ADDR;
-        CH6_AL1_TRANS_COUNT_TRIG_t    CH6_AL1_TRANS_COUNT_TRIG;
-        CH6_AL2_CTRL_t                CH6_AL2_CTRL;
-        CH6_AL2_TRANS_COUNT_t         CH6_AL2_TRANS_COUNT;
-        CH6_AL2_READ_ADDR_t           CH6_AL2_READ_ADDR;
-        CH6_AL2_WRITE_ADDR_TRIG_t     CH6_AL2_WRITE_ADDR_TRIG;
-        CH6_AL3_CTRL_t                CH6_AL3_CTRL;
-        CH6_AL3_WRITE_ADDR_t          CH6_AL3_WRITE_ADDR;
-        CH6_AL3_TRANS_COUNT_t         CH6_AL3_TRANS_COUNT;
-        CH6_AL3_READ_ADDR_TRIG_t      CH6_AL3_READ_ADDR_TRIG;
-        CH7_READ_ADDR_t               CH7_READ_ADDR;
-        CH7_WRITE_ADDR_t              CH7_WRITE_ADDR;
-        CH7_TRANS_COUNT_t             CH7_TRANS_COUNT;
-        CH7_CTRL_TRIG_t               CH7_CTRL_TRIG;
-        CH7_AL1_CTRL_t                CH7_AL1_CTRL;
-        CH7_AL1_READ_ADDR_t           CH7_AL1_READ_ADDR;
-        CH7_AL1_WRITE_ADDR_t          CH7_AL1_WRITE_ADDR;
-        CH7_AL1_TRANS_COUNT_TRIG_t    CH7_AL1_TRANS_COUNT_TRIG;
-        CH7_AL2_CTRL_t                CH7_AL2_CTRL;
-        CH7_AL2_TRANS_COUNT_t         CH7_AL2_TRANS_COUNT;
-        CH7_AL2_READ_ADDR_t           CH7_AL2_READ_ADDR;
-        CH7_AL2_WRITE_ADDR_TRIG_t     CH7_AL2_WRITE_ADDR_TRIG;
-        CH7_AL3_CTRL_t                CH7_AL3_CTRL;
-        CH7_AL3_WRITE_ADDR_t          CH7_AL3_WRITE_ADDR;
-        CH7_AL3_TRANS_COUNT_t         CH7_AL3_TRANS_COUNT;
-        CH7_AL3_READ_ADDR_TRIG_t      CH7_AL3_READ_ADDR_TRIG;
-        CH8_READ_ADDR_t               CH8_READ_ADDR;
-        CH8_WRITE_ADDR_t              CH8_WRITE_ADDR;
-        CH8_TRANS_COUNT_t             CH8_TRANS_COUNT;
-        CH8_CTRL_TRIG_t               CH8_CTRL_TRIG;
-        CH8_AL1_CTRL_t                CH8_AL1_CTRL;
-        CH8_AL1_READ_ADDR_t           CH8_AL1_READ_ADDR;
-        CH8_AL1_WRITE_ADDR_t          CH8_AL1_WRITE_ADDR;
-        CH8_AL1_TRANS_COUNT_TRIG_t    CH8_AL1_TRANS_COUNT_TRIG;
-        CH8_AL2_CTRL_t                CH8_AL2_CTRL;
-        CH8_AL2_TRANS_COUNT_t         CH8_AL2_TRANS_COUNT;
-        CH8_AL2_READ_ADDR_t           CH8_AL2_READ_ADDR;
-        CH8_AL2_WRITE_ADDR_TRIG_t     CH8_AL2_WRITE_ADDR_TRIG;
-        CH8_AL3_CTRL_t                CH8_AL3_CTRL;
-        CH8_AL3_WRITE_ADDR_t          CH8_AL3_WRITE_ADDR;
-        CH8_AL3_TRANS_COUNT_t         CH8_AL3_TRANS_COUNT;
-        CH8_AL3_READ_ADDR_TRIG_t      CH8_AL3_READ_ADDR_TRIG;
-        CH9_READ_ADDR_t               CH9_READ_ADDR;
-        CH9_WRITE_ADDR_t              CH9_WRITE_ADDR;
-        CH9_TRANS_COUNT_t             CH9_TRANS_COUNT;
-        CH9_CTRL_TRIG_t               CH9_CTRL_TRIG;
-        CH9_AL1_CTRL_t                CH9_AL1_CTRL;
-        CH9_AL1_READ_ADDR_t           CH9_AL1_READ_ADDR;
-        CH9_AL1_WRITE_ADDR_t          CH9_AL1_WRITE_ADDR;
-        CH9_AL1_TRANS_COUNT_TRIG_t    CH9_AL1_TRANS_COUNT_TRIG;
-        CH9_AL2_CTRL_t                CH9_AL2_CTRL;
-        CH9_AL2_TRANS_COUNT_t         CH9_AL2_TRANS_COUNT;
-        CH9_AL2_READ_ADDR_t           CH9_AL2_READ_ADDR;
-        CH9_AL2_WRITE_ADDR_TRIG_t     CH9_AL2_WRITE_ADDR_TRIG;
-        CH9_AL3_CTRL_t                CH9_AL3_CTRL;
-        CH9_AL3_WRITE_ADDR_t          CH9_AL3_WRITE_ADDR;
-        CH9_AL3_TRANS_COUNT_t         CH9_AL3_TRANS_COUNT;
-        CH9_AL3_READ_ADDR_TRIG_t      CH9_AL3_READ_ADDR_TRIG;
-        CH10_READ_ADDR_t              CH10_READ_ADDR;
-        CH10_WRITE_ADDR_t             CH10_WRITE_ADDR;
-        CH10_TRANS_COUNT_t            CH10_TRANS_COUNT;
-        CH10_CTRL_TRIG_t              CH10_CTRL_TRIG;
-        CH10_AL1_CTRL_t               CH10_AL1_CTRL;
-        CH10_AL1_READ_ADDR_t          CH10_AL1_READ_ADDR;
-        CH10_AL1_WRITE_ADDR_t         CH10_AL1_WRITE_ADDR;
-        CH10_AL1_TRANS_COUNT_TRIG_t   CH10_AL1_TRANS_COUNT_TRIG;
-        CH10_AL2_CTRL_t               CH10_AL2_CTRL;
-        CH10_AL2_TRANS_COUNT_t        CH10_AL2_TRANS_COUNT;
-        CH10_AL2_READ_ADDR_t          CH10_AL2_READ_ADDR;
-        CH10_AL2_WRITE_ADDR_TRIG_t    CH10_AL2_WRITE_ADDR_TRIG;
-        CH10_AL3_CTRL_t               CH10_AL3_CTRL;
-        CH10_AL3_WRITE_ADDR_t         CH10_AL3_WRITE_ADDR;
-        CH10_AL3_TRANS_COUNT_t        CH10_AL3_TRANS_COUNT;
-        CH10_AL3_READ_ADDR_TRIG_t     CH10_AL3_READ_ADDR_TRIG;
-        CH11_READ_ADDR_t              CH11_READ_ADDR;
-        CH11_WRITE_ADDR_t             CH11_WRITE_ADDR;
-        CH11_TRANS_COUNT_t            CH11_TRANS_COUNT;
-        CH11_CTRL_TRIG_t              CH11_CTRL_TRIG;
-        CH11_AL1_CTRL_t               CH11_AL1_CTRL;
-        CH11_AL1_READ_ADDR_t          CH11_AL1_READ_ADDR;
-        CH11_AL1_WRITE_ADDR_t         CH11_AL1_WRITE_ADDR;
-        CH11_AL1_TRANS_COUNT_TRIG_t   CH11_AL1_TRANS_COUNT_TRIG;
-        CH11_AL2_CTRL_t               CH11_AL2_CTRL;
-        CH11_AL2_TRANS_COUNT_t        CH11_AL2_TRANS_COUNT;
-        CH11_AL2_READ_ADDR_t          CH11_AL2_READ_ADDR;
-        CH11_AL2_WRITE_ADDR_TRIG_t    CH11_AL2_WRITE_ADDR_TRIG;
-        CH11_AL3_CTRL_t               CH11_AL3_CTRL;
-        CH11_AL3_WRITE_ADDR_t         CH11_AL3_WRITE_ADDR;
-        CH11_AL3_TRANS_COUNT_t        CH11_AL3_TRANS_COUNT;
-        CH11_AL3_READ_ADDR_TRIG_t     CH11_AL3_READ_ADDR_TRIG;
-        uint32_t                      reserved1[64];
+        CH_READ_ADDR_t                CH0_READ_ADDR;
+        CH_WRITE_ADDR_t               CH0_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH0_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH0_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH0_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH0_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH0_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH0_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH0_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH0_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH0_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH0_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH0_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH0_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH0_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH0_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH1_READ_ADDR;
+        CH_WRITE_ADDR_t               CH1_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH1_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH1_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH1_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH1_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH1_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH1_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH1_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH1_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH1_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH1_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH1_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH1_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH1_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH1_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH2_READ_ADDR;
+        CH_WRITE_ADDR_t               CH2_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH2_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH2_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH2_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH2_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH2_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH2_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH2_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH2_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH2_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH2_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH2_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH2_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH2_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH2_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH3_READ_ADDR;
+        CH_WRITE_ADDR_t               CH3_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH3_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH3_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH3_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH3_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH3_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH3_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH3_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH3_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH3_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH3_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH3_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH3_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH3_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH3_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH4_READ_ADDR;
+        CH_WRITE_ADDR_t               CH4_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH4_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH4_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH4_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH4_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH4_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH4_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH4_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH4_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH4_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH4_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH4_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH4_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH4_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH4_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH5_READ_ADDR;
+        CH_WRITE_ADDR_t               CH5_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH5_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH5_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH5_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH5_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH5_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH5_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH5_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH5_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH5_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH5_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH5_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH5_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH5_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH5_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH6_READ_ADDR;
+        CH_WRITE_ADDR_t               CH6_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH6_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH6_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH6_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH6_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH6_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH6_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH6_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH6_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH6_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH6_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH6_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH6_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH6_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH6_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH7_READ_ADDR;
+        CH_WRITE_ADDR_t               CH7_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH7_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH7_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH7_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH7_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH7_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH7_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH7_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH7_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH7_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH7_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH7_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH7_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH7_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH7_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH8_READ_ADDR;
+        CH_WRITE_ADDR_t               CH8_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH8_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH8_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH8_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH8_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH8_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH8_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH8_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH8_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH8_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH8_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH8_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH8_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH8_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH8_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH9_READ_ADDR;
+        CH_WRITE_ADDR_t               CH9_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH9_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH9_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH9_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH9_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH9_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH9_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH9_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH9_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH9_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH9_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH9_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH9_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH9_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH9_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH10_READ_ADDR;
+        CH_WRITE_ADDR_t               CH10_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH10_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH10_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH10_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH10_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH10_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH10_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH10_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH10_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH10_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH10_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH10_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH10_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH10_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH10_AL3_READ_ADDR_TRIG;
+        CH_READ_ADDR_t                CH11_READ_ADDR;
+        CH_WRITE_ADDR_t               CH11_WRITE_ADDR;
+        CH_TRANS_COUNT_t              CH11_TRANS_COUNT;
+        CH_CTRL_TRIG_t                CH11_CTRL_TRIG;
+        CH_AL1_CTRL_t                 CH11_AL1_CTRL;
+        CH_AL1_READ_ADDR_t            CH11_AL1_READ_ADDR;
+        CH_AL1_WRITE_ADDR_t           CH11_AL1_WRITE_ADDR;
+        CH_AL1_TRANS_COUNT_TRIG_t     CH11_AL1_TRANS_COUNT_TRIG;
+        CH_AL2_CTRL_t                 CH11_AL2_CTRL;
+        CH_AL2_TRANS_COUNT_t          CH11_AL2_TRANS_COUNT;
+        CH_AL2_READ_ADDR_t            CH11_AL2_READ_ADDR;
+        CH_AL2_WRITE_ADDR_TRIG_t      CH11_AL2_WRITE_ADDR_TRIG;
+        CH_AL3_CTRL_t                 CH11_AL3_CTRL;
+        CH_AL3_WRITE_ADDR_t           CH11_AL3_WRITE_ADDR;
+        CH_AL3_TRANS_COUNT_t          CH11_AL3_TRANS_COUNT;
+        CH_AL3_READ_ADDR_TRIG_t       CH11_AL3_READ_ADDR_TRIG;
+        uint32_t                      reserved0[64];
         INTR_t                        INTR;
         INTE0_t                       INTE0;
         INTF0_t                       INTF0;
         INTS0_t                       INTS0;
-        uint32_t                      reserved2[1];
+        uint32_t                      reserved1;
         INTE1_t                       INTE1;
         INTF1_t                       INTF1;
         INTS1_t                       INTS1;
-        TIMER0_t                      TIMER0;
-        TIMER1_t                      TIMER1;
-        TIMER2_t                      TIMER2;
-        TIMER3_t                      TIMER3;
+        TIMER_t                       TIMER[4];
         MULTI_CHAN_TRIGGER_t          MULTI_CHAN_TRIGGER;
         SNIFF_CTRL_t                  SNIFF_CTRL;
         SNIFF_DATA_t                  SNIFF_DATA;
-        uint32_t                      reserved3[1];
+        uint32_t                      reserved2;
         FIFO_LEVELS_t                 FIFO_LEVELS;
         CHAN_ABORT_t                  CHAN_ABORT;
         N_CHANNELS_t                  N_CHANNELS;
-        uint32_t                      reserved4[237];
-        CH0_DBG_CTDREQ_t              CH0_DBG_CTDREQ;
-        CH0_DBG_TCR_t                 CH0_DBG_TCR;
+        uint32_t                      reserved3[237];
+        CH_DBG_CTDREQ_t               CH0_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH0_DBG_TCR;
+        uint32_t                      reserved4[14];
+        CH_DBG_CTDREQ_t               CH1_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH1_DBG_TCR;
         uint32_t                      reserved5[14];
-        CH1_DBG_CTDREQ_t              CH1_DBG_CTDREQ;
-        CH1_DBG_TCR_t                 CH1_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH2_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH2_DBG_TCR;
         uint32_t                      reserved6[14];
-        CH2_DBG_CTDREQ_t              CH2_DBG_CTDREQ;
-        CH2_DBG_TCR_t                 CH2_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH3_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH3_DBG_TCR;
         uint32_t                      reserved7[14];
-        CH3_DBG_CTDREQ_t              CH3_DBG_CTDREQ;
-        CH3_DBG_TCR_t                 CH3_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH4_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH4_DBG_TCR;
         uint32_t                      reserved8[14];
-        CH4_DBG_CTDREQ_t              CH4_DBG_CTDREQ;
-        CH4_DBG_TCR_t                 CH4_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH5_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH5_DBG_TCR;
         uint32_t                      reserved9[14];
-        CH5_DBG_CTDREQ_t              CH5_DBG_CTDREQ;
-        CH5_DBG_TCR_t                 CH5_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH6_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH6_DBG_TCR;
         uint32_t                      reserved10[14];
-        CH6_DBG_CTDREQ_t              CH6_DBG_CTDREQ;
-        CH6_DBG_TCR_t                 CH6_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH7_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH7_DBG_TCR;
         uint32_t                      reserved11[14];
-        CH7_DBG_CTDREQ_t              CH7_DBG_CTDREQ;
-        CH7_DBG_TCR_t                 CH7_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH8_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH8_DBG_TCR;
         uint32_t                      reserved12[14];
-        CH8_DBG_CTDREQ_t              CH8_DBG_CTDREQ;
-        CH8_DBG_TCR_t                 CH8_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH9_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH9_DBG_TCR;
         uint32_t                      reserved13[14];
-        CH9_DBG_CTDREQ_t              CH9_DBG_CTDREQ;
-        CH9_DBG_TCR_t                 CH9_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH10_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH10_DBG_TCR;
         uint32_t                      reserved14[14];
-        CH10_DBG_CTDREQ_t             CH10_DBG_CTDREQ;
-        CH10_DBG_TCR_t                CH10_DBG_TCR;
-        uint32_t                      reserved15[14];
-        CH11_DBG_CTDREQ_t             CH11_DBG_CTDREQ;
-        CH11_DBG_TCR_t                CH11_DBG_TCR;
+        CH_DBG_CTDREQ_t               CH11_DBG_CTDREQ;
+        CH_DBG_TCR_t                  CH11_DBG_TCR;
     };
 
     static DMA_t & DMA     = (*(DMA_t *)0x50000000);
@@ -12399,7 +7993,7 @@ namespace _USBCTRL_DPRAM_  {
     END_TYPE()
 
     // Reset value: 0x00000000
-    BEGIN_TYPE(EP1_IN_CONTROL_t, uint32_t)
+    BEGIN_TYPE(EP_IN_CONTROL_t, uint32_t)
         // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
         ADD_BITFIELD_RW(ENABLE, 31, 1)
         // This endpoint is double buffered.
@@ -12417,13 +8011,13 @@ namespace _USBCTRL_DPRAM_  {
         ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
     END_TYPE()
 
-    static const uint32_t EP1_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP1_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP1_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP1_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
+    static const uint32_t EP_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
+    static const uint32_t EP_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
+    static const uint32_t EP_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
+    static const uint32_t EP_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
 
     // Reset value: 0x00000000
-    BEGIN_TYPE(EP1_OUT_CONTROL_t, uint32_t)
+    BEGIN_TYPE(EP_OUT_CONTROL_t, uint32_t)
         // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
         ADD_BITFIELD_RW(ENABLE, 31, 1)
         // This endpoint is double buffered.
@@ -12441,687 +8035,15 @@ namespace _USBCTRL_DPRAM_  {
         ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
     END_TYPE()
 
-    static const uint32_t EP1_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP1_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP1_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP1_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP2_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP2_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP2_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP2_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP2_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP2_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP2_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP2_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP2_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP2_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP3_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP3_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP3_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP3_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP3_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP3_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP3_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP3_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP3_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP3_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP4_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP4_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP4_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP4_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP4_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP4_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP4_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP4_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP4_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP4_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP5_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP5_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP5_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP5_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP5_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP5_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP5_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP5_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP5_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP5_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP6_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP6_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP6_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP6_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP6_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP6_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP6_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP6_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP6_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP6_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP7_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP7_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP7_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP7_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP7_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP7_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP7_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP7_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP7_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP7_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP8_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP8_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP8_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP8_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP8_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP8_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP8_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP8_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP8_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP8_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP9_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP9_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP9_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP9_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP9_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP9_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP9_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP9_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP9_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP9_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP10_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP10_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP10_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP10_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP10_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP10_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP10_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP10_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP10_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP10_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP11_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP11_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP11_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP11_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP11_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP11_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP11_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP11_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP11_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP11_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP12_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP12_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP12_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP12_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP12_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP12_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP12_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP12_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP12_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP12_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP13_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP13_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP13_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP13_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP13_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP13_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP13_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP13_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP13_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP13_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP14_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP14_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP14_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP14_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP14_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP14_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP14_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP14_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP14_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP14_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP15_IN_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP15_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP15_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP15_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP15_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP15_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP15_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP15_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP15_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP15_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
+    static const uint32_t EP_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
+    static const uint32_t EP_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
+    static const uint32_t EP_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
+    static const uint32_t EP_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
 
     // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
     // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
     // Reset value: 0x00000000
-    BEGIN_TYPE(EP0_IN_BUFFER_CONTROL_t, uint32_t)
+    BEGIN_TYPE(EP_IN_BUFFER_CONTROL_t, uint32_t)
         // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
         ADD_BITFIELD_RW(FULL_1, 31, 1)
         // Buffer 1 is the last buffer of the transfer.
@@ -13151,15 +8073,15 @@ namespace _USBCTRL_DPRAM_  {
         ADD_BITFIELD_RW(LENGTH_0, 0, 10)
     END_TYPE()
 
-    static const uint32_t EP0_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP0_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP0_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP0_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
+    static const uint32_t EP_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
+    static const uint32_t EP_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
+    static const uint32_t EP_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
+    static const uint32_t EP_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
 
     // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
     // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
     // Reset value: 0x00000000
-    BEGIN_TYPE(EP0_OUT_BUFFER_CONTROL_t, uint32_t)
+    BEGIN_TYPE(EP_OUT_BUFFER_CONTROL_t, uint32_t)
         // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
         ADD_BITFIELD_RW(FULL_1, 31, 1)
         // Buffer 1 is the last buffer of the transfer.
@@ -13189,1216 +8111,76 @@ namespace _USBCTRL_DPRAM_  {
         ADD_BITFIELD_RW(LENGTH_0, 0, 10)
     END_TYPE()
 
-    static const uint32_t EP0_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP0_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP0_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP0_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP1_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP1_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP1_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP1_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP1_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP1_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP1_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP1_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP1_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP1_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP2_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP2_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP2_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP2_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP2_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP2_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP2_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP2_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP2_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP2_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP3_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP3_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP3_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP3_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP3_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP3_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP3_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP3_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP3_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP3_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP4_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP4_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP4_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP4_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP4_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP4_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP4_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP4_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP4_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP4_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP5_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP5_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP5_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP5_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP5_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP5_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP5_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP5_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP5_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP5_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP6_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP6_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP6_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP6_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP6_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP6_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP6_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP6_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP6_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP6_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP7_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP7_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP7_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP7_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP7_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP7_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP7_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP7_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP7_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP7_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP8_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP8_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP8_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP8_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP8_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP8_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP8_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP8_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP8_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP8_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP9_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP9_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP9_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP9_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP9_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP9_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP9_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP9_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP9_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP9_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP10_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP10_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP10_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP10_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP10_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP10_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP10_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP10_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP10_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP10_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP11_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP11_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP11_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP11_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP11_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP11_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP11_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP11_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP11_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP11_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP12_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP12_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP12_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP12_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP12_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP12_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP12_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP12_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP12_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP12_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP13_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP13_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP13_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP13_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP13_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP13_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP13_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP13_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP13_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP13_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP14_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP14_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP14_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP14_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP14_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP14_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP14_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP14_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP14_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP14_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP15_IN_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP15_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP15_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP15_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP15_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP15_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP15_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP15_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP15_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP15_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
+    static const uint32_t EP_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
+    static const uint32_t EP_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
+    static const uint32_t EP_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
+    static const uint32_t EP_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
 
     struct USBCTRL_DPRAM_t {
         SETUP_PACKET_LOW_t            SETUP_PACKET_LOW;
         SETUP_PACKET_HIGH_t           SETUP_PACKET_HIGH;
-        EP1_IN_CONTROL_t              EP1_IN_CONTROL;
-        EP1_OUT_CONTROL_t             EP1_OUT_CONTROL;
-        EP2_IN_CONTROL_t              EP2_IN_CONTROL;
-        EP2_OUT_CONTROL_t             EP2_OUT_CONTROL;
-        EP3_IN_CONTROL_t              EP3_IN_CONTROL;
-        EP3_OUT_CONTROL_t             EP3_OUT_CONTROL;
-        EP4_IN_CONTROL_t              EP4_IN_CONTROL;
-        EP4_OUT_CONTROL_t             EP4_OUT_CONTROL;
-        EP5_IN_CONTROL_t              EP5_IN_CONTROL;
-        EP5_OUT_CONTROL_t             EP5_OUT_CONTROL;
-        EP6_IN_CONTROL_t              EP6_IN_CONTROL;
-        EP6_OUT_CONTROL_t             EP6_OUT_CONTROL;
-        EP7_IN_CONTROL_t              EP7_IN_CONTROL;
-        EP7_OUT_CONTROL_t             EP7_OUT_CONTROL;
-        EP8_IN_CONTROL_t              EP8_IN_CONTROL;
-        EP8_OUT_CONTROL_t             EP8_OUT_CONTROL;
-        EP9_IN_CONTROL_t              EP9_IN_CONTROL;
-        EP9_OUT_CONTROL_t             EP9_OUT_CONTROL;
-        EP10_IN_CONTROL_t             EP10_IN_CONTROL;
-        EP10_OUT_CONTROL_t            EP10_OUT_CONTROL;
-        EP11_IN_CONTROL_t             EP11_IN_CONTROL;
-        EP11_OUT_CONTROL_t            EP11_OUT_CONTROL;
-        EP12_IN_CONTROL_t             EP12_IN_CONTROL;
-        EP12_OUT_CONTROL_t            EP12_OUT_CONTROL;
-        EP13_IN_CONTROL_t             EP13_IN_CONTROL;
-        EP13_OUT_CONTROL_t            EP13_OUT_CONTROL;
-        EP14_IN_CONTROL_t             EP14_IN_CONTROL;
-        EP14_OUT_CONTROL_t            EP14_OUT_CONTROL;
-        EP15_IN_CONTROL_t             EP15_IN_CONTROL;
-        EP15_OUT_CONTROL_t            EP15_OUT_CONTROL;
-        EP0_IN_BUFFER_CONTROL_t       EP0_IN_BUFFER_CONTROL;
-        EP0_OUT_BUFFER_CONTROL_t      EP0_OUT_BUFFER_CONTROL;
-        EP1_IN_BUFFER_CONTROL_t       EP1_IN_BUFFER_CONTROL;
-        EP1_OUT_BUFFER_CONTROL_t      EP1_OUT_BUFFER_CONTROL;
-        EP2_IN_BUFFER_CONTROL_t       EP2_IN_BUFFER_CONTROL;
-        EP2_OUT_BUFFER_CONTROL_t      EP2_OUT_BUFFER_CONTROL;
-        EP3_IN_BUFFER_CONTROL_t       EP3_IN_BUFFER_CONTROL;
-        EP3_OUT_BUFFER_CONTROL_t      EP3_OUT_BUFFER_CONTROL;
-        EP4_IN_BUFFER_CONTROL_t       EP4_IN_BUFFER_CONTROL;
-        EP4_OUT_BUFFER_CONTROL_t      EP4_OUT_BUFFER_CONTROL;
-        EP5_IN_BUFFER_CONTROL_t       EP5_IN_BUFFER_CONTROL;
-        EP5_OUT_BUFFER_CONTROL_t      EP5_OUT_BUFFER_CONTROL;
-        EP6_IN_BUFFER_CONTROL_t       EP6_IN_BUFFER_CONTROL;
-        EP6_OUT_BUFFER_CONTROL_t      EP6_OUT_BUFFER_CONTROL;
-        EP7_IN_BUFFER_CONTROL_t       EP7_IN_BUFFER_CONTROL;
-        EP7_OUT_BUFFER_CONTROL_t      EP7_OUT_BUFFER_CONTROL;
-        EP8_IN_BUFFER_CONTROL_t       EP8_IN_BUFFER_CONTROL;
-        EP8_OUT_BUFFER_CONTROL_t      EP8_OUT_BUFFER_CONTROL;
-        EP9_IN_BUFFER_CONTROL_t       EP9_IN_BUFFER_CONTROL;
-        EP9_OUT_BUFFER_CONTROL_t      EP9_OUT_BUFFER_CONTROL;
-        EP10_IN_BUFFER_CONTROL_t      EP10_IN_BUFFER_CONTROL;
-        EP10_OUT_BUFFER_CONTROL_t     EP10_OUT_BUFFER_CONTROL;
-        EP11_IN_BUFFER_CONTROL_t      EP11_IN_BUFFER_CONTROL;
-        EP11_OUT_BUFFER_CONTROL_t     EP11_OUT_BUFFER_CONTROL;
-        EP12_IN_BUFFER_CONTROL_t      EP12_IN_BUFFER_CONTROL;
-        EP12_OUT_BUFFER_CONTROL_t     EP12_OUT_BUFFER_CONTROL;
-        EP13_IN_BUFFER_CONTROL_t      EP13_IN_BUFFER_CONTROL;
-        EP13_OUT_BUFFER_CONTROL_t     EP13_OUT_BUFFER_CONTROL;
-        EP14_IN_BUFFER_CONTROL_t      EP14_IN_BUFFER_CONTROL;
-        EP14_OUT_BUFFER_CONTROL_t     EP14_OUT_BUFFER_CONTROL;
-        EP15_IN_BUFFER_CONTROL_t      EP15_IN_BUFFER_CONTROL;
-        EP15_OUT_BUFFER_CONTROL_t     EP15_OUT_BUFFER_CONTROL;
+        EP_IN_CONTROL_t               EP1_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP1_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP2_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP2_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP3_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP3_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP4_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP4_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP5_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP5_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP6_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP6_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP7_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP7_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP8_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP8_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP9_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP9_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP10_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP10_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP11_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP11_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP12_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP12_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP13_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP13_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP14_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP14_OUT_CONTROL;
+        EP_IN_CONTROL_t               EP15_IN_CONTROL;
+        EP_OUT_CONTROL_t              EP15_OUT_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP0_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP0_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP1_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP1_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP2_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP2_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP3_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP3_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP4_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP4_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP5_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP5_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP6_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP6_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP7_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP7_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP8_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP8_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP9_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP9_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP10_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP10_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP11_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP11_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP12_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP12_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP13_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP13_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP14_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP14_OUT_BUFFER_CONTROL;
+        EP_IN_BUFFER_CONTROL_t        EP15_IN_BUFFER_CONTROL;
+        EP_OUT_BUFFER_CONTROL_t       EP15_OUT_BUFFER_CONTROL;
     };
 
     static USBCTRL_DPRAM_t & USBCTRL_DPRAM     = (*(USBCTRL_DPRAM_t *)0x50100000);
@@ -14422,189 +8204,7 @@ namespace _USBCTRL_REGS_  {
 
     // Interrupt endpoint 1. Only valid for HOST mode.
     // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP1_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 2. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP2_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 3. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP3_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 4. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP4_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 5. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP5_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 6. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP6_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 7. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP7_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 8. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP8_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 9. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP9_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 10. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP10_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 11. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP11_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 12. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP12_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 13. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP13_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 14. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP14_t, uint32_t)
-        // Interrupt EP requires preamble (is a low speed device on a full speed hub)
-        ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
-        // Direction of the interrupt endpoint. In=0, Out=1
-        ADD_BITFIELD_RW(INTEP_DIR, 25, 1)
-        // Endpoint number of the interrupt endpoint
-        ADD_BITFIELD_RW(ENDPOINT, 16, 4)
-        // Device address
-        ADD_BITFIELD_RW(ADDRESS, 0, 7)
-    END_TYPE()
-
-    // Interrupt endpoint 15. Only valid for HOST mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(ADDR_ENDP15_t, uint32_t)
+    BEGIN_TYPE(ADDR_ENDP__t, uint32_t)
         // Interrupt EP requires preamble (is a low speed device on a full speed hub)
         ADD_BITFIELD_RW(INTEP_PREAMBLE, 26, 1)
         // Direction of the interrupt endpoint. In=0, Out=1
@@ -15243,21 +8843,21 @@ namespace _USBCTRL_REGS_  {
 
     struct USBCTRL_REGS_t {
         ADDR_ENDP_t                   ADDR_ENDP;
-        ADDR_ENDP1_t                  ADDR_ENDP1;
-        ADDR_ENDP2_t                  ADDR_ENDP2;
-        ADDR_ENDP3_t                  ADDR_ENDP3;
-        ADDR_ENDP4_t                  ADDR_ENDP4;
-        ADDR_ENDP5_t                  ADDR_ENDP5;
-        ADDR_ENDP6_t                  ADDR_ENDP6;
-        ADDR_ENDP7_t                  ADDR_ENDP7;
-        ADDR_ENDP8_t                  ADDR_ENDP8;
-        ADDR_ENDP9_t                  ADDR_ENDP9;
-        ADDR_ENDP10_t                 ADDR_ENDP10;
-        ADDR_ENDP11_t                 ADDR_ENDP11;
-        ADDR_ENDP12_t                 ADDR_ENDP12;
-        ADDR_ENDP13_t                 ADDR_ENDP13;
-        ADDR_ENDP14_t                 ADDR_ENDP14;
-        ADDR_ENDP15_t                 ADDR_ENDP15;
+        ADDR_ENDP__t                  ADDR_ENDP_1;
+        ADDR_ENDP__t                  ADDR_ENDP_2;
+        ADDR_ENDP__t                  ADDR_ENDP_3;
+        ADDR_ENDP__t                  ADDR_ENDP_4;
+        ADDR_ENDP__t                  ADDR_ENDP_5;
+        ADDR_ENDP__t                  ADDR_ENDP_6;
+        ADDR_ENDP__t                  ADDR_ENDP_7;
+        ADDR_ENDP__t                  ADDR_ENDP_8;
+        ADDR_ENDP__t                  ADDR_ENDP_9;
+        ADDR_ENDP__t                  ADDR_ENDP_10;
+        ADDR_ENDP__t                  ADDR_ENDP_11;
+        ADDR_ENDP__t                  ADDR_ENDP_12;
+        ADDR_ENDP__t                  ADDR_ENDP_13;
+        ADDR_ENDP__t                  ADDR_ENDP_14;
+        ADDR_ENDP__t                  ADDR_ENDP_15;
         MAIN_CTRL_t                   MAIN_CTRL;
         SOF_WR_t                      SOF_WR;
         SOF_RD_t                      SOF_RD;
@@ -15276,7 +8876,7 @@ namespace _USBCTRL_REGS_  {
         USBPHY_DIRECT_t               USBPHY_DIRECT;
         USBPHY_DIRECT_OVERRIDE_t      USBPHY_DIRECT_OVERRIDE;
         USBPHY_TRIM_t                 USBPHY_TRIM;
-        uint32_t                      reserved1[1];
+        uint32_t                      reserved0;
         INTR_t                        INTR;
         INTE_t                        INTE;
         INTF_t                        INTF;
@@ -15409,7 +9009,7 @@ namespace _PIO0_  {
     // Clock divisor register for state machine 0
     // Frequency = clock freq / (CLKDIV_INT + CLKDIV_FRAC / 256)
     // Reset value: 0x00010000
-    BEGIN_TYPE(SM0_CLKDIV_t, uint32_t)
+    BEGIN_TYPE(SM_CLKDIV_t, uint32_t)
         // Effective frequency is sysclk/(int + frac/256).
         // Value of 0 is interpreted as 65536. If INT is 0, FRAC must also be 0.
         ADD_BITFIELD_RW(INT, 16, 16)
@@ -15419,7 +9019,7 @@ namespace _PIO0_  {
 
     // Execution/behavioural settings for state machine 0
     // Reset value: 0x0001f000
-    BEGIN_TYPE(SM0_EXECCTRL_t, uint32_t)
+    BEGIN_TYPE(SM_EXECCTRL_t, uint32_t)
         // If 1, an instruction written to SMx_INSTR is stalled, and latched by the state machine. Will clear to 0 once this instruction completes.
         ADD_BITFIELD_RO(EXEC_STALLED, 31, 1)
         // If 1, the MSB of the Delay/Side-set instruction field is used as side-set enable, rather than a side-set data bit. This allows instructions to perform side-set optionally, rather than on every instruction, but the maximum possible side-set width is reduced from 5 to 4. Note that the value of PINCTRL_SIDESET_COUNT is inclusive of this enable bit.
@@ -15449,13 +9049,13 @@ namespace _PIO0_  {
     END_TYPE()
 
     // All-ones if TX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM0_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
+    static const uint32_t SM_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
     // All-ones if RX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM0_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
+    static const uint32_t SM_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
 
     // Control behaviour of the input/output shift registers for state machine 0
     // Reset value: 0x000c0000
-    BEGIN_TYPE(SM0_SHIFTCTRL_t, uint32_t)
+    BEGIN_TYPE(SM_SHIFTCTRL_t, uint32_t)
         // When 1, RX FIFO steals the TX FIFO's storage, and becomes twice as deep.
         // TX FIFO is disabled as a result (always reads as both full and empty).
         // FIFOs are flushed when this bit is changed.
@@ -15482,338 +9082,20 @@ namespace _PIO0_  {
 
     // Current instruction address of state machine 0
     // Reset value: 0x00000000
-    BEGIN_TYPE(SM0_ADDR_t, uint32_t)
-        ADD_BITFIELD_RO(SM0_ADDR, 0, 5)
+    BEGIN_TYPE(SM_ADDR_t, uint32_t)
+        ADD_BITFIELD_RO(ADDR, 0, 5)
     END_TYPE()
 
     // Read to see the instruction currently addressed by state machine 0's program counter
     // Write to execute an instruction immediately (including jumps) and then resume execution.
     // Reset value: 0x00000000
-    BEGIN_TYPE(SM0_INSTR_t, uint32_t)
-        ADD_BITFIELD_RW(SM0_INSTR, 0, 16)
+    BEGIN_TYPE(SM_INSTR_t, uint32_t)
+        ADD_BITFIELD_RW(INSTR, 0, 16)
     END_TYPE()
 
     // State machine pin control
     // Reset value: 0x14000000
-    BEGIN_TYPE(SM0_PINCTRL_t, uint32_t)
-        // The number of MSBs of the Delay/Side-set instruction field which are used for side-set. Inclusive of the enable bit, if present. Minimum of 0 (all delay bits, no side-set) and maximum of 5 (all side-set, no delay).
-        ADD_BITFIELD_RW(SIDESET_COUNT, 29, 3)
-        // The number of pins asserted by a SET. In the range 0 to 5 inclusive.
-        ADD_BITFIELD_RW(SET_COUNT, 26, 3)
-        // The number of pins asserted by an OUT PINS, OUT PINDIRS or MOV PINS instruction. In the range 0 to 32 inclusive.
-        ADD_BITFIELD_RW(OUT_COUNT, 20, 6)
-        // The pin which is mapped to the least-significant bit of a state machine's IN data bus. Higher-numbered pins are mapped to consecutively more-significant data bits, with a modulo of 32 applied to pin number.
-        ADD_BITFIELD_RW(IN_BASE, 15, 5)
-        // The lowest-numbered pin that will be affected by a side-set operation. The MSBs of an instruction's side-set/delay field (up to 5, determined by SIDESET_COUNT) are used for side-set data, with the remaining LSBs used for delay. The least-significant bit of the side-set portion is the bit written to this pin, with more-significant bits written to higher-numbered pins.
-        ADD_BITFIELD_RW(SIDESET_BASE, 10, 5)
-        // The lowest-numbered pin that will be affected by a SET PINS or SET PINDIRS instruction. The data written to this pin is the least-significant bit of the SET data.
-        ADD_BITFIELD_RW(SET_BASE, 5, 5)
-        // The lowest-numbered pin that will be affected by an OUT PINS, OUT PINDIRS or MOV PINS instruction. The data written to this pin will always be the least-significant bit of the OUT or MOV data.
-        ADD_BITFIELD_RW(OUT_BASE, 0, 5)
-    END_TYPE()
-
-    // Clock divisor register for state machine 1
-    // Frequency = clock freq / (CLKDIV_INT + CLKDIV_FRAC / 256)
-    // Reset value: 0x00010000
-    BEGIN_TYPE(SM1_CLKDIV_t, uint32_t)
-        // Effective frequency is sysclk/(int + frac/256).
-        // Value of 0 is interpreted as 65536. If INT is 0, FRAC must also be 0.
-        ADD_BITFIELD_RW(INT, 16, 16)
-        // Fractional part of clock divisor
-        ADD_BITFIELD_RW(FRAC, 8, 8)
-    END_TYPE()
-
-    // Execution/behavioural settings for state machine 1
-    // Reset value: 0x0001f000
-    BEGIN_TYPE(SM1_EXECCTRL_t, uint32_t)
-        // If 1, an instruction written to SMx_INSTR is stalled, and latched by the state machine. Will clear to 0 once this instruction completes.
-        ADD_BITFIELD_RO(EXEC_STALLED, 31, 1)
-        // If 1, the MSB of the Delay/Side-set instruction field is used as side-set enable, rather than a side-set data bit. This allows instructions to perform side-set optionally, rather than on every instruction, but the maximum possible side-set width is reduced from 5 to 4. Note that the value of PINCTRL_SIDESET_COUNT is inclusive of this enable bit.
-        ADD_BITFIELD_RW(SIDE_EN, 30, 1)
-        // If 1, side-set data is asserted to pin directions, instead of pin values
-        ADD_BITFIELD_RW(SIDE_PINDIR, 29, 1)
-        // The GPIO number to use as condition for JMP PIN. Unaffected by input mapping.
-        ADD_BITFIELD_RW(JMP_PIN, 24, 5)
-        // Which data bit to use for inline OUT enable
-        ADD_BITFIELD_RW(OUT_EN_SEL, 19, 5)
-        // If 1, use a bit of OUT data as an auxiliary write enable
-        // When used in conjunction with OUT_STICKY, writes with an enable of 0 will
-        // deassert the latest pin write. This can create useful masking/override behaviour
-        // due to the priority ordering of state machine pin writes (SM0 < SM1 < ...)
-        ADD_BITFIELD_RW(INLINE_OUT_EN, 18, 1)
-        // Continuously assert the most recent OUT/SET to the pins
-        ADD_BITFIELD_RW(OUT_STICKY, 17, 1)
-        // After reaching this address, execution is wrapped to wrap_bottom.
-        // If the instruction is a jump, and the jump condition is true, the jump takes priority.
-        ADD_BITFIELD_RW(WRAP_TOP, 12, 5)
-        // After reaching wrap_top, execution is wrapped to this address.
-        ADD_BITFIELD_RW(WRAP_BOTTOM, 7, 5)
-        // Comparison used for the MOV x, STATUS instruction.
-        ADD_BITFIELD_RW(STATUS_SEL, 4, 1)
-        // Comparison level for the MOV x, STATUS instruction
-        ADD_BITFIELD_RW(STATUS_N, 0, 4)
-    END_TYPE()
-
-    // All-ones if TX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM1_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
-    // All-ones if RX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM1_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
-
-    // Control behaviour of the input/output shift registers for state machine 1
-    // Reset value: 0x000c0000
-    BEGIN_TYPE(SM1_SHIFTCTRL_t, uint32_t)
-        // When 1, RX FIFO steals the TX FIFO's storage, and becomes twice as deep.
-        // TX FIFO is disabled as a result (always reads as both full and empty).
-        // FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_RX, 31, 1)
-        // When 1, TX FIFO steals the RX FIFO's storage, and becomes twice as deep.
-        // RX FIFO is disabled as a result (always reads as both full and empty).
-        // FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_TX, 30, 1)
-        // Number of bits shifted out of OSR before autopull, or conditional pull (PULL IFEMPTY), will take place.
-        // Write 0 for value of 32.
-        ADD_BITFIELD_RW(PULL_THRESH, 25, 5)
-        // Number of bits shifted into ISR before autopush, or conditional push (PUSH IFFULL), will take place.
-        // Write 0 for value of 32.
-        ADD_BITFIELD_RW(PUSH_THRESH, 20, 5)
-        // 1 = shift out of output shift register to right. 0 = to left.
-        ADD_BITFIELD_RW(OUT_SHIFTDIR, 19, 1)
-        // 1 = shift input shift register to right (data enters from left). 0 = to left.
-        ADD_BITFIELD_RW(IN_SHIFTDIR, 18, 1)
-        // Pull automatically when the output shift register is emptied, i.e. on or following an OUT instruction which causes the output shift counter to reach or exceed PULL_THRESH.
-        ADD_BITFIELD_RW(AUTOPULL, 17, 1)
-        // Push automatically when the input shift register is filled, i.e. on an IN instruction which causes the input shift counter to reach or exceed PUSH_THRESH.
-        ADD_BITFIELD_RW(AUTOPUSH, 16, 1)
-    END_TYPE()
-
-    // Current instruction address of state machine 1
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM1_ADDR_t, uint32_t)
-        ADD_BITFIELD_RO(SM1_ADDR, 0, 5)
-    END_TYPE()
-
-    // Read to see the instruction currently addressed by state machine 1's program counter
-    // Write to execute an instruction immediately (including jumps) and then resume execution.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM1_INSTR_t, uint32_t)
-        ADD_BITFIELD_RW(SM1_INSTR, 0, 16)
-    END_TYPE()
-
-    // State machine pin control
-    // Reset value: 0x14000000
-    BEGIN_TYPE(SM1_PINCTRL_t, uint32_t)
-        // The number of MSBs of the Delay/Side-set instruction field which are used for side-set. Inclusive of the enable bit, if present. Minimum of 0 (all delay bits, no side-set) and maximum of 5 (all side-set, no delay).
-        ADD_BITFIELD_RW(SIDESET_COUNT, 29, 3)
-        // The number of pins asserted by a SET. In the range 0 to 5 inclusive.
-        ADD_BITFIELD_RW(SET_COUNT, 26, 3)
-        // The number of pins asserted by an OUT PINS, OUT PINDIRS or MOV PINS instruction. In the range 0 to 32 inclusive.
-        ADD_BITFIELD_RW(OUT_COUNT, 20, 6)
-        // The pin which is mapped to the least-significant bit of a state machine's IN data bus. Higher-numbered pins are mapped to consecutively more-significant data bits, with a modulo of 32 applied to pin number.
-        ADD_BITFIELD_RW(IN_BASE, 15, 5)
-        // The lowest-numbered pin that will be affected by a side-set operation. The MSBs of an instruction's side-set/delay field (up to 5, determined by SIDESET_COUNT) are used for side-set data, with the remaining LSBs used for delay. The least-significant bit of the side-set portion is the bit written to this pin, with more-significant bits written to higher-numbered pins.
-        ADD_BITFIELD_RW(SIDESET_BASE, 10, 5)
-        // The lowest-numbered pin that will be affected by a SET PINS or SET PINDIRS instruction. The data written to this pin is the least-significant bit of the SET data.
-        ADD_BITFIELD_RW(SET_BASE, 5, 5)
-        // The lowest-numbered pin that will be affected by an OUT PINS, OUT PINDIRS or MOV PINS instruction. The data written to this pin will always be the least-significant bit of the OUT or MOV data.
-        ADD_BITFIELD_RW(OUT_BASE, 0, 5)
-    END_TYPE()
-
-    // Clock divisor register for state machine 2
-    // Frequency = clock freq / (CLKDIV_INT + CLKDIV_FRAC / 256)
-    // Reset value: 0x00010000
-    BEGIN_TYPE(SM2_CLKDIV_t, uint32_t)
-        // Effective frequency is sysclk/(int + frac/256).
-        // Value of 0 is interpreted as 65536. If INT is 0, FRAC must also be 0.
-        ADD_BITFIELD_RW(INT, 16, 16)
-        // Fractional part of clock divisor
-        ADD_BITFIELD_RW(FRAC, 8, 8)
-    END_TYPE()
-
-    // Execution/behavioural settings for state machine 2
-    // Reset value: 0x0001f000
-    BEGIN_TYPE(SM2_EXECCTRL_t, uint32_t)
-        // If 1, an instruction written to SMx_INSTR is stalled, and latched by the state machine. Will clear to 0 once this instruction completes.
-        ADD_BITFIELD_RO(EXEC_STALLED, 31, 1)
-        // If 1, the MSB of the Delay/Side-set instruction field is used as side-set enable, rather than a side-set data bit. This allows instructions to perform side-set optionally, rather than on every instruction, but the maximum possible side-set width is reduced from 5 to 4. Note that the value of PINCTRL_SIDESET_COUNT is inclusive of this enable bit.
-        ADD_BITFIELD_RW(SIDE_EN, 30, 1)
-        // If 1, side-set data is asserted to pin directions, instead of pin values
-        ADD_BITFIELD_RW(SIDE_PINDIR, 29, 1)
-        // The GPIO number to use as condition for JMP PIN. Unaffected by input mapping.
-        ADD_BITFIELD_RW(JMP_PIN, 24, 5)
-        // Which data bit to use for inline OUT enable
-        ADD_BITFIELD_RW(OUT_EN_SEL, 19, 5)
-        // If 1, use a bit of OUT data as an auxiliary write enable
-        // When used in conjunction with OUT_STICKY, writes with an enable of 0 will
-        // deassert the latest pin write. This can create useful masking/override behaviour
-        // due to the priority ordering of state machine pin writes (SM0 < SM1 < ...)
-        ADD_BITFIELD_RW(INLINE_OUT_EN, 18, 1)
-        // Continuously assert the most recent OUT/SET to the pins
-        ADD_BITFIELD_RW(OUT_STICKY, 17, 1)
-        // After reaching this address, execution is wrapped to wrap_bottom.
-        // If the instruction is a jump, and the jump condition is true, the jump takes priority.
-        ADD_BITFIELD_RW(WRAP_TOP, 12, 5)
-        // After reaching wrap_top, execution is wrapped to this address.
-        ADD_BITFIELD_RW(WRAP_BOTTOM, 7, 5)
-        // Comparison used for the MOV x, STATUS instruction.
-        ADD_BITFIELD_RW(STATUS_SEL, 4, 1)
-        // Comparison level for the MOV x, STATUS instruction
-        ADD_BITFIELD_RW(STATUS_N, 0, 4)
-    END_TYPE()
-
-    // All-ones if TX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM2_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
-    // All-ones if RX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM2_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
-
-    // Control behaviour of the input/output shift registers for state machine 2
-    // Reset value: 0x000c0000
-    BEGIN_TYPE(SM2_SHIFTCTRL_t, uint32_t)
-        // When 1, RX FIFO steals the TX FIFO's storage, and becomes twice as deep.
-        // TX FIFO is disabled as a result (always reads as both full and empty).
-        // FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_RX, 31, 1)
-        // When 1, TX FIFO steals the RX FIFO's storage, and becomes twice as deep.
-        // RX FIFO is disabled as a result (always reads as both full and empty).
-        // FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_TX, 30, 1)
-        // Number of bits shifted out of OSR before autopull, or conditional pull (PULL IFEMPTY), will take place.
-        // Write 0 for value of 32.
-        ADD_BITFIELD_RW(PULL_THRESH, 25, 5)
-        // Number of bits shifted into ISR before autopush, or conditional push (PUSH IFFULL), will take place.
-        // Write 0 for value of 32.
-        ADD_BITFIELD_RW(PUSH_THRESH, 20, 5)
-        // 1 = shift out of output shift register to right. 0 = to left.
-        ADD_BITFIELD_RW(OUT_SHIFTDIR, 19, 1)
-        // 1 = shift input shift register to right (data enters from left). 0 = to left.
-        ADD_BITFIELD_RW(IN_SHIFTDIR, 18, 1)
-        // Pull automatically when the output shift register is emptied, i.e. on or following an OUT instruction which causes the output shift counter to reach or exceed PULL_THRESH.
-        ADD_BITFIELD_RW(AUTOPULL, 17, 1)
-        // Push automatically when the input shift register is filled, i.e. on an IN instruction which causes the input shift counter to reach or exceed PUSH_THRESH.
-        ADD_BITFIELD_RW(AUTOPUSH, 16, 1)
-    END_TYPE()
-
-    // Current instruction address of state machine 2
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM2_ADDR_t, uint32_t)
-        ADD_BITFIELD_RO(SM2_ADDR, 0, 5)
-    END_TYPE()
-
-    // Read to see the instruction currently addressed by state machine 2's program counter
-    // Write to execute an instruction immediately (including jumps) and then resume execution.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM2_INSTR_t, uint32_t)
-        ADD_BITFIELD_RW(SM2_INSTR, 0, 16)
-    END_TYPE()
-
-    // State machine pin control
-    // Reset value: 0x14000000
-    BEGIN_TYPE(SM2_PINCTRL_t, uint32_t)
-        // The number of MSBs of the Delay/Side-set instruction field which are used for side-set. Inclusive of the enable bit, if present. Minimum of 0 (all delay bits, no side-set) and maximum of 5 (all side-set, no delay).
-        ADD_BITFIELD_RW(SIDESET_COUNT, 29, 3)
-        // The number of pins asserted by a SET. In the range 0 to 5 inclusive.
-        ADD_BITFIELD_RW(SET_COUNT, 26, 3)
-        // The number of pins asserted by an OUT PINS, OUT PINDIRS or MOV PINS instruction. In the range 0 to 32 inclusive.
-        ADD_BITFIELD_RW(OUT_COUNT, 20, 6)
-        // The pin which is mapped to the least-significant bit of a state machine's IN data bus. Higher-numbered pins are mapped to consecutively more-significant data bits, with a modulo of 32 applied to pin number.
-        ADD_BITFIELD_RW(IN_BASE, 15, 5)
-        // The lowest-numbered pin that will be affected by a side-set operation. The MSBs of an instruction's side-set/delay field (up to 5, determined by SIDESET_COUNT) are used for side-set data, with the remaining LSBs used for delay. The least-significant bit of the side-set portion is the bit written to this pin, with more-significant bits written to higher-numbered pins.
-        ADD_BITFIELD_RW(SIDESET_BASE, 10, 5)
-        // The lowest-numbered pin that will be affected by a SET PINS or SET PINDIRS instruction. The data written to this pin is the least-significant bit of the SET data.
-        ADD_BITFIELD_RW(SET_BASE, 5, 5)
-        // The lowest-numbered pin that will be affected by an OUT PINS, OUT PINDIRS or MOV PINS instruction. The data written to this pin will always be the least-significant bit of the OUT or MOV data.
-        ADD_BITFIELD_RW(OUT_BASE, 0, 5)
-    END_TYPE()
-
-    // Clock divisor register for state machine 3
-    // Frequency = clock freq / (CLKDIV_INT + CLKDIV_FRAC / 256)
-    // Reset value: 0x00010000
-    BEGIN_TYPE(SM3_CLKDIV_t, uint32_t)
-        // Effective frequency is sysclk/(int + frac/256).
-        // Value of 0 is interpreted as 65536. If INT is 0, FRAC must also be 0.
-        ADD_BITFIELD_RW(INT, 16, 16)
-        // Fractional part of clock divisor
-        ADD_BITFIELD_RW(FRAC, 8, 8)
-    END_TYPE()
-
-    // Execution/behavioural settings for state machine 3
-    // Reset value: 0x0001f000
-    BEGIN_TYPE(SM3_EXECCTRL_t, uint32_t)
-        // If 1, an instruction written to SMx_INSTR is stalled, and latched by the state machine. Will clear to 0 once this instruction completes.
-        ADD_BITFIELD_RO(EXEC_STALLED, 31, 1)
-        // If 1, the MSB of the Delay/Side-set instruction field is used as side-set enable, rather than a side-set data bit. This allows instructions to perform side-set optionally, rather than on every instruction, but the maximum possible side-set width is reduced from 5 to 4. Note that the value of PINCTRL_SIDESET_COUNT is inclusive of this enable bit.
-        ADD_BITFIELD_RW(SIDE_EN, 30, 1)
-        // If 1, side-set data is asserted to pin directions, instead of pin values
-        ADD_BITFIELD_RW(SIDE_PINDIR, 29, 1)
-        // The GPIO number to use as condition for JMP PIN. Unaffected by input mapping.
-        ADD_BITFIELD_RW(JMP_PIN, 24, 5)
-        // Which data bit to use for inline OUT enable
-        ADD_BITFIELD_RW(OUT_EN_SEL, 19, 5)
-        // If 1, use a bit of OUT data as an auxiliary write enable
-        // When used in conjunction with OUT_STICKY, writes with an enable of 0 will
-        // deassert the latest pin write. This can create useful masking/override behaviour
-        // due to the priority ordering of state machine pin writes (SM0 < SM1 < ...)
-        ADD_BITFIELD_RW(INLINE_OUT_EN, 18, 1)
-        // Continuously assert the most recent OUT/SET to the pins
-        ADD_BITFIELD_RW(OUT_STICKY, 17, 1)
-        // After reaching this address, execution is wrapped to wrap_bottom.
-        // If the instruction is a jump, and the jump condition is true, the jump takes priority.
-        ADD_BITFIELD_RW(WRAP_TOP, 12, 5)
-        // After reaching wrap_top, execution is wrapped to this address.
-        ADD_BITFIELD_RW(WRAP_BOTTOM, 7, 5)
-        // Comparison used for the MOV x, STATUS instruction.
-        ADD_BITFIELD_RW(STATUS_SEL, 4, 1)
-        // Comparison level for the MOV x, STATUS instruction
-        ADD_BITFIELD_RW(STATUS_N, 0, 4)
-    END_TYPE()
-
-    // All-ones if TX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM3_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
-    // All-ones if RX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM3_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
-
-    // Control behaviour of the input/output shift registers for state machine 3
-    // Reset value: 0x000c0000
-    BEGIN_TYPE(SM3_SHIFTCTRL_t, uint32_t)
-        // When 1, RX FIFO steals the TX FIFO's storage, and becomes twice as deep.
-        // TX FIFO is disabled as a result (always reads as both full and empty).
-        // FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_RX, 31, 1)
-        // When 1, TX FIFO steals the RX FIFO's storage, and becomes twice as deep.
-        // RX FIFO is disabled as a result (always reads as both full and empty).
-        // FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_TX, 30, 1)
-        // Number of bits shifted out of OSR before autopull, or conditional pull (PULL IFEMPTY), will take place.
-        // Write 0 for value of 32.
-        ADD_BITFIELD_RW(PULL_THRESH, 25, 5)
-        // Number of bits shifted into ISR before autopush, or conditional push (PUSH IFFULL), will take place.
-        // Write 0 for value of 32.
-        ADD_BITFIELD_RW(PUSH_THRESH, 20, 5)
-        // 1 = shift out of output shift register to right. 0 = to left.
-        ADD_BITFIELD_RW(OUT_SHIFTDIR, 19, 1)
-        // 1 = shift input shift register to right (data enters from left). 0 = to left.
-        ADD_BITFIELD_RW(IN_SHIFTDIR, 18, 1)
-        // Pull automatically when the output shift register is emptied, i.e. on or following an OUT instruction which causes the output shift counter to reach or exceed PULL_THRESH.
-        ADD_BITFIELD_RW(AUTOPULL, 17, 1)
-        // Push automatically when the input shift register is filled, i.e. on an IN instruction which causes the input shift counter to reach or exceed PUSH_THRESH.
-        ADD_BITFIELD_RW(AUTOPUSH, 16, 1)
-    END_TYPE()
-
-    // Current instruction address of state machine 3
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM3_ADDR_t, uint32_t)
-        ADD_BITFIELD_RO(SM3_ADDR, 0, 5)
-    END_TYPE()
-
-    // Read to see the instruction currently addressed by state machine 3's program counter
-    // Write to execute an instruction immediately (including jumps) and then resume execution.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM3_INSTR_t, uint32_t)
-        ADD_BITFIELD_RW(SM3_INSTR, 0, 16)
-    END_TYPE()
-
-    // State machine pin control
-    // Reset value: 0x14000000
-    BEGIN_TYPE(SM3_PINCTRL_t, uint32_t)
+    BEGIN_TYPE(SM_PINCTRL_t, uint32_t)
         // The number of MSBs of the Delay/Side-set instruction field which are used for side-set. Inclusive of the enable bit, if present. Minimum of 0 (all delay bits, no side-set) and maximum of 5 (all side-set, no delay).
         ADD_BITFIELD_RW(SIDESET_COUNT, 29, 3)
         // The number of pins asserted by a SET. In the range 0 to 5 inclusive.
@@ -15963,30 +9245,30 @@ namespace _PIO0_  {
         DBG_PADOE_t                   DBG_PADOE;
         DBG_CFGINFO_t                 DBG_CFGINFO;
         INSTR_MEM_t                   INSTR_MEM[32];
-        SM0_CLKDIV_t                  SM0_CLKDIV;
-        SM0_EXECCTRL_t                SM0_EXECCTRL;
-        SM0_SHIFTCTRL_t               SM0_SHIFTCTRL;
-        SM0_ADDR_t                    SM0_ADDR;
-        SM0_INSTR_t                   SM0_INSTR;
-        SM0_PINCTRL_t                 SM0_PINCTRL;
-        SM1_CLKDIV_t                  SM1_CLKDIV;
-        SM1_EXECCTRL_t                SM1_EXECCTRL;
-        SM1_SHIFTCTRL_t               SM1_SHIFTCTRL;
-        SM1_ADDR_t                    SM1_ADDR;
-        SM1_INSTR_t                   SM1_INSTR;
-        SM1_PINCTRL_t                 SM1_PINCTRL;
-        SM2_CLKDIV_t                  SM2_CLKDIV;
-        SM2_EXECCTRL_t                SM2_EXECCTRL;
-        SM2_SHIFTCTRL_t               SM2_SHIFTCTRL;
-        SM2_ADDR_t                    SM2_ADDR;
-        SM2_INSTR_t                   SM2_INSTR;
-        SM2_PINCTRL_t                 SM2_PINCTRL;
-        SM3_CLKDIV_t                  SM3_CLKDIV;
-        SM3_EXECCTRL_t                SM3_EXECCTRL;
-        SM3_SHIFTCTRL_t               SM3_SHIFTCTRL;
-        SM3_ADDR_t                    SM3_ADDR;
-        SM3_INSTR_t                   SM3_INSTR;
-        SM3_PINCTRL_t                 SM3_PINCTRL;
+        SM_CLKDIV_t                   SM0_CLKDIV;
+        SM_EXECCTRL_t                 SM0_EXECCTRL;
+        SM_SHIFTCTRL_t                SM0_SHIFTCTRL;
+        SM_ADDR_t                     SM0_ADDR;
+        SM_INSTR_t                    SM0_INSTR;
+        SM_PINCTRL_t                  SM0_PINCTRL;
+        SM_CLKDIV_t                   SM1_CLKDIV;
+        SM_EXECCTRL_t                 SM1_EXECCTRL;
+        SM_SHIFTCTRL_t                SM1_SHIFTCTRL;
+        SM_ADDR_t                     SM1_ADDR;
+        SM_INSTR_t                    SM1_INSTR;
+        SM_PINCTRL_t                  SM1_PINCTRL;
+        SM_CLKDIV_t                   SM2_CLKDIV;
+        SM_EXECCTRL_t                 SM2_EXECCTRL;
+        SM_SHIFTCTRL_t                SM2_SHIFTCTRL;
+        SM_ADDR_t                     SM2_ADDR;
+        SM_INSTR_t                    SM2_INSTR;
+        SM_PINCTRL_t                  SM2_PINCTRL;
+        SM_CLKDIV_t                   SM3_CLKDIV;
+        SM_EXECCTRL_t                 SM3_EXECCTRL;
+        SM_SHIFTCTRL_t                SM3_SHIFTCTRL;
+        SM_ADDR_t                     SM3_ADDR;
+        SM_INSTR_t                    SM3_INSTR;
+        SM_PINCTRL_t                  SM3_PINCTRL;
         INTR_t                        INTR;
         IRQ0_INTE_t                   IRQ0_INTE;
         IRQ0_INTF_t                   IRQ0_INTF;
@@ -16517,323 +9799,13 @@ namespace _SIO_  {
     // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
     // The value returned on success is 0x1 << lock number.
     // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK0_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK1_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK2_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK3_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK4_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK5_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK6_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK7_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK8_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK9_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK10_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK11_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK12_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK13_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK14_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK15_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK16_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK17_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK18_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK19_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK20_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK21_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK22_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK23_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK24_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK25_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK26_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK27_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK28_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK29_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK30_t;
-
-    // Reading from a spinlock address will:
-    // - Return 0 if lock is already locked
-    // - Otherwise return nonzero, and simultaneously claim the lock
-    // 
-    // Writing (any value) releases the lock.
-    // If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.
-    // The value returned on success is 0x1 << lock number.
-    // Reset value: 0x00000000
-    typedef uint32_t SPINLOCK31_t;
+    typedef uint32_t SPINLOCK_t;
 
     struct SIO_t {
         CPUID_t                       CPUID;
         GPIO_IN_t                     GPIO_IN;
         GPIO_HI_IN_t                  GPIO_HI_IN;
-        uint32_t                      reserved1[1];
+        uint32_t                      reserved0;
         GPIO_OUT_t                    GPIO_OUT;
         GPIO_OUT_SET_t                GPIO_OUT_SET;
         GPIO_OUT_CLR_t                GPIO_OUT_CLR;
@@ -16861,7 +9833,7 @@ namespace _SIO_  {
         DIV_QUOTIENT_t                DIV_QUOTIENT;
         DIV_REMAINDER_t               DIV_REMAINDER;
         DIV_CSR_t                     DIV_CSR;
-        uint32_t                      reserved2[1];
+        uint32_t                      reserved1;
         INTERP0_ACCUM0_t              INTERP0_ACCUM0;
         INTERP0_ACCUM1_t              INTERP0_ACCUM1;
         INTERP0_BASE0_t               INTERP0_BASE0;
@@ -16894,41 +9866,13 @@ namespace _SIO_  {
         INTERP1_ACCUM0_ADD_t          INTERP1_ACCUM0_ADD;
         INTERP1_ACCUM1_ADD_t          INTERP1_ACCUM1_ADD;
         INTERP1_BASE_1AND0_t          INTERP1_BASE_1AND0;
-        SPINLOCK0_t                   SPINLOCK0;
-        SPINLOCK1_t                   SPINLOCK1;
-        SPINLOCK2_t                   SPINLOCK2;
-        SPINLOCK3_t                   SPINLOCK3;
-        SPINLOCK4_t                   SPINLOCK4;
-        SPINLOCK5_t                   SPINLOCK5;
-        SPINLOCK6_t                   SPINLOCK6;
-        SPINLOCK7_t                   SPINLOCK7;
-        SPINLOCK8_t                   SPINLOCK8;
-        SPINLOCK9_t                   SPINLOCK9;
-        SPINLOCK10_t                  SPINLOCK10;
-        SPINLOCK11_t                  SPINLOCK11;
-        SPINLOCK12_t                  SPINLOCK12;
-        SPINLOCK13_t                  SPINLOCK13;
-        SPINLOCK14_t                  SPINLOCK14;
-        SPINLOCK15_t                  SPINLOCK15;
-        SPINLOCK16_t                  SPINLOCK16;
-        SPINLOCK17_t                  SPINLOCK17;
-        SPINLOCK18_t                  SPINLOCK18;
-        SPINLOCK19_t                  SPINLOCK19;
-        SPINLOCK20_t                  SPINLOCK20;
-        SPINLOCK21_t                  SPINLOCK21;
-        SPINLOCK22_t                  SPINLOCK22;
-        SPINLOCK23_t                  SPINLOCK23;
-        SPINLOCK24_t                  SPINLOCK24;
-        SPINLOCK25_t                  SPINLOCK25;
-        SPINLOCK26_t                  SPINLOCK26;
-        SPINLOCK27_t                  SPINLOCK27;
-        SPINLOCK28_t                  SPINLOCK28;
-        SPINLOCK29_t                  SPINLOCK29;
-        SPINLOCK30_t                  SPINLOCK30;
-        SPINLOCK31_t                  SPINLOCK31;
+        SPINLOCK_t                    SPINLOCK[32];
     };
 
     static SIO_t & SIO     = (*(SIO_t *)0xd0000000);
+    static SIO_t & SIO_XOR = (*(SIO_t *)0xd0001000);
+    static SIO_t & SIO_SET = (*(SIO_t *)0xd0002000);
+    static SIO_t & SIO_CLR = (*(SIO_t *)0xd0003000);
 
 } // _SIO_
 
@@ -17369,20 +10313,20 @@ namespace _PPB_  {
     END_TYPE()
 
     struct PPB_t {
-        uint32_t                      reserved1[14340];
+        uint32_t                      reserved0[14340];
         SYST_CSR_t                    SYST_CSR;
         SYST_RVR_t                    SYST_RVR;
         SYST_CVR_t                    SYST_CVR;
         SYST_CALIB_t                  SYST_CALIB;
-        uint32_t                      reserved2[56];
+        uint32_t                      reserved1[56];
         NVIC_ISER_t                   NVIC_ISER;
-        uint32_t                      reserved3[31];
+        uint32_t                      reserved2[31];
         NVIC_ICER_t                   NVIC_ICER;
-        uint32_t                      reserved4[31];
+        uint32_t                      reserved3[31];
         NVIC_ISPR_t                   NVIC_ISPR;
-        uint32_t                      reserved5[31];
+        uint32_t                      reserved4[31];
         NVIC_ICPR_t                   NVIC_ICPR;
-        uint32_t                      reserved6[95];
+        uint32_t                      reserved5[95];
         NVIC_IPR0_t                   NVIC_IPR0;
         NVIC_IPR1_t                   NVIC_IPR1;
         NVIC_IPR2_t                   NVIC_IPR2;
@@ -17391,18 +10335,18 @@ namespace _PPB_  {
         NVIC_IPR5_t                   NVIC_IPR5;
         NVIC_IPR6_t                   NVIC_IPR6;
         NVIC_IPR7_t                   NVIC_IPR7;
-        uint32_t                      reserved7[568];
+        uint32_t                      reserved6[568];
         CPUID_t                       CPUID;
         ICSR_t                        ICSR;
         VTOR_t                        VTOR;
         AIRCR_t                       AIRCR;
         SCR_t                         SCR;
         CCR_t                         CCR;
-        uint32_t                      reserved8[1];
+        uint32_t                      reserved7;
         SHPR2_t                       SHPR2;
         SHPR3_t                       SHPR3;
         SHCSR_t                       SHCSR;
-        uint32_t                      reserved9[26];
+        uint32_t                      reserved8[26];
         MPU_TYPE_t                    MPU_TYPE;
         MPU_CTRL_t                    MPU_CTRL;
         MPU_RNR_t                     MPU_RNR;
@@ -17416,3 +10360,4 @@ namespace _PPB_  {
     static PPB_t & PPB_CLR = (*(PPB_t *)0xe0003000);
 
 } // _PPB_
+

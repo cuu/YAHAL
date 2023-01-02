@@ -17,6 +17,7 @@ add_executable(edumkII_uGUI_simple
 
 # Add YAHAL to target
 yahal_add_me(edumkII_uGUI_simple)
+yahal_add_library(edumkII_uGUI_simple uGUI)
 
 yahal_add_custom_targets(edumkII_uGUI_simple)
 yahal_add_extra_outputs(edumkII_uGUI_simple)

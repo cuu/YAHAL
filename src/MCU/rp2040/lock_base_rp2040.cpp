@@ -14,7 +14,7 @@ uint32_t lock_base_rp2040::_index = 0;
 
 lock_base_rp2040::lock_base_rp2040() {
     yahal_assert(_index < 32);
-    _lock = &SIO.SPINLOCK0 + _index;
+    _lock = SIO.SPINLOCK + _index;
     _mask = 1 << _index;
     _index++;
 }

@@ -40,7 +40,7 @@ class lock_base_rp2040 : public lock_base_interface
   private:
     static uint32_t _index;
     uint32_t        _mask;
-    SPINLOCK0_t *   _lock;
+    SPINLOCK_t *    _lock;
 };
 
 #endif // _LOCK_BASE_RP2040_H

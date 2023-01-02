@@ -31,7 +31,7 @@ int main(void)
         // Simple delay using an empty loop.
         // This will only work if the compiler does
         // not optimize away this code ...
-        for(int i=0; i < 100000; ++i) ;
+        for(int i=0; i < 1600000; ++i) ;
         // switch off the LED
         led = LOW;
         // Delay using the non-multitasking version

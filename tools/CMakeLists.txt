@@ -1,17 +1,18 @@
 cmake_minimum_required(VERSION 3.16)
 
 function(yahal_add_uf2_output TARGET)
-    set(TF $<TARGET_FILE:${TARGET}>)
-    set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
-    set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
+    # Load package if not already loaded
     if (NOT ELF2UF2_FOUND)
         find_package(ELF2UF2)
     endif()
-    if (ELF2UF2_FOUND)
-        add_custom_command(TARGET ${TARGET} POST_BUILD
-            COMMAND ELF2UF2 ${TF} ${TN}.uf2 
-        )
-    endif()
+
+    set(TF $<TARGET_FILE:${TARGET}>)
+    set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
+    set(TO $<TARGET_PROPERTY:${TARGET},OUTPUT_NAME>)
+
+    add_custom_command(TARGET ${TARGET} POST_BUILD
+        COMMAND ELF2UF2 ${TF} ${TN}.uf2 
+    )
 endfunction()
 
 
@@ -23,11 +24,11 @@ function(generate_pio_header TARGET PIO)
 
     cmake_parse_arguments(generate_pio_header "" "OUTPUT_FORMAT;OUTPUT_DIR" "" ${ARGN} )
 
-    # Output format default is c-sdk
+    # Output format default is yahal
     if (generate_pio_header_OUTPUT_FORMAT)
         set(OUTPUT_FORMAT "${generate_pio_header_OUTPUT_FORMAT}")
     else()
-        set(OUTPUT_FORMAT "c-sdk")
+        set(OUTPUT_FORMAT "yahal")
     endif()
 
     # Output directory default is cmake's binary dir
@@ -62,19 +63,21 @@ function(generate_pio_header TARGET PIO)
 endfunction()
 
 
-function(png_to_cpp TARGET PNG BG_COLOR)
+function(png_to_cpp TARGET PNG)
     # Load package if not already loaded
     if (NOT PNG2CPP_FOUND)
         find_package(PNG2CPP REQUIRED)
     endif()
+
+    # Parse argument
+    cmake_parse_arguments(png_to_cpp "" "BG_COLOR;OUTPUT_DIR" "" ${ARGN} )
 
     # Paramters are all relative to current CMakeList.txt
     set(PNG ${CMAKE_CURRENT_SOURCE_DIR}/${PNG})
 
     # Output file is always in same folder as png file
     get_filename_component(PNG_NAME ${PNG} NAME_WE)
-    get_filename_component(PNG_PATH ${PNG} DIRECTORY)
-    set(CPPFILE "${PNG_PATH}/${PNG_NAME}.cpp")
+    set(CPPFILE "${png_to_cpp_OUTPUT_DIR}/${PNG_NAME}.cpp")
 
     #Add a new target which depends on the cpp file
     set(PNG_TARGET "${PNG_NAME}_cpp")
@@ -83,7 +86,7 @@ function(png_to_cpp TARGET PNG BG_COLOR)
     add_custom_command(
         OUTPUT          ${CPPFILE}
         MAIN_DEPENDENCY ${PNG}
-        COMMAND PNG2CPP -o ${CPPFILE} -b ${BG_COLOR} ${PNG}
+        COMMAND PNG2CPP -o ${CPPFILE} -b ${png_to_cpp_BG_COLOR} ${PNG}
     )
 
     add_dependencies(${TARGET} ${PNG_TARGET})

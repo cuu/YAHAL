@@ -39,6 +39,7 @@ extern const uint16_t angry_bird[16384];
 
 int main(void) {
 
+    // Inject dependencies
     boostxl_eduMKII edu;
     edu.need_led_rgb = true;
     edu.need_lcd     = true;

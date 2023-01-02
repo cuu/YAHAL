@@ -68,9 +68,9 @@ void spi_rp2040::init() {
     if (_index)  RESETS_CLR.RESET.spi1 = 1;
     else         RESETS_CLR.RESET.spi0 = 1;
     // Configure GPIO pins MISO, MOSI & SCLK
-    _miso.setSEL(GPIO0_CTRL_FUNCSEL__spi0_rx);
-    _mosi.setSEL(GPIO3_CTRL_FUNCSEL__spi0_tx);
-    _sclk.setSEL(GPIO2_CTRL_FUNCSEL__spi0_sclk);
+    _miso.setSEL(GPIO_CTRL_FUNCSEL__spi);
+    _mosi.setSEL(GPIO_CTRL_FUNCSEL__spi);
+    _sclk.setSEL(GPIO_CTRL_FUNCSEL__spi);
     // Configure CS pin
     _cs.gpioMode(_master ? GPIO::OUTPUT | GPIO::INIT_HIGH : GPIO::INPUT);
     // Configure SPI port

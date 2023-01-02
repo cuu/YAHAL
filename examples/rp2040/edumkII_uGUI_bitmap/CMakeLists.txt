@@ -14,7 +14,7 @@ project(uGUI_bitmap)
 
 add_executable(uGUI_bitmap
     main.cpp
-    angry-bird.cpp
+    gen/angry-bird.cpp
 )
 
 # Add YAHAL
@@ -24,7 +24,9 @@ yahal_add_me(uGUI_bitmap)
 yahal_add_library(uGUI_bitmap uGUI)
 
 # Generate cpp-file from png
-png_to_cpp(uGUI_bitmap angry-bird.png 0x008000)
+png_to_cpp(uGUI_bitmap angry-bird.png 
+           BG_COLOR    0x008000 
+           OUTPUT_DIR  ${CMAKE_CURRENT_LIST_DIR}/gen)
 
 yahal_add_custom_targets(uGUI_bitmap)
 yahal_add_extra_outputs(uGUI_bitmap)
