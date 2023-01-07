@@ -58,8 +58,11 @@ struct add_bitfield_RW
     inline void operator=(T v) {
         value = (value & ~masks) | ((v & maskl) << Offset);
     }
-    inline void operator |= (T v) {
+    inline void operator <<= (T v) {
         value = v << Offset;
+    }
+    inline void operator |= (T v) {
+        value |= ((v & maskl) << Offset);
     }
 };
 

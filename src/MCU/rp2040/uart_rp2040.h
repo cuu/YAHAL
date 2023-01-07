@@ -49,7 +49,7 @@ private:
     bool _init;
     void init();
 
-    static int8_t _uart_tx_pins[2][5];
+    static int8_t _uart_tx_pins[2][4];
 
     static function<void(char)> _intHandler[2];
 

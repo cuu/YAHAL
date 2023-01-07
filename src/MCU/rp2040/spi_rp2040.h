@@ -102,7 +102,7 @@ private:
 
     void    init();
 
-    static int8_t _spi_miso_pins[2][5];
+    static int8_t _spi_miso_pins[2][4];
 
     static function<void(uint8_t)> _intHandler[2];
 };

@@ -25,7 +25,7 @@ using namespace _RESETS_;
 
 function<void(uint8_t)> spi_rp2040::_intHandler[2];
 
-int8_t spi_rp2040::_spi_miso_pins[2][5] =
+int8_t spi_rp2040::_spi_miso_pins[2][4] =
     { { 0,  4, 16, 20 }, { 8, 12, 24, 28 } };
 
 spi_rp2040::spi_rp2040( uint8_t     index ,
@@ -51,6 +51,9 @@ spi_rp2040::spi_rp2040( uint8_t     index ,
         if (mosi_pin ==  _spi_miso_pins[index][i]+3) mosi_found = true;
         if (sclk_pin ==  _spi_miso_pins[index][i]+2) sclk_found = true;
     }
+    (void)miso_found;  // suppress warnings
+    (void)mosi_found;
+    (void)sclk_found;
     yahal_assert(miso_found && mosi_found && sclk_found);
 }
 

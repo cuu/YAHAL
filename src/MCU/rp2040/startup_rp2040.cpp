@@ -148,7 +148,7 @@ void __attribute__((naked, noreturn)) Reset_Handler(void)
     /////////////////////////
 
     WATCHDOG.TICK.CYCLES             = 12;
-    WATCHDOG_SET.TICK.ENABLE        |= 1;
+    WATCHDOG_SET.TICK.ENABLE       <<= 1;
 
     CLOCKS.CLK_SYS_RESUS_CTRL        = 0;
 
@@ -164,30 +164,30 @@ void __attribute__((naked, noreturn)) Reset_Handler(void)
     while (CLOCKS.CLK_SYS_SELECTED != 0x1) {}
 
     // Set up PLL_SYS
-    RESETS_SET.RESET.pll_sys        |= 1;
-    RESETS_CLR.RESET.pll_sys        |= 1;
+    RESETS_SET.RESET.pll_sys         <<= 1;
+    RESETS_CLR.RESET.pll_sys         <<= 1;
     while (RESETS.RESET_DONE.pll_sys == 0) ;
     PLL_SYS.CS.REFDIV                = 1;
     PLL_SYS.FBDIV_INT                = 125;
-    PLL_SYS_CLR.PWR.VCOPD           |= 1;
-    PLL_SYS_CLR.PWR.PD              |= 1;
+    PLL_SYS_CLR.PWR.VCOPD            <<= 1;
+    PLL_SYS_CLR.PWR.PD               <<= 1;
     while (PLL_SYS.CS.LOCK != 1) { }
     PLL_SYS.PRIM.POSTDIV1            = 6;
     PLL_SYS.PRIM.POSTDIV2            = 2;
-    PLL_SYS_CLR.PWR.POSTDIVPD       |= 1;
+    PLL_SYS_CLR.PWR.POSTDIVPD       <<= 1;
 
     // Set up PLL_USB
-    RESETS_SET.RESET.pll_usb        |= 1;
-    RESETS_CLR.RESET.pll_usb        |= 1;
+    RESETS_SET.RESET.pll_usb        <<= 1;
+    RESETS_CLR.RESET.pll_usb        <<= 1;
     while (RESETS.RESET_DONE.pll_usb == 0) ;
     PLL_USB.CS.REFDIV                = 1;
     PLL_USB.FBDIV_INT                = 100;
-    PLL_USB_CLR.PWR.VCOPD           |= 1;
-    PLL_USB_CLR.PWR.PD              |= 1;
+    PLL_USB_CLR.PWR.VCOPD           <<= 1;
+    PLL_USB_CLR.PWR.PD              <<= 1;
     while (PLL_USB.CS.LOCK != 1) { }
     PLL_USB.PRIM.POSTDIV1            = 5;
     PLL_USB.PRIM.POSTDIV2            = 5;
-    PLL_USB_CLR.PWR.POSTDIVPD       |= 1;
+    PLL_USB_CLR.PWR.POSTDIVPD       <<= 1;
 
     CLOCKS.CLK_REF_CTRL.AUXSRC       = CLK_REF_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_REF_CTRL.SRC          = CLK_REF_CTRL_SRC__xosc_clksrc;
@@ -198,28 +198,28 @@ void __attribute__((naked, noreturn)) Reset_Handler(void)
     CLOCKS.CLK_SYS_DIV.INT           = 1;
     CLOCKS.CLK_SYS_DIV.FRAC          = 0;
 
-    CLOCKS_CLR.CLK_USB_CTRL.ENABLE  |= 1;
+    CLOCKS_CLR.CLK_USB_CTRL.ENABLE  <<= 1;
     CLOCKS.CLK_USB_CTRL.AUXSRC       = CLK_USB_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_USB_DIV.INT           = 1;
-    CLOCKS_SET.CLK_USB_CTRL.PHASE   |= 1;
-    CLOCKS_SET.CLK_USB_CTRL.ENABLE  |= 1;
+    CLOCKS_SET.CLK_USB_CTRL.PHASE   <<= 1;
+    CLOCKS_SET.CLK_USB_CTRL.ENABLE  <<= 1;
 
-    CLOCKS_CLR.CLK_ADC_CTRL.ENABLE  |= 1;
+    CLOCKS_CLR.CLK_ADC_CTRL.ENABLE  <<= 1;
     CLOCKS.CLK_ADC_CTRL.AUXSRC       = CLK_ADC_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_ADC_DIV.INT           = 1;
-    CLOCKS_SET.CLK_ADC_CTRL.PHASE   |= 1;
-    CLOCKS_SET.CLK_ADC_CTRL.ENABLE  |= 1;
+    CLOCKS_SET.CLK_ADC_CTRL.PHASE   <<= 1;
+    CLOCKS_SET.CLK_ADC_CTRL.ENABLE  <<= 1;
 
-    CLOCKS_CLR.CLK_RTC_CTRL.ENABLE  |= 1;
+    CLOCKS_CLR.CLK_RTC_CTRL.ENABLE  <<= 1;
     CLOCKS.CLK_RTC_CTRL.AUXSRC       = CLK_RTC_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_RTC_DIV.INT           = 1024;
     CLOCKS.CLK_RTC_DIV.FRAC          = 0;
-    CLOCKS_SET.CLK_RTC_CTRL.PHASE   |= 1;
-    CLOCKS_SET.CLK_RTC_CTRL.ENABLE  |= 1;
+    CLOCKS_SET.CLK_RTC_CTRL.PHASE   <<= 1;
+    CLOCKS_SET.CLK_RTC_CTRL.ENABLE  <<= 1;
 
-    CLOCKS_CLR.CLK_PERI_CTRL.ENABLE |= 1;
+    CLOCKS_CLR.CLK_PERI_CTRL.ENABLE <<= 1;
     CLOCKS.CLK_PERI_CTRL.AUXSRC      = CLK_PERI_CTRL_AUXSRC__clk_sys;
-    CLOCKS_SET.CLK_PERI_CTRL.ENABLE |= 1;
+    CLOCKS_SET.CLK_PERI_CTRL.ENABLE <<= 1;
 
     RESETS.RESET = 0;
 

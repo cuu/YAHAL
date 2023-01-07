@@ -15,26 +15,27 @@ pio_rp2040 pio_rp2040::pio0(PIO0);
 pio_rp2040 pio_rp2040::pio1(PIO1);
 
 pio_rp2040::pio_rp2040(PIO0_t & pio)
-: _pio(pio), _next_free_addr(0) {
+: _pio(pio),
+  _pio_xor(*(PIO0_t *)((uint8_t *)&pio + 0x1000)),
+  _pio_set(*(PIO0_t *)((uint8_t *)&pio + 0x2000)),
+  _pio_clr(*(PIO0_t *)((uint8_t *)&pio + 0x3000)),
+  _next_free_addr(0) {
     // Set base address of SM register banks
     _sm_regbanks = (SM_regs *)&pio.SM0_CLKDIV;
     // Disable all state machines, just in case..
-    PIO0.CTRL.SM_ENABLE  = 0x0;
-    PIO1.CTRL.SM_ENABLE  = 0x0;
+    _pio.CTRL.SM_ENABLE  = 0x0;
     // Restart all state machines
-    PIO0.CTRL.SM_RESTART = 0xf;
-    PIO1.CTRL.SM_RESTART = 0xf;
+    _pio.CTRL.SM_RESTART = 0xf;
     // Erase instruction memory
     for(int i=0; i < 32; ++i) {
-        PIO0.INSTR_MEM[i] = 0;
-        PIO1.INSTR_MEM[i] = 0;
+        _pio.INSTR_MEM[i] = 0;
     }
 }
 
 pio_rp2040::~pio_rp2040() {
     // Disable all state machines, just in case..
-    PIO0.CTRL.SM_ENABLE  = 0x0;
-    PIO1.CTRL.SM_ENABLE  = 0x0;
+    _pio.CTRL.SM_ENABLE  = 0x0;
+    _pio.CTRL.SM_ENABLE  = 0x0;
 }
 
 SM pio_rp2040::loadProgram(const pio_program & prgm) {
@@ -66,7 +67,8 @@ SM pio_rp2040::loadProgram(const pio_program & prgm) {
         _pio.INSTR_MEM[i + load_at_addr] = inst;
     }
     // Generate a state machine and initialize it
-    SM sm(_pio, sm_index, load_at_addr, _sm_regbanks[sm_index]);
+    SM sm(_pio, _pio_set, _pio_clr, sm_index,
+          load_at_addr, _sm_regbanks[sm_index]);
     // Set the initial PC
     sm.setRegister(out_dest_t::PC, load_at_addr);
     // Update the next free addr

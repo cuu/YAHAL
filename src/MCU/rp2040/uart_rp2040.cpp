@@ -9,7 +9,7 @@ using namespace _RESETS_;
 
 function<void(char)> uart_rp2040::_intHandler[2];
 
-int8_t uart_rp2040::_uart_tx_pins[2][5] =
+int8_t uart_rp2040::_uart_tx_pins[2][4] =
     { { 0, 12, 16, 28 }, { 4,  8, 20, 24 } };
 
 uart_rp2040::uart_rp2040(uint8_t index,
@@ -28,6 +28,8 @@ uart_rp2040::uart_rp2040(uint8_t index,
         if (tx_pin ==  _uart_tx_pins[index][i])    tx_found = true;
         if (rx_pin == (_uart_tx_pins[index][i]+1)) rx_found = true;
     }
+    (void)tx_found; // suppress warnings
+    (void)rx_found;
     yahal_assert(tx_found && rx_found);
 }
 

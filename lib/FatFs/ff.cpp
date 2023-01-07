@@ -7119,6 +7119,7 @@ int FatFs::_fstat (int file, struct stat *st) {
 
 int FatFs::_lseek (int file, int offset, int whence) {
     assert(whence == SEEK_SET);
+    (void)whence; // Suppress warnings
     FRESULT res = this->lseek(_f_ptrs[file-16], offset);
     set_errno(res);
     return res ? -1 : offset;

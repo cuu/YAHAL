@@ -206,32 +206,56 @@ struct SM_regs {
 
 struct SM {
     PIO0_t  &   pio;
+    PIO0_t  &   pio_set;
+    PIO0_t  &   pio_clr;
     uint8_t     sm_index;
     uint8_t     load_addr;
     SM_regs &   regs;
 
-    SM(PIO0_t & p, uint8_t i, uint8_t l, SM_regs & r)
-    : pio(p), sm_index(i), load_addr(l), regs(r) {
+    SM(PIO0_t & p, PIO0_t & ps, PIO0_t & pc,
+       uint8_t i, uint8_t l, SM_regs & r)
+    : pio(p), pio_set(ps), pio_clr(pc),
+      sm_index(i), load_addr(l), regs(r) {
         regs.init();
     }
 
+    inline void execute(uint16_t instruction) {
+        regs.SM_INSTR = instruction;
+    }
+
     void setRegister(out_dest_t reg, uint32_t val) {
+        // Remember current configuration
+        bool en = isEnabled();
+        disable();
         uint8_t out_base  = regs.SM_PINCTRL.OUT_BASE;
         uint8_t out_count = regs.SM_PINCTRL.OUT_COUNT;
+        // Write full 32 bits
         regs.SM_PINCTRL.OUT_BASE  = 0;
         regs.SM_PINCTRL.OUT_COUNT = 32;
+        // Empty the TX Fifo
+        while(pio.FLEVEL & (0xf << (sm_index << 3))) {
+            execute( op_PULL(0, 0) );
+        }
+        // Write value to TX Fifo first, then write it to destination
         writeTxFifo(val);
-        regs.SM_INSTR = op_PULL(0, 0);
-        regs.SM_INSTR = op_OUT (0, reg, 0);
+        execute( op_PULL(0, 0)      );
+        execute( op_OUT (0, reg, 0) );
+        // Restore original state
         regs.SM_PINCTRL.OUT_BASE  = out_base;
         regs.SM_PINCTRL.OUT_COUNT = out_count;
+        if (en) enable();
     }
 
     void setClock(uint32_t hz) {
-        regs.SM_CLKDIV.INT  =   125000000 / hz;
-        regs.SM_CLKDIV.FRAC = ((125000000 % hz) << 8) / 8000000;
+        regs.SM_CLKDIV.INT = 125000000 / hz;
+        uint64_t frac = ((125000000 % hz) << 8);
+        frac /= hz;
+        regs.SM_CLKDIV.FRAC = frac;
     }
 
+    inline bool TxFifoFull() {
+        return pio.FSTAT.TXFULL & (1 << sm_index);
+    }
     void writeTxFifo(uint32_t val) {
         while(pio.FSTAT.TXFULL & (1 << sm_index)) ;
         pio.TXF[sm_index] = val;
@@ -243,8 +267,17 @@ struct SM {
     }
 
     void enable() {
-        pio.CTRL.SM_ENABLE |= (1 << sm_index);
+        pio_set.CTRL.SM_ENABLE = (1 << sm_index);
     }
+
+    void disable() {
+        pio_clr.CTRL.SM_ENABLE = (1 << sm_index);
+    }
+
+    bool isEnabled() {
+        return pio.CTRL.SM_ENABLE & (1 << sm_index);
+    }
+
 };
 
 
@@ -266,6 +299,9 @@ public:
 private:
     pio_rp2040(PIO0_t & pio);
     PIO0_t &    _pio;
+    PIO0_t &    _pio_xor;
+    PIO0_t &    _pio_set;
+    PIO0_t &    _pio_clr;
     uint8_t     _next_free_addr;
     SM_regs *   _sm_regbanks;
 };

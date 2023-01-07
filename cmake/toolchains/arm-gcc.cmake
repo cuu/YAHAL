@@ -34,7 +34,7 @@ set(ARM_GCC_COMMON_FLAGS  "${ARM_GCC_COMMON_FLAGS} -fno-asynchronous-unwind-tabl
 set(ARM_GCC_COMMON_FLAGS  "${ARM_GCC_COMMON_FLAGS} -Wall -Wextra")
 
 set(ARM_GCC_DEBUG_FLAGS   "-O0 -g -gdwarf-3 -gstrict-dwarf -DDEBUG")
-set(ARM_GCC_RELEASE_FLAGS "-O3 -g -gdwarf-3 -gstrict-dwarf -DDEBUG")
+set(ARM_GCC_RELEASE_FLAGS "-O3 -g -gdwarf-3 -gstrict-dwarf")
 set(ARM_GCC_LINK_FLAGS    "-Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs --specs=nano.specs")
 
 foreach(LANG IN ITEMS C CXX ASM)
