@@ -37,7 +37,7 @@ int main(void)
     posix_io::inst.register_stdout(uart);
 
     // Start Main task as privileged task, because
-    // it has to initialize the DMA stuff...
+    // it has to initialize the PIO stuff...
     main_task Main;
     Main.start(50, true);
 

@@ -124,7 +124,7 @@ public:
     }
 
 private:
-    gpio_rp2040_pin _cs;    // CS Line of audio SPI
+    gpio_rp2040_pin _cs;    // CS Line of SD card SPI interface
     spi_rp2040      _spi;   // SPI interface used for the SD card reader
     sd_spi_drv      _sd;    // SD card low level driver
 
