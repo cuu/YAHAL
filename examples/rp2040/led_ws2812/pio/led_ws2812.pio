@@ -1,0 +1,45 @@
+;
+; Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
+;
+; SPDX-License-Identifier: BSD-3-Clause
+;
+
+
+.program led_ws2812
+.side_set 1
+
+.define public T2 2
+.define public T5 5
+.define public T3 3
+
+.wrap_target
+bitloop:
+    out x, 1       side 0 [T3 - 1] ; Side-set still takes place when instruction stalls
+    jmp !x do_zero side 1 [T2 - 1] ; Branch on the bit we shifted out. Positive pulse
+do_one:
+    jmp  bitloop   side 1 [T5 - 1] ; Continue driving high, for a long pulse
+do_zero:
+    nop            side 0 [T5 - 1] ; Or drive low, for a short pulse
+.wrap
+
+% yahal {
+void configure_SM(SM & sm, uint8_t ws2812_pin) {
+    // Set the PINDIR register
+    sm.setRegister(out_dest_t::PINDIRS, 1 << ws2812_pin);
+    // Set SM clock rate
+    sm.setClock(8000000);
+    // Configure sideset functions
+    sm.regs.SM_EXECCTRL.SIDE_EN     = 0;
+    sm.regs.SM_EXECCTRL.SIDE_PINDIR = 0;
+    // Set the wrap values
+    sm.setWrap(led_ws2812_wrap_target, led_ws2812_wrap);
+    // Configure the OSR
+    sm.regs.SM_SHIFTCTRL.PULL_THRESH  = 24;
+    sm.regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 0; // shift left
+    sm.regs.SM_SHIFTCTRL.AUTOPULL     = 1;
+    sm.regs.SM_SHIFTCTRL.FJOIN_TX     = 1;
+    // We output the signal as sideset
+    sm.regs.SM_PINCTRL.SIDESET_COUNT = 1;
+    sm.regs.SM_PINCTRL.SIDESET_BASE  = ws2812_pin;
+}
+%}
