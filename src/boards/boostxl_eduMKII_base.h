@@ -1,4 +1,4 @@
-// This file defines a gemeric interface to
+// This file defines a generic interface to
 // the functionality of a BOOSTXL-EDU MKII board.
 
 #ifndef _BOOSTXL_EDUMKII_BASE_H_

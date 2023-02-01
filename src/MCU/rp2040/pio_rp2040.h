@@ -224,7 +224,7 @@ struct SM {
     }
 
     void setRegister(out_dest_t reg, uint32_t val) {
-        // Remember current configuration
+        // Store current configuration
         bool en = isEnabled();
         disable();
         uint8_t out_base  = regs.SM_PINCTRL.OUT_BASE;
@@ -236,7 +236,8 @@ struct SM {
         while(pio.FLEVEL & (0xf << (sm_index << 3))) {
             execute( op_PULL(0, 0) );
         }
-        // Write value to TX Fifo first, then write it to destination
+        // Write value to TX Fifo first.
+        // Then pull it and write it to destination.
         writeTxFifo(val);
         execute( op_PULL(0, 0)      );
         execute( op_OUT (0, reg, 0) );

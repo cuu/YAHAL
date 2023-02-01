@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// This file was generated with svd2cpp, source file was rp2040.svd
+// This file was generated with svd2cpp, source file was svd/RP2040.svd
 // DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN !!
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -9870,9 +9870,6 @@ namespace _SIO_  {
     };
 
     static SIO_t & SIO     = (*(SIO_t *)0xd0000000);
-    static SIO_t & SIO_XOR = (*(SIO_t *)0xd0001000);
-    static SIO_t & SIO_SET = (*(SIO_t *)0xd0002000);
-    static SIO_t & SIO_CLR = (*(SIO_t *)0xd0003000);
 
 } // _SIO_
 
@@ -10355,9 +10352,6 @@ namespace _PPB_  {
     };
 
     static PPB_t & PPB     = (*(PPB_t *)0xe0000000);
-    static PPB_t & PPB_XOR = (*(PPB_t *)0xe0001000);
-    static PPB_t & PPB_SET = (*(PPB_t *)0xe0002000);
-    static PPB_t & PPB_CLR = (*(PPB_t *)0xe0003000);
 
 } // _PPB_
 

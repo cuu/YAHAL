@@ -35,10 +35,20 @@ struct add_bitfield_WO
     static const T masks = maskl << Offset;
 
   public:
+    // Assignment
     inline void operator = (T v) {
         value = (value & ~masks) | ((v & maskl) << Offset);
     }
+    // Standard shortcut operators
     inline void operator |= (T v) {
+        value |= ((v & maskl) << Offset);
+    }
+    inline void operator &= (T v) {
+        value &= ~masks | ((v & maskl) << Offset);
+    }
+    // Optimized shortcut operator for
+    // *.SET and *.CLR registers
+    inline void operator <<= (T v) {
         value = v << Offset;
     }
 };
@@ -55,14 +65,21 @@ struct add_bitfield_RW
     inline operator T() const {
         return (value >> Offset) & maskl;
     }
+    // Assignment
     inline void operator=(T v) {
         value = (value & ~masks) | ((v & maskl) << Offset);
     }
-    inline void operator <<= (T v) {
-        value = v << Offset;
-    }
+    // Standard shortcut operators
     inline void operator |= (T v) {
         value |= ((v & maskl) << Offset);
+    }
+    inline void operator &= (T v) {
+        value &= ~masks | ((v & maskl) << Offset);
+    }
+    // Optimized shortcut operator for
+    // *.SET and *.CLR registers
+    inline void operator <<= (T v) {
+        value = v << Offset;
     }
 };
 

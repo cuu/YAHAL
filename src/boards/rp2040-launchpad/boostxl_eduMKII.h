@@ -25,7 +25,7 @@
 #define LCD_BL          13
 // I2C sensors
 #define SENSOR_SDA      24
-#define SENSOR_SCL      26
+#define SENSOR_SCL      25
 #define OPT3001_INT     23
 #define TMP006_INT       3
 // Joystick
