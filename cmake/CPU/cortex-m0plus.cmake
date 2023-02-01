@@ -1,5 +1,5 @@
 ####################################
-# Configuration for ARM Cortex M4F #
+# Configuration for ARM Cortex M0+ #
 ####################################
 # Set CPU name
 set(YAHAL_CPU "cortex-m0plus")

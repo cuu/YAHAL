@@ -28,7 +28,7 @@ SECTIONS {
         *(.dtors)
 
         KEEP (*(.init))
-        KEEP (*(.fini*))
+        KEEP (*(.fini))
 
         __preinit_array_start = .;
         KEEP (*(.preinit_array*))
