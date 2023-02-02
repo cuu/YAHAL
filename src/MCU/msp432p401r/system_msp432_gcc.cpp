@@ -36,7 +36,7 @@ extern "C" {
 
 // Selects the MCLK source: LFXT, VLO, REFO, DCO, MOD, HFXT
 #ifndef TARGET_MCLK_SELECT
-#define TARGET_MCLK_SELECT DCO
+#define TARGET_MCLK_SELECT HFXT
 #endif
 
 // Selects the MCLK divider (1/2/4/8/16/32/64/128)
@@ -47,13 +47,13 @@ extern "C" {
 
 // Selects the SMCLK source:  LFXT, VLO, REFO, DCO, MOD, HFXT
 #ifndef TARGET_SMCLK_SELECT
-#define TARGET_SMCLK_SELECT DCO
+#define TARGET_SMCLK_SELECT HFXT
 #endif
 
 // Selects the SMCLK divider (1/2/4/8/16/32/64/128)
 // DIV1, DIV2, DIV4, DIV8, DIV16, DIV32, DIV64, DIV128
 #ifndef TARGET_SMCLK_DIV
-#define TARGET_SMCLK_DIV DIV1
+#define TARGET_SMCLK_DIV DIV2
 #endif
 
 ////////////////////////////
