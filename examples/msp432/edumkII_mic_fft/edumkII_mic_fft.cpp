@@ -30,11 +30,11 @@
 // For more details on the CMSIS DSP library, visit
 // http://www.keil.com/pack/doc/CMSIS/DSP/html/index.html
 
-#include <stdio.h>
-#include <arm_math.h>
-#include <arm_const_structs.h>
+#include <cstdio>
 #include <algorithm>
 
+#include "arm_math.h"
+#include "arm_const_structs.h"
 #include "adc14_msp432.h"
 #include "gpio_msp432.h"
 #include "spi_msp432.h"

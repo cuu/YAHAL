@@ -31,6 +31,7 @@
 #include "adc14_msp432.h"
 #include "uart_msp432.h"
 #include "posix_io.h"
+#include "task.h"
 
 #define CLEAR_SCREEN "%c[H%c[J",27,27
 
@@ -58,18 +59,18 @@ int main()
     adc14_msp432 & adc = adc14_msp432::inst;
 
     // setup and start the scan process
-	adc.adcSetupScan(ADC::ADC_10_BIT);
-	adc.adcStartScan(9, 15);
-
-	while(true) {
-	    printf(CLEAR_SCREEN);
-	    printf("joy X: %d\n", joy_X.adcReadScan());
+    adc.adcSetupScan(ADC::ADC_10_BIT);
+    adc.adcStartScan(9, 15);
+    
+    while(true) {
+        printf(CLEAR_SCREEN);
+        printf("joy X: %d\n", joy_X.adcReadScan());
         printf("joy Y: %d\n", joy_Y.adcReadScan());
         printf("acc X: %d\n", acc_X.adcReadScan());
         printf("acc Y: %d\n", acc_Y.adcReadScan());
         printf("acc Z: %d\n", acc_Z.adcReadScan());
 
         // Small delay
-        for (int i=0; i < 80000; ++i) ;
-	}
+        task::sleep(100);
+    }
 }

@@ -35,6 +35,7 @@
 #include <cstdio>
 #include "gpio_msp432.h"
 #include "adc14_msp432.h"
+#include "task.h"
 
 // create ADC channels
 adc14_msp432_channel joy_X(15);
@@ -47,7 +48,7 @@ gpio_msp432_pin green_led(PORT_PIN(2, 1));
 gpio_msp432_pin blue_led (PORT_PIN(2, 2));
 
 void delay() {
-    for(int i=0; i < 5000; ++i) ;
+    task::sleep(10); //for(int i=0; i < 500000; ++i) ;
 }
 
 void handler_X(uint16_t, uint16_t value) {
