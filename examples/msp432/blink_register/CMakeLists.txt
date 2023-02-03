@@ -10,14 +10,14 @@ include(YAHAL_import.cmake)
 add_compile_options(-DMCLK_SELECT=DCO  -DMCLK_DIV=DIV1)
 add_compile_options(-DSMCLK_SELECT=DCO -DSMCLK_DIV=DIV1)
 
-project(blink_simple)
+project(blink_register)
 
-add_executable(blink_simple
-    blink_simple.cpp
+add_executable(blink_register
+    blink_register.cpp
 )
 
 # Add YAHAL
-yahal_add_me(blink_simple)
+yahal_add_me(blink_register)
 
-yahal_add_custom_targets(blink_simple)
-yahal_add_extra_outputs(blink_simple)
+yahal_add_custom_targets(blink_register)
+yahal_add_extra_outputs(blink_register)

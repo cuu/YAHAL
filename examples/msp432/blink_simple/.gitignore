@@ -1,2 +1,11 @@
+/DEBUG/
 /Debug/
-/.launches/
+/debug/
+/RELEASE/
+/Release/
+/release/
+/BUILD/
+/Build/
+/build/
+/gen/
+/pio/*.pio.h
