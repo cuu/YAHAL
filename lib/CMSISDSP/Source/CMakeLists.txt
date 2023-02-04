@@ -1,9 +1,9 @@
 cmake_minimum_required (VERSION 3.16)
 cmake_policy(SET CMP0077 NEW)
 
-project(CMSISDSP)
+project(CMSISDSP_${PROJECT_NAME})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Ofast")
+add_compile_options(-Ofast)
 
 # DSP Sources
 SET(DSP ${CMAKE_CURRENT_SOURCE_DIR}/..)
@@ -191,7 +191,7 @@ option(ARM_CFFT_RADIX4_Q31   "deprecated q31 radix4 cfft"       OFF)
 #
 ###########################
 
-add_library(CMSISDSP)
+add_library(${PROJECT_NAME})
 
 if (BASICMATH)
   include(BasicMathFunctions/Config.cmake)
@@ -209,7 +209,7 @@ if (CONTROLLER)
   include(ControllerFunctions/Config.cmake)
   # Fast tables inclusion is allowed
   if (CONFIGTABLE)
-    target_compile_definitions(CMSISDSP PUBLIC ARM_FAST_ALLOW_TABLES)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ARM_FAST_ALLOW_TABLES)
   endif()
 endif()
 
@@ -217,7 +217,7 @@ if (FASTMATH)
   include(FastMathFunctions/Config.cmake)
   # Fast tables inclusion is allowed
   if (CONFIGTABLE)
-    target_compile_definitions(CMSISDSP PUBLIC ARM_FAST_ALLOW_TABLES)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ARM_FAST_ALLOW_TABLES)
   endif()
 endif()
 
@@ -225,7 +225,7 @@ if (FILTERING)
   include(FilteringFunctions/Config.cmake)
   # Fast tables inclusion is allowed
   if (CONFIGTABLE)
-    target_compile_definitions(CMSISDSP PUBLIC ARM_FAST_ALLOW_TABLES)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ARM_FAST_ALLOW_TABLES)
   endif()
 endif()
 
@@ -245,7 +245,7 @@ if (TRANSFORM)
   include(TransformFunctions/Config.cmake)
   # FFT tables inclusion is allowed
   if (CONFIGTABLE)
-    target_compile_definitions(CMSISDSP PUBLIC ARM_FFT_ALLOW_TABLES)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ARM_FFT_ALLOW_TABLES)
   endif()
 endif()
 
@@ -254,13 +254,13 @@ if (FILTERING OR CONTROLLER OR FASTMATH OR TRANSFORM OR SVM OR DISTANCE)
   if (TRANSFORM)
     # FFT tables inclusion is allowed
     if (CONFIGTABLE)
-      target_compile_definitions(CMSISDSP PUBLIC ARM_FFT_ALLOW_TABLES)
+      target_compile_definitions(${PROJECT_NAME} PUBLIC ARM_FFT_ALLOW_TABLES)
     endif()
   endif()
   if (FILTERING OR CONTROLLER OR FASTMATH)
     # Select which tables to include
     if (CONFIGTABLE)
-      target_compile_definitions(CMSISDSP PUBLIC ARM_FAST_ALLOW_TABLES)
+      target_compile_definitions(${PROJECT_NAME} PUBLIC ARM_FAST_ALLOW_TABLES)
     endif()
   endif()
   # Common project is adding ComputeLibrary tables used by SVM and Distance
@@ -284,7 +284,7 @@ if (INTERPOLATION)
 endif()
 
 ### Includes
-target_include_directories(CMSISDSP
+target_include_directories(${PROJECT_NAME}
     PUBLIC "${DSP}/Include"
     PUBLIC "${YAHAL_DIR}/include/CPU/CMSIS"
 )
@@ -293,6 +293,6 @@ include(configDsp.cmake)
 include(fft.cmake)
 include(interpol.cmake)
 
-configDsp(CMSISDSP)
-fft(CMSISDSP)
-interpol(CMSISDSP)
+configDsp(${PROJECT_NAME})
+fft(${PROJECT_NAME})
+interpol(${PROJECT_NAME})

@@ -73,6 +73,7 @@ void Device_TTI::processPulse(unsigned int pulse, CPU & cpu) {
     case 06: {
         cpu.setAC(0);
         FLAG = false;
+        [[fallthrough]];
     }
     // KRS (Keyboard Read Static)
     /////////////////////////////

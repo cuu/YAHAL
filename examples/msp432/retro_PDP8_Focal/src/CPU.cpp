@@ -243,13 +243,13 @@ void CPU::operate_instruction_group1() {
     if (MD & 0020) cml();
     if (MD & 0001) iac();
     switch (MD & 016) {
-        case 000: break; // No rotate
+        case 000: break;
         case 002: bsw(); break;
         case 006: ral();
-        //no break
+        [[fallthrough]];
         case 004: ral(); break;
         case 012: rar();
-        //no break
+        [[fallthrough]];
         case 010: rar(); break;
         case 014: AC &= MD; break; //r3l(); break;
         case 016: break; // Do not use

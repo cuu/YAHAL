@@ -86,19 +86,19 @@ BasicMathFunctions/arm_or_u8.c
 BasicMathFunctions/arm_not_u8.c  
 BasicMathFunctions/arm_xor_u8.c)
 
-target_sources(CMSISDSP PRIVATE ${SRCF64})
-target_sources(CMSISDSP PRIVATE ${SRCF32})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCF64})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCF32})
 
 if ((NOT ARMAC5) AND (NOT DISABLEFLOAT16))
-target_sources(CMSISDSP PRIVATE ${SRCF16})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCF16})
 endif()
 
-target_sources(CMSISDSP PRIVATE ${SRCQ31})
-target_sources(CMSISDSP PRIVATE ${SRCQ15})
-target_sources(CMSISDSP PRIVATE ${SRCQ7})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCQ31})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCQ15})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCQ7})
 
-target_sources(CMSISDSP PRIVATE ${SRCU32})
-target_sources(CMSISDSP PRIVATE ${SRCU16})
-target_sources(CMSISDSP PRIVATE ${SRCU8})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCU32})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCU16})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCU8})
 
 

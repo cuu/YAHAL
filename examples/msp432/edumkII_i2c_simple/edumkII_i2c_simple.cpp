@@ -20,6 +20,7 @@
 #include "uart_msp432.h"
 #include "posix_io.h"
 #include "i2c_msp432.h"
+#include "task.h"
 #include <cstdio>
 
 int main()
@@ -53,6 +54,6 @@ int main()
         uint16_t raw = (rxbuf[0] << 8) + rxbuf[1];
         // and show it on the console
         printf("Raw light value: %x\n", raw);
-        for (int i=0; i < 100000; ++i);
+        task::sleep(500);
     }
 }
