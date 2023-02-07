@@ -10,16 +10,16 @@ add_compile_options(-DSMCLK_SELECT=HFXT -DSMCLK_DIV=DIV1)
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(hw_test_edumkII)
+project(boostxl_edumkII_hw_test)
 
-add_executable(hw_test_edumkII
-    hw_test_edumkII.cpp
+add_executable(boostxl_edumkII_hw_test
+    boostxl_edumkII_hw_test.cpp
     HW.cpp
 )
 
-# Add YAHAL
-yahal_add_me(hw_test_edumkII)
-yahal_add_library(hw_test_edumkII uGUI)
+# Add YAHAL and uGUI
+yahal_add_me(boostxl_edumkII_hw_test)
+yahal_add_library(boostxl_edumkII_hw_test uGUI)
 
-yahal_add_custom_targets(hw_test_edumkII)
-yahal_add_extra_outputs(hw_test_edumkII)
+yahal_add_custom_targets(boostxl_edumkII_hw_test)
+yahal_add_extra_outputs(boostxl_edumkII_hw_test)
