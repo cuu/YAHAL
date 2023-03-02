@@ -20,40 +20,40 @@ extern "C" {
 ///////////////////////////
 
 // Controls the watchdog timer
-#define TARGET_WDT_DISABLE 1
+#define WDT_DISABLE 1
 
 // Defines the DCO center frequency (3/6/12/24/48 MHz)
 // DCO_1500kHz|DCO_3MHz|DCO_6MHz|DCO_12MHz|DCO_24MHz|DCO_48MHz
-#ifndef TARGET_DCO_RSEL
-#define TARGET_DCO_RSEL DCO_3MHz
+#ifndef DCO_RSEL
+#define DCO_RSEL DCO_3MHz
 #endif
 
 // Defines the DCO tuning value (-512...511)
 // Use with caution! Too high values might brick the board...
-#ifndef TARGET_DCO_TUNE
-#define TARGET_DCO_TUNE 0
+#ifndef DCO_TUNE
+#define DCO_TUNE 0
 #endif
 
 // Selects the MCLK source: LFXT, VLO, REFO, DCO, MOD, HFXT
-#ifndef TARGET_MCLK_SELECT
-#define TARGET_MCLK_SELECT HFXT
+#ifndef MCLK_SELECT
+#define MCLK_SELECT HFXT
 #endif
 
 // Selects the MCLK divider (1/2/4/8/16/32/64/128)
 // DIV1, DIV2, DIV4, DIV8, DIV16, DIV32, DIV64, DIV128
-#ifndef TARGET_MCLK_DIV
-#define TARGET_MCLK_DIV DIV1
+#ifndef MCLK_DIV
+#define MCLK_DIV DIV1
 #endif
 
 // Selects the SMCLK source:  LFXT, VLO, REFO, DCO, MOD, HFXT
-#ifndef TARGET_SMCLK_SELECT
-#define TARGET_SMCLK_SELECT HFXT
+#ifndef SMCLK_SELECT
+#define SMCLK_SELECT HFXT
 #endif
 
 // Selects the SMCLK divider (1/2/4/8/16/32/64/128)
 // DIV1, DIV2, DIV4, DIV8, DIV16, DIV32, DIV64, DIV128
-#ifndef TARGET_SMCLK_DIV
-#define TARGET_SMCLK_DIV DIV2
+#ifndef SMCLK_DIV
+#define SMCLK_DIV DIV2
 #endif
 
 ////////////////////////////
@@ -61,10 +61,10 @@ extern "C" {
 ////////////////////////////
 
 // Defines the HFXT frequency in Hz (e.g. 48000000)
-#define TARGET_HFXT_HZ 48000000
+#define HFXT_HZ 48000000
 
 // Defines the LFXT frequency in Hz (e.g. 32768)
-#define TARGET_LFXT_HZ 32768
+#define LFXT_HZ 32768
 
 //////////////////////////////////////
 // Defines for configuration values //
@@ -101,70 +101,70 @@ extern "C" {
 #define __SYSCLK    5000000
 
 // Sanity check for HFXT and LFXT
-#if ((TARGET_MCLK_SELECT == HFXT) || (TARGET_SMCLK_SELECT == HFXT))
-#ifndef TARGET_HFXT_HZ
-#error No HFXT frequency specified (TARGET_HFXT_HZ)
+#if ((MCLK_SELECT == HFXT) || (SMCLK_SELECT == HFXT))
+#ifndef HFXT_HZ
+#error No HFXT frequency specified (HFXT_HZ)
 #endif
 #endif
 
-#if ((TARGET_MCLK_SELECT == LFXT) || (TARGET_SMCLK_SELECT == LFXT))
-#ifndef TARGET_LFXT_HZ
-#error No LFXT frequency specified (TARGET_LFXT_HZ)
+#if ((MCLK_SELECT == LFXT) || (SMCLK_SELECT == LFXT))
+#ifndef LFXT_HZ
+#error No LFXT frequency specified (LFXT_HZ)
 #endif
 #endif
 
 // Calculate HFXTFREQ bits (for CSCTL2)
-#if (TARGET_HFXT_HZ > 40000000)
+#if (HFXT_HZ > 40000000)
 #define HFXT_FREQ CS_CTL2_HFXTFREQ_6 | CS_CTL2_HFXTDRIVE
-#elif (TARGET_HFXT_HZ > 32000000)
+#elif (HFXT_HZ > 32000000)
 #define HFXT_FREQ CS_CTL2_HFXTFREQ_5 | CS_CTL2_HFXTDRIVE
-#elif (TARGET_HFXT_HZ > 2400000)
+#elif (HFXT_HZ > 2400000)
 #define HFXT_FREQ CS_CTL2_HFXTFREQ_4 | CS_CTL2_HFXTDRIVE
-#elif (TARGET_HFXT_HZ > 16000000)
+#elif (HFXT_HZ > 16000000)
 #define HFXT_FREQ CS_CTL2_HFXTFREQ_3 | CS_CTL2_HFXTDRIVE
-#elif (TARGET_HFXT_HZ > 8000000)
+#elif (HFXT_HZ > 8000000)
 #define HFXT_FREQ CS_CTL2_HFXTFREQ_2 | CS_CTL2_HFXTDRIVE
-#elif (TARGET_HFXT_HZ > 4000000)
+#elif (HFXT_HZ > 4000000)
 #define HFXT_FREQ CS_CTL2_HFXTFREQ_1 | CS_CTL2_HFXTDRIVE
 #else
 #define HFXT_FREQ CS_CTL2_HFXTFREQ_0
 #endif
 
-#define MCLK_DIVIDER  (1 << TARGET_MCLK_DIV)
-#define SMCLK_DIVIDER (1 << TARGET_SMCLK_DIV)
+#define MCLK_DIVIDER  (1 << MCLK_DIV)
+#define SMCLK_DIVIDER (1 << SMCLK_DIV)
 
 // Evaluate the MCLK setting
-#if (TARGET_MCLK_SELECT == LFXT)
-#define __MASTER_CLOCK (TARGET_LFXT_HZ / MCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == VLO)
+#if (MCLK_SELECT == LFXT)
+#define __MASTER_CLOCK (LFXT_HZ / MCLK_DIVIDER)
+#elif (MCLK_SELECT == VLO)
 #define __MASTER_CLOCK (__VLOCLK / MCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == REFO)
+#elif (MCLK_SELECT == REFO)
 #define __MASTER_CLOCK (__REFOCLK_L / MCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == DCO)
-#define __MASTER_CLOCK ( (1500000 << TARGET_DCO_RSEL) / MCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == MOD)
+#elif (MCLK_SELECT == DCO)
+#define __MASTER_CLOCK ( (1500000 << DCO_RSEL) / MCLK_DIVIDER)
+#elif (MCLK_SELECT == MOD)
 #define __MASTER_CLOCK (__MODCLK / MCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == HFXT)
-#define __MASTER_CLOCK (TARGET_HFXT_HZ / MCLK_DIVIDER)
+#elif (MCLK_SELECT == HFXT)
+#define __MASTER_CLOCK (HFXT_HZ / MCLK_DIVIDER)
 #else
-#error No MCLK source defined (TARGET_MCLK_SELECT)
+#error No MCLK source defined (MCLK_SELECT)
 #endif
 
 // Evaluate the SMCLK setting
-#if (TARGET_MCLK_SELECT == LFXT)
-#define __SUBSYS_CLOCK (TARGET_LFXT_HZ / SMCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == VLO)
+#if (MCLK_SELECT == LFXT)
+#define __SUBSYS_CLOCK (LFXT_HZ / SMCLK_DIVIDER)
+#elif (MCLK_SELECT == VLO)
 #define __SUBSYS_CLOCK (__VLOCLK / SMCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == REFO)
+#elif (MCLK_SELECT == REFO)
 #define __SUBSYS_CLOCK (__REFOCLK_L / SMCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == DCO)
-#define __SUBSYS_CLOCK ((1500000 << TARGET_DCO_RSEL) / SMCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == MOD)
+#elif (MCLK_SELECT == DCO)
+#define __SUBSYS_CLOCK ((1500000 << DCO_RSEL) / SMCLK_DIVIDER)
+#elif (MCLK_SELECT == MOD)
 #define __SUBSYS_CLOCK (__MODCLK / SMCLK_DIVIDER)
-#elif (TARGET_MCLK_SELECT == HFXT)
-#define __SUBSYS_CLOCK (TARGET_HFXT_HZ / SMCLK_DIVIDER)
+#elif (MCLK_SELECT == HFXT)
+#define __SUBSYS_CLOCK (HFXT_HZ / SMCLK_DIVIDER)
 #else
-#error No SMCLK source defined (TARGET_SMCLK_SELECT)
+#error No SMCLK source defined (SMCLK_SELECT)
 #endif
 
 // Global clock variables
@@ -197,7 +197,7 @@ uint32_t LfxtFrequency = 0;
 void SystemInit(void)
 {
     // Control the watchdog timer
-#if (TARGET_WDT_DISABLE == 1)
+#if (WDT_DISABLE == 1)
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;
 #endif
 
@@ -229,8 +229,8 @@ void SystemInit(void)
 
     // Unlock CS module
     CS->KEY = CS_KEY_VAL;
-#ifdef TARGET_HFXT_HZ
-    HfxtFrequency = TARGET_HFXT_HZ;
+#ifdef HFXT_HZ
+    HfxtFrequency = HFXT_HZ;
     // Enable the HFXT crystal oscillator.
     // Initialize PJ for HFXT
     PJ->SEL0 |=  BIT3;
@@ -246,8 +246,8 @@ void SystemInit(void)
     }
 #endif
 
-#ifdef TARGET_LFXT_HZ
-    LfxtFrequency = TARGET_LFXT_HZ;
+#ifdef LFXT_HZ
+    LfxtFrequency = LFXT_HZ;
     // Enable the LFXT crystal oscillator. If the LFXT is not
     // available, the system will switch automatically to
     // REFOCLK with 32768Hz mode (less precision...).
@@ -267,12 +267,12 @@ void SystemInit(void)
 #endif
 
     // Set CTL0 and CTL1
-    CS->CTL0 =(TARGET_DCO_RSEL     << CS_CTL0_DCORSEL_OFS) |
-              (TARGET_DCO_TUNE & 0x3ff);
-    CS->CTL1 = TARGET_MCLK_SELECT  << CS_CTL1_SELM_OFS |
-               TARGET_MCLK_DIV     << CS_CTL1_DIVM_OFS |
-               TARGET_SMCLK_SELECT << CS_CTL1_SELS_OFS |
-               TARGET_SMCLK_DIV    << CS_CTL1_DIVS_OFS;
+    CS->CTL0 =(DCO_RSEL     << CS_CTL0_DCORSEL_OFS) |
+              (DCO_TUNE & 0x3ff);
+    CS->CTL1 = MCLK_SELECT  << CS_CTL1_SELM_OFS |
+               MCLK_DIV     << CS_CTL1_DIVM_OFS |
+               SMCLK_SELECT << CS_CTL1_SELS_OFS |
+               SMCLK_DIV    << CS_CTL1_DIVS_OFS;
 
     // Lock CS module
     CS->KEY = 0;

@@ -1,15 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_BUILD_TYPE DEBUG)
-#set(CMAKE_BUILD_TYPE RELEASE)
-
 # Set the target board
 set(YAHAL_BOARD "rp2040-launchpad")
 
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(blink_simple C CXX ASM)
+project(blink_simple)
 
 add_executable(blink_simple
     blink_simple.cpp

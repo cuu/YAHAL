@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(MAD)
+project(MAD_${PROJECT_NAME})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Ofast")
+add_compile_options(-Ofast)
 
-add_library(MAD
+add_library(${PROJECT_NAME}
     bit.c
     fixed.c
     huffman.c
@@ -18,6 +18,6 @@ add_library(MAD
     timer.c
 )
 
-target_include_directories(MAD
+target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )

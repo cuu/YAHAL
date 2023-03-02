@@ -46,6 +46,7 @@
 #include "audio_output.h"
 #include "mp3_decoder_task.h"
 #include "ff.h"
+#include <cassert>
 
 // SD card interface configuration
 //////////////////////////////////
@@ -88,14 +89,14 @@ public:
         FatFs::FRESULT res = _fs.mount(_part.gpioRead() == LOW ? 2 : 0);
 
         // Find first MP3 file
-        yahal_assert(res == FatFs::FR_OK);
+        assert(res == FatFs::FR_OK);
         res = _fs.findfirst(&_dir, &_finfo, "", "*.mp3");
 
         // Loop over all MP3 files
         while(res == FatFs::FR_OK && _finfo.fname[0]) {
             // Open the MP3 file
             res = _fs.open (&_file, _finfo.fname, FA_OPEN_EXISTING | FA_READ);
-            yahal_assert(res == FatFs::FR_OK);
+            assert(res == FatFs::FR_OK);
 
             // Start the SD reader and decoder tasks
             // to play the song :)

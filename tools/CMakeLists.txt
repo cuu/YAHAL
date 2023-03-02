@@ -70,17 +70,15 @@ function(png_to_cpp TARGET PNG)
     endif()
 
     # Parse argument
-    cmake_parse_arguments(png_to_cpp "" "BG_COLOR;OUTPUT_DIR" "" ${ARGN} )
+    cmake_parse_arguments(png_to_cpp "" "BG_COLOR;OUTPUT_FILE" "" ${ARGN} )
 
     # Paramters are all relative to current CMakeList.txt
-    set(PNG ${CMAKE_CURRENT_SOURCE_DIR}/${PNG})
-
-    # Output file is always in same folder as png file
-    get_filename_component(PNG_NAME ${PNG} NAME_WE)
-    set(CPPFILE "${png_to_cpp_OUTPUT_DIR}/${PNG_NAME}.cpp")
+    set(PNG     "${CMAKE_CURRENT_LIST_DIR}/${PNG}")
+    set(CPPFILE "${CMAKE_CURRENT_LIST_DIR}/${png_to_cpp_OUTPUT_FILE}")
+    get_filename_component(NAME_WE ${PNG} NAME_WE)
 
     #Add a new target which depends on the cpp file
-    set(PNG_TARGET "${PNG_NAME}_cpp")
+    set(PNG_TARGET "${PROJECT_NAME}_${NAME_WE}_cpp")
     add_custom_target(${PNG_TARGET} DEPENDS ${CPPFILE})
 
     add_custom_command(
@@ -90,4 +88,31 @@ function(png_to_cpp TARGET PNG)
     )
 
     add_dependencies(${TARGET} ${PNG_TARGET})
+endfunction()
+
+function(file_to_cpp TARGET FILE)
+    # Load package if not already loaded
+    if (NOT FILE2CPP_FOUND)
+        find_package(FILE2CPP REQUIRED)
+    endif()
+
+    # Parse argument
+    cmake_parse_arguments(file_to_cpp "" "OUTPUT_FILE" "" ${ARGN} )
+
+    # Paramters are all relative to current CMakeList.txt
+    set(FILE    "${CMAKE_CURRENT_LIST_DIR}/${FILE}")
+    set(CPPFILE "${CMAKE_CURRENT_LIST_DIR}/${file_to_cpp_OUTPUT_FILE}")
+    get_filename_component(NAME_WE ${FILE} NAME_WE)
+
+    #Add a new target which depends on the cpp file
+    set(FILE_TARGET "${PROJECT_NAME}_${NAME_WE}_cpp")
+    add_custom_target(${FILE_TARGET} DEPENDS ${CPPFILE})
+
+    add_custom_command(
+        OUTPUT          ${CPPFILE}
+        MAIN_DEPENDENCY ${FILE}
+        COMMAND FILE2CPP -o ${CPPFILE} ${FILE}
+    )
+
+    add_dependencies(${TARGET} ${FILE_TARGET})
 endfunction()

@@ -1,4 +1,3 @@
-##############################################
 # Initiaize YAHAL by setting the properties of
 # the board, MCU, toolchain etc.
 ##############################################
@@ -18,17 +17,6 @@ if (NOT YAHAL_BOARD)
 endif()
 
 #
-# This script might be called from the YAHAHL top-level
-# CMakeLists.txt. In this case YAHAL_DIR is not yet set!
-#
-if (NOT YAHAL_DIR)
-    set(YAHAL_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
-    get_filename_component(YAHAL_DIR "${YAHAL_DIR}" REALPATH ${CMAKE_CURRENT_LIST_DIR}/..)
-endif ()
-set(YAHAL_DIR ${YAHAL_DIR} CACHE PATH "Path to the YAHAL library")
-message("YAHAL_DIR is ${YAHAL_DIR}")
-
-#
 # Add YAHAL's cmake folder to the known paths of cmake modules
 #
 list(APPEND CMAKE_MODULE_PATH ${YAHAL_DIR}/cmake)
@@ -39,47 +27,40 @@ list(APPEND CMAKE_MODULE_PATH ${YAHAL_DIR}/cmake/packages)
 #
 include(boards/${YAHAL_BOARD})
 
-
-#string(TOLOWER "${CMAKE_CURRENT_LIST_DIR}" __list_dir)
-#string(TOLOWER "${CMAKE_SOURCE_DIR}/cmake" __source_dir)
-#message(${CMAKE_CURRENT_LIST_DIR})
-#message(${CMAKE_SOURCE_DIR})
-#if (__source_dir STREQUAL __list_dir)
-#    message("****** Root build *******")
-#else()
-#    message("****** App build *******")
-#endif()
-
-
 #
 # Macro to add YAHAL as a subdirectory to a project
 #
 function(yahal_add_me TARGET)
-    if (NOT CMAKE_PROJECT_NAME)
-        message(WARNING "add_lib_yahal() should be called after the project is created (and languages added)")
+    if (NOT PROJECT_NAME)
+        message(WARNING "yahal_add_me() should be called after the project is created (and languages added)")
     endif()
-    add_subdirectory(${YAHAL_DIR} YAHAL)
-    target_link_libraries(${TARGET} YAHAL)
+    add_subdirectory(${YAHAL_DIR}   YAHAL_${PROJECT_NAME})
+    target_link_libraries(${TARGET} YAHAL_${PROJECT_NAME})
+
+    # Add more libraries depending on MCU
+    if (${YAHAL_MCU} STREQUAL "rp2040")
+        if((YAHAL_WRAP_BITOPS EQUAL 1) OR (YAHAL_WRAP_DIVMUL EQUAL 1) OR (YAHAL_WRAP_FLOAT EQUAL 1) OR (YAHAL_WRAP_DOUBLE EQUAL 1))
+            target_link_libraries(${TARGET} rp2040_wrapper)
+        endif()
+    endif()
 endfunction()
 
 function(yahal_add_library TARGET LIB)
-    add_subdirectory(${YAHAL_DIR}/lib/${LIB} ${LIB})
-    target_link_libraries(${TARGET} ${LIB})
+    add_subdirectory(${YAHAL_DIR}/lib/${LIB} ${LIB}_${TARGET})
+    target_link_libraries(${TARGET} ${LIB}_${TARGET})
 endfunction()
-
 
 function(yahal_add_custom_targets TARGET)
     # Add a upload target using openocd if configuration was given
     if (OPENOCD_CONFIG)
         set(TF $<TARGET_FILE:${TARGET}>)
-        add_custom_target(upload 
+        add_custom_target("upload_${TARGET}" 
             openocd ${OPENOCD_CONFIG} -c "program \"${TF}\" verify reset exit"
             DEPENDS ${TF}
             VERBATIM
         )
     endif()
 endfunction()
-
 
 function(yahal_add_hex_output TARGET)
     set(TF $<TARGET_FILE:${TARGET}>)
@@ -91,7 +72,6 @@ function(yahal_add_hex_output TARGET)
     )
 endfunction()
 
-
 function(yahal_add_bin_output TARGET)
     set(TF $<TARGET_FILE:${TARGET}>)
     set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
@@ -101,7 +81,6 @@ function(yahal_add_bin_output TARGET)
         COMMAND ${CMAKE_OBJCOPY} -Obinary ${TF} ${TN}.bin
     )
 endfunction()
-
 
 function(yahal_add_dis_output TARGET)
     set(TF $<TARGET_FILE:${TARGET}>)
@@ -114,7 +93,6 @@ function(yahal_add_dis_output TARGET)
     )
 endfunction()
 
-
 function(yahal_rename_mapfile TARGET)
     set(TN $<TARGET_PROPERTY:${TARGET},NAME>)
     add_custom_command(TARGET ${TARGET} POST_BUILD 
@@ -122,9 +100,8 @@ function(yahal_rename_mapfile TARGET)
     )
 endfunction()
 
-
 function(yahal_add_extra_outputs TARGET)
-    set_property(TARGET  ${TARGET} PROPERTY SUFFIX .elf)
+    set_property(TARGET ${TARGET} PROPERTY SUFFIX .elf)
 
     # Add hex, bin and disassembly outputs
     yahal_add_hex_output(${TARGET})
@@ -140,3 +117,67 @@ function(yahal_add_extra_outputs TARGET)
 endfunction()
 
 endif()
+
+# Set the YAHAL target name depending on the fact
+# if this file was included from another project,
+# or if the YAHAL library is build standalone.
+if (NOT PROJECT_NAME)
+    set(YAHAL_TARGET "YAHAL")
+else()
+    set(YAHAL_TARGET "YAHAL_${PROJECT_NAME}")
+endif()
+
+#
+# Set default values for YAHAL flags
+#
+if (NOT DEFINED YAHAL_DEBUG_FLAGS)
+    set(YAHAL_DEBUG_FLAGS -g -gdwarf-3 -gstrict-dwarf)
+endif()
+if (NOT DEFINED YAHAL_OPT_FLAGS)
+    set(YAHAL_OPT_FLAGS -Og)
+endif()
+if (NOT DEFINED YAHAL_USE_NANO_SPECS)
+    set(YAHAL_USE_NANO_SPECS 1)
+endif()
+if (NOT DEFINED YAHAL_ENABLE_ASSERTS)
+    set(YAHAL_ENABLE_ASSERTS 1)
+endif()
+
+#
+# Evaluate YAHAL flags
+#
+if (YAHAL_USE_NANO_SPECS EQUAL 1)
+    add_link_options("--specs=nano.specs")
+endif()
+if (YAHAL_ENABLE_ASSERTS EQUAL 1)
+    add_compile_options(-DDEBUG)
+else()
+    add_compile_options(-DNDEBUG)
+endif()
+
+add_compile_options(${YAHAL_DEBUG_FLAGS} ${YAHAL_OPT_FLAGS})
+
+if (YAHAL_WRAP_FLOAT EQUAL 1)
+    set(CMAKE_EXE_LINKER_FLAGS 
+    "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_float\"")
+#    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_float)
+endif()
+
+if (YAHAL_WRAP_DOUBLE EQUAL 1)
+    set(CMAKE_EXE_LINKER_FLAGS 
+    "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_double\"")
+#    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_double)
+endif()
+
+if (YAHAL_WRAP_BITOPS EQUAL 1)
+    set(CMAKE_EXE_LINKER_FLAGS 
+    "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_bitops\"")
+#    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_bitops)
+endif()
+
+if (YAHAL_WRAP_DIVMUL EQUAL 1)
+    set(CMAKE_EXE_LINKER_FLAGS 
+    "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_div_mul\"")
+#    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_div_mul)
+endif()
+

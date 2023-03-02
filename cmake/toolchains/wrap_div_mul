@@ -1,0 +1,7 @@
+--wrap=__aeabi_idiv 
+--wrap=__aeabi_idivmod 
+--wrap=__aeabi_ldivmod 
+--wrap=__aeabi_uidiv 
+--wrap=__aeabi_uidivmod 
+--wrap=__aeabi_uldivmod 
+--wrap=__aeabi_lmul 

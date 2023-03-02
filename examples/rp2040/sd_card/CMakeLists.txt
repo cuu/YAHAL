@@ -15,8 +15,9 @@ add_executable(sd_card
     main.cpp
 )
 
-# Add YAHAL to target
+# Add YAHAL and FatFS libraries
 yahal_add_me(sd_card)
+yahal_add_library(sd_card FatFs)
 
 yahal_add_custom_targets(sd_card)
 yahal_add_extra_outputs(sd_card)

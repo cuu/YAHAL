@@ -1,6 +1,5 @@
 # This script tries to locate the YAHAL root
 # folder and reads the YAHAL_init.cmake file.
-#############################################
 
 # Check if we can get the path from a environment variable
 if (DEFINED ENV{YAHAL_DIR} AND (NOT YAHAL_DIR))

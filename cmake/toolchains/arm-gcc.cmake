@@ -29,14 +29,14 @@ set(CMAKE_STRIP               ${ARM_TOOLCHAIN_PATH}${TARGET_TRIPLET}strip${CMAKE
 set(CMAKE_TRY_COMPILE_TARGET_TYPE  STATIC_LIBRARY)
 
 # Set generic compiler options
-set(ARM_GCC_COMMON_FLAGS  "-ffunction-sections -fdata-sections -fno-unwind-tables")
-set(ARM_GCC_COMMON_FLAGS  "${ARM_GCC_COMMON_FLAGS} -fno-asynchronous-unwind-tables -fno-strict-aliasing")
-set(ARM_GCC_COMMON_FLAGS  "${ARM_GCC_COMMON_FLAGS} -Wall -Wextra")
+set(ARM_GCC_COMMON_FLAGS  "-ffunction-sections -fdata-sections \
+                           -fno-unwind-tables  -fno-asynchronous-unwind-tables \
+                           -fno-strict-aliasing -Wall -Wextra")
+set(ARM_GCC_DEBUG_FLAGS   "-O0 -DDEBUG -g -gdwarf-3 -gstrict-dwarf")
+set(ARM_GCC_RELEASE_FLAGS "-O3 -DNDEBUG")
+set(ARM_GCC_LINK_FLAGS    "-Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs")
 
-set(ARM_GCC_DEBUG_FLAGS   "-O0 -g -gdwarf-3 -gstrict-dwarf -DDEBUG")
-set(ARM_GCC_RELEASE_FLAGS "-O3 -g -gdwarf-3 -gstrict-dwarf")
-set(ARM_GCC_LINK_FLAGS    "-Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs --specs=nano.specs")
-
+# Copy the flags to the relevant cmake variables for all languages
 foreach(LANG IN ITEMS C CXX ASM)
     set(CMAKE_${LANG}_FLAGS_INIT         "${ARM_GCC_COMMON_FLAGS}")
     set(CMAKE_${LANG}_FLAGS_DEBUG_INIT   "${ARM_GCC_DEBUG_FLAGS}")
@@ -44,7 +44,7 @@ foreach(LANG IN ITEMS C CXX ASM)
     set(CMAKE_${LANG}_LINK_FLAGS         "${ARM_GCC_LINK_FLAGS}")
 endforeach()
 
-# Special C++ flags
+# Add specific C++ flags
 set(CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} -fno-exceptions -fno-rtti")
 
 # Set language standards

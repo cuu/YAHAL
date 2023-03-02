@@ -35,6 +35,7 @@ int main(void)
     // we can see the output of the task monitor
     uart_rp2040 uart;
     posix_io::inst.register_stdout(uart);
+    posix_io::inst.register_stderr(uart);
 
     // Start Main task as privileged task, because
     // it has to initialize the PIO stuff...

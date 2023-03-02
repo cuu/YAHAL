@@ -1,6 +1,6 @@
-/****************************/
-/* RP2040 GCC linker script */
-/****************************/
+/**************************************/
+/* rp2040-launchpad GCC linker script */
+/**************************************/
 
 MEMORY
 {
@@ -112,6 +112,7 @@ SECTIONS
         __data_load__  = LOADADDR(.data);
         __data_start__ = .;
         *(.vtable)
+        *(.move_to_ram*)
         *(.data*)
         . = ALIGN (4);
         __data_end__ = .;

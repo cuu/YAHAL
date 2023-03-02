@@ -1,0 +1,10 @@
+--wrap=__clzsi2 
+--wrap=__clzdi2 
+--wrap=__ctzsi2 
+--wrap=__ctzdi2 
+--wrap=__popcountsi2 
+--wrap=__popcountdi2 
+--wrap=__clz 
+--wrap=__clzl 
+--wrap=__clzll 
+--wrap=__clzsi2 

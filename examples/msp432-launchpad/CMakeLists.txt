@@ -6,7 +6,7 @@ set(YAHAL_BOARD "msp432-launchpad")
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(examples-msp432)
+project(msp432-launchpad-examples)
 
 #
 # Various blinky examples

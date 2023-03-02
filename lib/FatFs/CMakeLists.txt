@@ -1,16 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(FatFs)
+project(FatFs_${PROJECT_NAME})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Ofast")
+add_compile_options(-Ofast)
 
-add_library(FatFs
+add_library(${PROJECT_NAME}
     ff.cpp
     ffsystem.cpp
     ffunicode.cpp
 )
 
-target_include_directories(FatFs
+target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     PUBLIC ${YAHAL_DIR}/include/interface
 )
+

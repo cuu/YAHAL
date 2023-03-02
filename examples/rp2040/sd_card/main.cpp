@@ -22,7 +22,6 @@
 #include "spi_rp2040.h"
 #include "uart_rp2040.h"
 #include "yahal_String.h"
-#include "yahal_assert.h"
 
 #include <cstdio>
 #include <cassert>
@@ -63,7 +62,7 @@ int main(void)
     // Mount the SD card. Using this command,
     // the SD-card is opened by the FatFs driver
     ////////////////////////////////////////////
-    yahal_assert(fs.mount() == FatFs::FR_OK);
+    assert(fs.mount() == FatFs::FR_OK);
     // Print out number of 512 Byte blocks on SD card
     printf("Block count: %ld\n", sd.getBlockCount());
     uint32_t z;
@@ -83,7 +82,7 @@ int main(void)
     led = 1;
     // Open file for reading and writing
     FILE * f = fopen("test.dat", "w+");
-    yahal_assert(f != NULL);
+    assert(f != NULL);
     // Write numbers 0..99 to file
     for (int i=0; i < 10000; ++i) {
         fprintf(f, "%d\n", i);
@@ -106,7 +105,7 @@ int main(void)
     fclose(f);
 
     // Unmount the SD card
-    yahal_assert(fs.umount() == FatFs::FR_OK);
+    assert(fs.umount() == FatFs::FR_OK);
 
     return 0;
 }

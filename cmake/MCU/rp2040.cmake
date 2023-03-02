@@ -6,5 +6,5 @@ message("Using MCU RP2040")
 # Set MCU name
 set(YAHAL_MCU "rp2040")
 
-# MSP432 has a cortex M4F
+# RP2040 has a cortex M0+
 include(CPU/cortex-m0plus)

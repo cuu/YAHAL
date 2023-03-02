@@ -68,7 +68,7 @@ int main(void)
     if (tune & BIT9) tune |= 0xfc00;
     printf("DCO tune:            %d\n", tune);
     printf("DCO bias on:         %ld\n",  (CS->STAT & CS_STAT_DCOBIAS_ON) >> CS_STAT_DCOBIAS_ON_OFS);
-    printf("DCO on:              %ld\n",  (CS->STAT & CS_STAT_DCO_ON) >> CS_STAT_DCO_ON_OFS);
+    printf("DCO on:              %ld\n",  (CS->STAT & CS_STAT_DCO_ON)     >> CS_STAT_DCO_ON_OFS);
 
     printf("************ HFXT configuration ************\n");
     printf("HFXT bypass:         %ld\n", (CS->CTL2 & CS_CTL2_HFXTBYPASS) >> CS_CTL2_HFXTBYPASS_OFS);
@@ -87,7 +87,7 @@ int main(void)
     }
     printf("HFXT freq. sel.:     %s MHz\n", hfxt_freq);
     printf("HFXT drive:          %ld\n", (CS->CTL2 & CS_CTL2_HFXTDRIVE) >> CS_CTL2_HFXTDRIVE_OFS);
-    printf("HFXT on:             %ld\n",  (CS->STAT & CS_STAT_HFXT_ON) >> CS_STAT_HFXT_ON_OFS);
+    printf("HFXT on:             %ld\n", (CS->STAT & CS_STAT_HFXT_ON)   >> CS_STAT_HFXT_ON_OFS);
 
     printf("************ LFXT configuration ************\n");
     printf("LFXT bypass:         %ld\n", (CS->CTL2 & CS_CTL2_LFXTBYPASS) >> CS_CTL2_LFXTBYPASS_OFS);
@@ -100,21 +100,21 @@ int main(void)
         case 3: lfxt_drv = "strong (3)"; break;
         default: lfxt_drv = "??"; break;
     }
-    printf("LFXT drive:          %s\n", lfxt_drv);
-    printf("LFXT on:             %ld\n",  (CS->STAT & CS_STAT_LFXT_ON) >> CS_STAT_LFXT_ON_OFS);
+    printf("LFXT drive:          %s\n",  lfxt_drv);
+    printf("LFXT on:             %ld\n", (CS->STAT & CS_STAT_LFXT_ON) >> CS_STAT_LFXT_ON_OFS);
 
     printf("************ REFO configuration ************\n");
     printf("REFO select:         %s kHz\n", CS->CLKEN & CS_CLKEN_REFOFSEL ? "128" : "32.768" );
-    printf("REFO force enable:   %ld\n",  (CS->CLKEN  & CS_CLKEN_REFO_EN) >> CS_CLKEN_REFO_EN_OFS);
-    printf("REFO on:             %ld\n",  (CS->STAT   & CS_STAT_REFO_ON)  >> CS_STAT_REFO_ON_OFS);
+    printf("REFO force enable:   %ld\n",   (CS->CLKEN & CS_CLKEN_REFO_EN) >> CS_CLKEN_REFO_EN_OFS);
+    printf("REFO on:             %ld\n",   (CS->STAT  & CS_STAT_REFO_ON)  >> CS_STAT_REFO_ON_OFS);
 
     printf("************ VLO configuration ************\n");
-    printf("VLO force enable:    %ld\n", (CS->CLKEN & CS_CLKEN_VLO_EN) >> CS_CLKEN_VLO_EN_OFS);
-    printf("VLO on:              %ld\n", (CS->STAT  & CS_STAT_VLO_ON)  >> CS_STAT_VLO_ON_OFS);
+    printf("VLO force enable:    %ld\n",  (CS->CLKEN & CS_CLKEN_VLO_EN) >> CS_CLKEN_VLO_EN_OFS);
+    printf("VLO on:              %ld\n",  (CS->STAT  & CS_STAT_VLO_ON)  >> CS_STAT_VLO_ON_OFS);
 
     printf("************ MODOSC configuration ************\n");
     printf("MODOSC force enable: %ld\n",  (CS->CLKEN & CS_CLKEN_MODOSC_EN) >> CS_CLKEN_MODOSC_EN_OFS);
-    printf("MODOSC on:           %ld\n",  (CS->STAT & CS_STAT_MODOSC_ON) >> CS_STAT_MODOSC_ON_OFS);
+    printf("MODOSC on:           %ld\n",  (CS->STAT & CS_STAT_MODOSC_ON)   >> CS_STAT_MODOSC_ON_OFS);
 
     printf("************ MCLK signal ************\n");
     const char * selm = "";
@@ -129,9 +129,9 @@ int main(void)
     }
     printf("MCLK select:         %s\n", selm);
     printf("MCLK divider:        %d\n", 1 << ((CS->CTL1 & CS_CTL1_DIVM_MASK)  >> CS_CTL1_DIVM_OFS));
-    printf("MCLK cond. on:       %ld\n", (CS->CLKEN & CS_CLKEN_MCLK_EN)   >> CS_CLKEN_MCLK_EN_OFS);
-    printf("MCLK ready:          %ld\n", (CS->STAT  & CS_STAT_MCLK_READY) >> CS_STAT_MCLK_READY_OFS);
-    printf("MCLK on:             %ld\n", (CS->STAT  & CS_STAT_MCLK_ON)    >> CS_STAT_MCLK_ON_OFS);
+    printf("MCLK cond. on:       %ld\n",     (CS->CLKEN & CS_CLKEN_MCLK_EN)   >> CS_CLKEN_MCLK_EN_OFS);
+    printf("MCLK ready:          %ld\n",     (CS->STAT  & CS_STAT_MCLK_READY) >> CS_STAT_MCLK_READY_OFS);
+    printf("MCLK on:             %ld\n",     (CS->STAT  & CS_STAT_MCLK_ON)    >> CS_STAT_MCLK_ON_OFS);
 
     printf("************ SMCLK/HSMCLK signal ************\n");
     const char * sels = "";
@@ -146,13 +146,13 @@ int main(void)
     }
     printf("(H)SMCLK select:     %s\n", sels);
     printf("HSMCLK divider:      %d\n", 1 << ((CS->CTL1 & CS_CTL1_DIVHS_MASK) >> CS_CTL1_DIVHS_OFS));
-    printf("HSMCLK cond. on:     %ld\n", (CS->CLKEN & CS_CLKEN_HSMCLK_EN) >> CS_CLKEN_HSMCLK_EN_OFS);
+    printf("HSMCLK cond. on:     %ld\n",  (CS->CLKEN & CS_CLKEN_HSMCLK_EN)  >> CS_CLKEN_HSMCLK_EN_OFS);
     printf("HSMCLK ready:        %ld\n",  (CS->STAT & CS_STAT_HSMCLK_READY) >> CS_STAT_HSMCLK_READY_OFS);
-    printf("HSMCLK on:           %ld\n", (CS->STAT  & CS_STAT_HSMCLK_ON)  >> CS_STAT_HSMCLK_ON_OFS);
-    printf("SMCLK divider:       %d\n", 1 << ((CS->CTL1 & CS_CTL1_DIVS_MASK)  >> CS_CTL1_DIVS_OFS));
-    printf("SMCLK cond. on:      %ld\n", (CS->CLKEN & CS_CLKEN_SMCLK_EN) >> CS_CLKEN_SMCLK_EN_OFS);
-    printf("SMCLK ready:         %ld\n",  (CS->STAT & CS_STAT_SMCLK_READY) >> CS_STAT_SMCLK_READY_OFS);
-    printf("SMCLK on:            %ld\n", (CS->STAT  & CS_STAT_SMCLK_ON)  >> CS_STAT_SMCLK_ON_OFS);
+    printf("HSMCLK on:           %ld\n",  (CS->STAT  & CS_STAT_HSMCLK_ON)   >> CS_STAT_HSMCLK_ON_OFS);
+    printf("SMCLK divider:       %d\n", 1 << ((CS->CTL1 & CS_CTL1_DIVS_MASK) >> CS_CTL1_DIVS_OFS));
+    printf("SMCLK cond. on:      %ld\n",  (CS->CLKEN & CS_CLKEN_SMCLK_EN)   >> CS_CLKEN_SMCLK_EN_OFS);
+    printf("SMCLK ready:         %ld\n",  (CS->STAT & CS_STAT_SMCLK_READY)  >> CS_STAT_SMCLK_READY_OFS);
+    printf("SMCLK on:            %ld\n",  (CS->STAT  & CS_STAT_SMCLK_ON)    >> CS_STAT_SMCLK_ON_OFS);
 
     printf("************ ACLK signal ************\n");
     const char * sela = "";
@@ -175,8 +175,8 @@ int main(void)
     printf("************ Other signals ************\n");
     printf("REFOCLK on:          %ld\n", (CS->STAT & CS_STAT_REFOCLK_ON) >> CS_STAT_REFOCLK_ON_OFS);
     printf("LFXTCLK on:          %ld\n", (CS->STAT & CS_STAT_LFXTCLK_ON) >> CS_STAT_LFXTCLK_ON_OFS);
-    printf("VLOCLK on:           %ld\n", (CS->STAT & CS_STAT_VLOCLK_ON) >> CS_STAT_VLOCLK_ON_OFS);
-    printf("MODCLK on:           %ld\n", (CS->STAT & CS_STAT_MODCLK_ON) >> CS_STAT_MODCLK_ON_OFS);
+    printf("VLOCLK on:           %ld\n", (CS->STAT & CS_STAT_VLOCLK_ON)  >> CS_STAT_VLOCLK_ON_OFS);
+    printf("MODCLK on:           %ld\n", (CS->STAT & CS_STAT_MODCLK_ON)  >> CS_STAT_MODCLK_ON_OFS);
 
     printf("\n");
     printf("SystemCoreClock:      %ld Hz\n", SystemCoreClock);

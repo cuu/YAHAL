@@ -14,23 +14,57 @@
 // Small program to convert any file into a C/C++ struct
 //
 #include <iostream>
-#include <fstream>
 #include <iomanip>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <algorithm>
+#include <cstdint>
 #include <cstdlib>
+#include <getopt.h>
 #include <libgen.h>
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
+void usage() {
+    cout << "Usage: file2cpp [-o outfile] file"<< endl;
+    cout << endl;
+    cout << "-o outfile  : The output filename. Default is file.cpp" << endl;
+    cout << "file        : A valid file" << endl;
+    exit(1);
+}
 
-    // Check command line parameter
-    if (argc != 2) {
-        cerr << "Usage: " << argv[0] << " <file>" << endl << endl;
-        exit(1);
+int main(int argc, char *argv[]) {
+    // Process the command line arguments
+    string infile;
+    string outfile;
+    int opt;
+    while ((opt = getopt(argc, argv, ":o:")) != -1) {
+        switch (opt) {
+            case 'o': {
+                outfile = optarg;
+                break;
+            }
+            case ':': {
+                cerr << "Option needs a value!" << endl;
+                usage();
+                break;
+            }
+            case '?': {
+                cerr << "Unknown option '" << (char)optopt << "'" << endl;
+                usage();
+                break;
+            }
+        }
+    }
+    if (optind == (argc-1)) {
+        infile = argv[optind];
+    } else {
+        cerr << "No or too many filenames given!" << endl;
+        usage();
     }
 
     // Process the file name
-    string infile = argv[1];
     size_t dot = infile.find_last_of('.');
     string name_we;
     if (dot != string::npos) {
@@ -38,8 +72,11 @@ int main(int argc, char *argv[]) {
     } else {
         name_we = infile;
     }
-    string outfile = name_we + ".cpp";
-    string base    = basename( (char*)name_we.c_str() );
+    if (outfile.size()==0) {
+        // Set the default output name
+        outfile = name_we + ".cpp";
+    }
+    string base = basename( (char*)name_we.c_str() );
     // Dashes are not valid in variable names, so replace them
     std::replace(base.begin(), base.end(), '-', '_');
 
@@ -47,6 +84,15 @@ int main(int argc, char *argv[]) {
     ifstream ifs(infile.c_str(), ios::binary | ios::in);
     ofstream ofs(outfile.c_str(), ios::binary | ios::out);
 
+    if (!ifs) {
+        cerr << "Error: Could not open input file " << infile << endl;
+        exit(1);
+    }
+    if (!ofs) {
+        cerr << "Error: Could not open output file " << outfile << endl;
+        exit(1);
+    }
+    
     // Get the input file size
     streampos begin, end;
     begin = ifs.tellg();
@@ -64,7 +110,9 @@ int main(int argc, char *argv[]) {
     ofs << "//  Source file was: " << infile << " (size: " << filesize
         << " bytes)" << endl;
     ofs << "//" << endl << endl;
-    ofs << "unsigned char " << base << "[" << filesize << "] = {" << endl;
+    ofs << "#include <cstdint>" << endl;
+    ofs << endl;
+    ofs << "extern const uint8_t " << base << "[" << filesize << "] = {" << endl;
     size_t count = 0;
     while (true) {
         char c;
