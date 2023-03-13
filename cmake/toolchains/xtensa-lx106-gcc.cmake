@@ -29,18 +29,14 @@ set(CMAKE_STRIP               ${XTENSA_TOOLCHAIN_PATH}${TARGET_TRIPLET}strip${CM
 set(CMAKE_TRY_COMPILE_TARGET_TYPE  STATIC_LIBRARY)
 
 # Set generic compiler options
-set(XTENSA_GCC_COMMON_FLAGS  "-ffunction-sections -fdata-sections -fno-unwind-tables")
-set(XTENSA_GCC_COMMON_FLAGS  "${XTENSA_GCC_COMMON_FLAGS} -fno-asynchronous-unwind-tables -fno-strict-aliasing")
-set(XTENSA_GCC_COMMON_FLAGS  "${XTENSA_GCC_COMMON_FLAGS} -Wall -Wextra")
+set(XTENSA_GCC_COMMON_FLAGS  "-ffunction-sections -fdata-sections \
+                              -fno-unwind-tables  -fno-asynchronous-unwind-tables \
+                              -fno-strict-aliasing -Wall -Wextra")
+set(XTENSA_GCC_DEBUG_FLAGS   "-O0 -DDEBUG -g -gdwarf-3 -gstrict-dwarf")
+set(XTENSA_GCC_RELEASE_FLAGS "-O3 -DNDEBUG")
+set(XTENSA_GCC_LINK_FLAGS    "-Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs")
 
-set(XTENSA_GCC_DEBUG_FLAGS   "-O0 -g -gdwarf-3 -gstrict-dwarf -DDEBUG")
-set(XTENSA_GCC_RELEASE_FLAGS "-O3 -g -gdwarf-3 -gstrict-dwarf")
-set(XTENSA_GCC_LINK_FLAGS    "-Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs --specs=nano.specs")
-
-if (DEFINED YAHAL_USE_NANO_SPECS)
-    set(XTENSA_GCC_LINK_FLAGS    "${XTENSA_GCC_LINK_FLAGS} --specs=nano.specs")
-endif()
-
+# Copy the flags to the relevant cmake variables for all languages
 foreach(LANG IN ITEMS C CXX ASM)
     set(CMAKE_${LANG}_FLAGS_INIT         "${XTENSA_GCC_COMMON_FLAGS}")
     set(CMAKE_${LANG}_FLAGS_DEBUG_INIT   "${XTENSA_GCC_DEBUG_FLAGS}")
@@ -48,7 +44,7 @@ foreach(LANG IN ITEMS C CXX ASM)
     set(CMAKE_${LANG}_LINK_FLAGS         "${XTENSA_GCC_LINK_FLAGS}")
 endforeach()
 
-# Special C++ flags
+# Add specific C++ flags
 set(CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} -fno-exceptions -fno-rtti")
 
 # Set language standards

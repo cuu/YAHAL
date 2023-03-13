@@ -200,7 +200,6 @@ void __attribute__((optimize("O0"))) PendSV_Handler(void) {
     "       bx      lr                  @ \n");
 }
 
-
 void SVC_Handler(void) __attribute__((naked));
 void SVC_Handler(void) {
     asm volatile(
