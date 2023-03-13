@@ -6,7 +6,6 @@ target_sources(${YAHAL_TARGET} PRIVATE
     opt3001_drv.cpp
     soft_i2c_master.cpp
     ssd2119_drv.cpp
-    button_gnd_drv.cpp
     ina219_drv.cpp
     sd_spi_drv.cpp
     soft_i2c_slave.cpp
