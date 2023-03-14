@@ -16,6 +16,7 @@ posix_io posix_io::inst;
 // in libc need to be overwritten
 extern "C" {
 
+int _read (int file, char *buf, int len) __attribute__ ((used)); 
 int _read (int file, char *buf, int len) {
     int count=0;
     char c;
@@ -50,6 +51,7 @@ int _read (int file, char *buf, int len) {
     return count;
 }
 
+int _write (int file, const char *buf, int len) __attribute__ ((used)); 
 int _write (int file, const char *buf, int len) {
     int count = 0;
     if (file == STDOUT_FILENO) {
@@ -96,6 +98,7 @@ int _write (int file, const char *buf, int len) {
     return count;
 }
 
+int _open (const char *name, int flags, int mode) __attribute__ ((used)); 
 int _open (const char *name, int flags, int mode) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -107,6 +110,7 @@ int _open (const char *name, int flags, int mode) {
     return ret;
 }
 
+int _close (int file) __attribute__ ((used));
 int _close (int file) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -118,6 +122,7 @@ int _close (int file) {
     return ret;
 }
 
+int _link (char *old_name, char *new_name) __attribute__ ((used));
 int _link (char *old_name, char *new_name) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -129,6 +134,7 @@ int _link (char *old_name, char *new_name) {
     return ret;
 }
 
+int _unlink (char *name) __attribute__ ((used));
 int _unlink (char *name) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -140,6 +146,7 @@ int _unlink (char *name) {
     return ret;
 }
 
+int _stat (char *name, struct stat *st) __attribute__ ((used));
 int _stat (char *name, struct stat *st) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -151,6 +158,7 @@ int _stat (char *name, struct stat *st) {
     return ret;
 }
 
+int _fstat (int file, struct stat *st) __attribute__ ((used));
 int _fstat (int file, struct stat *st) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -162,6 +170,7 @@ int _fstat (int file, struct stat *st) {
     return ret;
 }
 
+int _lseek (int file, int offset, int whence) __attribute__ ((used));
 int _lseek (int file, int offset, int whence) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -172,6 +181,7 @@ int _lseek (int file, int offset, int whence) {
     return ret;
 }
 
+int _isatty (int file) __attribute__ ((used));
 int _isatty (int file) {
     int ret;
     if ((file == STDIN_FILENO ) ||
@@ -187,6 +197,19 @@ int _isatty (int file) {
         }
     }
     return ret;
+}
+
+int _kill(int pid, int sig) __attribute__ ((used));
+int _kill(int pid, int sig) {
+    (void)(pid);
+    (void)(sig);
+    errno = EINVAL;
+    return -1;
+}
+
+int _getpid(void) __attribute__ ((used));
+int _getpid(void) {
+    return -1;
 }
 
 }
