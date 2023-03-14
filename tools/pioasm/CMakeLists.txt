@@ -3,16 +3,16 @@ project(pioasm CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 
-find_package(BISON 3.4.2)
-find_package(FLEX 2.5.13) # no idea about the version
+# find_package(BISON 3.4.2)
+# find_package(FLEX 2.5.13) # no idea about the version
 
 add_custom_target(create_gen_dir
     ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_SOURCE_DIR}/gen
 )
 
-FLEX_TARGET(pioasm_lexer lexer.ll ${CMAKE_CURRENT_SOURCE_DIR}/gen/lexer.cpp)
-BISON_TARGET(pioasm_parser parser.yy ${CMAKE_CURRENT_SOURCE_DIR}/gen/parser.cpp)
-ADD_FLEX_BISON_DEPENDENCY(pioasm_lexer pioasm_parser)
+# FLEX_TARGET(pioasm_lexer lexer.ll ${CMAKE_CURRENT_SOURCE_DIR}/gen/lexer.cpp)
+# BISON_TARGET(pioasm_parser parser.yy ${CMAKE_CURRENT_SOURCE_DIR}/gen/parser.cpp)
+# ADD_FLEX_BISON_DEPENDENCY(pioasm_lexer pioasm_parser)
 
 add_executable(pioasm
     main.cpp
