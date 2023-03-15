@@ -24,7 +24,7 @@
 // and not here!
 
 #include <cstdint>
-#include "uart_msp432.h"
+#include "uart_rp2040.h"
 #include "posix_io.h"
 #include "main_task.h"
 #include "task_monitor.h"
@@ -33,7 +33,7 @@ int main(void)
 {
     // Redirect stdout to our backchannel UART, so
     // we can see the output of the task monitor
-    uart_msp432 uart;
+    uart_rp2040 uart;
     posix_io::inst.register_stdout(uart);
 
     // Start Main task as privileged task, because
