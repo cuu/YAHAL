@@ -11,7 +11,7 @@
 //
 // ---------------------------------------------
 //
-// This idle task. It does nothing but sleep.
+// The idle task. It does nothing but sleep.
 //
 #ifndef _TASK_IDLE_H_
 #define _TASK_IDLE_H_
@@ -35,5 +35,5 @@ class task_idle : public task
     }
 };
 
-#endif /* _TASKIDLE_H_ */
+#endif // _TASK_IDLE_H_
 

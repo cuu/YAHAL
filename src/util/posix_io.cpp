@@ -16,12 +16,12 @@ posix_io posix_io::inst;
 // in libc need to be overwritten
 extern "C" {
 
+int _read (int file, char *buf, int len) __attribute__ ((used)); 
 int _read (int file, char *buf, int len) {
     int count=0;
     char c;
     if (file == STDIN_FILENO) {
         // Handle STDIN
-        ///////////////
         for (; count < len; ++count) {
              if (posix_io::inst._uart_in) {
                  c = posix_io::inst._uart_in->getc();
@@ -51,6 +51,7 @@ int _read (int file, char *buf, int len) {
     return count;
 }
 
+int _write (int file, const char *buf, int len) __attribute__ ((used)); 
 int _write (int file, const char *buf, int len) {
     int count = 0;
     if (file == STDOUT_FILENO) {
@@ -70,20 +71,22 @@ int _write (int file, const char *buf, int len) {
         // Set color to red (CT100 code)
         if (posix_io::inst._uart_err) {
             // Set red color (VT100 code)
-            posix_io::inst._uart_err->putc(27);
-            posix_io::inst._uart_err->putc('[');
-            posix_io::inst._uart_err->putc('3');
-            posix_io::inst._uart_err->putc('1');
-            posix_io::inst._uart_err->putc('m');
-        }
-        for (int i=0; i < len; ++i) {
-            if (posix_io::inst._uart_err) {
-                posix_io::inst._uart_err->putc(buf[i]);
-                // Handle CR mode
-                if (posix_io::inst._add_CR_err && buf[i]=='\n') {
-                    posix_io::inst._uart_err->putc('\r');
+            const char red[]   = "\e[31m";
+            const char reset[] = "\e[0m";
+            const char * p = red;
+            while (*p) posix_io::inst._uart_err->putc(*p++);
+
+            for (int i=0; i < len; ++i) {
+                if (posix_io::inst._uart_err) {
+                    posix_io::inst._uart_err->putc(buf[i]);
+                    // Handle CR mode
+                    if (posix_io::inst._add_CR_err && buf[i]=='\n') {
+                        posix_io::inst._uart_err->putc('\r');
+                    }
                 }
             }
+            p = reset;
+            while (*p) posix_io::inst._uart_err->putc(*p++);
         }
         count = len;
     } else {
@@ -95,6 +98,7 @@ int _write (int file, const char *buf, int len) {
     return count;
 }
 
+int _open (const char *name, int flags, int mode) __attribute__ ((used)); 
 int _open (const char *name, int flags, int mode) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -106,6 +110,7 @@ int _open (const char *name, int flags, int mode) {
     return ret;
 }
 
+int _close (int file) __attribute__ ((used));
 int _close (int file) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -117,6 +122,7 @@ int _close (int file) {
     return ret;
 }
 
+int _link (char *old_name, char *new_name) __attribute__ ((used));
 int _link (char *old_name, char *new_name) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -128,6 +134,7 @@ int _link (char *old_name, char *new_name) {
     return ret;
 }
 
+int _unlink (char *name) __attribute__ ((used));
 int _unlink (char *name) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -139,6 +146,7 @@ int _unlink (char *name) {
     return ret;
 }
 
+int _stat (char *name, struct stat *st) __attribute__ ((used));
 int _stat (char *name, struct stat *st) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -150,6 +158,7 @@ int _stat (char *name, struct stat *st) {
     return ret;
 }
 
+int _fstat (int file, struct stat *st) __attribute__ ((used));
 int _fstat (int file, struct stat *st) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -161,6 +170,7 @@ int _fstat (int file, struct stat *st) {
     return ret;
 }
 
+int _lseek (int file, int offset, int whence) __attribute__ ((used));
 int _lseek (int file, int offset, int whence) {
     int ret;
     if (posix_io::inst._file_io) {
@@ -171,6 +181,7 @@ int _lseek (int file, int offset, int whence) {
     return ret;
 }
 
+int _isatty (int file) __attribute__ ((used));
 int _isatty (int file) {
     int ret;
     if ((file == STDIN_FILENO ) ||
@@ -186,6 +197,19 @@ int _isatty (int file) {
         }
     }
     return ret;
+}
+
+int _kill(int pid, int sig) __attribute__ ((used));
+int _kill(int pid, int sig) {
+    (void)(pid);
+    (void)(sig);
+    errno = EINVAL;
+    return -1;
+}
+
+int _getpid(void) __attribute__ ((used));
+int _getpid(void) {
+    return -1;
 }
 
 }

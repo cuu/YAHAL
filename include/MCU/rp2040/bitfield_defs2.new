@@ -1,0 +1,103 @@
+/*
+ * bitfield_defs.h
+ *
+ *  Created on: 14.10.2022
+ *      Author: andreas
+ */
+
+#ifndef _BITFIELD_DEFS_H_
+#define _BITFIELD_DEFS_H_
+
+#include <stdint.h>
+
+//////////////////////////////
+// Helper templates and macros
+//////////////////////////////
+
+template <typename T>
+T getBitMask(const volatile T & value, int Offset, int Bits) {
+    T maskl = (T(1) << Bits) - T(1);
+    return (value >> Offset) & maskl;
+}
+
+template <typename T>
+void setBitMask(volatile T & value, T v, int Offset, int Bits) {
+    T maskl = (T(1) << Bits) - T(1);
+    T masks = maskl << Offset;
+    value = (value & ~masks) | ((v & maskl) << Offset);
+}
+
+template <typename T>
+void orBitMask(volatile T & value, T v, int Offset, int Bits) {
+    T maskl = (T(1) << Bits) - T(1);
+    value |= (v & maskl) << Offset;
+}
+
+
+template <typename T, int Offset, int Bits>
+struct BitFieldMember_RO
+{
+  private:
+    volatile T value;  // This is the value which is 'mirrored' by the union
+
+  public:
+    inline operator T() const {
+        return getBitMask<T>(value, Offset, Bits);
+    }
+};
+
+template <typename T, int Offset, int Bits>
+struct BitFieldMember_WO
+{
+  private:
+    volatile T value;  // This is the value which is 'mirrored' by the union
+
+  public:
+    inline void operator = (T v) {
+        setBitMask<T>(value, v, Offset, Bits);
+    }
+    inline void operator |= (T v) {
+        orBitMask<T>(value, v, Offset, Bits);
+    }
+};
+
+template <typename T, int Offset, int Bits>
+struct BitFieldMember_RW
+{
+  private:
+    volatile T value;  // This is the value which is 'mirrored' by the union
+
+  public:
+    inline operator T() const {
+        return getBitMask<T>(value, Offset, Bits);
+    }
+    inline void operator = (T v) {
+        setBitMask<T>(value, v, Offset, Bits);
+    }
+    inline void operator |= (T v) {
+        orBitMask<T>(value, v, Offset, Bits);
+    }
+};
+
+#define BEGIN_TYPE(typeName, T) \
+    union typeName \
+    { \
+        volatile T value; \
+        inline void operator = (T v)   { value = v;    } \
+        inline operator volatile T& () { return value; } \
+        inline operator T  () const    { return value; } \
+        typedef T StorageType;
+
+#define ADD_BITFIELD_RO(memberName, offset, bits) \
+        BitFieldMember_RO<StorageType, offset, bits> memberName;
+
+#define ADD_BITFIELD_WO(memberName, offset, bits) \
+        BitFieldMember_WO<StorageType, offset, bits> memberName;
+
+#define ADD_BITFIELD_RW(memberName, offset, bits) \
+        BitFieldMember_RW<StorageType, offset, bits> memberName;
+
+#define END_TYPE() \
+    };
+
+#endif // _BITFIELD_DEFS_H_

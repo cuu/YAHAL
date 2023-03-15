@@ -67,7 +67,7 @@ public:
             puts("| Task Name        | Flg | Prio | State     | Stack usage |  CPU % |");
             puts("+------------------+-----+------+-----------+-------------+--------+");
             do {
-                register uint32_t t = p->getDeltaTicks();
+                uint32_t t = p->getDeltaTicks();
                 printf("| %-16s | %c/%c | %4d | %-9s | %4d / %-4d | %2ld.%1ld %% |\n",
                        p->getName(),
                        p->isPrivileged() ? 'P' : 'U', p->isUsingFloat() ? 'F' : 'I',

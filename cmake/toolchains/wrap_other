@@ -1,0 +1,33 @@
+
+  -Wl,--wrap=__aeabi_memcpy 
+  -Wl,--wrap=__aeabi_memset 
+  -Wl,--wrap=__aeabi_memcpy4 
+  -Wl,--wrap=__aeabi_memset4 
+  -Wl,--wrap=__aeabi_memcpy8 
+  -Wl,--wrap=__aeabi_memset8 
+
+  -Wl,--wrap=malloc 
+  -Wl,--wrap=calloc 
+  -Wl,--wrap=realloc 
+  -Wl,--wrap=free 
+
+-mem copy
+
+  -Wl,--wrap=memcpy 
+  -Wl,--wrap=memset 
+
+-printf
+
+  -Wl,--wrap=printf 
+  -Wl,--wrap=vprintf 
+  -Wl,--wrap=sprintf 
+  -Wl,--wrap=snprintf 
+  -Wl,--wrap=vsnprintf
+
+- stdio
+
+  -Wl,--wrap=puts 
+  -Wl,--wrap=putchar 
+  -Wl,--wrap=getchar
+
+
