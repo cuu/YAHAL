@@ -23,7 +23,7 @@ VERBOSE     = 1
 
 # YAHAL part
 ############
-YAHAL_DIR     = /home/student/git/YAHAL
+YAHAL_DIR     = ~/gitlab-FH/YAHAL
 INCLUDE_DIRS += $(YAHAL_DIR)/src/platform/esp8266
 INCLUDE_DIRS += $(YAHAL_DIR)/include/interface
 INCLUDE_DIRS += $(YAHAL_DIR)/src/driver

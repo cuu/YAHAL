@@ -34,7 +34,7 @@ set(XTENSA_GCC_COMMON_FLAGS  "-ffunction-sections -fdata-sections \
                               -fno-strict-aliasing -Wall -Wextra")
 set(XTENSA_GCC_DEBUG_FLAGS   "-O0 -DDEBUG -g -gdwarf-3 -gstrict-dwarf")
 set(XTENSA_GCC_RELEASE_FLAGS "-O3 -DNDEBUG")
-set(XTENSA_GCC_LINK_FLAGS    "-Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs")
+set(XTENSA_GCC_LINK_FLAGS    "-Wl,--no-warn-rwx-segment -Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs")
 
 # Copy the flags to the relevant cmake variables for all languages
 foreach(LANG IN ITEMS C CXX ASM)

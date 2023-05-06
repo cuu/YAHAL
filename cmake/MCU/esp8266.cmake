@@ -6,7 +6,7 @@ message("Using MCU ESP8266")
 # Set MCU name
 set(YAHAL_MCU "esp8266")
 
-# MSP432 has a cortex M4F
+# MSP432 has a xtensa lx106 CPU
 include(CPU/xtensa-lx106)
 
 # Linker script

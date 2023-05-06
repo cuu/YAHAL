@@ -8,9 +8,4 @@ message("Using board WiFiTick")
 include(toolchains/xtensa-lx106-gcc)
 include(MCU/esp8266)
 
-# Debug interface: The RP2040 LP has a
-# buildin picoprobe debug probe, which
-# is supported by OpenOCD.
-#set(OPENOCD_CONFIG 
-#    "-f" "interface/picoprobe.cfg" "-f" "target/rp2040.cfg"
-#    CACHE STRING "OpenOCD configuration")
+# Linker script stuff to be added
