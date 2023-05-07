@@ -49,7 +49,7 @@ void arm_split_rifft_q31(
         uint32_t modifier);
 
 /**
-  @addtogroup RealFFT
+  @addtogroup RealFFTQ31
   @{
  */
 
@@ -68,41 +68,39 @@ void arm_split_rifft_q31(
 
 | RFFT Size  | Input Format  | Output Format  | Number of bits to upscale |
 | ---------: | ------------: | -------------: | ------------------------: |
-| 32         | 1.31          | 5.27           | 5                         |
-| 64         | 1.31          | 6.26           | 6                         |
-| 128        | 1.31          | 7.25           | 7                         |
-| 256        | 1.31          | 8.24           | 8                         |
-| 512        | 1.31          | 9.23           | 9                         |
-| 1024       | 1.31          | 10.22          | 10                        |
-| 2048       | 1.31          | 11.21          | 11                        |
-| 4096       | 1.31          | 12.20          | 12                        |
-| 8192       | 1.31          | 13.19          | 13                        |
+| 32         | 1.31          | 6.26           | 5                         |
+| 64         | 1.31          | 7.25           | 6                         |
+| 128        | 1.31          | 8.24           | 7                         |
+| 256        | 1.31          | 9.23           | 8                         |
+| 512        | 1.31          | 10.22          | 9                         |
+| 1024       | 1.31          | 11.21          | 10                        |
+| 2048       | 1.31          | 12.20          | 11                        |
+| 4096       | 1.31          | 13.19          | 12                        |
+| 8192       | 1.31          | 14.18          | 13                        |
              
   @par             Input and Output formats for RIFFT Q31
 
 | RIFFT Size  | Input Format  | Output Format  | Number of bits to upscale |
 | ----------: | ------------: | -------------: | ------------------------: |
-| 32          | 1.31          | 5.27           | 0                         |
-| 64          | 1.31          | 6.26           | 0                         |
-| 128         | 1.31          | 7.25           | 0                         |
-| 256         | 1.31          | 8.24           | 0                         |
-| 512         | 1.31          | 9.23           | 0                         |
-| 1024        | 1.31          | 10.22          | 0                         |
-| 2048        | 1.31          | 11.21          | 0                         |
-| 4096        | 1.31          | 12.20          | 0                         |
-| 8192        | 1.31          | 13.19          | 0                         |
+| 32          | 1.31          | 6.26           | 0                         |
+| 64          | 1.31          | 7.25           | 0                         |
+| 128         | 1.31          | 8.24           | 0                         |
+| 256         | 1.31          | 9.23           | 0                         |
+| 512         | 1.31          | 10.22          | 0                         |
+| 1024        | 1.31          | 11.21          | 0                         |
+| 2048        | 1.31          | 12.20          | 0                         |
+| 4096        | 1.31          | 13.19          | 0                         |
+| 8192        | 1.31          | 14.18          | 0                         |
 
   @par
-                   If the input buffer is of length N (fftLenReal), the output buffer must have length 2N + 2
-                   since it is containing the conjugate part. (N/2 + 1 + N/2 complex samples)
+                   If the input buffer is of length N (fftLenReal), the output buffer must have length 2N
+                   since it is containing the conjugate part (except for MVE version where N+2 is enough).
                    The input buffer is modified by this function.
   @par
-                   For the RIFFT, the source buffer must have at least length 
-                   fftLenReal + 2 which is (N/2 + 1 complex samples). It is not using the conjugate part.
-                   The last two elements must be equal to what would be generated
-                   by the RFFT:
-                     (pSrc[0] - pSrc[1]) >> 1 and 0
-
+                   For the RIFFT, the source buffer must have length N+2 since the Nyquist frequency value
+                   is needed but conjugate part is ignored. 
+                   It is not using the packing trick of the float version.
+                   
  */
 
 void arm_rfft_q31(
@@ -142,7 +140,7 @@ void arm_rfft_q31(
 }
 
 /**
-  @} end of RealFFT group
+  @} end of RealFFTQ31 group
  */
 
 /**

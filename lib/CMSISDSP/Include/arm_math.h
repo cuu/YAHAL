@@ -47,11 +47,12 @@
    * - \ref groupBayes "Bayes classifier functions"
    * - \ref groupDistance "Distance functions"
    * - \ref groupQuaternionMath "Quaternion functions"
+   * - \ref groupWindow "Window functions"
    *
    * The library has generally separate functions for operating on 8-bit integers, 16-bit integers,
    * 32-bit integer and 32-bit floating-point values and 64-bit floating-point values.
    *
-   * The library is providing vectorized versions of most algorthms for Helium
+   * The library is providing vectorized versions of most algorithms for Helium
    * and of most f32 algorithms for Neon.
    *
    * When using a vectorized version, provide a little bit of padding after the end of
@@ -63,6 +64,12 @@
    * Compute Graph. The documentation for this project is available
    * on the <a href="https://github.com/ARM-software/CMSIS-DSP/blob/main/ComputeGraph/README.md">CMSIS-DSP github repository.</a> 
    *
+   * A Python wrapper is also available with a Python API as close as possible
+   * to the C one. It can be used to start developing and testing an algorithm with NumPy and
+   * SciPy before writing the C version. Is is available on <a href="https://pypi.org/project/cmsisdsp/">PyPI.org</a>.
+   * It can be installed with : pip install cmsisdsp
+   * 
+   * 
    * \section using Using the Library
    *
    * The library is released in source form. It is strongly advised to compile the library using -Ofast to
@@ -198,6 +205,7 @@
 #include "dsp/transform_functions.h"
 #include "dsp/filtering_functions.h"
 #include "dsp/quaternion_math_functions.h"
+#include "dsp/window_functions.h"
 
 
 
