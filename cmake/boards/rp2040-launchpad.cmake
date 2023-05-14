@@ -5,7 +5,7 @@
 message("Using board RP2040 Lauchpad") 
 
 # Toolchain and MCU configuration
-include(toolchains/arm-gcc)
+set(CMAKE_TOOLCHAIN_FILE toolchains/arm-gcc)
 include(MCU/rp2040)
 
 # Linker script

@@ -12,6 +12,6 @@ add_compile_definitions(ARM_MATH_CM0PLUS)
 
 # Add flags
 foreach(LANG IN ITEMS C CXX ASM)
-    set(CMAKE_${LANG}_FLAGS_INIT "${CMAKE_${LANG}_FLAGS_INIT} ${CORTEX_FLAGS}")
+    set(CMAKE_${LANG}_FLAGS "${CMAKE_${LANG}_FLAGS} ${CORTEX_FLAGS}")
 endforeach()
 

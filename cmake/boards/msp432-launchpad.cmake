@@ -5,7 +5,7 @@
 message("Using board TI MSP432 Lauchpad") 
 
 # Toolchain and MCU configuration
-include(toolchains/arm-gcc)
+set(CMAKE_TOOLCHAIN_FILE toolchains/arm-gcc)
 include(MCU/msp432p401r)
 
 # Linker script

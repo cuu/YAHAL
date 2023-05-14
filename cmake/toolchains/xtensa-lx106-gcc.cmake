@@ -12,7 +12,7 @@ endif()
 
 # Set cmake compiler tools
 set(CMAKE_SYSTEM_NAME         Generic)
-set(CMAKE_SYSTEM_PROCESSOR    arm)
+set(CMAKE_SYSTEM_PROCESSOR    xtensa)
 set(TARGET_TRIPLET            xtensa-lx106-elf-)
 
 set(CMAKE_AR                  ${XTENSA_TOOLCHAIN_PATH}${TARGET_TRIPLET}ar${CMAKE_EXECUTABLE_SUFFIX})
@@ -50,9 +50,6 @@ set(CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} -fno-exceptions -fno-rtti")
 # Set language standards
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
-
-# Set executable suffix
-set(CMAKE_EXECUTABLE_SUFFIX .elf)
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)

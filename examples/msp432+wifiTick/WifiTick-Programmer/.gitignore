@@ -1,4 +1,11 @@
+/DEBUG/
 /Debug/
-/.launches/
-/example_wifitick_programmer.map
-/example_wifitick_programmer.out
+/debug/
+/RELEASE/
+/Release/
+/release/
+/BUILD/
+/Build/
+/build/
+/gen/
+/pio/*.pio.h
