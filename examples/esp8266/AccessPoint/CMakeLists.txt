@@ -12,6 +12,9 @@ add_executable(AccessPoint
     AccessPoint.cpp
 )
 
+# Add YAHAL library
+yahal_add_me(AccessPoint)
+
 # Add Arduino libraries
 target_link_arduino_libraries(AccessPoint PRIVATE core)
 

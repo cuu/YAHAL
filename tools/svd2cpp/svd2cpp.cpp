@@ -125,8 +125,17 @@ public:
     // the beginning and at the end.
     string Trim(string str) {
         const char *typeOfWhitespaces = " \t\n";
+        // Erase trailing whitespaces
         str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
+        // Erase leading whitespaces
         str.erase(0, str.find_first_not_of(typeOfWhitespaces));
+        // Erase \n within the string
+        size_t pos=0;
+        while((pos=str.find('\n')) != string::npos) {
+            size_t pos2 = str.find_first_not_of(typeOfWhitespaces, pos);
+            str.erase(pos, pos2-pos);
+            str.insert(pos, " ");
+        }
         return str;
     }
 
