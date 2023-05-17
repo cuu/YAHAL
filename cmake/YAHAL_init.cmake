@@ -47,7 +47,7 @@ endfunction()
 
 function(yahal_add_library TARGET LIB)
     add_subdirectory(${YAHAL_DIR}/lib/${LIB} ${LIB}_${TARGET})
-    target_link_libraries(${TARGET} ${LIB}_${TARGET})
+    target_link_libraries(${TARGET} PRIVATE ${LIB}_${TARGET})
 endfunction()
 
 function(yahal_add_custom_targets TARGET)

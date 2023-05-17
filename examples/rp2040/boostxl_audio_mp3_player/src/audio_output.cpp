@@ -30,7 +30,7 @@ audio_output::audio_output() : _audio_en(5), _pcm_timer(0),
     sync.setSEL(GPIO_CTRL_FUNCSEL__pio0);
 
     // Set up the PIO state machine
-    configure_SM(_sm, 7, 22, 15);
+    configure_SM(_sm, mosi.getGpio(), sclk.getGpio(), sync.getGpio());
     _sm.enable();
 
     enable_output(true);

@@ -118,6 +118,9 @@ public:
     inline void setGpio(gpio_pin_t gpio) {
         _gpio = gpio;
     }
+    inline gpio_pin_t getGpio() {
+        return _gpio;
+    }
     inline void gpioMode(gpio_mode_t mode) {
         _interf.gpioMode(_gpio, mode);
     }
