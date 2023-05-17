@@ -1,5 +1,5 @@
 #include "gpio_esp8266.h"
-#include "esp8266ex.h"
+#include "ESP8266.h"
 #include "yahal_assert.h"
 
 extern "C"
@@ -7,13 +7,15 @@ extern "C"
 #include "ets_sys.h"
 }
 
+const uint8_t gpio_esp8266::GPIO_TO_IOMUX[] = { 12,5,13,4,14,15,6,7,8,9,10,11,0,1,2,3 };
+
 gpio_esp8266 gpio_esp8266::inst;
 
 gpio_esp8266::gpio_esp8266()
 {
     for (int i = 0; i < 16; ++i) {
         intHandler[i] = 0;
-        intMode[i]    = _GPIO_::INT_DISABLE;
+        intMode[i]    = _GPIO_::PIN_INT_TYPE__DISABLE;
     }
     ETS_GPIO_INTR_ATTACH(gpio_irq_handler, this);
     ETS_GPIO_INTR_ENABLE();
@@ -31,32 +33,33 @@ void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode)
     yahal_assert(gpio < 16);
 
     // Select GPIO as pin function
-    ESP_IOMUX(gpio).FUNC = (_IOMUX_::GPIO_TO_IOMUX[gpio] > 11) ? 1 : 4;
+    uint8_t mux_idx = GPIO_TO_IOMUX[gpio];
+    _IO_MUX_::IO_MUX.ENTRY[mux_idx].FUNC = (mux_idx > 11) ? 1 : 4;
 
     // Configure basic GPIO modes
     if (mode & GPIO::INPUT) {
-        ESP_IOMUX(gpio).OE = 0;
-        ESP_GPIO.ENABLE_W1TC = 1 << gpio;
+        _IO_MUX_::IO_MUX.ENTRY[mux_idx].OE = 0;
+        _GPIO_::GPIO.ENABLE_W1TC = 1 << gpio;
     }
     else if (mode & GPIO::OUTPUT) {
-        ESP_IOMUX(gpio).OE = 1;
-        ESP_GPIO.ENABLE_W1TS = 1 << gpio;
-        ESP_GPIO.PIN[gpio].DRIVER = _GPIO_::DRIVER_PUSH_PULL;
+        _IO_MUX_::IO_MUX.ENTRY[mux_idx].OE = 1;
+        _GPIO_::GPIO.ENABLE_W1TS = 1 << gpio;
+        _GPIO_::GPIO.PIN[gpio].DRIVER = _GPIO_::PIN_DRIVER__PUSH_PULL;
     }
     else if (mode & GPIO::OUTPUT_OPEN_DRAIN) {
-        ESP_IOMUX(gpio).OE = 1;
-        ESP_GPIO.ENABLE_W1TS = 1 << gpio;
-        ESP_GPIO.PIN[gpio].DRIVER = _GPIO_::DRIVER_OPEN_DRAIN;
+        _IO_MUX_::IO_MUX.ENTRY[mux_idx].OE = 1;
+        _GPIO_::GPIO.ENABLE_W1TS = 1 << gpio;
+        _GPIO_::GPIO.PIN[gpio].DRIVER = _GPIO_::PIN_DRIVER__OPEN_DRAIN;
     }
     else yahal_assert(false);
 
-    ESP_IOMUX(gpio).PULLUP = (mode & GPIO::PULLUP) ? 1 : 0;
-    ESP_IOMUX(gpio).PULLDOWN = (mode & GPIO::PULLDOWN) ? 1 : 0;
+    _IO_MUX_::IO_MUX.ENTRY[mux_idx].PULLUP   = (mode & GPIO::PULLUP) ?   1 : 0;
+    _IO_MUX_::IO_MUX.ENTRY[mux_idx].PULLDOWN = (mode & GPIO::PULLDOWN) ? 1 : 0;
     if (mode & GPIO::INIT_HIGH) {
-        ESP_GPIO.OUT_DATA_W1TS = (1 << gpio);
+        _GPIO_::GPIO.OUT_W1TS = (1 << gpio);
     }
     if (mode & GPIO::INIT_LOW) {
-        ESP_GPIO.OUT_DATA_W1TC = (1 << gpio);
+        _GPIO_::GPIO.OUT_W1TC = (1 << gpio);
     }
 }
 
@@ -64,7 +67,7 @@ void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode)
 bool gpio_esp8266::gpioRead(uint16_t gpio)
 {
     yahal_assert(gpio < 16);
-    return (ESP_GPIO.IN.DATA & (1 << gpio));
+    return (_GPIO_::GPIO.IN.DATA & (1 << gpio));
 }
 
 
@@ -72,9 +75,9 @@ void gpio_esp8266::gpioWrite(uint16_t gpio, bool value)
 {
     yahal_assert(gpio < 16);
     if (value) {
-        ESP_GPIO.OUT_DATA_W1TS = (1 << gpio);
+        _GPIO_::GPIO.OUT_W1TS = (1 << gpio);
     } else {
-        ESP_GPIO.OUT_DATA_W1TC = (1 << gpio);
+        _GPIO_::GPIO.OUT_W1TC = (1 << gpio);
     }
 }
 
@@ -82,7 +85,7 @@ void gpio_esp8266::gpioWrite(uint16_t gpio, bool value)
 void gpio_esp8266::gpioToggle(uint16_t gpio)
 {
     yahal_assert(gpio < 16);
-    ESP_GPIO.OUT ^= (1 << gpio);
+    _GPIO_::GPIO.OUT ^= (1 << gpio);
 }
 
 
@@ -91,29 +94,29 @@ void gpio_esp8266::gpioAttachIrq(uint16_t gpio, uint16_t irq_mode,
 {
     yahal_assert(gpio < 16);
     intHandler[gpio] = handler;
-    int esp_mode = _GPIO_::INT_DISABLE;
+    int esp_mode = _GPIO_::PIN_INT_TYPE__DISABLE;
     switch (irq_mode)
     {
         case GPIO::RISING:
-            esp_mode = _GPIO_::INT_RAISING_EDGE;
+            esp_mode = _GPIO_::PIN_INT_TYPE__RAISING_EDGE;
             break;
         case GPIO::FALLING:
-            esp_mode = _GPIO_::INT_FALLING_EDGE;
+            esp_mode = _GPIO_::PIN_INT_TYPE__FALLING_EDGE;
             break;
         case GPIO::RISING | GPIO::FALLING:
-            esp_mode = _GPIO_::INT_BOTH_EDGES;
+            esp_mode = _GPIO_::PIN_INT_TYPE__BOTH_EDGES;
             break;
         case GPIO::LEVEL_HIGH:
-            esp_mode = _GPIO_::INT_LEVEL_HIGH;
+            esp_mode = _GPIO_::PIN_INT_TYPE__LEVEL_HIGH;
             break;
         case GPIO::LEVEL_LOW:
-            esp_mode = _GPIO_::INT_LEVEL_LOW;
+            esp_mode = _GPIO_::PIN_INT_TYPE__LEVEL_LOW;
             break;
         default:
             yahal_assert(false);
     }
-    intMode[gpio]               = esp_mode;
-    ESP_GPIO.PIN[gpio].INT_TYPE = esp_mode;
+    intMode[gpio]                   = esp_mode;
+    _GPIO_::GPIO.PIN[gpio].INT_TYPE = esp_mode;
 }
 
 
@@ -121,7 +124,7 @@ void gpio_esp8266::gpioDetachIrq(uint16_t gpio)
 {
     yahal_assert(gpio < 16);
     gpioDisableIrq(gpio);
-    intMode[gpio] = _GPIO_::INT_DISABLE;
+    intMode[gpio] = _GPIO_::PIN_INT_TYPE__DISABLE;
     intHandler[gpio] = 0;
 }
 
@@ -130,23 +133,23 @@ void gpio_esp8266::gpioEnableIrq(uint16_t gpio)
 {
     yahal_assert(gpio < 16);
     // Clear pending interrupts
-    ESP_GPIO.STATUS_W1TC = (1 << gpio);
-    ESP_GPIO.PIN[gpio].INT_TYPE = intMode[gpio];
+    _GPIO_::GPIO.STATUS_W1TC = (1 << gpio);
+    _GPIO_::GPIO.PIN[gpio].INT_TYPE = intMode[gpio];
 }
 
 
 void gpio_esp8266::gpioDisableIrq(uint16_t gpio)
 {
     yahal_assert(gpio < 16);
-    ESP_GPIO.PIN[gpio].INT_TYPE = _GPIO_::INT_DISABLE;
+    _GPIO_::GPIO.PIN[gpio].INT_TYPE = _GPIO_::PIN_INT_TYPE__DISABLE;
 }
 
 
 void gpio_esp8266::handleInterrupt()
 {
     // Acknowledge all pending IRQs
-    uint16_t status = ESP_GPIO.STATUS;
-    ESP_GPIO.STATUS_W1TC = status;
+    uint16_t status = _GPIO_::GPIO.STATUS;
+    _GPIO_::GPIO.STATUS_W1TC = status;
 
     // Serve all pending IRQs
     while (uint8_t gpio = __builtin_ffs(status)) {
@@ -168,17 +171,17 @@ void gpio_esp8266::brightnessControl(uint16_t gpio, bool on)
 {
     yahal_assert(gpio < 16);
     if (on) {
-        ESP_GPIO.PIN[gpio].SOURCE = _GPIO_::SOURCE_SIGMA_DELTA;
+        _GPIO_::GPIO.PIN[gpio].SOURCE = _GPIO_::PIN_SOURCE__SIGMA_DELTA;
     } else {
-        ESP_GPIO.PIN[gpio].SOURCE = _GPIO_::SOURCE_GPIO;
+        _GPIO_::GPIO.PIN[gpio].SOURCE = _GPIO_::PIN_SOURCE__GPIO;
     }
 }
 
 
 void gpio_esp8266::setBrightness(uint8_t value)
 {
-    ESP_GPIO.SIGMA_DELTA.ENABLE = 1;
-    ESP_GPIO.SIGMA_DELTA.PRESCALE = 0x80;
-    ESP_GPIO.SIGMA_DELTA.TARGET = value;
+    _GPIO_::GPIO.SIGMA_DELTA.ENABLE = 1;
+    _GPIO_::GPIO.SIGMA_DELTA.PRESCALE = 0x80;
+    _GPIO_::GPIO.SIGMA_DELTA.TARGET = value;
 }
 

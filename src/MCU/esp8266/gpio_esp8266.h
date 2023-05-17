@@ -32,6 +32,8 @@ private:
 
     function<void()> intHandler[16];
     uint16_t         intMode[16];
+
+    const static uint8_t GPIO_TO_IOMUX[];
 };
 
 void gpio_irq_handler(gpio_esp8266 *);

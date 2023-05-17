@@ -34,6 +34,7 @@
 // Driver includes
 #include "st7735s_drv.h"
 #include "uGUI.h"
+#include "task.h"
 
 extern const uint16_t angry_bird[16384];
 
@@ -74,6 +75,6 @@ int main(void) {
     // for HW-scrolling...
     while (1) {
         lcd.scroll(-1);
-        for (int i=0; i < 80000; i++) ;
+        task::sleep(10);
     }
 }
