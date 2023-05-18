@@ -1,5 +1,11 @@
+/DEBUG/
 /Debug/
-/.launches/
-/.settings/language.settings.xml
-
-
+/debug/
+/RELEASE/
+/Release/
+/release/
+/BUILD/
+/Build/
+/build/
+/gen/
+/pio/*.pio.h

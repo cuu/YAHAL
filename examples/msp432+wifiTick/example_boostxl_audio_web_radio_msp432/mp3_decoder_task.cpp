@@ -12,7 +12,7 @@
 // ---------------------------------------------
 //
 
-#include <mp3_decoder_task.h>
+#include "mp3_decoder_task.h"
 #include <memory.h>
 
 mp3_decoder_task::mp3_decoder_task(stream_reader_task & sr, audio_output & ao) :

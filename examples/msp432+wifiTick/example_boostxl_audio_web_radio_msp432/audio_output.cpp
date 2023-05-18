@@ -12,7 +12,7 @@
 // ---------------------------------------------
 //
 
-#include <audio_output.h>
+#include "audio_output.h"
 
 audio_output::audio_output()
     : _audio_en (PORT_PIN(5,0)),

@@ -20,6 +20,7 @@
 #ifndef _I2C_DEVICE_H_
 #define _I2C_DEVICE_H_
 
+#include <functional>
 #include "i2c_commands.h"
 #include "gpio_interface.h"
 #include "soft_i2c_slave.h"
@@ -95,9 +96,9 @@ private:
     uint8_t _reg_index;
 
     // soft_i2c_slave callback methods
-    static bool    _receive (uint16_t index, uint8_t data, void * ptr);
-    static uint8_t _transmit(uint16_t index, void * ptr);
-    static void    _stop(void * ptr);
+    std::function<bool(uint16_t index, uint8_t data)> _receive ;
+    std::function<uint8_t(uint16_t index)>  _transmit;
+    std::function<void()> _stop;
 };
 
 #endif // _I2C_DEVICE_H_

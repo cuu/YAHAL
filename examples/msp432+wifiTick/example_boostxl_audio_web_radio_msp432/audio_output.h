@@ -38,9 +38,9 @@ public:
     inline void stop()  { _pcm_timer.stop();  }
 
     inline void setRate(uint32_t kHz) {
-//        _pcm_timer.setNanoPeriod(1000000000/kHz, TIMER::PERIODIC);
-        _pcm_timer.setNanoPeriod(1000000000/(kHz+_offset), TIMER::PERIODIC);
-//        _pcm_timer.setNanoPeriod(1000000000/(kHz-200), TIMER::PERIODIC);
+        _pcm_timer.setNanoPeriod(1000000000/kHz, TIMER::PERIODIC);
+//        _pcm_timer.setNanoPeriod(1000000000/(kHz +_offset), TIMER::PERIODIC);
+//        _pcm_timer.setNanoPeriod(1000000000/(kHz-100), TIMER::PERIODIC);
     }
 
     inline int  fifo_available_put() { return _pcm_fifo.available_put(); }

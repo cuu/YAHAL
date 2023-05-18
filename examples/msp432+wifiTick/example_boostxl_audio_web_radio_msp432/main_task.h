@@ -52,13 +52,13 @@ public:
         // Wait for reset of ESP8266
         sleep(2000);
 
-        stream_reader.connectToWlan("TG WLAN", "");
+        stream_reader.connectToWlan("TG WLAN", "Wanja&Mikesch2007");
 
         // KLARA
         const char * server = "icecast-servers.vrtcdn.be";
 
-//        const char * stream = "/klara-mid.mp3";
-        const char * stream = "/klaracontinuo-mid.mp3";
+        const char * stream = "/klara-mid.mp3";
+//        const char * stream = "/klaracontinuo-mid.mp3";
 //        const char * stream = "/radio1-mid.mp3";
 //        const char * stream = "/ra2ant-mid.mp3";
 //        const char * stream = "/ra2lim-mid.mp3";
@@ -67,6 +67,11 @@ public:
 //        const char * stream = "/mnm_90s00s-mid.mp3";
 //        const char * stream = "/mnm_urb-mid.mp3";
 //        const char * stream = "/ketnetradio-mid.mp3";
+
+        // WDR
+//        const char * server = "f121.rndfnk.com";
+
+//        const char * stream = "/ard/wdr/wdr2/aachenundregion/mp3/128/stream.mp3?cid=01FBS09GH8H34FYWE8CX7TCZP1&sid=2PxeelnwAFfnsOCSLRf5nBVzDUG&token=4xpNtDrfVdasHjoCv-mxCrX_oV5JeHc0C70qykl_nt0&tvf=VuNapXtHYBdmMTIxLnJuZGZuay5jb20";
 
         stream_reader.connectToSrv (server, 80, stream);
         audio_output.start();
