@@ -6,15 +6,15 @@ set(YAHAL_BOARD "wifitick")
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(WebServer)
+project(web_server)
 
-add_executable(WebServer
-    WebServer.cpp
+add_executable(web_server
+    web_server.cpp
 )
 
 # Add Arduino libraries
-target_link_arduino_libraries(WebServer PRIVATE core)
+target_link_arduino_libraries(web_server PRIVATE core)
 
 # This upload target
-target_enable_arduino_upload(WebServer)
+target_enable_arduino_upload(web_server)
 

@@ -6,18 +6,18 @@ set(YAHAL_BOARD "wifitick")
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(AccessPoint)
+project(access_point)
 
-add_executable(AccessPoint
-    AccessPoint.cpp
+add_executable(access_point
+    access_point.cpp
 )
 
 # Add YAHAL library
-yahal_add_me(AccessPoint)
+yahal_add_me(access_point)
 
 # Add Arduino libraries
-target_link_arduino_libraries(AccessPoint PRIVATE core)
+target_link_arduino_libraries(access_point PRIVATE core)
 
 # This upload target
-target_enable_arduino_upload(AccessPoint)
+target_enable_arduino_upload(access_point)
 
