@@ -38,7 +38,7 @@ pio_rp2040::~pio_rp2040() {
     _pio.CTRL.SM_ENABLE  = 0x0;
 }
 
-SM pio_rp2040::loadProgram(const pio_program & prgm) {
+SM* pio_rp2040::loadProgram(const pio_program & prgm) {
     // Find a free state machine
     uint8_t sm_index=0;
     for(sm_index=0; sm_index < 4; ++sm_index) {
@@ -67,10 +67,10 @@ SM pio_rp2040::loadProgram(const pio_program & prgm) {
         _pio.INSTR_MEM[i + load_at_addr] = inst;
     }
     // Generate a state machine and initialize it
-    SM sm(_pio, _pio_set, _pio_clr, sm_index,
-          load_at_addr, _sm_regbanks[sm_index]);
+    SM* sm = new SM(_pio, _pio_set, _pio_clr, sm_index,
+                    load_at_addr, _sm_regbanks[sm_index]);
     // Set the initial PC
-    sm.setRegister(out_dest_t::PC, load_at_addr);
+    sm->setRegister(out_dest_t::PC, load_at_addr);
     // Update the next free addr
     _next_free_addr += load_at_addr + prgm.length;
     // Return the state machine in charge

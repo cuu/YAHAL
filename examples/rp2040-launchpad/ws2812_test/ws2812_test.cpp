@@ -15,55 +15,16 @@
 // Port 1 pin 0. The delay is implemented with
 // a simple for-loop.
 
-#include "gpio_rp2040.h"
-#include "pio/led_ws2812.pio.h"
+#include "ws2812_rp2040.h"
 #include "task.h"
 
-using namespace std;
-
-const uint32_t WS2812_GPIO = 29;
-
-uint32_t leds[8];
-
-void setLED(SM & sm, int index, uint32_t rgb) {
-    rgb |= (rgb & 0x0000ff00) << 16;
-    rgb &= 0xffff00ff;
-    rgb |= (rgb & 0x000000ff) <<  8;
-    leds[index] = rgb;
-    for (int i=0; i <= index; ++i) {
-        sm.writeTxFifo(leds[i]);
-    }
-}
-
 int main(void) {
-    gpio_rp2040_pin led( WS2812_GPIO );
-    led.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
-
-    // Set up the PIO state machine
-    SM sm  = pio_rp2040::pio0.loadProgram(led_ws2812_program);
-    configure_SM(sm, WS2812_GPIO);
-    sm.enable();
-
-    setLED(sm, 7, 0x00000000);
-    task::sleep(300);
-    setLED(sm, 3, 0x00050000);
-    task::sleep(300);
-    setLED(sm, 4, 0x00000500);
-    task::sleep(300);
-    setLED(sm, 5, 0x0000000a);
-    task::sleep(300);
-
+    ws2812_rp2040 leds(29, 8);
     while (1) {
-        setLED(sm, 0, 0x00050000);
-        task::sleep(300);
-        setLED(sm, 0, 0x00000500);
-        task::sleep(300);
-        setLED(sm, 0, 0x00000005);
-        task::sleep(300);
-        setLED(sm, 0, 0x00000005);
-        task::sleep(10);
-        setLED(sm, 1, rand() & 0x000f0f0f);
-        task::sleep(10);
+        leds[0] = HIGH;
+        task::sleep(500);
+        leds[0] = LOW;
+        task::sleep(500);
     }
 }
 

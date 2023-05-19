@@ -1,7 +1,7 @@
 
 #include "uart_rp2040.h"
 #include "gpio_rp2040.h"
-#include "yahal_assert.h"
+#include <cassert>
 #include <cstring>
 
 using namespace _IO_BANK0_;
@@ -18,7 +18,7 @@ uart_rp2040::uart_rp2040(uint8_t index,
 : _init(false),    _index(index), _tx_pin(tx_pin),
   _rx_pin(rx_pin), _baud(baud),   _mode(mode) {
 
-    yahal_assert(index < 2);
+    assert(index < 2);
     _uart     = (index==0) ? &UART0     : &UART1;
     _uart_set = (index==0) ? &UART0_SET : &UART1_SET;
     _uart_clr = (index==0) ? &UART0_CLR : &UART1_CLR;
@@ -30,7 +30,7 @@ uart_rp2040::uart_rp2040(uint8_t index,
     }
     (void)tx_found; // suppress warnings
     (void)rx_found;
-    yahal_assert(tx_found && rx_found);
+    assert(tx_found && rx_found);
 }
 
 void uart_rp2040::init() {
@@ -172,4 +172,3 @@ void UART1_IRQ_Handler(void) {
 }
 
 } // extern "C"
-

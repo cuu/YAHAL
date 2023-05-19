@@ -4,8 +4,7 @@
 ; SPDX-License-Identifier: BSD-3-Clause
 ;
 
-
-.program led_ws2812
+.program ws2812
 .side_set 1
 
 .define public T2 2
@@ -23,23 +22,27 @@ do_zero:
 .wrap
 
 % yahal {
-void configure_SM(SM & sm, uint8_t ws2812_pin) {
+void configure_SM(SM * sm, uint8_t ws2812_pin) {
     // Set the PINDIR register
-    sm.setRegister(out_dest_t::PINDIRS, 1 << ws2812_pin);
+    sm->setRegister(out_dest_t::PINDIRS, 1 << ws2812_pin);
     // Set SM clock rate
-    sm.setClock(8000000);
+    sm->setClock(8000000);
+
     // Configure sideset functions
-    sm.regs.SM_EXECCTRL.SIDE_EN     = 0;
-    sm.regs.SM_EXECCTRL.SIDE_PINDIR = 0;
+    sm->regs.SM_EXECCTRL.SIDE_EN     = 0;
+    sm->regs.SM_EXECCTRL.SIDE_PINDIR = 0;
+
     // Set the wrap values
-    sm.setWrap(led_ws2812_wrap_target, led_ws2812_wrap);
+    sm->setWrap(ws2812_wrap_target, ws2812_wrap);
+
     // Configure the OSR
-    sm.regs.SM_SHIFTCTRL.PULL_THRESH  = 24;
-    sm.regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 0; // shift left
-    sm.regs.SM_SHIFTCTRL.AUTOPULL     = 1;
-    sm.regs.SM_SHIFTCTRL.FJOIN_TX     = 1;
+    sm->regs.SM_SHIFTCTRL.PULL_THRESH  = 24;
+    sm->regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 0; // shift left
+    sm->regs.SM_SHIFTCTRL.AUTOPULL     = 1;
+    sm->regs.SM_SHIFTCTRL.FJOIN_TX     = 1;
+
     // We output the signal as sideset
-    sm.regs.SM_PINCTRL.SIDESET_COUNT = 1;
-    sm.regs.SM_PINCTRL.SIDESET_BASE  = ws2812_pin;
+    sm->regs.SM_PINCTRL.SIDESET_COUNT = 1;
+    sm->regs.SM_PINCTRL.SIDESET_BASE  = ws2812_pin;
 }
 %}

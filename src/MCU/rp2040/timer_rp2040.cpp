@@ -6,14 +6,14 @@
  */
 
 #include "timer_rp2040.h"
-#include "yahal_assert.h"
+#include <cassert>
 
 timer_rp2040 *   timer_rp2040::_timerinst[4];
 function<void()> timer_rp2040::_callback[4];
 
 timer_rp2040::timer_rp2040(uint32_t index) {
-    yahal_assert(index < 4);
-    yahal_assert(_timerinst[index] == nullptr);
+    assert(index < 4);
+    assert(_timerinst[index] == nullptr);
     // Initialize members
     _index      = index;
     _mask       = 1 << index;

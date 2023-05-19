@@ -20,9 +20,9 @@
 using namespace _PPB_;
 
 #include "yahal_config.h"
-#include "yahal_assert.h"
 #include "task.h"
 #include "task_idle.h"
+#include <cassert>
 
 extern uint32_t SystemCoreClock;
 
@@ -74,7 +74,7 @@ struct Stack_Frame {
 };
 
 void task::_setup_stack(bool priv) {
-    yahal_assert(_stack_size > sizeof(Stack_Frame));
+    assert(_stack_size > sizeof(Stack_Frame));
 
     _stack_ptr = _stack_base +
                 (_stack_size - sizeof(Stack_Frame));
@@ -177,7 +177,7 @@ void __attribute__((optimize("O0"))) PendSV_Handler(void) {
     register uint8_t * psp asm("r0");
     task::_setStackPtr(psp);
 #ifdef CHECK_STACK_OVERFLOW
-    yahal_assert((psp - task::_getStackBase()) > 10);
+    assert((psp - task::_getStackBase()) > 10);
 #endif
     task::_switchToNext();
     psp = task::_getStackPtr();
@@ -269,7 +269,7 @@ void SVC_Handler_C(uint32_t * args) {
         default:
         ////////
         {
-            yahal_assert(false);
+            assert(false);
         }
     }
 }

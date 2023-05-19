@@ -8,7 +8,7 @@
 #include "gpio_rp2040.h"
 
 #include "RP2040.h"
-#include "yahal_assert.h"
+#include <cassert>
 
 using namespace _SIO_;
 using namespace _IO_BANK0_;
@@ -18,20 +18,20 @@ gpio_rp2040 gpio_rp2040::inst;
 
 void
 gpio_rp2040::gpioMode (uint16_t gpio, uint16_t mode) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     setSEL  (gpio, GPIO_CTRL_FUNCSEL__sio);
     setMode (gpio, mode);
 }
 
 bool
 gpio_rp2040::gpioRead (uint16_t gpio) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     return SIO.GPIO_IN & (1 << gpio);
 }
 
 void
 gpio_rp2040::gpioWrite (uint16_t gpio, bool value) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     uint32_t mask = 1 << gpio;
     if (_open_drain & mask) {
         if (value) SIO.GPIO_OE_CLR = mask;
@@ -50,7 +50,7 @@ gpio_rp2040::gpioWrite (uint16_t gpio, bool value) {
 
 void
 gpio_rp2040::gpioToggle (uint16_t gpio) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     uint32_t mask = 1 << gpio;
     if ((_open_drain & mask) || (_open_source & mask))
           SIO.GPIO_OE_XOR  = mask;
@@ -60,7 +60,7 @@ gpio_rp2040::gpioToggle (uint16_t gpio) {
 void
 gpio_rp2040::gpioAttachIrq (gpio_pin_t gpio, gpio_mode_t mode,
                             function<void()> handler) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     _irqConfig[gpio] = 0;
     // configure irqs according to mode
     if (mode & GPIO::LEVEL_LOW) {
@@ -83,7 +83,7 @@ gpio_rp2040::gpioAttachIrq (gpio_pin_t gpio, gpio_mode_t mode,
 
 void
 gpio_rp2040::gpioDetachIrq (uint16_t gpio) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     // Disable irqs
     gpioDisableIrq(gpio);
     // unregister handler
@@ -92,7 +92,7 @@ gpio_rp2040::gpioDetachIrq (uint16_t gpio) {
 
 void
 gpio_rp2040::gpioEnableIrq (uint16_t gpio) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     PROC0_INTE0_t *INTE_SET = &IO_BANK0_SET.PROC0_INTE0 + (gpio >> 3);
     INTR0_t       *INTR     = &IO_BANK0.INTR0           + (gpio >> 3);
     int mask_shift = (gpio & 0x7) * 4;
@@ -110,7 +110,7 @@ gpio_rp2040::gpioEnableIrq (uint16_t gpio) {
 
 void
 gpio_rp2040::gpioDisableIrq (uint16_t gpio) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     PROC0_INTE0_t *INTE_CLR = &IO_BANK0_CLR.PROC0_INTE0 + (gpio >> 3);
     INTR0_t       *INTR     = &IO_BANK0.INTR0           + (gpio >> 3);
     int mask_shift = (gpio & 0x7) * 4;
@@ -121,7 +121,7 @@ gpio_rp2040::gpioDisableIrq (uint16_t gpio) {
 }
 
 void gpio_rp2040::setSEL (uint16_t gpio, uint8_t sel) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     GPIO_CTRL_t *io_ctrl = &IO_BANK0.GPIO0_CTRL + (gpio << 1);
     // Set the pad function and reset all other bits
     io_ctrl->FUNCSEL = sel;
@@ -132,7 +132,7 @@ void gpio_rp2040::setSEL (uint16_t gpio, uint8_t sel) {
 }
 
 void gpio_rp2040::setMode (uint16_t gpio, uint16_t mode) {
-    yahal_assert(gpio < 30);
+    assert(gpio < 30);
     uint32_t mask = 1 << gpio;
     GPIO_t *pad_ctrl = &PADS_BANK0.GPIO[gpio];
 

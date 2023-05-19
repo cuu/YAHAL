@@ -11,8 +11,7 @@ const uint8_t gpio_esp8266::GPIO_TO_IOMUX[] = { 12,5,13,4,14,15,6,7,8,9,10,11,0,
 
 gpio_esp8266 gpio_esp8266::inst;
 
-gpio_esp8266::gpio_esp8266()
-{
+gpio_esp8266::gpio_esp8266() {
     for (int i = 0; i < 16; ++i) {
         intHandler[i] = 0;
         intMode[i]    = _GPIO_::PIN_INT_TYPE__DISABLE;
@@ -21,15 +20,11 @@ gpio_esp8266::gpio_esp8266()
     ETS_GPIO_INTR_ENABLE();
 }
 
-
-gpio_esp8266::~gpio_esp8266()
-{
+gpio_esp8266::~gpio_esp8266() {
     ETS_GPIO_INTR_DISABLE();
 }
 
-
-void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode)
-{
+void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode) {
     assert(gpio < 16);
 
     // Select GPIO as pin function
@@ -63,16 +58,12 @@ void gpio_esp8266::gpioMode(uint16_t gpio, uint16_t mode)
     }
 }
 
-
-bool gpio_esp8266::gpioRead(uint16_t gpio)
-{
+bool gpio_esp8266::gpioRead(uint16_t gpio) {
     assert(gpio < 16);
     return (_GPIO_::GPIO.IN.DATA & (1 << gpio));
 }
 
-
-void gpio_esp8266::gpioWrite(uint16_t gpio, bool value)
-{
+void gpio_esp8266::gpioWrite(uint16_t gpio, bool value) {
     assert(gpio < 16);
     if (value) {
         _GPIO_::GPIO.OUT_W1TS = (1 << gpio);
@@ -81,17 +72,13 @@ void gpio_esp8266::gpioWrite(uint16_t gpio, bool value)
     }
 }
 
-
-void gpio_esp8266::gpioToggle(uint16_t gpio)
-{
+void gpio_esp8266::gpioToggle(uint16_t gpio) {
     assert(gpio < 16);
     _GPIO_::GPIO.OUT ^= (1 << gpio);
 }
 
-
 void gpio_esp8266::gpioAttachIrq(uint16_t gpio, uint16_t irq_mode,
-                                 function<void()> handler)
-{
+                                 function<void()> handler) {
     assert(gpio < 16);
     intHandler[gpio] = handler;
     int esp_mode = _GPIO_::PIN_INT_TYPE__DISABLE;
@@ -119,34 +106,26 @@ void gpio_esp8266::gpioAttachIrq(uint16_t gpio, uint16_t irq_mode,
     _GPIO_::GPIO.PIN[gpio].INT_TYPE = esp_mode;
 }
 
-
-void gpio_esp8266::gpioDetachIrq(uint16_t gpio)
-{
+void gpio_esp8266::gpioDetachIrq(uint16_t gpio) {
     assert(gpio < 16);
     gpioDisableIrq(gpio);
     intMode[gpio] = _GPIO_::PIN_INT_TYPE__DISABLE;
     intHandler[gpio] = 0;
 }
 
-
-void gpio_esp8266::gpioEnableIrq(uint16_t gpio)
-{
+void gpio_esp8266::gpioEnableIrq(uint16_t gpio) {
     assert(gpio < 16);
     // Clear pending interrupts
     _GPIO_::GPIO.STATUS_W1TC = (1 << gpio);
     _GPIO_::GPIO.PIN[gpio].INT_TYPE = intMode[gpio];
 }
 
-
-void gpio_esp8266::gpioDisableIrq(uint16_t gpio)
-{
+void gpio_esp8266::gpioDisableIrq(uint16_t gpio) {
     assert(gpio < 16);
     _GPIO_::GPIO.PIN[gpio].INT_TYPE = _GPIO_::PIN_INT_TYPE__DISABLE;
 }
 
-
-void gpio_esp8266::handleInterrupt()
-{
+void gpio_esp8266::handleInterrupt() {
     // Acknowledge all pending IRQs
     uint16_t status = _GPIO_::GPIO.STATUS;
     _GPIO_::GPIO.STATUS_W1TC = status;
@@ -160,15 +139,11 @@ void gpio_esp8266::handleInterrupt()
     }
 }
 
-
-void gpio_irq_handler(gpio_esp8266 * gpio)
-{
+void gpio_irq_handler(gpio_esp8266 * gpio) {
     gpio->handleInterrupt();
 }
 
-
-void gpio_esp8266::brightnessControl(uint16_t gpio, bool on)
-{
+void gpio_esp8266::brightnessControl(uint16_t gpio, bool on) {
     assert(gpio < 16);
     if (on) {
         _GPIO_::GPIO.PIN[gpio].SOURCE = _GPIO_::PIN_SOURCE__SIGMA_DELTA;
@@ -177,9 +152,7 @@ void gpio_esp8266::brightnessControl(uint16_t gpio, bool on)
     }
 }
 
-
-void gpio_esp8266::setBrightness(uint8_t value)
-{
+void gpio_esp8266::setBrightness(uint8_t value) {
     _GPIO_::GPIO.SIGMA_DELTA.ENABLE = 1;
     _GPIO_::GPIO.SIGMA_DELTA.PRESCALE = 0x80;
     _GPIO_::GPIO.SIGMA_DELTA.TARGET = value;

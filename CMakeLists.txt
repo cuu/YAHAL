@@ -7,7 +7,7 @@ project(YAHAL CXX C ASM)
 
 add_library(${YAHAL_TARGET})
 
+add_subdirectory(tools)
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(tools)
 

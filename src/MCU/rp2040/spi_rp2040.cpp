@@ -17,8 +17,8 @@
 // pass in a CS gpio pin, which might be used by
 // higher layers or automatically in this driver.
 
-#include "yahal_assert.h"
 #include "spi_rp2040.h"
+#include <cassert>
 
 using namespace _IO_BANK0_;
 using namespace _RESETS_;
@@ -39,7 +39,7 @@ spi_rp2040::spi_rp2040( uint8_t     index ,
       _cs(cs_pin),  _master(spi_master), _mode(mode),     _init(false),
       _generate_CS(true), _baud(0)  {
 
-    yahal_assert(index < 2);
+    assert(index < 2);
     _spi     = (index==0) ? &SPI0     : &SPI1;
     _spi_set = (index==0) ? &SPI0_SET : &SPI1_SET;
     _spi_clr = (index==0) ? &SPI0_CLR : &SPI1_CLR;
@@ -54,7 +54,7 @@ spi_rp2040::spi_rp2040( uint8_t     index ,
     (void)miso_found;  // suppress warnings
     (void)mosi_found;
     (void)sclk_found;
-    yahal_assert(miso_found && mosi_found && sclk_found);
+    assert(miso_found && mosi_found && sclk_found);
 }
 
 spi_rp2040::~spi_rp2040() {
@@ -201,7 +201,7 @@ void spi_rp2040::setSpeed(uint32_t baud)
         if (freq_in < (prescale + 2) * 256 * (uint64_t) baud)
             break;
     }
-    yahal_assert(prescale <= 254); // Frequency too low
+    assert(prescale <= 254); // Frequency too low
 
     // Find largest post-divide which makes output <= baudrate. Post-divide is
     // an integer in the range 1 to 256 inclusive.

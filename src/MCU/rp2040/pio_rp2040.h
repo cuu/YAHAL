@@ -183,12 +183,12 @@ inline uint16_t op_SET(uint8_t    delay_sideset,
 }
 
 struct SM_regs {
-    SM_CLKDIV_t                   SM_CLKDIV;
-    SM_EXECCTRL_t                 SM_EXECCTRL;
-    SM_SHIFTCTRL_t                SM_SHIFTCTRL;
-    SM_ADDR_t                     SM_ADDR;
-    SM_INSTR_t                    SM_INSTR;
-    SM_PINCTRL_t                  SM_PINCTRL;
+    SM_CLKDIV_t       SM_CLKDIV;
+    SM_EXECCTRL_t     SM_EXECCTRL;
+    SM_SHIFTCTRL_t    SM_SHIFTCTRL;
+    SM_ADDR_t         SM_ADDR;
+    SM_INSTR_t        SM_INSTR;
+    SM_PINCTRL_t      SM_PINCTRL;
 
     void init() {
         // Initialize SM registers with reset values;
@@ -257,8 +257,11 @@ struct SM {
     inline bool TxFifoFull() {
         return pio.FSTAT.TXFULL & (1 << sm_index);
     }
+    inline bool TxFifoEmpty() {
+        return pio.FSTAT.TXEMPTY & (1 << sm_index);
+    }
     void writeTxFifo(uint32_t val) {
-        while(pio.FSTAT.TXFULL & (1 << sm_index)) ;
+        while(TxFifoFull()) ;
         pio.TXF[sm_index] = val;
     }
 
@@ -295,7 +298,7 @@ public:
     static pio_rp2040 pio0;
     static pio_rp2040 pio1;
 
-    SM loadProgram(const pio_program & prgm);
+    SM* loadProgram(const pio_program & prgm);
 
 private:
     pio_rp2040(PIO0_t & pio);
