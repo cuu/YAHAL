@@ -223,15 +223,16 @@ struct SM {
         regs.SM_INSTR = instruction;
     }
 
-    void setRegister(out_dest_t reg, uint32_t val) {
+    void setRegister(out_dest_t reg, uint32_t val,
+                     uint8_t offset = 0, uint8_t size = 32) {
         // Store current configuration
         bool en = isEnabled();
         disable();
         uint8_t out_base  = regs.SM_PINCTRL.OUT_BASE;
         uint8_t out_count = regs.SM_PINCTRL.OUT_COUNT;
         // Write full 32 bits
-        regs.SM_PINCTRL.OUT_BASE  = 0;
-        regs.SM_PINCTRL.OUT_COUNT = 32;
+        regs.SM_PINCTRL.OUT_BASE  = offset;
+        regs.SM_PINCTRL.OUT_COUNT = size;
         // Empty the TX Fifo
         while(pio.FLEVEL & (0xf << (sm_index << 3))) {
             execute( op_PULL(0, 0) );
@@ -239,30 +240,6 @@ struct SM {
         // Write value to TX Fifo first.
         // Then pull it and write it to destination.
         writeTxFifo(val);
-        execute( op_PULL(0, 0)      );
-        execute( op_OUT (0, reg, 0) );
-        // Restore original state
-        regs.SM_PINCTRL.OUT_BASE  = out_base;
-        regs.SM_PINCTRL.OUT_COUNT = out_count;
-        if (en) enable();
-    }
-
-    void setRegisterBit(out_dest_t reg, uint8_t bit) {
-        // Store current configuration
-        bool en = isEnabled();
-        disable();
-        uint8_t out_base  = regs.SM_PINCTRL.OUT_BASE;
-        uint8_t out_count = regs.SM_PINCTRL.OUT_COUNT;
-        // Write only 1 bit
-        regs.SM_PINCTRL.OUT_BASE  = bit;
-        regs.SM_PINCTRL.OUT_COUNT = 1;
-        // Empty the TX Fifo
-        while(pio.FLEVEL & (0xf << (sm_index << 3))) {
-            execute( op_PULL(0, 0) );
-        }
-        // Write value to TX Fifo first.
-        // Then pull it and write it to destination.
-        writeTxFifo(1);
         execute( op_PULL(0, 0)      );
         execute( op_OUT (0, reg, 0) );
         // Restore original state

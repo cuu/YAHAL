@@ -63,6 +63,7 @@ ws2812_rp2040::~ws2812_rp2040() {
 
 void ws2812_rp2040::init() {
     // configure GPIO pin
+    _gpio.gpioMode(GPIO::DRIVE_12mA);
     _gpio.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
     // Set up the PIO state machine
     _sm = pio_rp2040::pio0.loadProgram(ws2812_program);

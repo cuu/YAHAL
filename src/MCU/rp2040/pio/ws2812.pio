@@ -23,8 +23,8 @@ do_zero:
 
 % yahal {
 void configure_SM(SM * sm, uint8_t ws2812_pin) {
-    // Set the PINDIR register
-    sm->setRegisterBit(out_dest_t::PINDIRS, ws2812_pin);
+    // Set the bit in the PINDIRS register
+    sm->setRegister(out_dest_t::PINDIRS, 1, ws2812_pin, 1);
     // Set SM clock rate
     sm->setClock(8000000);
 
