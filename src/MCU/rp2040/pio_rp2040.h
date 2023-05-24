@@ -13,9 +13,11 @@
 
 using namespace _PIO0_;
 
-//////////////////////////////////////////////////////////////
 // enums and methods to generate state machine instructions //
-//////////////////////////////////////////////////////////////
+
+/////////
+// JMP //
+/////////
 enum class jmp_cond_t : uint16_t {
     always       = 0,
     Xzero        = 1,
@@ -40,6 +42,9 @@ inline bool is_JMP(uint16_t opcode) {
     return (opcode & 0xe000) == 0;
 }
 
+//////////
+// WAIT //
+//////////
 enum class wait_pol_t : uint16_t {
     wait_for_1   = 1,
     wait_for_0   = 0
@@ -62,6 +67,9 @@ inline uint16_t op_WAIT(uint8_t    delay_sideset,
            (index & 0x1f);
 }
 
+////////
+// IN //
+////////
 enum class in_src_t : uint16_t {
     PINS         = 0,
     X            = 1,
@@ -80,6 +88,9 @@ inline uint16_t op_IN(uint8_t  delay_sideset,
            (bitcount & 0x1f);
 }
 
+/////////
+// OUT //
+/////////
 enum class out_dest_t : uint16_t {
     PINS         = 0,
     X            = 1,
@@ -100,6 +111,9 @@ inline uint16_t op_OUT(uint8_t    delay_sideset,
            (bitcount & 0x1f);
 }
 
+//////////
+// PUSH //
+//////////
 const uint16_t IFFULL = 0x40;
 const uint16_t BLOCK  = 0x20;
 
@@ -110,6 +124,9 @@ inline uint16_t op_PUSH(uint8_t  delay_sideset,
            flags;
 }
 
+//////////
+// PULL //
+//////////
 inline uint16_t op_PULL(uint8_t  delay_sideset,
                         uint16_t flags) {
     return 0x8080 |
@@ -117,6 +134,9 @@ inline uint16_t op_PULL(uint8_t  delay_sideset,
            flags;
 }
 
+/////////
+// MOV //
+/////////
 enum class mov_dest_t : uint16_t {
     PINS         = 0,
     X            = 1,
@@ -154,6 +174,9 @@ inline uint16_t op_MOV(uint8_t    delay_sideset,
            (static_cast<uint16_t>(src));
 }
 
+/////////
+// IRQ //
+/////////
 const uint32_t CLR  = 0x40;
 const uint32_t WAIT = 0x20;
 
@@ -166,6 +189,9 @@ inline uint16_t op_IRQ(uint8_t  delay_sideset,
            (index & 0x1f);
 }
 
+/////////
+// SET //
+/////////
 enum class set_dest_t : uint16_t {
     PINS         = 0,
     X            = 1,
@@ -182,6 +208,8 @@ inline uint16_t op_SET(uint8_t    delay_sideset,
             (data & 0x1f);
 }
 
+// Struct to mirror the registers of a single SM.
+// Will be used inside the SM struct (see below).
 struct SM_regs {
     SM_CLKDIV_t       SM_CLKDIV;
     SM_EXECCTRL_t     SM_EXECCTRL;
@@ -189,21 +217,11 @@ struct SM_regs {
     SM_ADDR_t         SM_ADDR;
     SM_INSTR_t        SM_INSTR;
     SM_PINCTRL_t      SM_PINCTRL;
-
-    void init() {
-        // Initialize SM registers with reset values;
-        SM_CLKDIV                 = 0;
-        SM_CLKDIV.INT             = 1;
-        SM_EXECCTRL               = 0;
-        SM_EXECCTRL.WRAP_TOP      = 0x1f;
-        SM_SHIFTCTRL              = 0;
-        SM_SHIFTCTRL.OUT_SHIFTDIR = 1;
-        SM_SHIFTCTRL.IN_SHIFTDIR  = 1;
-        SM_PINCTRL                = 0;
-        SM_PINCTRL.SET_COUNT      = 5;
-    }
+    // Initialize SM registers with reset values;
+    void init();
 };
 
+// Struct for a single SM.
 struct SM {
     PIO0_t  &   pio;
     PIO0_t  &   pio_set;
@@ -219,83 +237,75 @@ struct SM {
         regs.init();
     }
 
+    // Execute a single PIO instruction
     inline void execute(uint16_t instruction) {
         regs.SM_INSTR = instruction;
     }
 
+    // Set a PIO register. Default is to write a 32-bit word,
+    // but offset and size can be specified to only change
+    // specific bits. Any register which is handled by the
+    // OUT instruction can be used.
     void setRegister(out_dest_t reg, uint32_t val,
-                     uint8_t offset = 0, uint8_t size = 32) {
-        // Store current configuration
-        bool en = isEnabled();
-        disable();
-        uint8_t out_base  = regs.SM_PINCTRL.OUT_BASE;
-        uint8_t out_count = regs.SM_PINCTRL.OUT_COUNT;
-        // Write full 32 bits
-        regs.SM_PINCTRL.OUT_BASE  = offset;
-        regs.SM_PINCTRL.OUT_COUNT = size;
-        // Empty the TX Fifo
-        while(pio.FLEVEL & (0xf << (sm_index << 3))) {
-            execute( op_PULL(0, 0) );
-        }
-        // Write value to TX Fifo first.
-        // Then pull it and write it to destination.
-        writeTxFifo(val);
-        execute( op_PULL(0, 0)      );
-        execute( op_OUT (0, reg, 0) );
-        // Restore original state
-        regs.SM_PINCTRL.OUT_BASE  = out_base;
-        regs.SM_PINCTRL.OUT_COUNT = out_count;
-        if (en) enable();
-    }
+                     uint8_t offset = 0, uint8_t size = 32);
 
-    void setClock(uint32_t hz) {
-        regs.SM_CLKDIV.INT = 125000000 / hz;
-        uint64_t frac = ((125000000 % hz) << 8);
-        frac /= hz;
-        regs.SM_CLKDIV.FRAC = frac;
-    }
+    // Set the PIO clock
+    void setClock(uint32_t hz);
 
+    // Check if TX FIFO is full.
     inline bool TxFifoFull() {
         return pio.FSTAT.TXFULL & (1 << sm_index);
     }
+
+    // Check if TX FIFO is empty.
     inline bool TxFifoEmpty() {
         return pio.FSTAT.TXEMPTY & (1 << sm_index);
     }
-    void writeTxFifo(uint32_t val) {
+
+    // Write a 32 bit value to the TX FIFO
+    inline void writeTxFifo(uint32_t val) {
         while(TxFifoFull()) ;
         pio.TXF[sm_index] = val;
     }
 
-    void setWrap(uint8_t bottom, uint8_t top) {
+    // Set the WRAP addresses. Parameters are relative to
+    // the load address!
+    inline void setWrap(uint8_t bottom, uint8_t top) {
         regs.SM_EXECCTRL.WRAP_BOTTOM = bottom + load_addr;
         regs.SM_EXECCTRL.WRAP_TOP    = top    + load_addr;
     }
 
-    void enable() {
+    // Enable the SM
+    inline void enable() {
         pio_set.CTRL.SM_ENABLE = (1 << sm_index);
     }
 
-    void disable() {
+    // Disable the SM
+    inline void disable() {
         pio_clr.CTRL.SM_ENABLE = (1 << sm_index);
     }
 
-    bool isEnabled() {
+    // Check if SM is enabled
+    inline bool isEnabled() {
         return pio.CTRL.SM_ENABLE & (1 << sm_index);
     }
 
 };
 
-
+// Struct for a PIO programm (used in the generated code
+// of the PIO assembler)
 struct pio_program {
     const uint16_t  *instructions;
     uint8_t         length;
     int8_t          origin; // required instruction memory origin or -1
 };
 
+// PIO control class
 class pio_rp2040 {
 public:
     virtual ~pio_rp2040();
 
+    // The two static PIO singletons
     static pio_rp2040 pio0;
     static pio_rp2040 pio1;
 

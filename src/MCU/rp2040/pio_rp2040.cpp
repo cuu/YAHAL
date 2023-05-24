@@ -11,8 +11,54 @@
 using namespace _PIO0_;
 using namespace _PIO1_;
 
+// The two PIO instances
 pio_rp2040 pio_rp2040::pio0(PIO0);
 pio_rp2040 pio_rp2040::pio1(PIO1);
+
+void SM_regs::init() {
+    // Initialize SM registers with reset values;
+    SM_CLKDIV                 = 0;
+    SM_CLKDIV.INT             = 1;
+    SM_EXECCTRL               = 0;
+    SM_EXECCTRL.WRAP_TOP      = 0x1f;
+    SM_SHIFTCTRL              = 0;
+    SM_SHIFTCTRL.OUT_SHIFTDIR = 1;
+    SM_SHIFTCTRL.IN_SHIFTDIR  = 1;
+    SM_PINCTRL                = 0;
+    SM_PINCTRL.SET_COUNT      = 5;
+}
+
+void SM::setRegister(out_dest_t reg, uint32_t val,
+                     uint8_t offset, uint8_t size) {
+    // Store current configuration
+    bool en = isEnabled();
+    disable();
+    uint8_t out_base  = regs.SM_PINCTRL.OUT_BASE;
+    uint8_t out_count = regs.SM_PINCTRL.OUT_COUNT;
+    // Configure bits to write
+    regs.SM_PINCTRL.OUT_BASE  = offset;
+    regs.SM_PINCTRL.OUT_COUNT = size;
+    // Empty the TX Fifo
+    while(pio.FLEVEL & (0xf << (sm_index << 3))) {
+        execute( op_PULL(0, 0) );
+    }
+    // Write value to TX Fifo first.
+    // Then pull it and write it to destination.
+    writeTxFifo(val);
+    execute( op_PULL(0, 0)      );
+    execute( op_OUT (0, reg, 0) );
+    // Restore original state
+    regs.SM_PINCTRL.OUT_BASE  = out_base;
+    regs.SM_PINCTRL.OUT_COUNT = out_count;
+    if (en) enable();
+}
+
+void SM::setClock(uint32_t hz) {
+    regs.SM_CLKDIV.INT = 125000000 / hz;
+    uint64_t frac = ((125000000 % hz) << 8);
+    frac /= hz;
+    regs.SM_CLKDIV.FRAC = frac;
+}
 
 pio_rp2040::pio_rp2040(PIO0_t & pio)
 : _pio(pio),
@@ -62,6 +108,7 @@ SM* pio_rp2040::loadProgram(const pio_program & prgm) {
     for(int i=0; i < prgm.length; i++) {
         uint16_t inst = prgm.instructions[i];
         if (is_JMP(inst)) {
+            // Relocate to load address
             inst += load_at_addr;
         }
         _pio.INSTR_MEM[i + load_at_addr] = inst;

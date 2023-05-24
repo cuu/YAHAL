@@ -22,7 +22,7 @@
 // One has to keep in mind that the 4K words (6KB)
 // is all what can be accessed by the CPU. So 6KB
 // contain the FOCAL interpreter as well as any user
-// program -> quite astonishing from todays point of
+// program -> quite astonishing from today's point of
 // view.
 
 #include <cstdint>

@@ -56,7 +56,7 @@ int add3(int a, int b) {
 // Third assembly version of add function.
 // Here we use a local variable and show how
 // to access this variable in a inline assembly
-// statement. C variables can simply by referenced
+// statement. C variables can simply be referenced
 // just like the parameter variables. In this special
 // case, the compiler will notice that variable 'result'
 // can be mapped to R0, and optimize this variable away...
