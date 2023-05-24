@@ -9,3 +9,5 @@
 /build/
 /gen/
 /pio/*.pio.h
+/.idea/
+/cmake-build-debug/
