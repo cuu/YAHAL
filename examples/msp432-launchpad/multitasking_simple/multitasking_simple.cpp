@@ -22,8 +22,14 @@
 // a more complete and fully featured multitasking
 // kernel, use YAHAL's task class.
 
+#include "posix_io.h"
+#include "uart_msp432.h"
 #include "gpio_msp432.h"
+#include <cstdio>
+
 #include "OS.h"
+
+int global = 0;
 
 // Simple delay function
 void delay(int ms) {
@@ -50,14 +56,32 @@ void task2(void) {
     }
 }
 
+// simple task to increment a global variable
+void task3(void) {
+    for (int i=0; i < 50000; ++i) {
+        ++global;
+    }
+    delay(200);
+    printf("Task 3 ending. global is: %d\n", global);
+}
 
 int main(void)
 {
+    // Set up UART and enable stdin/stdout
+    uart_msp432 uart; // default is backchannel UART!
+    posix_io::inst.register_stdin ( uart );
+    posix_io::inst.register_stdout( uart );
+    posix_io::inst.register_stderr( uart );
+
     // Add two tasks to our mini-OS
     OS_add_task(task1);
     OS_add_task(task2);
 
+    // Add two tasks which should increment the
+    // global integer by 50000 each.
+    OS_add_task(task3);
+    OS_add_task(task3);
+
     // Start the scheduler. This method will never return...
     OS_start_scheduler();
 }
-
