@@ -1,0 +1,13 @@
+/DEBUG/
+/Debug/
+/debug/
+/RELEASE/
+/Release/
+/release/
+/BUILD/
+/Build/
+/build/
+/gen/
+/pio/*.pio.h
+/.idea/
+/cmake-build-debug/
