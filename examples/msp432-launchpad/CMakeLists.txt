@@ -64,6 +64,7 @@ add_subdirectory(soft_i2c_master_slave)
 add_subdirectory(stepper_motor)
 add_subdirectory(uart_simple)
 add_subdirectory(ws2812_leds)
+add_subdirectory(max30102_simple)
 
 #
 # HW testing programs

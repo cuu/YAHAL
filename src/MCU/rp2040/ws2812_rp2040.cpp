@@ -9,29 +9,29 @@ using namespace _TIMER_;
 // LED implementation
 /////////////////////
 ws2812_rp2040::LED::LED() {
-    _color    = 0;
+    _color = 0;
     // Default for on is a dark red
     set_on_color(0x080000);
 }
 
 void ws2812_rp2040::LED::on() {
     _color = _on_color;
-    _ws2812_rp2040->update();
+    _ws2812_rp2040->update(_index);
 }
 
 void ws2812_rp2040::LED::off() {
     _color = 0;
-    _ws2812_rp2040->update();
+    _ws2812_rp2040->update(_index);
 }
 
 void ws2812_rp2040::LED::toggle() {
     _color = _color ? 0 : _on_color;
-    _ws2812_rp2040->update();
+    _ws2812_rp2040->update(_index);
 }
 
 void ws2812_rp2040::LED::set_color(uint32_t rgb) {
     _color = _ws2812_rp2040->xRGB_to_GRBx(rgb);
-    _ws2812_rp2040->update();
+    _ws2812_rp2040->update(_index);
 }
 
 void ws2812_rp2040::LED::set_on_color(uint32_t rgb) {
@@ -40,18 +40,19 @@ void ws2812_rp2040::LED::set_on_color(uint32_t rgb) {
 
 void ws2812_rp2040::LED::operator = (bool b) {
     _color = b ? _on_color : 0;
-    _ws2812_rp2040->update();
+    _ws2812_rp2040->update(_index);
 }
 
 // ws2812_rp2040 implementation
 ///////////////////////////////
 ws2812_rp2040::ws2812_rp2040(gpio_pin_t pin,
                              uint16_t   size)
-: _init(false), _gpio(pin), _size(size) {
+: _init(false), _gpio(pin), _size(size), _last(0) {
     // Allocate LED array and set base class pointers
     _leds = new LED[_size];
     for(uint16_t i=0; i < _size; ++i) {
         _leds[i]._ws2812_rp2040 = this;
+        _leds[i]._index = i;
     }
 }
 
@@ -71,6 +72,8 @@ void ws2812_rp2040::init() {
     _sm->enable();
     // set flag
     _init = true;
+    // initialize LEDs
+    update(_size);
 }
 
 void ws2812_rp2040::set_colors(uint32_t * values, uint16_t size) {
@@ -78,7 +81,7 @@ void ws2812_rp2040::set_colors(uint32_t * values, uint16_t size) {
     for(uint16_t i=0; i < size; ++i) {
         _leds[i]._color = xRGB_to_GRBx(values[i]);
     }
-    update();
+    update(size-1);
 }
 
 uint32_t ws2812_rp2040::xRGB_to_GRBx(uint32_t rgb) {
@@ -93,22 +96,23 @@ uint32_t ws2812_rp2040::xRGB_to_GRBx(uint32_t rgb) {
     return rgb;
 }
 
-void ws2812_rp2040::update() {
+void ws2812_rp2040::update(uint16_t index) {
     if (!_init) init();
-    static uint64_t last=0;
     // The PIO buffers the data in the FIFO (8 entries).
     // Sending the whole FIFO takes 80us. The reset time
     // for a WS2812 is at least 280us, so we wait approx.
     // 400us before sending a new packet.
-    while ((time_us() - last) < 400) { }
-    // Update the LEDs
+    while ((time_us() - _last) < 400) { }
+    // Update the LEDs. A mutex will not help here because
+    // the critical section could still be interrupted. But
+    // WS2812 timing is critical...
     task::enterCritical();
-    for(uint16_t i=0; i < _size; ++i) {
+    for(uint16_t i=0; i <= index; ++i) {
         _sm->writeTxFifo(_leds[i]._color);
     }
     task::leaveCritical();
     // Store timer value
-    last = time_us();
+    _last = time_us();
 }
 
 uint64_t ws2812_rp2040::time_us() {

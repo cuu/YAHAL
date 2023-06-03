@@ -64,9 +64,9 @@ namespace MAX30102 {
     };
 
     enum SLOT_CONFIG {
-        NONE             = 0x00,
-        LED1             = 0x01,
-        LED2             = 0x02
+        SLOT_NONE        = 0x00,
+        SLOT_LED1        = 0x01,
+        SLOT_LED2        = 0x02
     };
 
     static const uint8_t PULSE_AMP_MEDIUM = 0x80;
@@ -150,10 +150,10 @@ public:
     // should be filled from left to right (enable slot1, then slot2 etc.)
     // This method has to be called _before_ set_led_mode(MAX30102_MODE_MULTI_LEDS)
     // is called!
-    void config_slots(uint8_t slot1 = MAX30102::SLOT_CONFIG::NONE,
-                      uint8_t slot2 = MAX30102::SLOT_CONFIG::NONE,
-                      uint8_t slot3 = MAX30102::SLOT_CONFIG::NONE,
-                      uint8_t slot4 = MAX30102::SLOT_CONFIG::NONE);
+    void config_slots(uint8_t slot1 = MAX30102::SLOT_CONFIG::SLOT_NONE,
+                      uint8_t slot2 = MAX30102::SLOT_CONFIG::SLOT_NONE,
+                      uint8_t slot3 = MAX30102::SLOT_CONFIG::SLOT_NONE,
+                      uint8_t slot4 = MAX30102::SLOT_CONFIG::SLOT_NONE);
 
     // Read the die temperature and return the result as a float
     // number in degrees celsius °C. Treat the integer portion of

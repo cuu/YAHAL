@@ -275,22 +275,22 @@ void max30102_drv::set_pulse_amplitude_led2(uint8_t amplitude) {
 void max30102_drv::config_slots(uint8_t slot1, uint8_t slot2,
                                 uint8_t slot3, uint8_t slot4) {
     _active_slots = 0;
-    if (slot1 != MAX30102::NONE) {
+    if (slot1 != MAX30102::SLOT_NONE) {
         set_register_mask_value(MAX30102::MUL_LED_CTRL_1,
                                 MAX30102::SLOT1_MASK, slot1);
         _active_slots += 1;
     }
-    if (slot2 != MAX30102::NONE) {
+    if (slot2 != MAX30102::SLOT_NONE) {
         set_register_mask_value(MAX30102::MUL_LED_CTRL_1,
                                 MAX30102::SLOT2_MASK, slot2 << 4);
         _active_slots += 1;
     }
-    if (slot3 != MAX30102::NONE) {
+    if (slot3 != MAX30102::SLOT_NONE) {
         set_register_mask_value(MAX30102::MUL_LED_CTRL_2,
                                 MAX30102::SLOT3_MASK, slot3);
         _active_slots += 1;
     }
-    if (slot4 != MAX30102::NONE) {
+    if (slot4 != MAX30102::SLOT_NONE) {
         set_register_mask_value(MAX30102::MUL_LED_CTRL_2,
                                 MAX30102::SLOT4_MASK, slot4 << 4);
         _active_slots += 1;

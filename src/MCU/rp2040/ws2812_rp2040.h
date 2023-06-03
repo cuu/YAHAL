@@ -23,6 +23,7 @@ public:
 
       private:
         ws2812_rp2040 * _ws2812_rp2040;
+        uint16_t _index;
         uint32_t _color;
         uint32_t _on_color;
     };
@@ -49,10 +50,11 @@ private:
     LED *           _leds;
     uint16_t        _size;
     SM *            _sm;
+    uint64_t        _last;
     
     void            init();
     uint32_t        xRGB_to_GRBx(uint32_t rgb);
-    void            update();
+    void            update(uint16_t index);
     uint64_t        time_us();
 };
 
