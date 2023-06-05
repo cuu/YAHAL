@@ -1,0 +1,10 @@
+image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-and-cmake-image
+
+msp_examples:
+  before_script:
+    - cd examples/msp432-launchpad
+    - mkdir build
+    - cd build
+  script:
+    - cmake ..
+    - make
