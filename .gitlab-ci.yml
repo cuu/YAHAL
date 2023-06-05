@@ -8,3 +8,5 @@ msp_examples:
   script:
     - cmake ..
     - make
+  tags:
+    - shared
