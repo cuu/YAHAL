@@ -7,6 +7,6 @@ msp432_examples:
     - cd build
   script:
     - cmake ..
-    - make -j 8
+    - make -j 6
   tags:
     - shared
