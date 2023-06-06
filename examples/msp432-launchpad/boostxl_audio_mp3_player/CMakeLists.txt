@@ -8,6 +8,8 @@ include(YAHAL_import.cmake)
 
 project(boostxl_audio_mp3_player)
 
+set(YAHAL_OPT_FLAGS -Ofast)
+
 add_executable(boostxl_audio_mp3_player)
 add_subdirectory(src)
 

@@ -21,8 +21,12 @@ extern "C" {
 /*********************/
 #define WEAK_FUNC(FUN) \
 void FUN(void) __attribute__ ((weak));
+#define WEAK_INT_FUNC(FUN) \
+int FUN() __attribute__ ((weak));
 #define WEAK_ALIAS_FUNC(FUN, FUN_ALIAS) \
 void FUN(void) __attribute__ ((weak, alias(#FUN_ALIAS)));
+#define WEAK_ALIAS_INT_FUNC(FUN, FUN_ALIAS) \
+int FUN() __attribute__ ((weak, alias(#FUN_ALIAS)));
 
 /************************************/
 /* External variables and functions */
@@ -30,11 +34,12 @@ void FUN(void) __attribute__ ((weak, alias(#FUN_ALIAS)));
 extern void     __cmsis_start(void);
 extern uint32_t __StackTop;
 
-typedef void(*pFunc)(void);
+typedef void (*pFunc)(void);
 
 // Forward declaration of the implemented handlers.
 WEAK_FUNC(Default_Handler)
 WEAK_FUNC(Reset_Handler)
+WEAK_INT_FUNC(return_0)
 
 // Cortex-M0+ Processor Exceptions
 WEAK_ALIAS_FUNC(NMI_Handler, Default_Handler)
@@ -240,6 +245,25 @@ void Default_Handler(void)
 {
     // Enter an infinite loop.
     while (1) { }
+}
+
+// Dummy Posix File IO functions
+// to suppress linker warnings
+WEAK_ALIAS_INT_FUNC( _read,   return_0 );
+WEAK_ALIAS_INT_FUNC( _write,  return_0 );
+WEAK_ALIAS_INT_FUNC( _open,   return_0 );
+WEAK_ALIAS_INT_FUNC( _close,  return_0 );
+WEAK_ALIAS_INT_FUNC( _link,   return_0 );
+WEAK_ALIAS_INT_FUNC( _unlink, return_0 );
+WEAK_ALIAS_INT_FUNC( _stat,   return_0 );
+WEAK_ALIAS_INT_FUNC( _fstat,  return_0 );
+WEAK_ALIAS_INT_FUNC( _lseek,  return_0 );
+WEAK_ALIAS_INT_FUNC( _isatty, return_0 );
+WEAK_ALIAS_INT_FUNC( _kill,   return_0 );
+WEAK_ALIAS_INT_FUNC( _getpid, return_0 );
+
+int return_0() {
+    return 0;
 }
 
 #ifdef __cplusplus

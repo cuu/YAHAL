@@ -161,22 +161,22 @@ void Reset_Handler(void) {
     // copied AFTER this call!
     SystemInit();
 
-    // Let cmsis code do the initialization of the C++
+    // Let CMSIS code do the initialization of the C++
     // runtime and jump to main
     __cmsis_start();
 }
 
-/* This is the code that gets called when the processor receives an unexpected  */
-/* interrupt.  This simply enters an infinite loop, preserving the system state */
-/* for examination by a debugger.                                               */
-void Default_Handler(void) {
-    /* Enter an infinite loop. */
-    while (1) {
-    }
+// This is the code that gets called when the processor receives an unexpected
+// interrupt.  This simply enters an infinite loop, preserving the system state
+// for examination by a debugger.
+void Default_Handler(void)
+{
+    // Enter an infinite loop.
+    while (1) { }
 }
 
-/* Dummy Posix File IO functions */
-/* to suppress linker warnings   */
+// Dummy Posix File IO functions
+// to suppress linker warnings
 WEAK_ALIAS_INT_FUNC( _read,   return_0 );
 WEAK_ALIAS_INT_FUNC( _write,  return_0 );
 WEAK_ALIAS_INT_FUNC( _open,   return_0 );
