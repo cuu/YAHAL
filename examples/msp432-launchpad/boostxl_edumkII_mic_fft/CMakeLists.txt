@@ -3,12 +3,6 @@ cmake_minimum_required(VERSION 3.16)
 # Set the target board
 set(YAHAL_BOARD "msp432-launchpad")
 
-# Place each function or data item into its own section in the output file.
-# The linker can perform optimizations to improve locality of reference in the instruction space.
-# This leads to smaller executables (after stripping).
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections")
-
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
