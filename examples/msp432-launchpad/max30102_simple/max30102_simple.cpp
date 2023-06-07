@@ -38,7 +38,7 @@ int main(void)
         if (max.check()) {
             uint32_t ir_value = max.get_slot_data(0);
             uint32_t red_value = max.get_slot_data(1);
-            printf("%d %d\n", ir_value, red_value);
+            printf("%ld %ld\n", ir_value, red_value);
         }
     }
 }
