@@ -1,4 +1,4 @@
-image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-and-cmake-image
+image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-image
 
 msp432_examples:
   before_script:
