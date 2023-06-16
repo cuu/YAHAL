@@ -17,7 +17,6 @@
 using namespace _IO_BANK0_;
 
 audio_output::audio_output() : _audio_en(5), _pcm_timer(0),
-        _sm(pio_rp2040::pio0.loadProgram(dac8311_program)),
         _pcm_fifo (PCM_FIFO_SIZE)
 {
     _audio_en.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
@@ -30,21 +29,22 @@ audio_output::audio_output() : _audio_en(5), _pcm_timer(0),
     sync.setSEL(GPIO_CTRL_FUNCSEL__pio0);
 
     // Set up the PIO state machine
+    _sm = pio_rp2040::pio0.loadProgram(dac8311_program);
     configure_SM(_sm, 7, 22, 15);
-    _sm.enable();
+    _sm->enable();
 
     enable_output(true);
 
     // Configure PCM timer.
     _pcm_timer.setCallback([this]() {
-        while(!_sm.TxFifoFull()) {
+        while(!_sm->TxFifoFull()) {
             if (_pcm_fifo.get(_pcm_value)) {
                 // Convert the 16 bit signed PCM value
                 // to a 14 bit unsigned value, as needed
                 // by the DAC8311. The upper 16 bits of
                 // the value written to writeTxFifo are
                 // transfered by the PIO code.
-                _sm.writeTxFifo((_pcm_value + 32768) << 14);
+                _sm->writeTxFifo((_pcm_value + 32768) << 14);
             } else break;
         }
     });

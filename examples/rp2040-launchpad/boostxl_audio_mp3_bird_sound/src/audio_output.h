@@ -47,7 +47,7 @@ private:
     timer_rp2040 _pcm_timer;
 
     // State Machine
-    SM _sm;
+    SM * _sm;
     
     // PCM FIFO buffer
     FIFO  <int16_t> _pcm_fifo;
