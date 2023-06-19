@@ -17,7 +17,7 @@ add_executable(soft_i2c_master_client
 )
 
 target_include_directories(soft_i2c_master_client
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE .
 )
 
 # Add YAHAL to target

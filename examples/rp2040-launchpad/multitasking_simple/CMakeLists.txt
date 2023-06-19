@@ -14,7 +14,7 @@ add_executable(multitasking_simple
 )
 
 # Add YAHAL to target
-yahal_add_me(multitasking_simple.cpp)
+yahal_add_me(multitasking_simple)
 
 target_include_directories(multitasking_simple
     PRIVATE .
