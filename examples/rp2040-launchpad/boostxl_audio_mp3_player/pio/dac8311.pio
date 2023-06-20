@@ -21,47 +21,47 @@ bitloop:
 
 % yahal {
 
-void setRate(SM & sm, uint32_t Hz) {
+void setRate(SM * sm, uint32_t Hz) {
     static uint32_t last_Hz = 0;
     if (Hz != last_Hz) {
-        sm.setRegister(out_dest_t::Y, SM_CLK/Hz - CYCLES_PER_SAMPLE);
+        sm->setRegister(out_dest_t::Y, SM_CLK/Hz - CYCLES_PER_SAMPLE);
         last_Hz = Hz;
     }
 }
 
-void configure_SM(SM & sm, uint8_t mosi_pin,
+void configure_SM(SM * sm, uint8_t mosi_pin,
                            uint8_t sclk_pin,
                            uint8_t sync_pin) {
     // Set the PINDIR register
-    sm.setRegister(out_dest_t::PINDIRS, (1 << mosi_pin) |
+    sm->setRegister(out_dest_t::PINDIRS, (1 << mosi_pin) |
                       (1 << sclk_pin) | (1 << sync_pin));
 
     // Set default (CD standard) PCM rate
     setRate(sm, 44100);
 
     // Set SM clock rate
-    sm.setClock(SM_CLK);
+    sm->setClock(SM_CLK);
 
     // Configure EXECCTRL register
-    sm.regs.SM_EXECCTRL.SIDE_EN     = 0;
-    sm.regs.SM_EXECCTRL.SIDE_PINDIR = 0;
+    sm->regs.SM_EXECCTRL.SIDE_EN     = 0;
+    sm->regs.SM_EXECCTRL.SIDE_PINDIR = 0;
 
     // Set the wrap values
-    sm.setWrap(dac8311_wrap_target, dac8311_wrap);
+    sm->setWrap(dac8311_wrap_target, dac8311_wrap);
 
     // Configure SHIFTCTRL register 
-    sm.regs.SM_SHIFTCTRL.FJOIN_TX     = 1;
-    sm.regs.SM_SHIFTCTRL.PULL_THRESH  = PCM_SIZE_BITS;
-    sm.regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 0; // shift left
-    sm.regs.SM_SHIFTCTRL.AUTOPULL     = 0;
+    sm->regs.SM_SHIFTCTRL.FJOIN_TX     = 1;
+    sm->regs.SM_SHIFTCTRL.PULL_THRESH  = PCM_SIZE_BITS;
+    sm->regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 0; // shift left
+    sm->regs.SM_SHIFTCTRL.AUTOPULL     = 0;
 
     // Configure PINCTRL register
-    sm.regs.SM_PINCTRL.SIDESET_BASE  = sclk_pin;
-    sm.regs.SM_PINCTRL.SIDESET_COUNT = 1;
-    sm.regs.SM_PINCTRL.SET_BASE      = sync_pin;
-    sm.regs.SM_PINCTRL.SET_COUNT     = 1;
-    sm.regs.SM_PINCTRL.OUT_BASE      = mosi_pin;
-    sm.regs.SM_PINCTRL.OUT_COUNT     = 1;
+    sm->regs.SM_PINCTRL.SIDESET_BASE  = sclk_pin;
+    sm->regs.SM_PINCTRL.SIDESET_COUNT = 1;
+    sm->regs.SM_PINCTRL.SET_BASE      = sync_pin;
+    sm->regs.SM_PINCTRL.SET_COUNT     = 1;
+    sm->regs.SM_PINCTRL.OUT_BASE      = mosi_pin;
+    sm->regs.SM_PINCTRL.OUT_COUNT     = 1;
 }
 
 %}
