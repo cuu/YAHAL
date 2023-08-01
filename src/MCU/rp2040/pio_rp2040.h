@@ -8,12 +8,14 @@
 #ifndef _PIO_RP2040_H_
 #define _PIO_RP2040_H_
 
-#include <cstdint>
 #include "RP2040.h"
-
 using namespace _PIO0_;
 
-// enums and methods to generate state machine instructions //
+#include <cstdint>
+#include <functional>
+using std::function;
+
+// enums and methods to generate state machine instructions
 
 /////////
 // JMP //
@@ -226,14 +228,15 @@ struct SM {
     PIO0_t  &   pio;
     PIO0_t  &   pio_set;
     PIO0_t  &   pio_clr;
+    uint8_t     pio_index;
     uint8_t     sm_index;
     uint8_t     load_addr;
     SM_regs &   regs;
 
-    SM(PIO0_t & p, PIO0_t & ps, PIO0_t & pc,
-       uint8_t i, uint8_t l, SM_regs & r)
-    : pio(p), pio_set(ps), pio_clr(pc),
-      sm_index(i), load_addr(l), regs(r) {
+    SM(PIO0_t & p, PIO0_t & ps, PIO0_t & pc, uint8_t pi,
+       uint8_t smi, uint8_t l, SM_regs & r)
+    : pio(p), pio_set(ps), pio_clr(pc), pio_index(pi),
+      sm_index(smi), load_addr(l), regs(r) {
         regs.init();
     }
 
@@ -290,6 +293,17 @@ struct SM {
         return pio.CTRL.SM_ENABLE & (1 << sm_index);
     }
 
+    void attachIrq(function<void()> handler);
+    void enableIrq();
+    void disableIrq();
+
+    void attachTXNFULLIrq(function<void()> handler);
+    void enableTXNFULLIrq();
+    void disableTXNFULLIrq();
+
+    void attachRXNEMPTYIrq(function<void()> handler);
+    void enableRXNEMPTYIrq();
+    void disableRXNEMPTYIrq();
 };
 
 // Struct for a PIO programm (used in the generated code
@@ -311,14 +325,20 @@ public:
 
     SM* loadProgram(const pio_program & prgm);
 
+    static function<void()> _handler_pio0[12];
+    static function<void()> _handler_pio1[12];
+
 private:
-    pio_rp2040(PIO0_t & pio);
+    pio_rp2040(PIO0_t & pio, uint8_t pio_index);
     PIO0_t &    _pio;
     PIO0_t &    _pio_xor;
     PIO0_t &    _pio_set;
     PIO0_t &    _pio_clr;
+    uint8_t     _pio_index;
     uint8_t     _next_free_addr;
     SM_regs *   _sm_regbanks;
+    bool        _in_use[4];
+
 };
 
 #endif // _PIO_RP2040_H_

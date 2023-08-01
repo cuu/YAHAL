@@ -1,0 +1,78 @@
+;
+; Copyright (c) 2023 A. Terstegge
+;
+
+.define PUBLIC PCM_SIZE_BITS     16
+.define PUBLIC CYCLES_PER_SAMPLE ((2*PCM_SIZE_BITS) + 9)
+.define PUBLIC SM_CLK            40000000
+
+;
+; Program handling the DAC8311 data including a
+; waiting loop to implement different PCM rates.
+;
+.program dac8311
+.side_set 1    ; Sideset is driving SCLK
+
+            mov     x, y            side 1        ; copy delay value
+delay:      jmp     x--, delay      side 1
+
+            mov     x, STATUS       side 1
+            jmp     !x, delay1      side 1
+            irq     0 rel           side 1
+            jmp     output          side 1
+delay1:     nop                     side 1 [1]
+
+output:     pull    ifempty         side 1        ; wait for new data to arrive
+            set     pins, 0         side 1        ; assert SYNC
+bitloop:    out     pins, 1         side 1        ; Output a single bit on ..
+            jmp     !osre, bitloop  side 0        ; .. SCLK falling edge
+            set     pins, 1         side 1        ; de-assert SYNC
+
+% yahal {
+
+// Method to set the PCM rate.
+void setRate(SM * pcm_sm, /*SM * timer_sm,*/ uint32_t Hz) {
+    static uint32_t last_Hz = 0;
+    if (Hz != last_Hz) {
+        pcm_sm  ->setRegister(out_dest_t::Y, SM_CLK/Hz - CYCLES_PER_SAMPLE);
+        last_Hz = Hz;
+    }
+}
+
+void configure_SM(SM * pcm_sm, uint8_t mosi_pin, uint8_t sclk_pin, uint8_t sync_pin) {
+    // Set the PINDIR register
+    pcm_sm->setRegister(out_dest_t::PINDIRS, 1, mosi_pin, 1);
+    pcm_sm->setRegister(out_dest_t::PINDIRS, 1, sclk_pin, 1);
+    pcm_sm->setRegister(out_dest_t::PINDIRS, 1, sync_pin, 1);
+
+    // Set default (CD standard) PCM rate
+    setRate(pcm_sm, 44100);
+
+    // Set SM clock rate
+    pcm_sm->setClock(SM_CLK);
+
+    // Configure EXECCTRL register
+    pcm_sm->regs.SM_EXECCTRL.SIDE_EN     = 0;
+    pcm_sm->regs.SM_EXECCTRL.SIDE_PINDIR = 0;
+    pcm_sm->regs.SM_EXECCTRL.STATUS_SEL  = 0;   // TX FIFO level < N
+    pcm_sm->regs.SM_EXECCTRL.STATUS_N    = 3;
+
+    // Set the wrap values
+    pcm_sm  ->setWrap(dac8311_wrap_target, dac8311_wrap);
+
+    // Configure SHIFTCTRL register 
+    pcm_sm->regs.SM_SHIFTCTRL.FJOIN_TX     = 1;
+    pcm_sm->regs.SM_SHIFTCTRL.PULL_THRESH  = PCM_SIZE_BITS;
+    pcm_sm->regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 0; // shift left
+    pcm_sm->regs.SM_SHIFTCTRL.AUTOPULL     = 0;
+
+    // Configure PINCTRL register
+    pcm_sm->regs.SM_PINCTRL.SIDESET_BASE  = sclk_pin;
+    pcm_sm->regs.SM_PINCTRL.SIDESET_COUNT = 1;
+    pcm_sm->regs.SM_PINCTRL.SET_BASE      = sync_pin;
+    pcm_sm->regs.SM_PINCTRL.SET_COUNT     = 1;
+    pcm_sm->regs.SM_PINCTRL.OUT_BASE      = mosi_pin;
+    pcm_sm->regs.SM_PINCTRL.OUT_COUNT     = 1;
+}
+
+%}

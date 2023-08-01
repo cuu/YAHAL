@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// This file was generated with svd2cpp, source file was svd/RP2040.svd
+// This file was generated with svd2cpp, source file was RP2040_regs.svd
 // DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN !!
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -7993,7 +7993,7 @@ namespace _USBCTRL_DPRAM_  {
     END_TYPE()
 
     // Reset value: 0x00000000
-    BEGIN_TYPE(EP_IN_CONTROL_t, uint32_t)
+    BEGIN_TYPE(EP_CONTROL_t, uint32_t)
         // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
         ADD_BITFIELD_RW(ENABLE, 31, 1)
         // This endpoint is double buffered.
@@ -8011,39 +8011,15 @@ namespace _USBCTRL_DPRAM_  {
         ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
     END_TYPE()
 
-    static const uint32_t EP_IN_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP_IN_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP_IN_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP_IN_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
-
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP_OUT_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
-        ADD_BITFIELD_RW(ENABLE, 31, 1)
-        // This endpoint is double buffered.
-        ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
-        // Trigger an interrupt each time a buffer is done.
-        ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
-        ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
-        ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
-        // Trigger an interrupt if a STALL is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
-        // Trigger an interrupt if a NAK is sent. Intended for debug only.
-        ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
-        ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
-    END_TYPE()
-
-    static const uint32_t EP_OUT_CONTROL_ENDPOINT_TYPE__Control = 0;
-    static const uint32_t EP_OUT_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
-    static const uint32_t EP_OUT_CONTROL_ENDPOINT_TYPE__Bulk = 2;
-    static const uint32_t EP_OUT_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
+    static const uint32_t EP_CONTROL_ENDPOINT_TYPE__Control = 0;
+    static const uint32_t EP_CONTROL_ENDPOINT_TYPE__Isochronous = 1;
+    static const uint32_t EP_CONTROL_ENDPOINT_TYPE__Bulk = 2;
+    static const uint32_t EP_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
 
     // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
     // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
     // Reset value: 0x00000000
-    BEGIN_TYPE(EP_IN_BUFFER_CONTROL_t, uint32_t)
+    BEGIN_TYPE(EP_BUFFER_CONTROL_t, uint32_t)
         // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
         ADD_BITFIELD_RW(FULL_1, 31, 1)
         // Buffer 1 is the last buffer of the transfer.
@@ -8073,114 +8049,76 @@ namespace _USBCTRL_DPRAM_  {
         ADD_BITFIELD_RW(LENGTH_0, 0, 10)
     END_TYPE()
 
-    static const uint32_t EP_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP_IN_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
-
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.
-    // Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(EP_OUT_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_1, 31, 1)
-        // Buffer 1 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_1, 30, 1)
-        // The data pid of buffer 1.
-        ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.
-        // For a non Isochronous endpoint the offset is always 64 bytes.
-        ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
-        // The length of the data in buffer 1.
-        ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
-        ADD_BITFIELD_RW(FULL_0, 15, 1)
-        // Buffer 0 is the last buffer of the transfer.
-        ADD_BITFIELD_RW(LAST_0, 14, 1)
-        // The data pid of buffer 0.
-        ADD_BITFIELD_RW(PID_0, 13, 1)
-        // Reset the buffer selector to buffer 0.
-        ADD_BITFIELD_RW(RESET, 12, 1)
-        // Reply with a stall (valid for both buffers).
-        ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
-        ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
-        // The length of the data in buffer 0.
-        ADD_BITFIELD_RW(LENGTH_0, 0, 10)
-    END_TYPE()
-
-    static const uint32_t EP_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
-    static const uint32_t EP_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
-    static const uint32_t EP_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
-    static const uint32_t EP_OUT_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
+    static const uint32_t EP_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__128 = 0;
+    static const uint32_t EP_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__256 = 1;
+    static const uint32_t EP_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__512 = 2;
+    static const uint32_t EP_BUFFER_CONTROL_DOUBLE_BUFFER_ISO_OFFSET__1024 = 3;
 
     struct USBCTRL_DPRAM_t {
         SETUP_PACKET_LOW_t            SETUP_PACKET_LOW;
         SETUP_PACKET_HIGH_t           SETUP_PACKET_HIGH;
-        EP_IN_CONTROL_t               EP1_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP1_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP2_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP2_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP3_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP3_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP4_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP4_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP5_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP5_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP6_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP6_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP7_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP7_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP8_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP8_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP9_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP9_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP10_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP10_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP11_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP11_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP12_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP12_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP13_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP13_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP14_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP14_OUT_CONTROL;
-        EP_IN_CONTROL_t               EP15_IN_CONTROL;
-        EP_OUT_CONTROL_t              EP15_OUT_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP0_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP0_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP1_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP1_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP2_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP2_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP3_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP3_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP4_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP4_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP5_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP5_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP6_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP6_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP7_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP7_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP8_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP8_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP9_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP9_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP10_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP10_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP11_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP11_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP12_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP12_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP13_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP13_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP14_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP14_OUT_BUFFER_CONTROL;
-        EP_IN_BUFFER_CONTROL_t        EP15_IN_BUFFER_CONTROL;
-        EP_OUT_BUFFER_CONTROL_t       EP15_OUT_BUFFER_CONTROL;
+        EP_CONTROL_t                  EP1_IN_CONTROL;
+        EP_CONTROL_t                  EP1_OUT_CONTROL;
+        EP_CONTROL_t                  EP2_IN_CONTROL;
+        EP_CONTROL_t                  EP2_OUT_CONTROL;
+        EP_CONTROL_t                  EP3_IN_CONTROL;
+        EP_CONTROL_t                  EP3_OUT_CONTROL;
+        EP_CONTROL_t                  EP4_IN_CONTROL;
+        EP_CONTROL_t                  EP4_OUT_CONTROL;
+        EP_CONTROL_t                  EP5_IN_CONTROL;
+        EP_CONTROL_t                  EP5_OUT_CONTROL;
+        EP_CONTROL_t                  EP6_IN_CONTROL;
+        EP_CONTROL_t                  EP6_OUT_CONTROL;
+        EP_CONTROL_t                  EP7_IN_CONTROL;
+        EP_CONTROL_t                  EP7_OUT_CONTROL;
+        EP_CONTROL_t                  EP8_IN_CONTROL;
+        EP_CONTROL_t                  EP8_OUT_CONTROL;
+        EP_CONTROL_t                  EP9_IN_CONTROL;
+        EP_CONTROL_t                  EP9_OUT_CONTROL;
+        EP_CONTROL_t                  EP10_IN_CONTROL;
+        EP_CONTROL_t                  EP10_OUT_CONTROL;
+        EP_CONTROL_t                  EP11_IN_CONTROL;
+        EP_CONTROL_t                  EP11_OUT_CONTROL;
+        EP_CONTROL_t                  EP12_IN_CONTROL;
+        EP_CONTROL_t                  EP12_OUT_CONTROL;
+        EP_CONTROL_t                  EP13_IN_CONTROL;
+        EP_CONTROL_t                  EP13_OUT_CONTROL;
+        EP_CONTROL_t                  EP14_IN_CONTROL;
+        EP_CONTROL_t                  EP14_OUT_CONTROL;
+        EP_CONTROL_t                  EP15_IN_CONTROL;
+        EP_CONTROL_t                  EP15_OUT_CONTROL;
+        EP_BUFFER_CONTROL_t           EP0_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP0_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP1_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP1_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP2_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP2_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP3_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP3_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP4_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP4_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP5_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP5_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP6_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP6_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP7_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP7_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP8_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP8_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP9_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP9_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP10_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP10_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP11_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP11_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP12_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP12_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP13_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP13_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP14_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP14_OUT_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP15_IN_BUFFER_CONTROL;
+        EP_BUFFER_CONTROL_t           EP15_OUT_BUFFER_CONTROL;
     };
 
     static USBCTRL_DPRAM_t & USBCTRL_DPRAM     = (*(USBCTRL_DPRAM_t *)0x50100000);

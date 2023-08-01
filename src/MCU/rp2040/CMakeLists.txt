@@ -11,12 +11,18 @@ target_sources(${YAHAL_TARGET} PRIVATE
     ws2812_rp2040.cpp
     startup_rp2040.cpp
     system_rp2040.cpp
+    dac8311_rp2040_drv.cpp
 )
 
 # generate PIO header files
-generate_pio_header(${YAHAL_TARGET}
-                    ${CMAKE_CURRENT_LIST_DIR}/pio/ws2812.pio
-                    OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
+generate_pio_header(
+        ${YAHAL_TARGET}
+        ${CMAKE_CURRENT_LIST_DIR}/pio/ws2812.pio
+        OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
+generate_pio_header(
+        ${YAHAL_TARGET}
+        ${CMAKE_CURRENT_LIST_DIR}/pio/dac8311.pio
+        OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
 
 add_subdirectory(wrappers)
 

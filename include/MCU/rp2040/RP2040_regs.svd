@@ -20961,11 +20961,10 @@
           <name>SETUP_PACKET_HIGH</name>
           <resetValue>0x00000000</resetValue>
         </register>
-
         <register>
-          <dim>15</dim>
-          <dimIncrement>8</dimIncrement>
-          <dimIndex>1,2,3,4,5,6,7,8,9,10,11,12,13,14,15</dimIndex>
+          <dim>30</dim>
+          <dimIncrement>4</dimIncrement>
+          <dimIndex>1_IN,1_OUT,2_IN,2_OUT,3_IN,3_OUT,4_IN,4_OUT,5_IN,5_OUT,6_IN,6_OUT,7_IN,7_OUT,8_IN,8_OUT,9_IN,9_OUT,10_IN,10_OUT,11_IN,11_OUT,12_IN,12_OUT,13_IN,13_OUT,14_IN,14_OUT,15_IN,15_OUT</dimIndex>
           <addressOffset>0x0008</addressOffset>
           <fields>
             <field>
@@ -21034,89 +21033,13 @@
               <name>BUFFER_ADDRESS</name>
             </field>
           </fields>
-          <name>EP[%s]_IN_CONTROL</name>
+          <name>EP[%s]_CONTROL</name>
           <resetValue>0x00000000</resetValue>
         </register>
-
         <register>
-          <dim>15</dim>
-          <dimIncrement>8</dimIncrement>
-          <dimIndex>1,2,3,4,5,6,7,8,9,10,11,12,13,14,15</dimIndex>
-          <addressOffset>0x000c</addressOffset>
-          <fields>
-            <field>
-              <access>read-write</access>
-              <bitRange>[31:31]</bitRange>
-              <description>Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.</description>
-              <name>ENABLE</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[30:30]</bitRange>
-              <description>This endpoint is double buffered.</description>
-              <name>DOUBLE_BUFFERED</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[29:29]</bitRange>
-              <description>Trigger an interrupt each time a buffer is done.</description>
-              <name>INTERRUPT_PER_BUFF</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[28:28]</bitRange>
-              <description>Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.</description>
-              <name>INTERRUPT_PER_DOUBLE_BUFF</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[27:26]</bitRange>
-              <enumeratedValues>
-                <enumeratedValue>
-                  <name>Control</name>
-                  <value>0</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>Isochronous</name>
-                  <value>1</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>Bulk</name>
-                  <value>2</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>Interrupt</name>
-                  <value>3</value>
-                </enumeratedValue>
-              </enumeratedValues>
-              <name>ENDPOINT_TYPE</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[17:17]</bitRange>
-              <description>Trigger an interrupt if a STALL is sent. Intended for debug only.</description>
-              <name>INTERRUPT_ON_STALL</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[16:16]</bitRange>
-              <description>Trigger an interrupt if a NAK is sent. Intended for debug only.</description>
-              <name>INTERRUPT_ON_NAK</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[15:0]</bitRange>
-              <description>64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.</description>
-              <name>BUFFER_ADDRESS</name>
-            </field>
-          </fields>
-          <name>EP[%s]_OUT_CONTROL</name>
-          <resetValue>0x00000000</resetValue>
-        </register>
-
-        <register>
-          <dim>16</dim>
-          <dimIncrement>8</dimIncrement>
+          <dim>32</dim>
+          <dimIncrement>4</dimIncrement>
+          <dimIndex>0_IN,0_OUT,1_IN,1_OUT,2_IN,2_OUT,3_IN,3_OUT,4_IN,4_OUT,5_IN,5_OUT,6_IN,6_OUT,7_IN,7_OUT,8_IN,8_OUT,9_IN,9_OUT,10_IN,10_OUT,11_IN,11_OUT,12_IN,12_OUT,13_IN,13_OUT,14_IN,14_OUT,15_IN,15_OUT</dimIndex>
           <addressOffset>0x0080</addressOffset>
           <description>Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.\n
             Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.</description>
@@ -21219,116 +21142,7 @@
               <name>LENGTH_0</name>
             </field>
           </fields>
-          <name>EP[%s]_IN_BUFFER_CONTROL</name>
-          <resetValue>0x00000000</resetValue>
-        </register>
-
-        <register>
-          <dim>16</dim>
-          <dimIncrement>8</dimIncrement>
-          <addressOffset>0x0084</addressOffset>
-          <description>Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.\n
-            Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.</description>
-          <fields>
-            <field>
-              <access>read-write</access>
-              <bitRange>[31:31]</bitRange>
-              <description>Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.</description>
-              <name>FULL_1</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[30:30]</bitRange>
-              <description>Buffer 1 is the last buffer of the transfer.</description>
-              <name>LAST_1</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[29:29]</bitRange>
-              <description>The data pid of buffer 1.</description>
-              <name>PID_1</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[28:27]</bitRange>
-              <description>The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.\n
-                For a non Isochronous endpoint the offset is always 64 bytes.</description>
-              <enumeratedValues>
-                <enumeratedValue>
-                  <name>128</name>
-                  <value>0</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>256</name>
-                  <value>1</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>512</name>
-                  <value>2</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>1024</name>
-                  <value>3</value>
-                </enumeratedValue>
-              </enumeratedValues>
-              <name>DOUBLE_BUFFER_ISO_OFFSET</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[26:26]</bitRange>
-              <description>Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.</description>
-              <name>AVAILABLE_1</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[25:16]</bitRange>
-              <description>The length of the data in buffer 1.</description>
-              <name>LENGTH_1</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[15:15]</bitRange>
-              <description>Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.</description>
-              <name>FULL_0</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[14:14]</bitRange>
-              <description>Buffer 0 is the last buffer of the transfer.</description>
-              <name>LAST_0</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[13:13]</bitRange>
-              <description>The data pid of buffer 0.</description>
-              <name>PID_0</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[12:12]</bitRange>
-              <description>Reset the buffer selector to buffer 0.</description>
-              <name>RESET</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[11:11]</bitRange>
-              <description>Reply with a stall (valid for both buffers).</description>
-              <name>STALL</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[10:10]</bitRange>
-              <description>Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.</description>
-              <name>AVAILABLE_0</name>
-            </field>
-            <field>
-              <access>read-write</access>
-              <bitRange>[9:0]</bitRange>
-              <description>The length of the data in buffer 0.</description>
-              <name>LENGTH_0</name>
-            </field>
-          </fields>
-          <name>EP[%s]_OUT_BUFFER_CONTROL</name>
+          <name>EP[%s]_BUFFER_CONTROL</name>
           <resetValue>0x00000000</resetValue>
         </register>
       </registers>
