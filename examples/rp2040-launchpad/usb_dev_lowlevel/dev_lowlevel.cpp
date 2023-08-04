@@ -183,7 +183,7 @@ void usb_device_init() {
     NVIC_EnableIRQ(USBCTRL_IRQ_IRQn);
 
     // Mux the controller to the onboard usb phy
-    USBCTRL_REGS_SET.USB_MUXING.SOFTCON <<= 1;
+//    USBCTRL_REGS_SET.USB_MUXING.SOFTCON <<= 1;
     USBCTRL_REGS_SET.USB_MUXING.TO_PHY <<= 1;
 
     // Force VBUS detect so the device thinks it is plugged into a host
@@ -337,6 +337,7 @@ void usb_handle_string_descriptor() {
  * @brief Sends a zero length status packet back to the host.
  */
 void usb_acknowledge_out_request(void) {
+    printf("ACK: ");
     usb_start_transfer(usb_get_endpoint_configuration(EP0_IN_ADDR), nullptr, 0);
 }
 
@@ -521,6 +522,8 @@ void usb_handle_setup_packet(void) {
 
 extern "C" {
     void USBCTRL_IRQ_Handler(void) {
+        printf("** INT ** ");
+
         // Setup packet received
         if (USBCTRL_REGS.INTS.SETUP_REQ) {
             USBCTRL_REGS_CLR.SIE_STATUS.SETUP_REC = 1;
@@ -539,6 +542,7 @@ extern "C" {
 }
 
 int main(void) {
+
     uart_rp2040 uart; // default is backchannel UART!
 
     posix_io::inst.register_stdin(uart);
