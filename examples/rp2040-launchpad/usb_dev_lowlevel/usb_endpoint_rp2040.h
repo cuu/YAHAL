@@ -20,7 +20,7 @@ public:
 
     void set_handler(function<void(uint8_t * buffer, uint16_t len)>) override;
 
-    static usb_endpoint_interface * addr_to_ep(uint8_t addr);
+    friend class usb_endpoint_ctrl;
 
 private:
     EP_CONTROL_t *        _endp_ctrl;
@@ -30,8 +30,6 @@ private:
     uint16_t              _buffer_size;
     static uint8_t *      _next_free_buffer;
 
-    uint8_t		  _next_pid;
-        
     function<void(uint8_t * buffer, uint16_t len)> _handler;
 
     static usb_endpoint_interface * endpoints[16][2];

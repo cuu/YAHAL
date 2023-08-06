@@ -3,7 +3,19 @@
 #include <cassert>
 #include <cstdio>
 
-uint8_t * usb_endpoint_rp2040::_next_free_buffer = (uint8_t *)&USBCTRL_DPRAM + 0x100;
+usb_endpoint_ctrl usb_endpoint_ctrl::inst;
+
+
+usb_endpoint_interface * usb_endpoint_ctrl::create_endpoint(
+        uint8_t addr, uint8_t  type, uint16_t packet_size, uint8_t interval) {
+    return new usb_endpoint_rp2040(addr, type, packet_size, interval);
+}
+
+usb_endpoint_interface * usb_endpoint_ctrl::addr_to_ep(uint8_t addr) {
+    return usb_endpoint_rp2040::endpoints[addr & 0x0f][addr >> 7];
+}
+
+uint8_t * usb_endpoint_rp2040::_next_free_buffer = (uint8_t *)&USBCTRL_DPRAM + 0x180;
 usb_endpoint_interface * usb_endpoint_rp2040::endpoints[16][2] = { nullptr };
 
 usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
@@ -25,23 +37,25 @@ usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
 
     // Set Hardware registers
     uint8_t offset = (addr & 0x7f) << 1;
-    bool    is_in  =  addr & 0x80;
-    
+
     if (offset) {
         _endp_ctrl = (EP_CONTROL_t *)&USBCTRL_DPRAM + offset;
-        if (!is_in) _endp_ctrl++;
+        if (!is_EP_IN()) _endp_ctrl++;
+        // Set buffer address in DPRAM
+        _buffer = _next_free_buffer;
+        _next_free_buffer += packet_size;
+        _buffer_size = packet_size;
+        assert(_next_free_buffer <= (uint8_t *)&USBCTRL_DPRAM + 0x1000);
     } else {
+        // Handle special case EP0
         _endp_ctrl = nullptr;
+        _buffer = (uint8_t *)&USBCTRL_DPRAM + 0x100;
+        _buffer_size = packet_size;
+        assert(_buffer_size == 64);
     }
     _buff_ctrl = (EP_BUFFER_CONTROL_t *)&USBCTRL_DPRAM.EP0_IN_BUFFER_CONTROL + offset;
-    if (!is_in) _buff_ctrl++;
+    if (!is_EP_IN()) _buff_ctrl++;
 
-    // Set buffer address in DPRAM
-    _buffer = _next_free_buffer;
-    _next_free_buffer += packet_size;
-    _buffer_size = packet_size;
-
-    assert(_next_free_buffer <= (uint8_t *)&USBCTRL_DPRAM + 0x1000);
     // Set endpoint control register
     if (_endp_ctrl) {
         _endp_ctrl->BUFFER_ADDRESS     = (uint32_t)_buffer & 0xffff;
@@ -51,7 +65,7 @@ usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
     }
 
     // Initial PID value
-    _next_pid = 0;
+    next_pid = 0;
     
     // Store this endpoint in lookup table
     usb_endpoint_rp2040::endpoints[addr & 0x0f][addr >> 7] = this;
@@ -68,24 +82,20 @@ void usb_endpoint_rp2040::start_transfer(uint8_t * buffer, uint16_t len) {
 
     assert(len <= _buffer_size);
 
-    if (is_EP_IN()) {
+    if (is_EP_IN() /*&& (buffer != nullptr) && (len != 0)*/) {
         // Need to copy the data from the user buffer to the usb memory
         memcpy((void *) _buffer, (void *) buffer, len);
     }
 
     // Set pid and flip for next transfer
-    _buff_ctrl->PID_0       = _next_pid;
+    _buff_ctrl->PID_0       = next_pid;
     _buff_ctrl->FULL_0      = is_EP_IN();
     _buff_ctrl->LENGTH_0    = len;
     _buff_ctrl->AVAILABLE_0 = 1;
-    _next_pid ^= 1;
+    next_pid ^= 1;
 }
 
 void usb_endpoint_rp2040::set_handler(function<void(uint8_t * buffer, uint16_t len)> handler) {
     _handler = handler;
-}
-
-usb_endpoint_interface * usb_endpoint_rp2040::addr_to_ep(uint8_t addr) {
-    return endpoints[addr & 0x0f][addr >> 7];
 }
 

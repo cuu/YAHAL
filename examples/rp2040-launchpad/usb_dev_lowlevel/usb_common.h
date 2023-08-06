@@ -57,20 +57,20 @@
 
 //#define USB_DESCRIPTOR_TYPE_ENDPOINT 0x05
 
-struct usb_setup_packet {
+struct __attribute__((__packed__)) usb_setup_packet {
     uint8_t bmRequestType;
     uint8_t bRequest;
     uint16_t wValue;
     uint16_t wIndex;
     uint16_t wLength;
-} __packed;
+};
 
-struct usb_descriptor {
+struct __attribute__((__packed__)) usb_descriptor {
     uint8_t bLength;
     uint8_t bDescriptorType;
 };
 
-struct usb_device_descriptor {
+struct __attribute__((__packed__)) usb_device_descriptor {
     uint8_t bLength;
     uint8_t bDescriptorType;
     uint16_t bcdUSB;
@@ -85,9 +85,9 @@ struct usb_device_descriptor {
     uint8_t iProduct;
     uint8_t iSerialNumber;
     uint8_t bNumConfigurations;
-} __packed;
+};
 
-struct usb_configuration_descriptor {
+struct __attribute__((__packed__)) usb_configuration_descriptor {
     uint8_t bLength;
     uint8_t bDescriptorType;
     uint16_t wTotalLength;
@@ -96,9 +96,9 @@ struct usb_configuration_descriptor {
     uint8_t iConfiguration;
     uint8_t bmAttributes;
     uint8_t bMaxPower;
-} __packed;
+};
 
-struct usb_interface_descriptor {
+struct __attribute__((__packed__)) usb_interface_descriptor {
     uint8_t bLength;
     uint8_t bDescriptorType;
     uint8_t bInterfaceNumber;
@@ -108,18 +108,18 @@ struct usb_interface_descriptor {
     uint8_t bInterfaceSubClass;
     uint8_t bInterfaceProtocol;
     uint8_t iInterface;
-} __packed;
+};
 
-struct usb_endpoint_descriptor {
+struct __attribute__((__packed__)) usb_endpoint_descriptor {
     uint8_t bLength;
     uint8_t bDescriptorType;
     uint8_t bEndpointAddress;
     uint8_t bmAttributes;
     uint16_t wMaxPacketSize;
     uint8_t bInterval;
-} __packed;
+};
 
-struct usb_endpoint_descriptor_long {
+struct __attribute__((__packed__)) usb_endpoint_descriptor_long {
     uint8_t bLength;
     uint8_t bDescriptorType;
     uint8_t bEndpointAddress;
@@ -128,6 +128,6 @@ struct usb_endpoint_descriptor_long {
     uint8_t bInterval;
     uint8_t bRefresh;
     uint8_t bSyncAddr;
-} __attribute__((packed));
+};
 
 #endif

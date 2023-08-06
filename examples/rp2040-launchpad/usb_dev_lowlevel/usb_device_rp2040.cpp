@@ -10,6 +10,8 @@ using namespace _USBCTRL_DPRAM_;
 using namespace _USBCTRL_REGS_;
 using namespace _RESETS_;
 
+function<void(usb_setup_packet * packet)> usb_device_rp2040::_setup_handler;
+function<void()> usb_device_rp2040::_bus_reset_handler;
 
 void usb_device_rp2040::init() {
     // Reset usb controller
@@ -68,11 +70,11 @@ void usb_device_rp2040::set_address(uint8_t addr) {
 
 
 extern "C" {
-    void USBCTRL_IRQ_Handler1(void) {
+    void USBCTRL_IRQ_Handler(void) {
         // Setup packet received
         if (USBCTRL_REGS.INTS.SETUP_REQ) {
             USBCTRL_REGS_CLR.SIE_STATUS.SETUP_REC = 1;
-            usb_device_rp2040::handle_setup_received((usb_setup_packet *)&USBCTRL_DPRAM);
+            usb_device_rp2040::_setup_handler((usb_setup_packet *)&USBCTRL_DPRAM);
         }
         // Buffer status, one or more buffers have completed
         if (USBCTRL_REGS.INTS.BUFF_STATUS) {
@@ -86,8 +88,8 @@ extern "C" {
                     // Get endpoint and call handler
                     uint8_t ep_addr = (i >> 1);
                     if (!(i & 1)) ep_addr |= 0x80;
-                    usb_endpoint_interface * ep = usb_endpoint_rp2040::addr_to_ep(ep_addr);
-                    if (ep)  ep->process_buffer();
+                    usb_endpoint_interface * ep = usb_endpoint_ctrl::inst.addr_to_ep(ep_addr);
+                    if (ep) ep->process_buffer();
                 }
                 bit <<= 1;
             }
@@ -95,7 +97,7 @@ extern "C" {
         // Bus is reset
         if (USBCTRL_REGS.INTS.BUS_RESET) {
             USBCTRL_REGS_CLR.SIE_STATUS.BUS_RESET = 1;
-            usb_device_rp2040::handle_bus_reset();
+            usb_device_rp2040::_bus_reset_handler();
         }
     }
 }

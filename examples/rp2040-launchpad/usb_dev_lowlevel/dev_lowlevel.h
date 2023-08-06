@@ -104,11 +104,11 @@ static const struct usb_configuration_descriptor config_descriptor = {
                             sizeof(interface_descriptor) +
                             sizeof(ep1_out) +
                             sizeof(ep2_in)),
-        .bNumInterfaces  = 1,
-        .bConfigurationValue = 1, // Configuration 1
-        .iConfiguration = 0,      // No string
-        .bmAttributes = 0xc0,     // attributes: self powered, no remote wakeup
-        .bMaxPower = 0x32         // 100ma
+        .bNumInterfaces      = 1,
+        .bConfigurationValue = 1,    // Configuration 1
+        .iConfiguration      = 0,    // No string
+        .bmAttributes        = 0xc0, // attributes: self powered, no remote wakeup
+        .bMaxPower           = 0x32  // 100ma
 };
 
 // Descriptors
