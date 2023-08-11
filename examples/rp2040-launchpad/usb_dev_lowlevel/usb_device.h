@@ -1,7 +1,7 @@
-#ifndef _USB_DEVICE_INTERFACE_H_
-#define _USB_DEVICE_INTERFACE_H_
+#ifndef _USB_DEVICE_H_
+#define _USB_DEVICE_H_
 
-#include "usb_configuration.h"
+class usb_configuration;
 #include "usb_common.h"
 #include <array>
 
@@ -9,10 +9,11 @@ class usb_device {
 public:
     usb_device();
 
+    // Methods to modify the device descriptor
     inline void set_bcdUSB(uint16_t n) {
         descriptor.bcdUSB = n;
     }
-    inline void set_bDeviceClass(uint8_t n) {
+    inline void set_bDeviceClass(USB::bDeviceClass_t n) {
         descriptor.bDeviceClass = n;
     }
     inline void set_bDeviceSubClass(uint8_t n) {
@@ -33,16 +34,22 @@ public:
     inline void set_bcdDevice(uint16_t n) {
         descriptor.bcdDevice = n;
     }
-
     void set_Manufacturer(const char *);
     void set_Product(const char *);
     void set_SerialNumber(const char *);
 
-    // The device descriptor
-    usb_device_descriptor descriptor;
-
+    // Add a new configuration to this device
     void add_configuration(usb_configuration & config);
+
+    // Find a configuration based on its bConfigurationValue
+    // Return nullptr if not found
+    usb_configuration * find_configuration(uint8_t i);
+
+    // The device descriptor
+    USB::device_descriptor_t descriptor;
+
+    // Configurations
     std::array<usb_configuration *, 5> configurations;
 };
 
-#endif // _USB_DEVICE_INTERFACE_H_
+#endif // _USB_DEVICE_H_

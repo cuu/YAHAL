@@ -6,9 +6,8 @@
 using std::function;
 
 #include "usb_common.h"
-#include "usb_device.h"
 
-class usb_dcd_interface : public usb_device {
+class usb_dcd_interface {
 public:
 
     virtual void init() = 0;
@@ -18,7 +17,7 @@ public:
     virtual void irq_disable() = 0;
     virtual void set_address(uint8_t addr) = 0;
 
-    virtual void set_setup_handler(function<void(usb_setup_packet * packet)>) = 0;
+    virtual void set_setup_handler(function<void(USB::setup_packet_t * packet)>) = 0;
     virtual void set_bus_reset_handler(function<void()>) = 0;
 
 protected:

@@ -1,10 +1,14 @@
+#include "usb_configuration.h"
 #include "usb_interface.h"
 #include "usb_strings.h"
+#include "usb_endpoint_interface.h"
 #include <cassert>
 
-usb_interface::usb_interface() : descriptor{}, endpoints{nullptr} {
-    descriptor.bLength = sizeof(usb_interface_descriptor);
-    descriptor.bDescriptorType = USB_DT_INTERFACE;
+using namespace USB;
+
+usb_interface::usb_interface() : descriptor{}, function(nullptr), endpoints{nullptr} {
+    descriptor.bLength = sizeof(interface_descriptor_t);
+    descriptor.bDescriptorType = bDescriptorType_t::DESC_INTERFACE;
 }
 
 void usb_interface::set_InterfaceName(const char * n) {
@@ -21,6 +25,7 @@ void usb_interface::add_endpoint(usb_endpoint_interface & ep) {
     }
     assert(i != 5);
     descriptor.bNumEndpoints = i+1;
+    if (_parent) _parent->set_total_length();
 }
 
 uint16_t usb_interface::get_totalLength() {
@@ -30,3 +35,14 @@ uint16_t usb_interface::get_totalLength() {
     }
     return len;
 }
+
+void usb_interface::activate_endpoints(bool b) {
+    for (usb_endpoint_interface * ep : endpoints) {
+        if (ep) ep->enable_endpoint(b);
+    }
+}
+
+void usb_interface::set_parent(usb_configuration *p) {
+    _parent = p;
+}
+

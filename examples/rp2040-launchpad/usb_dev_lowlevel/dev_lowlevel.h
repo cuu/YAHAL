@@ -9,6 +9,8 @@
 
 #include "usb_common.h"
 #include "RP2040.h"
+using namespace USB;
+
 using namespace _USBCTRL_DPRAM_;
 using namespace _USBCTRL_REGS_;
 using namespace _RESETS_;
@@ -43,51 +45,51 @@ struct usb_device_configuration {
     struct usb_endpoint_configuration endpoints[USB_NUM_ENDPOINTS];
 };
 
-#define EP0_IN_ADDR  (USB_DIR_IN  | 0)
-#define EP0_OUT_ADDR (USB_DIR_OUT | 0)
-#define EP1_OUT_ADDR (USB_DIR_OUT | 1)
-#define EP2_IN_ADDR  (USB_DIR_IN  | 2)
+#define EP0_IN_ADDR  ((uint8_t)direction_t::DIR_IN  | 0)
+#define EP0_OUT_ADDR ((uint8_t)direction_t::DIR_OUT | 0)
+#define EP1_OUT_ADDR ((uint8_t)direction_t::DIR_OUT | 1)
+#define EP2_IN_ADDR  ((uint8_t)direction_t::DIR_IN  | 2)
 
 // EP0 IN and OUT
 static const struct usb_endpoint_descriptor ep0_out = {
-        .bLength          = sizeof(struct usb_endpoint_descriptor),
-        .bDescriptorType  = USB_DT_ENDPOINT,
+        .bLength          = sizeof(endpoint_descriptor_t),
+        .bDescriptorType  = bDescriptorType_t::DESC_ENDPOINT,
         .bEndpointAddress = EP0_OUT_ADDR, // EP number 0, OUT from host (rx to device)
-        .bmAttributes     = USB_TRANSFER_TYPE_CONTROL,
+        .bmAttributes     = ep_attributes_t::TRANS_CONTROL,
         .wMaxPacketSize   = 64,
         .bInterval        = 0
 };
 
 static const struct usb_endpoint_descriptor ep0_in = {
         .bLength          = sizeof(struct usb_endpoint_descriptor),
-        .bDescriptorType  = USB_DT_ENDPOINT,
+        .bDescriptorType  = bDescriptorType_t::DESC_ENDPOINT,
         .bEndpointAddress = EP0_IN_ADDR, // EP number 0, OUT from host (rx to device)
-        .bmAttributes     = USB_TRANSFER_TYPE_CONTROL,
+        .bmAttributes     = ep_attributes_t::TRANS_CONTROL,
         .wMaxPacketSize   = 64,
         .bInterval        = 0
 };
 
 static const struct usb_endpoint_descriptor ep1_out = {
         .bLength          = sizeof(struct usb_endpoint_descriptor),
-        .bDescriptorType  = USB_DT_ENDPOINT,
+        .bDescriptorType  = bDescriptorType_t::DESC_ENDPOINT,
         .bEndpointAddress = EP1_OUT_ADDR, // EP number 1, OUT from host (rx to device)
-        .bmAttributes     = USB_TRANSFER_TYPE_BULK,
+        .bmAttributes     = ep_attributes_t::TRANS_BULK,
         .wMaxPacketSize   = 64,
         .bInterval        = 0
 };
 
 static const struct usb_endpoint_descriptor ep2_in = {
         .bLength          = sizeof(struct usb_endpoint_descriptor),
-        .bDescriptorType  = USB_DT_ENDPOINT,
+        .bDescriptorType  = bDescriptorType_t::DESC_ENDPOINT,
         .bEndpointAddress = EP2_IN_ADDR, // EP number 2, IN from host (tx from device)
-        .bmAttributes     = USB_TRANSFER_TYPE_BULK,
+        .bmAttributes     = ep_attributes_t::TRANS_BULK,
         .wMaxPacketSize   = 64,
         .bInterval        = 0
 };
 
 static const struct usb_interface_descriptor interface_descriptor = {
         .bLength            = sizeof(struct usb_interface_descriptor),
-        .bDescriptorType    = USB_DT_INTERFACE,
+        .bDescriptorType    = bDescriptorType_t::DESC_INTERFACE,
         .bInterfaceNumber   = 0,
         .bAlternateSetting  = 0,
         .bNumEndpoints      = 2,    // Interface has 2 endpoints
@@ -114,7 +116,7 @@ static const struct usb_configuration_descriptor config_descriptor = {
 // Descriptors
 static const struct usb_device_descriptor device_descriptor = {
         .bLength            = sizeof(struct usb_device_descriptor),
-        .bDescriptorType    = USB_DT_DEVICE,
+        .bDescriptorType    = bDescriptorType_t::DESC_DEVICE,
         .bcdUSB             = 0x0110, // USB 1.1 device
         .bDeviceClass       = 0,      // Specified in interface descriptor
         .bDeviceSubClass    = 0,      // No subclass

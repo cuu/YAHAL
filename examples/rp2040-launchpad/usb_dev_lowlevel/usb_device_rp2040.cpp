@@ -10,7 +10,7 @@ using namespace _USBCTRL_DPRAM_;
 using namespace _USBCTRL_REGS_;
 using namespace _RESETS_;
 
-function<void(usb_setup_packet * packet)> usb_device_rp2040::_setup_handler;
+function<void(USB::setup_packet_t * packet)> usb_device_rp2040::_setup_handler;
 function<void()> usb_device_rp2040::_bus_reset_handler;
 
 void usb_device_rp2040::init() {
@@ -74,7 +74,7 @@ extern "C" {
         // Setup packet received
         if (USBCTRL_REGS.INTS.SETUP_REQ) {
             USBCTRL_REGS_CLR.SIE_STATUS.SETUP_REC = 1;
-            usb_device_rp2040::_setup_handler((usb_setup_packet *)&USBCTRL_DPRAM);
+            usb_device_rp2040::_setup_handler((USB::setup_packet_t *)&USBCTRL_DPRAM);
         }
         // Buffer status, one or more buffers have completed
         if (USBCTRL_REGS.INTS.BUFF_STATUS) {

@@ -7,6 +7,8 @@
 #include <cassert>
 #include <cstring>
 
+using namespace USB;
+
 usb_strings usb_strings::inst;
 
 // Add a new entry and return the index
@@ -30,7 +32,7 @@ uint8_t usb_strings::prepare_buffer(uint8_t index, uint8_t * buffer) {
     if (index) bLength *= 2;
     bLength += 2;
     *buffer++ = bLength;
-    *buffer++ = USB_DT_STRING;
+    *buffer++ = (uint8_t)bDescriptorType_t::DESC_STRING;
     const char *str = _strings[index];
     while (*str) {
         *buffer++ = *str++;

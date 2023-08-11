@@ -10,13 +10,15 @@ include(YAHAL_import.cmake)
 project(usb_dev_lowlevel)
 
 add_executable(usb_dev_lowlevel
+#     dev_lowlevel.cpp
     usb_strings.cpp
     usb_interface.cpp
     usb_configuration.cpp
     usb_device.cpp
     usb_endpoint_rp2040.cpp
     usb_device_rp2040.cpp
-    usb_device_driver.cpp
+    usb_device_controller.cpp
+    usb_interface_association.cpp
     main.cpp
 )
  

@@ -3,11 +3,12 @@
 #include <cassert>
 #include <cstdio>
 
+using namespace USB;
+
 usb_endpoint_ctrl usb_endpoint_ctrl::inst;
 
-
 usb_endpoint_interface * usb_endpoint_ctrl::create_endpoint(
-        uint8_t addr, uint8_t  type, uint16_t packet_size, uint8_t interval) {
+        uint8_t addr, ep_attributes_t type, uint16_t packet_size, uint8_t interval) {
     return new usb_endpoint_rp2040(addr, type, packet_size, interval);
 }
 
@@ -19,7 +20,7 @@ uint8_t * usb_endpoint_rp2040::_next_free_buffer = (uint8_t *)&USBCTRL_DPRAM + 0
 usb_endpoint_interface * usb_endpoint_rp2040::endpoints[16][2] = { nullptr };
 
 usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
-                                         uint8_t  transfer_type,
+                                         USB::ep_attributes_t transfer_type,
                                          uint16_t packet_size,
                                          uint8_t  interval) {
 
@@ -28,8 +29,8 @@ usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
     packet_size &= 0xffc0;
 
     // Set up descriptor
-    descriptor.bLength          = sizeof(usb_endpoint_descriptor);
-    descriptor.bDescriptorType  = USB_DT_ENDPOINT;
+    descriptor.bLength          = sizeof(endpoint_descriptor_t);
+    descriptor.bDescriptorType  = bDescriptorType_t::DESC_ENDPOINT;
     descriptor.bEndpointAddress = addr;
     descriptor.bmAttributes     = transfer_type;
     descriptor.wMaxPacketSize   = packet_size;
@@ -60,8 +61,8 @@ usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
     if (_endp_ctrl) {
         _endp_ctrl->BUFFER_ADDRESS     = (uint32_t)_buffer & 0xffff;
         _endp_ctrl->INTERRUPT_PER_BUFF = 1;
-        _endp_ctrl->ENDPOINT_TYPE      = descriptor.bmAttributes;
-        _endp_ctrl->ENABLE             = 1;
+        _endp_ctrl->ENDPOINT_TYPE      = (uint32_t)descriptor.bmAttributes;
+        _endp_ctrl->ENABLE             = 0;
     }
 
     // Initial PID value
@@ -81,6 +82,7 @@ void usb_endpoint_rp2040::process_buffer() {
 void usb_endpoint_rp2040::start_transfer(uint8_t * buffer, uint16_t len) {
 
     assert(len <= _buffer_size);
+    printf("Transfer EP %2x with %d bytes\n", descriptor.bEndpointAddress, len);
 
     if (is_EP_IN() /*&& (buffer != nullptr) && (len != 0)*/) {
         // Need to copy the data from the user buffer to the usb memory
@@ -99,3 +101,11 @@ void usb_endpoint_rp2040::set_handler(function<void(uint8_t * buffer, uint16_t l
     _handler = handler;
 }
 
+void usb_endpoint_rp2040::enable_endpoint(bool b) {
+    printf("EP %2x enabled: %d\n", descriptor.bEndpointAddress, b);
+    _endp_ctrl->ENABLE = b;
+}
+
+void usb_endpoint_rp2040::send_stall() {
+    _buff_ctrl->STALL = 1;
+}

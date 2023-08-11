@@ -18,7 +18,7 @@ public:
     void irq_disable() override;
     void set_address(uint8_t addr) override;
 
-    void set_setup_handler(function<void(usb_setup_packet * packet)> h) override {
+    void set_setup_handler(function<void(USB::setup_packet_t * packet)> h) override {
         _setup_handler = h;
     }
     void set_bus_reset_handler(function<void()> h) override {
@@ -28,7 +28,7 @@ public:
     friend void USBCTRL_IRQ_Handler(void);
 
 private:
-    static function<void(usb_setup_packet * packet)> _setup_handler;
+    static function<void(USB::setup_packet_t * packet)> _setup_handler;
     static function<void()> _bus_reset_handler;
 };
 

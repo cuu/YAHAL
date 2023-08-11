@@ -11,7 +11,7 @@ using namespace _RESETS_;
 class usb_endpoint_rp2040 : public usb_endpoint_interface {
 public:
     usb_endpoint_rp2040(uint8_t  addr,
-                        uint8_t  type,
+                        USB::ep_attributes_t  type,
                         uint16_t packet_size = 64,
                         uint8_t  interval    = 0);
     
@@ -19,6 +19,12 @@ public:
     void start_transfer(uint8_t * buffer, uint16_t len) override;
 
     void set_handler(function<void(uint8_t * buffer, uint16_t len)>) override;
+    void enable_endpoint(bool b) override;
+
+    void send_stall() override;
+
+//    inline uint8_t * get_buffer() override      { return _buffer;      }
+//    inline uint16_t  get_buffer_size() override { return _buffer_size; }
 
     friend class usb_endpoint_ctrl;
 
