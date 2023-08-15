@@ -13,9 +13,6 @@ public:
 
 private:
 
-    usb_endpoint_interface * EP0_IN;
-    usb_endpoint_interface * EP0_OUT;
-
     void handle_set_address(USB::setup_packet_t * pkt);
     void handle_get_descriptor(USB::setup_packet_t * pkt);
     void handle_set_descriptor(USB::setup_packet_t * pkt);
@@ -30,8 +27,6 @@ private:
 
     usb_dcd_interface & _driver;
     usb_device &        _device;
-    uint8_t             _new_addr;
-    bool                _should_set_address;
     uint8_t             _active_configuration;
 };
 

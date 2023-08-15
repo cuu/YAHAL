@@ -2,7 +2,28 @@
 #ifndef _USB_COMMON_H_
 #define _USB_COMMON_H_
 
-#include <stdint.h>
+#ifndef CDC_CS_REQUESTS
+#define CDC_CS_REQUESTS
+#endif
+
+#ifndef CDC_CS_DEVICE_CLASSES
+#define CDC_CS_DEVICE_CLASSES
+#endif
+
+#ifndef CDC_CS_INTERFACE_CLASSES
+#define CDC_CS_INTERFACE_CLASSES
+#endif
+
+#ifndef CDC_CS_SUBCLASSES
+#define CDC_CS_SUBCLASSES
+#endif
+
+#ifndef CDC_CS_PROTOCOLS
+#define CDC_CS_PROTOCOLS
+#endif
+
+
+#include <cstdint>
 
 namespace USB {
 
@@ -20,7 +41,8 @@ namespace USB {
         REQ_SET_CONFIGURATION   = 9,
         REQ_GET_INTERFACE       = 10,
         REQ_SET_INTERFACE       = 11,
-        REQ_SYNCH_FRAME         = 12
+        REQ_SYNCH_FRAME         = 12,
+        CDC_CS_REQUESTS
     };
 
     enum class direction_t : uint8_t {
@@ -76,26 +98,11 @@ namespace USB {
     };
 
     enum class bDeviceClass_t : uint8_t {
-        CLASS_UNSPECIFIED          = 0,
-        CLASS_AUDIO                = 1,
-        CLASS_CDC                  = 2,
-        CLASS_HID                  = 3,
-        CLASS_PHYSICAL             = 5,
-        CLASS_IMAGE                = 6,
-        CLASS_PRINTER              = 7,
-        CLASS_MSC                  = 8,
-        CLASS_HUB                  = 9,
-        CLASS_CDC_DATA             = 10,
-        CLASS_SMART_CARD           = 11,
-        CLASS_CONTENT_SECURITY     = 13,
-        CLASS_VIDEO                = 14,
-        CLASS_PERSONAL_HEALTHCARE  = 15,
-        CLASS_AUDIO_VIDEO          = 16,
         CLASS_APPLICATION_SPECIFIC = 0xFE,
-        CLASS_VENDOR_SPECIFIC      = 0xFF
+        CLASS_VENDOR_SPECIFIC      = 0xFF,
+        CDC_CS_DEVICE_CLASSES
     };
 
-    // USB Device Descriptor
     struct __attribute__((__packed__)) device_descriptor_t {
         uint8_t             bLength;            // Size of this descriptor in bytes.
         bDescriptorType_t   bDescriptorType;    // DEVICE Descriptor Type.
@@ -117,7 +124,8 @@ namespace USB {
     ///////////////////////////////
     // USB Configuration Descriptor
     ///////////////////////////////
-    union conf_attr_t {
+
+    union __attribute__((__packed__)) conf_attr_t {
         struct __attribute__((__packed__)) {
             uint8_t     reserved        : 5;
             uint8_t     remote_wakeup   : 1;
@@ -139,40 +147,60 @@ namespace USB {
     };
     static_assert(sizeof(configuration_descriptor_t) == 9);
 
-    ///////////////////////////////////////
-    // USB Interface Association Descriptor
-    ///////////////////////////////////////
-    struct __attribute__((__packed__)) interface_association_descriptor_t {
-        uint8_t             bLength;
-        bDescriptorType_t   bDescriptorType;
-        uint8_t             bFirstInterface;
-        uint8_t             bInterfaceCount;
-        bDeviceClass_t      bFunctionClass;
-        uint8_t             bFunctionSubClass;
-        uint8_t             bFunctionProtocol;
-        uint8_t             iFunction;
-    };
-    static_assert(sizeof(interface_association_descriptor_t) == 8);
-
     ///////////////////////////
     // USB Interface Descriptor
     ///////////////////////////
+
+    enum class bInterfaceClass_t : uint8_t {
+        CLASS_APPLICATION_SPECIFIC = 0xFE,
+        CLASS_VENDOR_SPECIFIC      = 0xFF,
+        CDC_CS_INTERFACE_CLASSES
+    };
+
+    enum class bInterfaceSubClass_t : uint8_t {
+        CDC_CS_SUBCLASSES
+    };
+
+    enum class bInterfaceProtocol_t : uint8_t {
+        PROTOCOL_NONE               = 0x00,
+        PROTOCOL_FROM_DESCRIPTOR    = 0xfe,
+        PROTOCOL_VENDOR_SPECIFIC    = 0xff,
+        CDC_CS_PROTOCOLS
+    };
+
     struct __attribute__((__packed__)) interface_descriptor_t {
-        uint8_t             bLength;
-        bDescriptorType_t   bDescriptorType;
-        uint8_t             bInterfaceNumber;
-        uint8_t             bAlternateSetting;
-        uint8_t             bNumEndpoints;
-        bDeviceClass_t      bInterfaceClass;
-        uint8_t             bInterfaceSubClass;
-        uint8_t             bInterfaceProtocol;
-        uint8_t             iInterface;
+        uint8_t                 bLength;
+        bDescriptorType_t       bDescriptorType;
+        uint8_t                 bInterfaceNumber;
+        uint8_t                 bAlternateSetting;
+        uint8_t                 bNumEndpoints;
+        bInterfaceClass_t       bInterfaceClass;
+        bInterfaceSubClass_t    bInterfaceSubClass;
+        bInterfaceProtocol_t    bInterfaceProtocol;
+        uint8_t                 iInterface;
     };
     static_assert(sizeof(interface_descriptor_t) == 9);
+
+    ///////////////////////////////////////
+    // USB Interface Association Descriptor
+    ///////////////////////////////////////
+
+    struct __attribute__((__packed__)) interface_association_descriptor_t {
+        uint8_t                 bLength;
+        bDescriptorType_t       bDescriptorType;
+        uint8_t                 bFirstInterface;
+        uint8_t                 bInterfaceCount;
+        bInterfaceClass_t       bFunctionClass;
+        bInterfaceSubClass_t    bFunctionSubClass;
+        bInterfaceProtocol_t    bFunctionProtocol;
+        uint8_t                 iFunction;
+    };
+    static_assert(sizeof(interface_association_descriptor_t) == 8);
 
     //////////////////////////
     // USB Endpoint Descriptor
     //////////////////////////
+
     enum class ep_attributes_t : uint8_t {
         TRANS_CONTROL       = 0,
         TRANS_ISOCHRONOUS   = 1,

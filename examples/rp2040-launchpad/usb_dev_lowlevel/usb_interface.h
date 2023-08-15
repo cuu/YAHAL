@@ -6,6 +6,7 @@ class usb_configuration;
 class usb_endpoint_interface;
 
 #include "usb_common.h"
+#include "usb_functional_descriptor.h"
 #include <array>
 
 class usb_interface {
@@ -18,13 +19,13 @@ public:
     inline void set_bAlternateSetting (uint8_t n) {
         descriptor.bAlternateSetting  = n;
     }
-    inline void set_bInterfaceClass   (USB::bDeviceClass_t n) {
+    inline void set_bInterfaceClass   (USB::bInterfaceClass_t n) {
         descriptor.bInterfaceClass    = n;
     }
-    inline void set_bInterfaceSubClass(uint8_t n) {
+    inline void set_bInterfaceSubClass(USB::bInterfaceSubClass_t n) {
         descriptor.bInterfaceSubClass = n;
     }
-    inline void set_bInterfaceProtocol(uint8_t n) {
+    inline void set_bInterfaceProtocol(USB::bInterfaceProtocol_t n) {
         descriptor.bInterfaceProtocol = n;
     }
 
@@ -44,8 +45,14 @@ public:
 
     void set_parent(usb_configuration * p);
 
+    void add_func_descriptor(usb_functional_descriptor & desc);
+
+    usb_functional_descriptor *   _func_desc;
+
 private:
-    usb_configuration * _parent;
+    usb_configuration *           _parent;
+
+
 };
 
 #endif

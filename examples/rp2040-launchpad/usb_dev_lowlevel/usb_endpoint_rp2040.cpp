@@ -1,3 +1,4 @@
+#include "usb_dcd_rp2040.h"
 #include "usb_endpoint_rp2040.h"
 #include <cstring>
 #include <cassert>
@@ -5,22 +6,10 @@
 
 using namespace USB;
 
-usb_endpoint_ctrl usb_endpoint_ctrl::inst;
-
-usb_endpoint_interface * usb_endpoint_ctrl::create_endpoint(
-        uint8_t addr, ep_attributes_t type, uint16_t packet_size, uint8_t interval) {
-    return new usb_endpoint_rp2040(addr, type, packet_size, interval);
-}
-
-usb_endpoint_interface * usb_endpoint_ctrl::addr_to_ep(uint8_t addr) {
-    return usb_endpoint_rp2040::endpoints[addr & 0x0f][addr >> 7];
-}
-
 uint8_t * usb_endpoint_rp2040::_next_free_buffer = (uint8_t *)&USBCTRL_DPRAM + 0x180;
-usb_endpoint_interface * usb_endpoint_rp2040::endpoints[16][2] = { nullptr };
 
 usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
-                                         USB::ep_attributes_t transfer_type,
+                                         ep_attributes_t transfer_type,
                                          uint16_t packet_size,
                                          uint8_t  interval) {
 
@@ -69,10 +58,10 @@ usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
     next_pid = 0;
     
     // Store this endpoint in lookup table
-    usb_endpoint_rp2040::endpoints[addr & 0x0f][addr >> 7] = this;
+    usb_dcd_rp2040::inst()._endpoints[addr & 0x0f][addr >> 7] = this;
 }
     
-void usb_endpoint_rp2040::process_buffer() {
+void usb_endpoint_rp2040::_process_buffer() {
     // Call user handler
     if (_handler) {
         _handler(_buffer, _buff_ctrl->LENGTH_0);
@@ -81,8 +70,9 @@ void usb_endpoint_rp2040::process_buffer() {
 
 void usb_endpoint_rp2040::start_transfer(uint8_t * buffer, uint16_t len) {
 
-    assert(len <= _buffer_size);
     printf("Transfer EP %2x with %d bytes\n", descriptor.bEndpointAddress, len);
+
+    assert(len <= _buffer_size);
 
     if (is_EP_IN() /*&& (buffer != nullptr) && (len != 0)*/) {
         // Need to copy the data from the user buffer to the usb memory
@@ -109,3 +99,4 @@ void usb_endpoint_rp2040::enable_endpoint(bool b) {
 void usb_endpoint_rp2040::send_stall() {
     _buff_ctrl->STALL = 1;
 }
+

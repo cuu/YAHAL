@@ -6,7 +6,9 @@
 
 using namespace USB;
 
-usb_interface::usb_interface() : descriptor{}, function(nullptr), endpoints{nullptr} {
+usb_interface::usb_interface()
+: descriptor{}, function(nullptr), endpoints{nullptr},
+  _func_desc(nullptr), _parent(nullptr) {
     descriptor.bLength = sizeof(interface_descriptor_t);
     descriptor.bDescriptorType = bDescriptorType_t::DESC_INTERFACE;
 }
@@ -29,9 +31,19 @@ void usb_interface::add_endpoint(usb_endpoint_interface & ep) {
 }
 
 uint16_t usb_interface::get_totalLength() {
+    // Start with size of own descriptor
     uint16_t len = descriptor.bLength;
+    // Add size of all functional descriptors
+    usb_functional_descriptor * fd = _func_desc;
+    while (fd) {
+        len += fd->descriptor_length;
+        fd = fd->next;
+    }
+    // Add size of all endpoint descriptors
     for (usb_endpoint_interface * ep : endpoints) {
-        if (ep) len += ep->descriptor.bLength;
+        if (ep) {
+            len += ep->descriptor.bLength;
+        }
     }
     return len;
 }
@@ -46,3 +58,14 @@ void usb_interface::set_parent(usb_configuration *p) {
     _parent = p;
 }
 
+void usb_interface::add_func_descriptor(usb_functional_descriptor & desc) {
+     if (!_func_desc) {
+         // First entry
+         _func_desc = &desc;
+     } else {
+         usb_functional_descriptor *ptr = _func_desc;
+         while (ptr->next) ptr = ptr->next;
+         ptr->next = &desc;
+     }
+    if (_parent) _parent->set_total_length();
+}

@@ -15,7 +15,7 @@ void usb_interface_association::set_FunctionName(const char * n) {
     descriptor.iFunction = usb_strings::inst.add_string(n);
 }
 
-void usb_interface_association::add_interface(usb_interface & interface) {
+uint8_t usb_interface_association::add_interface(usb_interface & interface) {
     uint8_t index = _parent->add_interface(interface);
     if (!descriptor.bInterfaceCount) {
         // First interface for this association
@@ -23,6 +23,7 @@ void usb_interface_association::add_interface(usb_interface & interface) {
         interface.function = this;
     }
     descriptor.bInterfaceCount++;
+    return index;
 }
 
 void usb_interface_association::set_parent(usb_configuration *p) {

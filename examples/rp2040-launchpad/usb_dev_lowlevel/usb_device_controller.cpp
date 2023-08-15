@@ -18,35 +18,18 @@ using enum USB::bDescriptorType_t;
 using enum USB::recipient_t;
 
 usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_device & device)
-    : _driver(driver), _device(device), _new_addr(0), _should_set_address(false),
+    : _driver(driver), _device(device),
       _active_configuration(0) {
-
-    EP0_IN  = usb_endpoint_ctrl::inst.create_endpoint(0x80, ep_attributes_t::TRANS_CONTROL, 64, 0);
-    EP0_OUT = usb_endpoint_ctrl::inst.create_endpoint(0x00, ep_attributes_t::TRANS_CONTROL, 64, 0);
-
-    EP0_IN->set_handler([&](uint8_t *, uint16_t) {
-        if (_should_set_address) {
-            _driver.set_address(_new_addr);
-            _should_set_address = false;
-        } else {
-            EP0_OUT->start_transfer(nullptr, 0);
-        }
-    });
-
-    EP0_OUT->set_handler([](uint8_t *, uint16_t) {
-    });
 
     _driver.set_bus_reset_handler([&]() {
         printf("Bus reset\n");
-        _new_addr = 0;
-        _should_set_address = false;
-        _driver.set_address(0);
+        _driver.reset_address();
         _active_configuration = 0;
     });
 
     _driver.set_setup_handler([&](USB::setup_packet_t *pkt) {
         // Reset PID to 1 for EP0_IN
-        EP0_IN->next_pid = 1;
+        _driver.get_ep0_in()->next_pid = 1;
         // Check request type
         if (pkt->bmRequestType.type == type_t::TYPE_CLASS) {
             assert("No class specific requests.." && false);
@@ -114,11 +97,7 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
 void usb_device_controller::handle_set_address(setup_packet_t * pkt) {
     assert(pkt->bmRequestType.direction == direction_t::DIR_OUT);
     assert(pkt->bmRequestType.recipient == recipient_t::REC_DEVICE);
-    _new_addr = pkt->wValue & 0xff;
-    printf("Set address %d\n", _new_addr);
-    _should_set_address = true;
-    // Send back ACK
-    EP0_IN->start_transfer(nullptr, 0);
+    _driver.set_address(pkt->wValue & 0xff);
 }
 
 void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
@@ -127,16 +106,18 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
     uint8_t desc_index = pkt->wValue & 0xff;
     USB::bDescriptorType_t desc_type = (USB::bDescriptorType_t)(pkt->wValue >> 8);
 
-    uint8_t   tmp_buf[64];
+    uint8_t   tmp_buf[512];
     uint8_t * tmp_ptr = tmp_buf;
 
     switch (desc_type) {
         case DESC_DEVICE: {
+            printf("DESC_DEVICE\n");
             assert(_device.descriptor.bLength <= pkt->wLength);
-            EP0_IN->start_transfer((uint8_t *) &_device.descriptor, _device.descriptor.bLength);
+            _driver.get_ep0_in()->start_transfer((uint8_t *) &_device.descriptor, _device.descriptor.bLength);
             break;
         }
         case DESC_CONFIGURATION: {
+            printf("DESC_CONF\n");
             usb_configuration * conf = _device.configurations[desc_index];
             if (conf) {
                 assert(pkt->wLength >= sizeof(configuration_descriptor_t));
@@ -147,12 +128,24 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
                     // Copy interface and endpoint descriptors
                     for (usb_interface * inter : conf->interfaces) {
                         if (inter) {
+                            // Process interface association
                             if (inter->function) {
                                 memcpy(tmp_ptr, &inter->function->descriptor, sizeof(interface_association_descriptor_t));
                                 tmp_ptr += sizeof(interface_association_descriptor_t);
                             }
+                            // Process interface descriptor and all endpoint descriptors
                             memcpy(tmp_ptr, &inter->descriptor, sizeof(interface_descriptor_t));
                             tmp_ptr += sizeof(interface_descriptor_t);
+                            // Process functional descriptors
+                            if (inter->function) {
+                                // Process Functional Descriptors
+                                usb_functional_descriptor * func_ptr = inter->_func_desc;
+                                while(func_ptr) {
+                                    memcpy(tmp_ptr, func_ptr->descriptor, func_ptr->descriptor_length);
+                                    tmp_ptr += func_ptr->descriptor_length;
+                                    func_ptr = func_ptr->next;
+                                }
+                            }
                             for (usb_endpoint_interface * ep : inter->endpoints) {
                                 if (ep) {
                                     memcpy(tmp_ptr, &ep->descriptor, sizeof(endpoint_descriptor_t));
@@ -165,22 +158,23 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
             }
             uint32_t len = (uint32_t)tmp_ptr - (uint32_t)tmp_buf;
             assert(len <= pkt->wLength);
-            EP0_IN->start_transfer(tmp_buf, MIN(len, pkt->wLength));
+            _driver.get_ep0_in()->start_transfer(tmp_buf, MIN(len, pkt->wLength));
             break;
         }
         case DESC_STRING: {
+            printf("DESC_STRING\n");
             uint8_t index = pkt->wValue & 0xff;
             uint8_t len = usb_strings::inst.prepare_buffer(index, tmp_buf);
             assert(len <= pkt->wLength);
-            EP0_IN->start_transfer(tmp_buf, len);
+            _driver.get_ep0_in()->start_transfer(tmp_buf, len);
             break;
         }
         case DESC_OTG: {
             break;
         }
         case DESC_DEBUG: {
-            EP0_IN->send_stall();
-            EP0_IN->start_transfer(tmp_buf, 0);
+            _driver.get_ep0_in()->send_stall();
+            _driver.get_ep0_in()->start_transfer(tmp_buf, 0);
             break;
         }
         default:
@@ -198,7 +192,7 @@ void usb_device_controller::handle_set_descriptor(setup_packet_t * pkt) {
 void usb_device_controller::handle_get_configuration(USB::setup_packet_t *pkt) {
     assert(pkt->bmRequestType.direction == direction_t::DIR_IN);
     assert(pkt->bmRequestType.recipient == recipient_t::REC_DEVICE);
-    EP0_IN->start_transfer(&_active_configuration, 1);
+    _driver.get_ep0_in()->start_transfer(&_active_configuration, 1);
 }
 
 void usb_device_controller::handle_set_configuration(USB::setup_packet_t *pkt) {
@@ -224,7 +218,7 @@ void usb_device_controller::handle_set_configuration(USB::setup_packet_t *pkt) {
             _active_configuration = index;
         }
     }
-    EP0_IN->start_transfer(nullptr, 0);
+    _driver.get_ep0_in()->start_transfer(nullptr, 0);
 }
 
 void usb_device_controller::handle_get_interface(USB::setup_packet_t *pkt) {
@@ -234,7 +228,7 @@ void usb_device_controller::handle_get_interface(USB::setup_packet_t *pkt) {
     if (_active_configuration) {
         usb_interface * inter = _device.configurations[_active_configuration]->interfaces[index];
         if (inter) {
-            EP0_IN->start_transfer(&inter->descriptor.bAlternateSetting, 1);
+            _driver.get_ep0_in()->start_transfer(&inter->descriptor.bAlternateSetting, 1);
         } else {
             assert("nullptr error" && false);
         }
@@ -281,9 +275,8 @@ void usb_device_controller::handle_get_status(USB::setup_packet_t * pkt) {
             break;
         }
     }
-    EP0_IN->send_stall();
-    EP0_IN->start_transfer(nullptr, 0);
-
+    _driver.get_ep0_in()->send_stall();
+    _driver.get_ep0_in()->start_transfer(nullptr, 0);
 }
 
 void usb_device_controller::handle_clear_feature(USB::setup_packet_t *pkt) {

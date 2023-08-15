@@ -15,11 +15,20 @@ add_executable(usb_dev_lowlevel
     usb_interface.cpp
     usb_configuration.cpp
     usb_device.cpp
+    usb_dcd_rp2040.cpp
     usb_endpoint_rp2040.cpp
-    usb_device_rp2040.cpp
     usb_device_controller.cpp
     usb_interface_association.cpp
     main.cpp
+    usb_functional_descriptor.cpp
+    usb_header_fd.cpp
+    usb_call_mgmt_fd.cpp
+    usb_acm_fd.cpp 
+    usb_acm_fd.h 
+    usb_union_fd.cpp
+    usb_union_fd.h
+    usb_dcd_rp2040.cpp
+    usb_dcd_rp2040.h
 )
  
 # Add YAHAL to target
