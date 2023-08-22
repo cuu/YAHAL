@@ -1,33 +1,40 @@
-#ifndef _USB_ENDPOINT_INTERFACE_H_
-#define _USB_ENDPOINT_INTERFACE_H_
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
+//
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
+#ifndef TUPP_USB_ENDPOINT_INTERFACE_H_
+#define TUPP_USB_ENDPOINT_INTERFACE_H_
 
+#include "usb_interface.h"
+#include "usb_endpoint_base.h"
 #include <cstdint>
-#include <functional>
-using std::function;
 
-#include "usb_common.h"
-using namespace USB;
-
-
-class usb_endpoint_interface {
+class usb_endpoint_interface : public usb_endpoint_base {
 public:
-    // The USB endpoint descriptor
-    USB::endpoint_descriptor_t descriptor;
+    usb_endpoint_interface(usb_interface * interface) {
+        if (interface) interface->add_endpoint(this);
+    }
 
-    // Start a transfer on this endpoint (data and status stage).
-    // including data and status phases.
-    virtual void start_transfer(uint8_t * buffer, uint16_t len) = 0;
+    // Start a transfer on this endpoint (data stage).
+    virtual bool start_transfer(uint8_t * buffer, uint16_t len, bool blocking=true) = 0;
 
-    // Set the data handler associated to this endpoint
-    virtual void set_handler(function<void(uint8_t * buffer, uint16_t len)>) = 0;
-
+    // (De-)Activate this endpoint
     virtual void enable_endpoint(bool b) = 0;
 
+    // Send a stall
     virtual void send_stall() = 0;
 
-    inline bool is_EP_IN() const {
-        return descriptor.bEndpointAddress & 0x80;
-    }
+    // Send ZLP with DATA1
+    virtual void send_zlp_data1() = 0;
 
     // PID used for next transfer
     uint8_t next_pid;
@@ -36,4 +43,4 @@ protected:
     virtual ~usb_endpoint_interface() = default;
 };
 
-#endif
+#endif  // TUPP_USB_ENDPOINT_INTERFACE_H_

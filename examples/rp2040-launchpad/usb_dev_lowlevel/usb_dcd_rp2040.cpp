@@ -6,70 +6,12 @@
 #include "usb_endpoint_rp2040.h"
 #include <cstring>
 #include <cstdio>
-
-///////////////////////////
-// usb_endpoint_ctrl_rp2040
-///////////////////////////
+#include <cassert>
 
 usb_dcd_rp2040::usb_dcd_rp2040()
-        : _endpoints({nullptr},{nullptr}),
-          _ep0_in(nullptr), _ep0_out(nullptr),
-          _new_addr(0), _should_set_address(false) {
-}
-
-void usb_dcd_rp2040::pullup_enable(bool e) {
-    USBCTRL_REGS_SET.SIE_CTRL.PULLUP_EN <<= e;
-}
-
-void usb_dcd_rp2040::irq_enable(bool e) {
-    if (e) {
-        // Enable USB interrupt in NVIC
-        NVIC_ClearPendingIRQ(USBCTRL_IRQ_IRQn);
-        NVIC_EnableIRQ(USBCTRL_IRQ_IRQn);
-    } else {
-        NVIC_DisableIRQ(USBCTRL_IRQ_IRQn);
-    }
-}
-
-void usb_dcd_rp2040::set_address(uint8_t addr) {
-    _new_addr = addr;
-    printf("Set address %d\n", _new_addr);
-    _should_set_address = true;
-    // Send back ACK
-    _ep0_in->start_transfer(nullptr, 0);
-}
-
-void usb_dcd_rp2040::reset_address() {
-    _new_addr = 0;
-    _should_set_address = false;
-    USBCTRL_REGS.ADDR_ENDP.ADDRESS = 0;
-
-}
-
-usb_endpoint_interface * usb_dcd_rp2040::create_endpoint(
-        uint8_t addr,
-        ep_attributes_t type,
-        uint16_t packet_size,
-        uint8_t interval) {
-    return new usb_endpoint_rp2040(addr, type, packet_size, interval);
-}
-
-usb_endpoint_interface * usb_dcd_rp2040::create_endpoint(
-        direction_t     direction,
-        ep_attributes_t type,
-        uint16_t        packet_size,
-        uint8_t         interval) {
-    auto dir = (uint8_t)direction;
-    for (uint8_t i = 0; i < 16; ++i) {
-        if (!_endpoints[i][dir]) {
-            uint8_t addr = i & (dir << 7);
-            return new usb_endpoint_rp2040(addr, type, packet_size, interval);
-        }
-    }
-    return nullptr;
-}
-
-void usb_dcd_rp2040::init() {
+: _endpoints({nullptr},{nullptr}),
+  _new_addr(0), _should_set_address(false)
+{
     // Reset usb controller
     RESETS_SET.RESET.usbctrl <<= 1;
     RESETS_CLR.RESET.usbctrl <<= 1;
@@ -100,24 +42,67 @@ void usb_dcd_rp2040::init() {
     USBCTRL_REGS_SET.INTE.BUFF_STATUS <<= 1;
     USBCTRL_REGS_SET.INTE.SETUP_REQ   <<= 1;
 
-    // Create standard endpoints 0
-    _ep0_in  = create_endpoint(0x80, ep_attributes_t::TRANS_CONTROL, 64, 0);
-    _ep0_out = create_endpoint(0x00, ep_attributes_t::TRANS_CONTROL, 64, 0);
+    // Enable USB interrupt
+    NVIC_ClearPendingIRQ(USBCTRL_IRQ_IRQn);
+    NVIC_EnableIRQ(USBCTRL_IRQ_IRQn);
+}
 
-    _ep0_in->set_handler([&](uint8_t *, uint16_t) {
-        if (_should_set_address) {
-            USBCTRL_REGS.ADDR_ENDP.ADDRESS = _new_addr;
-            _should_set_address = false;
-        } else {
-            _ep0_out->start_transfer(nullptr, 0);
+void usb_dcd_rp2040::pullup_enable(bool e) {
+    USBCTRL_REGS_SET.SIE_CTRL.PULLUP_EN <<= e;
+}
+
+void usb_dcd_rp2040::irq_enable(bool e) {
+    if (e) {
+        NVIC_EnableIRQ(USBCTRL_IRQ_IRQn);
+    } else {
+        NVIC_DisableIRQ(USBCTRL_IRQ_IRQn);
+    }
+}
+
+void usb_dcd_rp2040::set_address(uint8_t addr) {
+    _new_addr = addr;
+    printf("Set address %d\n", _new_addr);
+    _should_set_address = true;
+}
+
+void usb_dcd_rp2040::check_address() {
+    if (_should_set_address) {
+        USBCTRL_REGS.ADDR_ENDP.ADDRESS = _new_addr;
+        _should_set_address = false;
+    }
+}
+
+void usb_dcd_rp2040::reset_address() {
+    _new_addr = 0;
+    _should_set_address = false;
+    USBCTRL_REGS.ADDR_ENDP.ADDRESS = 0;
+
+}
+
+usb_endpoint_interface * usb_dcd_rp2040::create_endpoint(
+        uint8_t addr,
+        ep_attributes_t type,
+        uint16_t packet_size,
+        uint8_t interval,
+        usb_interface * interface) {
+    return new usb_endpoint_rp2040(addr, type, packet_size, interval, interface);
+}
+
+usb_endpoint_interface * usb_dcd_rp2040::create_endpoint(
+        direction_t     direction,
+        ep_attributes_t type,
+        uint16_t        packet_size,
+        uint8_t         interval,
+        usb_interface * interface) {
+    uint8_t dir = (direction == direction_t::DIR_IN) ? 1 : 0;
+    for (uint8_t i = 0; i < 16; ++i) {
+        if (!_endpoints[i][dir]) {
+            uint8_t addr = i | (dir << 7);
+            return new usb_endpoint_rp2040(addr, type, packet_size, interval, interface);
         }
-    });
-
-    _ep0_out->set_handler([](uint8_t *, uint16_t) {
-    });
-
-    irq_enable(true);
-
+    }
+    assert(!"No free endpoints");
+    return nullptr;
 }
 
 extern "C" {
@@ -125,7 +110,7 @@ void USBCTRL_IRQ_Handler(void) {
     // Setup packet received
     if (USBCTRL_REGS.INTS.SETUP_REQ) {
         USBCTRL_REGS_CLR.SIE_STATUS.SETUP_REC = 1;
-        usb_dcd_rp2040::inst()._setup_handler((USB::setup_packet_t *)&USBCTRL_DPRAM);
+        usb_dcd_rp2040::inst().setup_handler((USB::setup_packet_t *)&USBCTRL_DPRAM);
     }
     // Buffer status, one or more buffers have completed
     if (USBCTRL_REGS.INTS.BUFF_STATUS) {
@@ -136,10 +121,8 @@ void USBCTRL_IRQ_Handler(void) {
                 // Clear bits
                 USBCTRL_REGS_CLR.BUFF_STATUS = bit;
                 buffs ^= bit;
-                // Get endpoint and call internal handler
-                uint8_t ep_addr = (i >> 1);
-                if (!(i & 1)) ep_addr |= 0x80;
-                usb_endpoint_rp2040 * ep = usb_dcd_rp2040::inst().addr_to_ep(ep_addr);
+                // Call internal handler
+                auto ep = usb_dcd_rp2040::inst()._endpoints[i>>1][!(i&1)];
                 if (ep) ep->_process_buffer();
             }
             bit <<= 1;
@@ -148,7 +131,7 @@ void USBCTRL_IRQ_Handler(void) {
     // Bus is reset
     if (USBCTRL_REGS.INTS.BUS_RESET) {
         USBCTRL_REGS_CLR.SIE_STATUS.BUS_RESET = 1;
-        usb_dcd_rp2040::inst()._bus_reset_handler();
+        usb_dcd_rp2040::inst().bus_reset_handler();
     }
 }
 }

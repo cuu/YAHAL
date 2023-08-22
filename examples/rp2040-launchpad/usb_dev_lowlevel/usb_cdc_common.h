@@ -1,6 +1,22 @@
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
+//
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
+#ifndef TUPP_USB_CDC_COMMON_H_
+#define TUPP_USB_CDC_COMMON_H_
 
-#ifndef _USB_CDC_COMMON_H_
-#define _USB_CDC_COMMON_H_
+#ifdef TUPP_USB_COMMON_H_
+#warning "usb_cdc_common.h has to be included before usb_common.h!"
+#endif
 
 #include <cstdint>
 
@@ -213,6 +229,31 @@ namespace USB::CDC {
     };
     static_assert(sizeof(func_desc_direct_line_t) == 4);
 
+    ////////////////////////
+    // Line coding structure
+    ////////////////////////
+    enum class bCharFormat_t : uint8_t {
+        STOP_BITS_1     = 0,
+        STOP_BITS_15    = 1,
+        STOP_BITS_2     = 2
+    };
+
+    enum class bParityType_t : uint8_t {
+        PARITY_NONE        = 0,
+        PARITY_ODD         = 1,
+        PARITY_EVEN        = 2,
+        PARITY_MARK        = 3,
+        PARITY_SPACE       = 4
+    };
+
+    struct __attribute__((__packed__)) line_coding_t {
+        uint32_t        dwDTERate{};
+        bCharFormat_t   bCharFormat{};
+        bParityType_t   bParityType{};
+        uint8_t         bDataBits{};
+    };
+    static_assert(sizeof(line_coding_t) == 7);
+
 }   // namespace USB::CDC
 
-#endif
+#endif  // TUPP_USB_CDC_COMMON_H_

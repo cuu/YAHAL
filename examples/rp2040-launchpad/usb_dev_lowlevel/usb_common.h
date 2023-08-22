@@ -1,27 +1,26 @@
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
+//
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
+#ifndef TUPP_USB_COMMON_H_
+#define TUPP_USB_COMMON_H_
 
-#ifndef _USB_COMMON_H_
-#define _USB_COMMON_H_
-
-#ifndef CDC_CS_REQUESTS
+#ifndef TUPP_USB_CDC_COMMON_H_
 #define CDC_CS_REQUESTS
-#endif
-
-#ifndef CDC_CS_DEVICE_CLASSES
 #define CDC_CS_DEVICE_CLASSES
-#endif
-
-#ifndef CDC_CS_INTERFACE_CLASSES
 #define CDC_CS_INTERFACE_CLASSES
-#endif
-
-#ifndef CDC_CS_SUBCLASSES
 #define CDC_CS_SUBCLASSES
-#endif
-
-#ifndef CDC_CS_PROTOCOLS
 #define CDC_CS_PROTOCOLS
 #endif
-
 
 #include <cstdint>
 
@@ -59,7 +58,8 @@ namespace USB {
     enum class recipient_t : uint8_t {
         REC_DEVICE              = 0,
         REC_INTERFACE           = 1,
-        REC_ENDPOINT            = 2
+        REC_ENDPOINT            = 2,
+        REC_OTHER               = 3
     };
 
     union bmRequestType_t {
@@ -104,20 +104,20 @@ namespace USB {
     };
 
     struct __attribute__((__packed__)) device_descriptor_t {
-        uint8_t             bLength;            // Size of this descriptor in bytes.
-        bDescriptorType_t   bDescriptorType;    // DEVICE Descriptor Type.
-        uint16_t            bcdUSB;             // USB Specification Release Number in BCD (i.e., 2.10 is 210H)
-        bDeviceClass_t      bDeviceClass;       // Class code (assigned by the USB-IF). \li If this field is reset to zero, each
-        uint8_t             bDeviceSubClass;    // Subclass code (assigned by the USB-IF). These codes are qualified by the value
-        uint8_t             bDeviceProtocol;    // Protocol code (assigned by the USB-IF). These codes are qualified by the value
-        uint8_t             bMaxPacketSize0;    // Maximum packet size for endpoint zero (only 8, 16, 32, or 64 are valid). For H
-        uint16_t            idVendor;           // Vendor ID (assigned by the USB-IF).
-        uint16_t            idProduct;          // Product ID (assigned by the manufacturer).
-        uint16_t            bcdDevice;          // Device release number in binary-coded decimal.
-        uint8_t             iManufacturer;      // Index of string descriptor describing manufacturer.
-        uint8_t             iProduct;           // Index of string descriptor describing product.
-        uint8_t             iSerialNumber;      // Index of string descriptor describing the device's serial number.
-        uint8_t             bNumConfigurations; // Number of possible configurations.
+        uint8_t             bLength;
+        bDescriptorType_t   bDescriptorType;
+        uint16_t            bcdUSB;
+        bDeviceClass_t      bDeviceClass;
+        uint8_t             bDeviceSubClass;
+        uint8_t             bDeviceProtocol;
+        uint8_t             bMaxPacketSize0;
+        uint16_t            idVendor;
+        uint16_t            idProduct;
+        uint16_t            bcdDevice;
+        uint8_t             iManufacturer;
+        uint8_t             iProduct;
+        uint8_t             iSerialNumber;
+        uint8_t             bNumConfigurations;
     };
     static_assert(sizeof(USB::device_descriptor_t) == 18);
 
@@ -217,7 +217,6 @@ namespace USB {
         uint8_t             bInterval;
     };
     static_assert(sizeof(endpoint_descriptor_t) == 7);
-
 };
 
-#endif
+#endif // TUPP_USB_COMMON_H_

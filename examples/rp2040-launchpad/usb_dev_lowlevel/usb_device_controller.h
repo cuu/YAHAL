@@ -1,15 +1,55 @@
-#ifndef _USB_DEVICE_DRIVER_H_
-#define _USB_DEVICE_DRIVER_H_
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
+//
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
+#ifndef TUPP_USB_DEVICE_CONTROLLER_H_
+#define TUPP_USB_DEVICE_CONTROLLER_H_
+
+#define MAX_DESCRIPTOR_SIZE 256
 
 class usb_device;
+#include "usb_config.h"
 #include "usb_dcd_interface.h"
 #include "usb_endpoint_interface.h"
 
 class usb_device_controller {
 public:
-    explicit usb_device_controller(usb_dcd_interface & driver, usb_device & device);
+    usb_device_controller(usb_dcd_interface & driver, usb_device & device);
 
-    inline bool active_configuration() { return _active_configuration; }
+    // Create a new endpoint based on its address.
+    usb_endpoint_interface * create_endpoint(
+            usb_interface & interface,
+            uint8_t         addr,
+            ep_attributes_t type,
+            uint16_t        packet_size,
+            uint8_t         interval) {
+        return _driver.create_endpoint(addr, type, packet_size, interval, &interface);
+    }
+
+    // Create a new endpoint based on its address.
+    usb_endpoint_interface * create_endpoint(
+            usb_interface & interface,
+            direction_t     direction,
+            ep_attributes_t type,
+            uint16_t        packet_size,
+            uint8_t         interval) {
+        return _driver.create_endpoint(direction, type, packet_size, interval, &interface);
+    }
+
+    const volatile uint8_t & active_configuration;
+
+    // Standard endpoints 0
+    usb_endpoint_interface * _ep0_in;
+    usb_endpoint_interface * _ep0_out;
 
 private:
 
@@ -27,8 +67,9 @@ private:
 
     usb_dcd_interface & _driver;
     usb_device &        _device;
-    uint8_t             _active_configuration;
+    volatile uint8_t    _active_configuration;
+    // Buffer for device descriptors
+    uint8_t             _buf[TUPP_MAX_DESC_SIZE];
 };
 
-
-#endif
+#endif  // TUPP_USB_DEVICE_CONTROLLER_H_

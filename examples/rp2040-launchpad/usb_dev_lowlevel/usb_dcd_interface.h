@@ -8,6 +8,8 @@ using std::function;
 #include "usb_common.h"
 class usb_endpoint_interface;
 
+class usb_interface;
+
 using namespace USB;
 
 class usb_dcd_interface {
@@ -24,29 +26,29 @@ public:
     virtual void reset_address() = 0;
 
     // Set handler for setup packets
-    virtual void set_setup_handler(function<void(USB::setup_packet_t * packet)>) = 0;
+    function<void(USB::setup_packet_t * packet)> setup_handler;
 
     // Set handler for bus reset
-    virtual void set_bus_reset_handler(function<void()>) = 0;
+    function<void()> bus_reset_handler;
 
-    // Create a new endpoint based on it new address.
+    // Create a new endpoint based on its address.
     virtual usb_endpoint_interface * create_endpoint(
-            uint8_t         addr,
-            ep_attributes_t type,
-            uint16_t        packet_size,
-            uint8_t         interval) = 0;
+                                 uint8_t         addr,
+                                 ep_attributes_t type,
+                                 uint16_t        packet_size = 64,
+                                 uint8_t         interval = 0,
+                                 usb_interface * interface = nullptr) = 0;
 
     // Create a new endpoint based on its direction.
     // The next free available address is used.
     virtual usb_endpoint_interface * create_endpoint(
-            direction_t     direction,
-            ep_attributes_t type,
-            uint16_t        packet_size,
-            uint8_t         interval) = 0;
+                                 direction_t     direction,
+                                 ep_attributes_t type,
+                                 uint16_t        packet_size = 64,
+                                 uint8_t         interval = 0,
+                                 usb_interface * interface = nullptr) = 0;
 
-    // Access to standard endpoints 0
-    virtual usb_endpoint_interface * get_ep0_in()  = 0;
-    virtual usb_endpoint_interface * get_ep0_out() = 0;
+    virtual usb_endpoint_interface * addr_to_ep(uint8_t addr) = 0;
 
 protected:
     virtual ~usb_dcd_interface() = default;
