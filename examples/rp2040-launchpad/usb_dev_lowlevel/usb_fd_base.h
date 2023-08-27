@@ -22,6 +22,10 @@ public:
     usb_fd_base(usb_interface & i, uint8_t * ptr, uint16_t len)
     : descriptor(ptr), descriptor_length(len), next(nullptr), _parent(i) {}
 
+    // No copy, no assignment
+    usb_fd_base (const usb_fd_base&) = delete;
+    usb_fd_base& operator= (const usb_fd_base&) = delete;
+
     uint8_t * descriptor;
     uint16_t  descriptor_length;
 

@@ -21,13 +21,20 @@ public:
     friend class usb_dcd_rp2040;
     friend void USBCTRL_IRQ_Handler(void);
 
-    bool start_transfer(uint8_t * buffer, uint16_t len, bool blocking = true) override;
+    bool start_transfer(uint8_t * buffer, uint16_t len) override;
 
     void enable_endpoint(bool b) override;
 
     void send_stall() override;
 
     void send_zlp_data1() override;
+
+    void send_NAK(bool b) override;
+
+    inline volatile bool is_active() override {
+        return _active;
+    }
+
 
 private:
     usb_endpoint_rp2040(uint8_t  addr,
@@ -49,7 +56,9 @@ private:
     uint16_t              _current_len{};
     uint16_t              _bytes_left{};
 
-    bool                  _active{};
+    volatile bool         _active{};
+
+    uint32_t              _mask;
 
     inline void _process_buffer() {
         // Dispatch request according endpoint direction

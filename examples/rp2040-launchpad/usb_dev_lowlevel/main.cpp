@@ -10,6 +10,7 @@
 #include "posix_io.h"
 #include <cstdio>
 
+#include "FIFO.h"
 
 int main() {
     uart_rp2040 uart; // default is backchannel UART!
@@ -53,20 +54,28 @@ int main() {
     /////////////////////
     usb_cdc_acm_device acm_device(controller, config);
 
+    FIFO<uint8_t> fifo(10000);
+
     acm_device.set_receive_handler([&](uint8_t *buf, uint16_t len) {
-        // We simply echo back any chars
-        printf("Received %d bytes\n", len);
-        acm_device.transmit(buf, len);
+        // Check if we need to stop incoming data
+        if (fifo.available_put() < 500) {
+            acm_device._ep_data_out->send_NAK(true);
+        }
+        // Copy all available bytes to the FIFO
+        for(int i=0; i<len; ++i) {
+            fifo.put(buf[i]);
+        }
     });
 
-    acm_device.set_line_coding_handler([&](const CDC::line_coding_t & lc) {
+
+    acm_device.set_line_coding_handler([&](uint8_t *,uint16_t) {
         const char * parity[5] = {"N", "O", "E", "M", "S"};
         const char * stop[3]   = {"1", "1.5", "2"};
         printf("Line coding set to %d baud %d%s%s\n",
-               (int)lc.dwDTERate,
-               (int)lc.bDataBits,
-               parity[(int)lc.bCharFormat],
-               stop[(int)lc.bParityType]);
+               (int)acm_device.line_coding.dwDTERate,
+               (int)acm_device.line_coding.bDataBits,
+               parity[(int)acm_device.line_coding.bParityType],
+               stop[(int)acm_device.line_coding.bCharFormat]);
     });
 
     acm_device.set_control_line_handler([](bool dtr, bool rts) {
@@ -89,11 +98,30 @@ int main() {
         task::sleep(100);
     }
 
-    ///////////////
-    // Endless loop
-    ///////////////
     printf("Entering endless loop...\n");
-    while(1) {
-        task::sleep(1000);
+
+    uint8_t buf[64], val;
+    int i=0;
+    while (1) {
+        // Check if we need to enable incoming data
+        if (fifo.available_put() > 1000) {
+            acm_device._ep_data_out->send_NAK(false);
+        }
+        // Check if there is some data in the FIFO for sending
+        if (fifo.available_get()) {
+            for (i = 0; i < 64; ++i) {
+                if (fifo.get(val)) {
+                    buf[i] = val;
+                } else {
+                    break;
+                }
+            }
+            // Transmit the data, if existing
+            if (i)  {
+                acm_device._ep_data_in->start_transfer(buf, i);
+                while(acm_device._ep_data_in->is_active()) ;
+//                task::sleep(20);
+            }
+        }
     }
 }

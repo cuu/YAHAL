@@ -25,7 +25,7 @@ public:
     }
 
     // Start a transfer on this endpoint (data stage).
-    virtual bool start_transfer(uint8_t * buffer, uint16_t len, bool blocking=true) = 0;
+    virtual bool start_transfer(uint8_t * buffer, uint16_t len) = 0;
 
     // (De-)Activate this endpoint
     virtual void enable_endpoint(bool b) = 0;
@@ -36,8 +36,12 @@ public:
     // Send ZLP with DATA1
     virtual void send_zlp_data1() = 0;
 
+    virtual void send_NAK(bool b) = 0;
+
+    virtual volatile bool is_active() = 0;
+
     // PID used for next transfer
-    uint8_t next_pid;
+    uint8_t next_pid{};
 
 protected:
     virtual ~usb_endpoint_interface() = default;

@@ -21,6 +21,10 @@ class usb_fd_acm : public usb_fd_base {
 public:
     explicit usb_fd_acm(usb_interface & i);
 
+    // No copy, no assignment
+    usb_fd_acm (const usb_fd_acm&) = delete;
+    usb_fd_acm& operator= (const usb_fd_acm&) = delete;
+
     inline void set_bmCapabilities(USB::CDC::bmAcmCapabilities_t val) {
         _descriptor.bmCapabilities = val;
     }

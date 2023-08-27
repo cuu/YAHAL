@@ -4,6 +4,9 @@
 #include <cassert>
 #include <cstdio>
 
+#include "RP2040.h"
+using namespace _USBCTRL_REGS_;
+
 using namespace USB;
 
 uint8_t * usb_endpoint_rp2040::_next_free_buffer = (uint8_t *)&USBCTRL_DPRAM + 0x180;
@@ -26,7 +29,7 @@ usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
     set_bInterval       (interval);
 
     // Set Hardware registers
-    uint8_t offset = (addr & 0x7f) << 1;
+    uint8_t offset = (addr & 0x0f) << 1;
 
     if (offset) {
         _endp_ctrl = (EP_CONTROL_t *)&USBCTRL_DPRAM + offset;
@@ -57,12 +60,23 @@ usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
     // Initial PID value
     next_pid = 0;
 
+    // Initialize bitmask (used for some registers)
+    _mask = 1 << offset;
+    if (!is_IN()) _mask <<= 1;
+    printf("Mask %08lx for EP %02x\n", _mask, addr);
+
     // Store this endpoint in lookup table
     usb_dcd_rp2040::inst()._endpoints[addr & 0x0f][addr >> 7] = this;
 }
 
-bool usb_endpoint_rp2040::start_transfer(uint8_t * buffer, uint16_t len, bool blocking) {
-    printf("Start transfer EP %02x len %d\n", descriptor.bEndpointAddress, len);
+bool usb_endpoint_rp2040::start_transfer(uint8_t * buffer, uint16_t len) {
+
+//    printf("Start transfer EP %02x len %d\n", descriptor.bEndpointAddress, len);
+
+//    assert(!_active);
+
+    // Wait if a request is still being processed
+//    while(_active) ;
     // Mark this endpoint as active
     _active = true;
     // Store transfer parameters
@@ -74,14 +88,18 @@ bool usb_endpoint_rp2040::start_transfer(uint8_t * buffer, uint16_t len, bool bl
     // Limit size to max packet size.
     _current_len = len > descriptor.wMaxPacketSize ?
                    descriptor.wMaxPacketSize : len;
-    // Trigger the transfer in HW.
+
     if (is_IN() && _current_len) {
         // Copy the data from user buffer to the HW buffer
         memcpy(_hw_buffer, _current_ptr, _current_len);
         // Update transfer parameters
         _bytes_left  -= _current_len;
         _current_ptr += _current_len;
+    } else {
+        // Enable reception of OUT packets
+//        send_NAK(false);
     }
+    // Trigger the transfer in HW.
     trigger_transfer(_current_len);
     return true;
 }
@@ -101,6 +119,16 @@ void usb_endpoint_rp2040::send_zlp_data1() {
     start_transfer(nullptr, 0);
 }
 
+void usb_endpoint_rp2040::send_NAK(bool b) {
+    if (b) {
+//        _USBCTRL_REGS_::USBCTRL_REGS_CLR.EP_ABORT_DONE = _mask;
+        _USBCTRL_REGS_::USBCTRL_REGS_SET.EP_ABORT = _mask;
+//        while(!(_USBCTRL_REGS_::USBCTRL_REGS.EP_ABORT_DONE & _mask)) ;
+    } else {
+        _USBCTRL_REGS_::USBCTRL_REGS_CLR.EP_ABORT = _mask;
+    }
+}
+
 void usb_endpoint_rp2040::handle_buffer_in() {
     // Entering this method means that the hw controller
     // has sent a packet of data to the host.
@@ -112,10 +140,11 @@ void usb_endpoint_rp2040::handle_buffer_in() {
         // data which was sent to the host. Deactivate the
         // endpoint before, because the handler might be used
         // to trigger a new transfer!
-        _active = false;
         if (data_handler) {
             data_handler(_data_ptr, _data_len);
         }
+        _active = false;
+
         return;
     }
     // We need to send more data to the host. So prepare
@@ -133,11 +162,16 @@ void usb_endpoint_rp2040::handle_buffer_in() {
 }
 
 void usb_endpoint_rp2040::handle_buffer_out() {
-    printf("EP %02x handle buffer out\n", descriptor.bEndpointAddress);
+//    send_NAK(true);
+//    printf("EP %02x handle buffer out 0x%08lx\n", descriptor.bEndpointAddress, (uint32_t)USBCTRL_REGS.SIE_STATUS);
+
+    assert(_active);
 
     // Entering this method means that the host has sent us a
     // new data packet. Copy all received bytes to the user buffer.
     uint16_t received_len = _buff_ctrl->LENGTH_0;
+//    printf("handle_buffer_out: Received %d bytes\n", received_len);
+
     memcpy(_current_ptr, _hw_buffer, received_len);
     // Update transfer parameters
     _bytes_left  -= received_len;
@@ -146,12 +180,14 @@ void usb_endpoint_rp2040::handle_buffer_out() {
     // all bytes or received a 'short' packet, which returned
     // fewer bytes as expected.
     if ((_bytes_left == 0) || (received_len < _current_len)) {
+        // Stop accepting any packets
+//        send_NAK(true);
         // Let the user handler consume the complete
         // received data set.
+        _active = false;
         if (data_handler) {
             data_handler(_data_ptr, _data_len - _bytes_left);
         }
-        _active = false;
         return;
     }
     // More bytes to receive, so trigger a new transfer.
@@ -160,16 +196,31 @@ void usb_endpoint_rp2040::handle_buffer_out() {
                    descriptor.wMaxPacketSize : _bytes_left;
     // Finally trigger the transfer
     trigger_transfer(_current_len);
+//    send_NAK(false);
 }
 
 void usb_endpoint_rp2040::trigger_transfer(uint16_t len) {
+//    assert(!is_active());
+    assert(_buff_ctrl->AVAILABLE_0 == 0);
+
 //    printf("Trigger transfer EP %2x, len %d, next_pid %d\n",
 //           descriptor.bEndpointAddress,len, next_pid);
     // Set pid and flip for next transfer
     _buff_ctrl->PID_0       = next_pid;
-    _buff_ctrl->FULL_0      = is_IN();
+    _buff_ctrl->FULL_0      = is_IN() ? 1 : 0;
     _buff_ctrl->LENGTH_0    = len;
-    _buff_ctrl->AVAILABLE_0 = 1;
     next_pid ^= 1;
+
+    __asm volatile (
+            "b 1f\n"
+            "1: b 1f\n"
+            "1: b 1f\n"
+            "1: b 1f\n"
+            "1: b 1f\n"
+            "1: b 1f\n"
+            "1:\n"
+            : : : "memory");
+
+    _buff_ctrl->AVAILABLE_0 = 1;
 }
 

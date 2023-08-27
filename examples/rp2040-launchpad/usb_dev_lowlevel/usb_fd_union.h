@@ -21,6 +21,10 @@ class usb_fd_union : public usb_fd_base {
 public:
     explicit usb_fd_union(usb_interface & i);
 
+    // No copy, no assignment
+    usb_fd_union (const usb_fd_union&) = delete;
+    usb_fd_union& operator= (const usb_fd_union&) = delete;
+
     inline void set_bControlInterface(uint8_t val) {
         _descriptor.bControlInterface = val;
     }

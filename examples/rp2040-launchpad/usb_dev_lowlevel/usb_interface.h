@@ -41,14 +41,14 @@ public:
     friend class usb_device_controller;     // may access _assoc_ptr, _fd_ptr, _endpoints
 
     // Methods to set the descriptor elements
-    inline void set_bInterfaceNumber  (uint8_t n) {
-        _descriptor.bInterfaceNumber   = n;
+    inline void set_bInterfaceNumber(uint8_t n) {
+        _descriptor.bInterfaceNumber = n;
     }
-    inline void set_bAlternateSetting (uint8_t n) {
-        _descriptor.bAlternateSetting  = n;
+    inline void set_bAlternateSetting(uint8_t n) {
+        _descriptor.bAlternateSetting = n;
     }
-    inline void set_bInterfaceClass   (USB::bInterfaceClass_t n) {
-        _descriptor.bInterfaceClass    = n;
+    inline void set_bInterfaceClass(USB::bInterfaceClass_t n) {
+        _descriptor.bInterfaceClass = n;
     }
     inline void set_bInterfaceSubClass(USB::bInterfaceSubClass_t n) {
         _descriptor.bInterfaceSubClass = n;

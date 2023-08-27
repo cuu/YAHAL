@@ -32,6 +32,7 @@ usb_dcd_rp2040::usb_dcd_rp2040()
     USBCTRL_REGS_SET.MAIN_CTRL.CONTROLLER_EN <<= 1;
 
     // Enable an interrupt per EP0 transaction
+    USBCTRL_REGS_CLR.SIE_CTRL.EP0_DOUBLE_BUF <<= 1;
     USBCTRL_REGS_SET.SIE_CTRL.EP0_INT_1BUF <<= 1;
 
     // Enable interrupts ...
@@ -76,7 +77,6 @@ void usb_dcd_rp2040::reset_address() {
     _new_addr = 0;
     _should_set_address = false;
     USBCTRL_REGS.ADDR_ENDP.ADDRESS = 0;
-
 }
 
 usb_endpoint_interface * usb_dcd_rp2040::create_endpoint(

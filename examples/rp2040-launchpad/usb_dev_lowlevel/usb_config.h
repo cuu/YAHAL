@@ -36,7 +36,7 @@
 #define TUPP_MAX_INTERF_PER_CONF 5
 #endif
 
-// Maximum number of USB interfaces associations per USB configuration
+// Maximum number of USB interface associations per USB configuration
 #ifndef TUPP_MAX_ASSOC_PER_CONF
 #define TUPP_MAX_ASSOC_PER_CONF 5
 #endif

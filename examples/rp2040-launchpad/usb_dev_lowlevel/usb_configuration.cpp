@@ -49,9 +49,9 @@ void usb_configuration::set_total_length() {
         }
     }
     // Add all interfaces and their endpoints
-    for (usb_interface *interf : _interfaces) {
-        if (interf) {
-            len += interf->get_total_desc_length();
+    for (usb_interface *interface : _interfaces) {
+        if (interface) {
+            len += interface->get_total_desc_length();
         }
     }
     _descriptor.wTotalLength = len;

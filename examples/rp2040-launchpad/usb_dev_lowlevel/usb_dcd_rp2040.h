@@ -39,18 +39,18 @@ public:
     usb_endpoint_interface * create_endpoint(
                          uint8_t         addr,
                          ep_attributes_t type,
-                         uint16_t        packet_size = 64,
-                         uint8_t         interval = 0,
-                         usb_interface * interface = nullptr) override;
+                         uint16_t        packet_size,
+                         uint8_t         interval,
+                         usb_interface * interface) override;
 
     // Create a new endpoint based on its direction.
     // The next free available address is used.
     usb_endpoint_interface * create_endpoint(
                          direction_t     direction,
                          ep_attributes_t type,
-                         uint16_t        packet_size = 64,
-                         uint8_t         interval = 0,
-                         usb_interface * interface = nullptr) override;
+                         uint16_t        packet_size,
+                         uint8_t         interval,
+                         usb_interface * interface) override;
 
     void check_address();
 

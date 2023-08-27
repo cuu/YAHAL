@@ -21,6 +21,10 @@ class usb_fd_header : public usb_fd_base {
 public:
     explicit usb_fd_header(usb_interface & i);
 
+    // No copy, no assignment
+    usb_fd_header (const usb_fd_header&) = delete;
+    usb_fd_header& operator= (const usb_fd_header&) = delete;
+
     inline void set_bcdCDC(uint16_t val) {
         _descriptor.bcdCDC = val;
     }

@@ -13,8 +13,6 @@
 //
 #include "usb_cdc_acm_device.h"
 #include "usb_common.h"
-#include "usb_cdc_acm_device.h"
-#include "usb_interface.h"
 #include <cstdio>
 #include <cassert>
 
@@ -76,7 +74,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
 
     // Prepare new request to receive data
     //////////////////////////////////////
-    _ep_data_out->start_transfer(_buffer, 64, false);
+    _ep_data_out->start_transfer(_buffer, 64);
 
     // Endpoint handler
     ///////////////////
@@ -84,7 +82,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
         // Call user handler
         if (_receive_handler) _receive_handler(buf, len);
         // Trigger a new receive
-        _ep_data_out->start_transfer(_buffer, 64, false);
+        _ep_data_out->start_transfer(_buffer, 64);
     };
 
     // Handler for CDC ACM specific requests
@@ -95,8 +93,8 @@ usb_cdc_acm_device::usb_cdc_acm_device(
             case USB::bRequest_t::CDC_REQ_SET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
                 controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
-                // Call user handler
-                if (_line_coding_handler) _line_coding_handler(_line_coding);
+                // Set the user handler
+                controller._ep0_out->data_handler = _line_coding_handler;
                 // Status stage
                 controller._ep0_in->send_zlp_data1();
                 break;

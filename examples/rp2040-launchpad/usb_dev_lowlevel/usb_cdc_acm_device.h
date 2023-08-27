@@ -36,7 +36,7 @@ public:
     inline void set_receive_handler(std::function<void(uint8_t *,uint16_t)> h) {
         _receive_handler = std::move(h);
     }
-    inline void set_line_coding_handler(std::function<void(const CDC::line_coding_t & lc)> h) {
+    inline void set_line_coding_handler(std::function<void(uint8_t *,uint16_t)> h) {
         _line_coding_handler = std::move(h);
     }
     inline void set_control_line_handler(std::function<void(bool dtr, bool rts)> h) {
@@ -63,15 +63,15 @@ private:
     usb_fd_call_mgmt            _call_mgmt_fd{_if_ctrl};
     usb_fd_acm                  _acm_fd      {_if_ctrl};
     usb_fd_union                _union_fd    {_if_ctrl};
-
+public:
     // USB endpoints
     usb_endpoint_interface *    _ep_ctrl_in  { nullptr };
     usb_endpoint_interface *    _ep_data_in  { nullptr };
     usb_endpoint_interface *    _ep_data_out { nullptr };
-
+private:
     // Callback handlers
     std::function<void(uint8_t *,uint16_t)> _receive_handler;
-    std::function<void(const CDC::line_coding_t & lc)> _line_coding_handler;
+    std::function<void(uint8_t *,uint16_t)> _line_coding_handler;
     std::function<void(bool dtr, bool rts)> _control_line_handler;
     std::function<void(uint16_t millis)> _break_handler;
 

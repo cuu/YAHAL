@@ -42,11 +42,18 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
 
     // These handlers are not necessary - only for debugging
     _ep0_in->data_handler = [&](uint8_t *, uint16_t len) {
-        printf("EP 80 IN handler - %d sent to host!!\n", len);
+//        printf("EP 80 IN handler - %d sent to host!!\n", len);
     };
     _ep0_out->data_handler = [](uint8_t *, uint16_t len) {
-        printf("EP 00 OUT handler - %d received from host\n", len);
+//        printf("EP 00 OUT handler - %d received from host\n", len);
     };
+
+    // Be ready to receive s.th. from host
+//    _ep0_out->start_transfer(nullptr, 64);
+
+    // Send NAK for all requests unless we are ready to handle
+    // the OUT packets
+//    _ep0_out->send_NAK(true);
 
     ////////////////////////////
     // Handler for USB bus reset

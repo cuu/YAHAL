@@ -21,6 +21,10 @@ class usb_fd_call_mgmt : public usb_fd_base {
 public:
     explicit usb_fd_call_mgmt(usb_interface & i);
 
+    // No copy, no assignment
+    usb_fd_call_mgmt (const usb_fd_call_mgmt&) = delete;
+    usb_fd_call_mgmt& operator= (const usb_fd_call_mgmt&) = delete;
+
     inline void set_bmCapabilities(USB::CDC::bmCmCapabilities_t val) {
         _descriptor.bmCapabilities = val;
     }
