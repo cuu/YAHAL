@@ -60,22 +60,19 @@ void usb_endpoint::start_transfer(uint8_t * buffer, uint16_t len) {
     trigger_transfer(_current_len);
 }
 
-void usb_endpoint::handle_buffer_in(uint16_t len) {
-//    assert(_active);
+void usb_endpoint::handle_buffer_in(uint16_t) {
+    assert(_active);
     // Entering this method means that the hw controller
     // has sent a packet of data to the host.
     // Check if we need to change the hw address
     // Check if the last packet has been sent
     if (!_bytes_left) {
-        // Call user handler which will report the complete
-        // data which was sent to the host. Deactivate the
-        // endpoint before, because the handler might be used
-        // to trigger a new transfer!
+        // Call user handler which will report the
+        // complete data which was sent to the host.
+        _active = false;
         if (data_handler) {
             data_handler(_data_ptr, _data_len);
         }
-        _active = false;
-
         return;
     }
     // We need to send more data to the host. So prepare
@@ -119,4 +116,3 @@ void usb_endpoint::handle_buffer_out(uint16_t len) {
     // Finally trigger the transfer
     trigger_transfer(_current_len);
 }
-

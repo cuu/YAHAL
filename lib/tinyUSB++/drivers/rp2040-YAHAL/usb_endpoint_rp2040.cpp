@@ -1,3 +1,16 @@
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
+//
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
 #include "usb_dcd_rp2040.h"
 #include "usb_endpoint_rp2040.h"
 #include <cstring>
@@ -94,25 +107,21 @@ void usb_endpoint_rp2040::send_stall() {
 
 void usb_endpoint_rp2040::trigger_transfer(uint16_t len) {
     assert(_buff_ctrl->AVAILABLE_0 == 0);
-
-//    printf("Trigger transfer EP %2x, len %d, next_pid %d\n",
-//           descriptor.bEndpointAddress,len, next_pid);
     // Set pid and flip for next transfer
     _buff_ctrl->PID_0       = next_pid;
     _buff_ctrl->FULL_0      = is_IN() ? 1 : 0;
     _buff_ctrl->LENGTH_0    = len;
     next_pid ^= 1;
 
-    __asm volatile (
-            "b 1f\n"
-            "1: b 1f\n"
-            "1: b 1f\n"
-            "1: b 1f\n"
-            "1: b 1f\n"
-            "1: b 1f\n"
-            "1:\n"
-            : : : "memory");
+//    __asm volatile (
+//            "b 1f\n"
+//            "1: b 1f\n"
+//            "1: b 1f\n"
+//            "1: b 1f\n"
+//            "1: b 1f\n"
+//            "1: b 1f\n"
+//            "1:\n"
+//            : : : "memory");
 
     _buff_ctrl->AVAILABLE_0 = 1;
 }
-

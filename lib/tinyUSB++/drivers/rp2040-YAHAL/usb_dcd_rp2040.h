@@ -1,9 +1,18 @@
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
 //
-// Created by andreas on 15.08.23.
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-
-#ifndef _USB_DCD_RP2040_H
-#define _USB_DCD_RP2040_H
+#ifndef TUPP_USB_DCD_RP2040_H_
+#define TUPP_USB_DCD_RP2040_H_
 
 #include "usb_dcd_interface.h"
 #include "usb_endpoint_rp2040.h"
@@ -68,4 +77,4 @@ private:
 
 };
 
-#endif //USB_DEV_LOWLEVEL_USB_DCD_RP2040_H
+#endif // TUPP_USB_DCD_RP2040_H_

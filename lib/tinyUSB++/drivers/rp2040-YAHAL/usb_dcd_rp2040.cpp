@@ -1,7 +1,16 @@
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
 //
-// Created by andreas on 15.08.23.
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-
 #include "usb_dcd_rp2040.h"
 #include "usb_endpoint_rp2040.h"
 #include <cstring>
@@ -36,12 +45,12 @@ usb_dcd_rp2040::usb_dcd_rp2040()
     USBCTRL_REGS_SET.SIE_CTRL.EP0_INT_1BUF <<= 1;
 
     // Enable interrupts ...
-    // ... when a buffer is done,
-    // ... when the bus is reset, and
     // ... when a setup packet is received
-    USBCTRL_REGS_SET.INTE.BUS_RESET   <<= 1;
-    USBCTRL_REGS_SET.INTE.BUFF_STATUS <<= 1;
-    USBCTRL_REGS_SET.INTE.SETUP_REQ   <<= 1;
+    // ... when the bus is reset, and
+    // ... when a buffer is done,
+    USBCTRL_REGS_SET.INTE.SETUP_REQ     <<= 1;
+    USBCTRL_REGS_SET.INTE.BUS_RESET     <<= 1;
+    USBCTRL_REGS_SET.INTE.BUFF_STATUS   <<= 1;
 
     // Enable USB interrupt
     NVIC_ClearPendingIRQ(USBCTRL_IRQ_IRQn);
@@ -105,12 +114,18 @@ usb_endpoint * usb_dcd_rp2040::create_endpoint(
     return nullptr;
 }
 
+
 extern "C" {
 void USBCTRL_IRQ_Handler(void) {
     // Setup packet received
     if (USBCTRL_REGS.INTS.SETUP_REQ) {
         USBCTRL_REGS_CLR.SIE_STATUS.SETUP_REC = 1;
         usb_dcd_rp2040::inst().setup_handler((USB::setup_packet_t *)&USBCTRL_DPRAM);
+    }
+    // Bus is reset
+    if (USBCTRL_REGS.INTS.BUS_RESET) {
+        USBCTRL_REGS_CLR.SIE_STATUS.BUS_RESET = 1;
+        usb_dcd_rp2040::inst().bus_reset_handler();
     }
     // Buffer status, one or more buffers have completed
     if (USBCTRL_REGS.INTS.BUFF_STATUS) {
@@ -127,11 +142,6 @@ void USBCTRL_IRQ_Handler(void) {
             }
             bit <<= 1;
         }
-    }
-    // Bus is reset
-    if (USBCTRL_REGS.INTS.BUS_RESET) {
-        USBCTRL_REGS_CLR.SIE_STATUS.BUS_RESET = 1;
-        usb_dcd_rp2040::inst().bus_reset_handler();
     }
 }
 }

@@ -97,15 +97,15 @@ protected:
 
     virtual void trigger_transfer(uint16_t len) = 0;
 
-    uint8_t *             _data_ptr{};
-    uint16_t              _data_len{};
-    uint8_t *             _current_ptr{};
-    uint16_t              _current_len{};
-    uint16_t              _bytes_left{};
+    uint8_t *             _data_ptr {};
+    uint16_t              _data_len {};
+    uint8_t *             _current_ptr {};
+    uint16_t              _current_len {};
+    uint16_t              _bytes_left {};
 
     volatile bool         _active {false};
 
-    uint8_t *             _hw_buffer;
+    uint8_t *             _hw_buffer {};
 
     virtual ~usb_endpoint() = default;
 

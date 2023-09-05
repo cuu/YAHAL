@@ -14,11 +14,7 @@
 #ifndef TUPP_USB_CDC_COMMON_H_
 #define TUPP_USB_CDC_COMMON_H_
 
-#ifdef TUPP_USB_COMMON_H_
-#warning "usb_cdc_common.h has to be included before usb_common.h!"
-#endif
-
-#include <cstdint>
+#include "usb_common.h"
 
 //////////////////////////////
 // CDC class specific requests
@@ -84,7 +80,6 @@
     CDC_COMM_PROTOCOL_AT_3GPP_27007             = 0x05, \
     CDC_COMM_PROTOCOL_AT_CDMA                   = 0x06, \
     CDC_COMM_PROTOCOL_ETHERNET_EMULATION_MODEL  = 0x07, \
-                                                        \
     CDC_DATA_PROTOCOL_ISDN_BRI                  = 0x30, \
     CDC_DATA_PROTOCOL_HDLC                      = 0x31, \
     CDC_DATA_PROTOCOL_TRANSPARENT               = 0x32, \
@@ -103,7 +98,6 @@ namespace USB::CDC {
     //////////////////////////////////
     // Functional Descriptor base type
     //////////////////////////////////
-
     enum class func_desc_type_t : uint8_t {
         CS_INTERFACE    = 0x24,
         CS_ENDPOINT     = 0x25
@@ -212,7 +206,6 @@ namespace USB::CDC {
     /////////////////////////////////////////////////////
     // Direct Line Management (DLM) Functional Descriptor
     /////////////////////////////////////////////////////
-
     union __attribute__((__packed__)) bmDlmCapabilities_t {
         struct __attribute__((__packed__)) {
             uint8_t pulse_support       : 1;
@@ -252,6 +245,61 @@ namespace USB::CDC {
         uint8_t         bDataBits  { 8 };
     };
     static_assert(sizeof(line_coding_t) == 7);
+
+    ///////////////////////////////////
+    // CDC class specific notifications
+    ///////////////////////////////////
+    enum class bNotification_t : uint8_t  {
+        NOTIF_NETWORK_CONNECTION    = 0x00,
+        NOTIF_RESPONSE_AVAILABLE    = 0x01,
+        NOTIF_AUX_JACK_HOOK_STATE   = 0x08,
+        NOTIF_RING_DETECT           = 0x09,
+        NOTIF_SERIAL_STATE          = 0x20,
+        NOTIF_CALL_STATE_CHANGE     = 0x28,
+        NOTIF_LINE_STATE_CHANGE     = 0x23
+    };
+
+    struct __attribute__((__packed__)) notification_t {
+        bmRequestType_t     bmRequestType;
+        bNotification_t     bNotification;
+        uint16_t            wValue;
+        uint16_t            wIndex;
+        uint16_t            wLength;
+    };
+    static_assert(sizeof(notification_t) == 8);
+
+    ///////////////////////////////
+    // Serial State notification //
+    ///////////////////////////////
+    union __attribute__((__packed__)) bmUartState_t {
+        struct __attribute__((__packed__)) {
+            uint16_t    bRxCarrier_DCD  : 1 ;
+            uint16_t    bTxCarrier_DSR  : 1 ;
+            uint16_t    bBreak          : 1 ;
+            uint16_t    bRingSignal     : 1 ;
+            uint16_t    bFraming        : 1 ;
+            uint16_t    bParity         : 1 ;
+            uint16_t    bOverRun        : 1 ;
+            uint16_t    reserved        : 9 ;
+        };
+        uint16_t val;
+    };
+
+    struct __attribute__((__packed__)) notif_serial_state_t : public notification_t {
+        notif_serial_state_t() {
+            // Set all known values
+            bmRequestType.direction = direction_t::DIR_IN;
+            bmRequestType.type      = type_t::TYPE_CLASS;
+            bmRequestType.recipient = recipient_t::REC_INTERFACE;
+            bNotification   = bNotification_t::NOTIF_SERIAL_STATE;
+            wValue          = 0;
+            wIndex          = 0;
+            wLength         = 2;
+            bmUartState.val = 0;
+        }
+        bmUartState_t   bmUartState;
+    };
+    static_assert(sizeof(notif_serial_state_t) == 10);
 
 }   // namespace USB::CDC
 

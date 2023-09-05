@@ -14,14 +14,7 @@
 #ifndef TUPP_USB_COMMON_H_
 #define TUPP_USB_COMMON_H_
 
-#ifndef TUPP_USB_CDC_COMMON_H_
-#define CDC_CS_REQUESTS
-#define CDC_CS_DEVICE_CLASSES
-#define CDC_CS_INTERFACE_CLASSES
-#define CDC_CS_SUBCLASSES
-#define CDC_CS_PROTOCOLS
-#endif
-
+#include "usb_cdc_defines.h"
 #include <cstdint>
 
 namespace USB {

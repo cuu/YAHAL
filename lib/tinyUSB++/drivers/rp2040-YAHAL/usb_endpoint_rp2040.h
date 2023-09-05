@@ -1,4 +1,16 @@
-
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
+//
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
 #ifndef TUPP_USB_ENDPOINT_RP2040_H_
 #define TUPP_USB_ENDPOINT_RP2040_H_
 
@@ -43,7 +55,7 @@ private:
 
     uint32_t              _mask;
 
-    void trigger_transfer(uint16_t len);
+    void trigger_transfer(uint16_t len) override;
 };
 
 #endif  // TUPP_USB_ENDPOINT_RP2040_H_

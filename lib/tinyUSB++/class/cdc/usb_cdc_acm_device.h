@@ -25,6 +25,7 @@
 #include "usb_fd_call_mgmt.h"
 #include "usb_fd_acm.h"
 #include "usb_fd_union.h"
+#include "fifo.h"
 #include <functional>
 #include <utility>
 
@@ -33,22 +34,24 @@ public:
     usb_cdc_acm_device(usb_device_controller & controller,
                        usb_configuration & configuration);
 
-    inline void set_receive_handler(std::function<void(uint8_t *,uint16_t)> h) {
-        _receive_handler = std::move(h);
-    }
-    inline void set_line_coding_handler(std::function<void(uint8_t *,uint16_t)> h) {
-        _line_coding_handler = std::move(h);
-    }
-    inline void set_control_line_handler(std::function<void(bool dtr, bool rts)> h) {
-        _control_line_handler = std::move(h);
-    }
-    inline void set_break_handler(std::function<void(uint16_t)> h) {
-        _break_handler = std::move(h);
-    }
+    // Reading data from this device. Parameters are the
+    // buffer and the maximum size of bytes to be read.
+    // Return value is the actual amount of data read.
+    uint16_t read(uint8_t *buf, uint16_t max_len);
 
-    inline void transmit(uint8_t *buf, uint16_t len) {
-        _ep_data_in->start_transfer(buf, len);
-    }
+    // Write data to this device. THe buffer and its size
+    // are passed as parameters. The return value signals
+    // if the writing was successful. Either all or no data
+    // is written!
+    bool write(uint8_t *buf, uint16_t len);
+
+    // Send a serial state notification to this device.
+    void notify_serial_state(const USB::CDC::bmUartState_t & state);
+
+    // Callback handlers
+    std::function<void(uint8_t *,uint16_t)> line_coding_handler;
+    std::function<void(bool dtr, bool rts)> control_line_handler;
+    std::function<void(uint16_t millis)>    break_handler;
 
     // Read only version of line coding information
     const CDC::line_coding_t & line_coding;
@@ -63,23 +66,22 @@ private:
     usb_fd_call_mgmt            _call_mgmt_fd{_if_ctrl};
     usb_fd_acm                  _acm_fd      {_if_ctrl};
     usb_fd_union                _union_fd    {_if_ctrl};
-public:
+
     // USB endpoints
-    usb_endpoint *    _ep_ctrl_in  { nullptr };
-    usb_endpoint *    _ep_data_in  { nullptr };
-    usb_endpoint *    _ep_data_out { nullptr };
-private:
-    // Callback handlers
-    std::function<void(uint8_t *,uint16_t)> _receive_handler;
-    std::function<void(uint8_t *,uint16_t)> _line_coding_handler;
-    std::function<void(bool dtr, bool rts)> _control_line_handler;
-    std::function<void(uint16_t millis)> _break_handler;
+    usb_endpoint *              _ep_ctrl_in  {nullptr};
+    usb_endpoint *              _ep_data_in  {nullptr};
+    usb_endpoint *              _ep_data_out {nullptr};
 
     // Line coding information
     CDC::line_coding_t          _line_coding;
 
-    // Internal data buffer
-    uint8_t                     _buffer[64];
+    // Fifos for received data and data to be transmitted.
+    fifo<uint8_t, 256>          _received;
+    fifo<uint8_t, 256>          _transmit;
+
+    // Internal data buffers
+    uint8_t                     _buffer_out[64] {0};
+    uint8_t                     _buffer_in [64] {0};
 };
 
 #endif  // TUPP_USB_CDC_ACM_DEVICE_H

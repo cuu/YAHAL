@@ -26,8 +26,7 @@ using enum USB::direction_t;
 usb_cdc_acm_device::usb_cdc_acm_device(
         usb_device_controller & controller,
         usb_configuration & configuration)
-:   line_coding(_line_coding),
-    _configuration(configuration)
+: line_coding(_line_coding), _configuration(configuration)
 {
     // USB interface association descriptor config
     //////////////////////////////////////////////
@@ -66,59 +65,76 @@ usb_cdc_acm_device::usb_cdc_acm_device(
 
     // USB endpoints
     ////////////////
-    _ep_ctrl_in  = controller.create_endpoint(_if_ctrl, DIR_IN,  TRANS_INTERRUPT, 64, 10);
     _ep_data_in  = controller.create_endpoint(_if_data, DIR_IN,  TRANS_BULK, 64, 0);
     _ep_data_out = controller.create_endpoint(_if_data, DIR_OUT, TRANS_BULK, 64, 0);
+    _ep_ctrl_in  = controller.create_endpoint(_if_ctrl, DIR_IN,  TRANS_INTERRUPT, 64, 10);
 
     // Prepare new request to receive data
     //////////////////////////////////////
-    _ep_data_out->start_transfer(_buffer, 64);
+    _ep_data_out->start_transfer(_buffer_out, 64);
 
-    // Endpoint handler
-    ///////////////////
-    _ep_data_out->data_handler = [&](uint8_t *buf, uint16_t len){
-        // Call user handler
-        if (_receive_handler) _receive_handler(buf, len);
+    // Endpoint handlers
+    ////////////////////
+    _ep_data_out->data_handler = [&](uint8_t *buf, uint16_t len) {
+        // Check if we need to stop incoming data.
+        if (_received.available_put() < 2 * _ep_data_out->descriptor.wMaxPacketSize) {
+            _ep_data_out->send_NAK(true);
+        }
+        // Copy all available bytes to the fifo
+        for (int i=0; i < len; ++i) assert(_received.put(buf[i]));
         // Trigger a new receive
-        _ep_data_out->start_transfer(_buffer, 64);
+        _ep_data_out->start_transfer(_buffer_out, 64);
+    };
+
+    _ep_data_in->data_handler = [&](uint8_t *, uint16_t len) {
+        // Check if we have more data to send
+        for(len = 0; len < _ep_data_in->descriptor.wMaxPacketSize; ++len) {
+            if (!_transmit.get(_buffer_in[len])) {
+                break;
+            }
+        }
+        // Trigger a new transmit
+        if (len) {
+            _ep_data_in->start_transfer(_buffer_in, len);
+        }
     };
 
     // Handler for CDC ACM specific requests
     ////////////////////////////////////////
     _if_ctrl.setup_handler = [&](USB::setup_packet_t *pkt) {
-        printf("Received CDC command 0x%02x\n", (int)pkt->bRequest);
         switch(pkt->bRequest) {
-            case USB::bRequest_t::CDC_REQ_SET_LINE_CODING: {
+            case bRequest_t::CDC_REQ_SET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
-                controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
-                // Set the user handler
-                controller._ep0_out->data_handler = _line_coding_handler;
-                // Status stage
+                // Prepare status stage
                 controller._ep0_in->send_zlp_data1();
+                // Set the user handler
+                controller._ep0_out->data_handler = line_coding_handler;
+                // Receive line coding info
+                controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 break;
             }
-            case USB::bRequest_t::CDC_REQ_GET_LINE_CODING: {
+            case bRequest_t::CDC_REQ_GET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
                 controller._ep0_in->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 // Status stage
                 controller._ep0_out->send_zlp_data1();
                 break;
             }
-            case USB::bRequest_t::CDC_REQ_SET_CONTROL_LINE_STATE: {
-                // Call user handler
-                if (_control_line_handler) {
-                    _control_line_handler(pkt->wValue & 0x0001,
-                                          pkt->wValue & 0x0002);
-                }
-                // Status stage
+            case bRequest_t::CDC_REQ_SET_CONTROL_LINE_STATE: {
+                // Prepare status stage
                 controller._ep0_in->send_zlp_data1();
+                // Call user handler
+                if (control_line_handler) {
+                    control_line_handler(pkt->wValue & 0x0001,
+                                         pkt->wValue & 0x0002);
+                }
                 break;
             }
-            case USB::bRequest_t::CDC_REQ_SEND_BREAK: {
-                // Call user handler
-                if (_break_handler) _break_handler(pkt->wValue);
-                // Status stage
+            case bRequest_t::CDC_REQ_SEND_BREAK: {
+                // Prepare status stage
                 controller._ep0_in->send_zlp_data1();
+                // Call user handler
+                if (break_handler) break_handler(pkt->wValue);
                 break;
             }
             default: {
@@ -126,4 +142,40 @@ usb_cdc_acm_device::usb_cdc_acm_device(
             }
         }
     };
+}
+
+uint16_t usb_cdc_acm_device::read(uint8_t *buf, uint16_t max_len) {
+    uint8_t  val = 0;
+    uint16_t len;
+    for (len=0; len < max_len; ++len) {
+        if (_received.get(val)) {
+            buf[len] = val;
+        } else break;
+    }
+    // Check if we can receive more data
+    if (_received.available_get() < 2 * _ep_data_out->descriptor.wMaxPacketSize) {
+        _ep_data_out->send_NAK(false);
+    }
+    return len;
+}
+
+bool usb_cdc_acm_device::write(uint8_t *buf, uint16_t len) {
+    if (_transmit.available_put() < len) {
+        return false;
+    }
+    for(int i=0; i < len; ++i) {
+        _transmit.put(buf[i]);
+    }
+    // Check if we need a new transfer
+    if (!_ep_data_in->is_active()) {
+        _ep_data_in->data_handler(nullptr, 0);
+    }
+    return true;
+}
+
+void usb_cdc_acm_device::notify_serial_state(const USB::CDC::bmUartState_t & state) {
+    CDC::notif_serial_state_t serial_state;
+    serial_state.wIndex         = _if_ctrl.descriptor.bInterfaceNumber;
+    serial_state.bmUartState    = state;
+    _ep_ctrl_in->start_transfer((uint8_t *)&serial_state, sizeof(serial_state));
 }
