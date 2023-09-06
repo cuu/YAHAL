@@ -46,4 +46,14 @@
 #define TUPP_MAX_EP_PER_INTERFACE 5
 #endif
 
+// Default packet size for USB endpoint
+#ifndef TUPP_DEFAULT_PAKET_SIZE
+#define TUPP_DEFAULT_PAKET_SIZE 64
+#endif
+
+// Default polling interval for USB endpoint
+#ifndef TUPP_DEFAULT_POLL_INTERVAL
+#define TUPP_DEFAULT_POLL_INTERVAL 10
+#endif
+
 #endif // _TUPP_USB_CONFIG_H_

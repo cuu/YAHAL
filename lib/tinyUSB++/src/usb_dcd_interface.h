@@ -6,8 +6,9 @@
 using std::function;
 
 #include "usb_common.h"
-class usb_endpoint;
+#include "usb_config.h"
 
+class usb_endpoint;
 class usb_interface;
 
 using namespace USB;
@@ -35,8 +36,8 @@ public:
     virtual usb_endpoint * create_endpoint(
                                  uint8_t         addr,
                                  ep_attributes_t type,
-                                 uint16_t        packet_size = 64,
-                                 uint8_t         interval = 0,
+                                 uint16_t        packet_size = TUPP_DEFAULT_PAKET_SIZE,
+                                 uint8_t         interval    = TUPP_DEFAULT_POLL_INTERVAL,
                                  usb_interface * interface = nullptr) = 0;
 
     // Create a new endpoint based on its direction.
@@ -44,8 +45,8 @@ public:
     virtual usb_endpoint * create_endpoint(
                                  direction_t     direction,
                                  ep_attributes_t type,
-                                 uint16_t        packet_size = 64,
-                                 uint8_t         interval = 0,
+                                 uint16_t        packet_size = TUPP_DEFAULT_PAKET_SIZE,
+                                 uint8_t         interval    = TUPP_DEFAULT_POLL_INTERVAL,
                                  usb_interface * interface = nullptr) = 0;
 
     virtual usb_endpoint * addr_to_ep(uint8_t addr) = 0;

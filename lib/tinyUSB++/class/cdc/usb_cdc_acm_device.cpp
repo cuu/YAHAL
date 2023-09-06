@@ -65,13 +65,13 @@ usb_cdc_acm_device::usb_cdc_acm_device(
 
     // USB endpoints
     ////////////////
-    _ep_data_in  = controller.create_endpoint(_if_data, DIR_IN,  TRANS_BULK, 64, 0);
-    _ep_data_out = controller.create_endpoint(_if_data, DIR_OUT, TRANS_BULK, 64, 0);
-    _ep_ctrl_in  = controller.create_endpoint(_if_ctrl, DIR_IN,  TRANS_INTERRUPT, 64, 10);
+    _ep_data_in  = controller.create_endpoint(_if_data, DIR_IN,  TRANS_BULK);
+    _ep_data_out = controller.create_endpoint(_if_data, DIR_OUT, TRANS_BULK);
+    _ep_ctrl_in  = controller.create_endpoint(_if_ctrl, DIR_IN,  TRANS_INTERRUPT);
 
     // Prepare new request to receive data
     //////////////////////////////////////
-    _ep_data_out->start_transfer(_buffer_out, 64);
+    _ep_data_out->start_transfer(_buffer_out, _ep_data_out->descriptor.wMaxPacketSize);
 
     // Endpoint handlers
     ////////////////////
@@ -83,7 +83,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
         // Copy all available bytes to the fifo
         for (int i=0; i < len; ++i) assert(_received.put(buf[i]));
         // Trigger a new receive
-        _ep_data_out->start_transfer(_buffer_out, 64);
+        _ep_data_out->start_transfer(_buffer_out, _ep_data_out->descriptor.wMaxPacketSize);
     };
 
     _ep_data_in->data_handler = [&](uint8_t *, uint16_t len) {

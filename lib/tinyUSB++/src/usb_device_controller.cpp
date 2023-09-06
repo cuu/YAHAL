@@ -31,29 +31,24 @@ using enum USB::bRequest_t;
 using enum USB::bDescriptorType_t;
 using enum USB::recipient_t;
 using enum USB::ep_attributes_t;
+using enum USB::direction_t;
 
 usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_device & device)
     : active_configuration(_active_configuration), _ep0_in(nullptr), _ep0_out(nullptr),
      _driver(driver), _device(device), _active_configuration(0), _buf{0}
 {
-    // Create standard endpoints 0
-    _ep0_in  = _driver.create_endpoint(0x80, TRANS_CONTROL);
-    _ep0_out = _driver.create_endpoint(0x00, TRANS_CONTROL);
+    // Create standard endpoints 0. Since these are the first
+    // two endpoints, address 0 will be used automatically
+    _ep0_in  = _driver.create_endpoint(DIR_IN,  TRANS_CONTROL);
+    _ep0_out = _driver.create_endpoint(DIR_OUT, TRANS_CONTROL);
 
     // These handlers are not necessary - only for debugging
-    _ep0_in->data_handler = [&](uint8_t *, uint16_t len) {
+//    _ep0_in->data_handler = [&](uint8_t *, uint16_t) {
 //        printf("EP 80 IN handler - %d sent to host!!\n", len);
-    };
-    _ep0_out->data_handler = [](uint8_t *, uint16_t len) {
+//    };
+//    _ep0_out->data_handler = [](uint8_t *, uint16_t) {
 //        printf("EP 00 OUT handler - %d received from host\n", len);
-    };
-
-    // Be ready to receive s.th. from host
-//    _ep0_out->start_transfer(nullptr, 64);
-
-    // Send NAK for all requests unless we are ready to handle
-    // the OUT packets
-//    _ep0_out->send_NAK(true);
+//    };
 
     ////////////////////////////
     // Handler for USB bus reset

@@ -16,6 +16,7 @@
 
 class usb_interface;
 #include "usb_common.h"
+#include "usb_config.h"
 #include <cassert>
 #include <cstdint>
 #include <functional>
@@ -88,8 +89,8 @@ protected:
     usb_endpoint(
             uint8_t  addr,
             USB::ep_attributes_t  transfer_type,
-            uint16_t packet_size = 64,
-            uint8_t  interval    = 0,
+            uint16_t packet_size = TUPP_DEFAULT_PAKET_SIZE,
+            uint8_t  interval    = TUPP_DEFAULT_POLL_INTERVAL,
             usb_interface * interface = nullptr);
 
     void handle_buffer_in(uint16_t len);

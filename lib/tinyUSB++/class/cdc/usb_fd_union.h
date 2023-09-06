@@ -29,11 +29,11 @@ public:
         _descriptor.bControlInterface = val;
     }
     inline void set_bSubordinateInterface0(uint8_t val) {
-        _descriptor.bSubordinateInterface0 = val;
+        _descriptor.bSubordinateInterface[0] = val;
     }
 
 private:
-    USB::CDC::func_desc_union_t _descriptor {};
+    USB::CDC::func_desc_union_t<1> _descriptor {};
 };
 
 #endif // TUPP_USB_FD_UNION_H_

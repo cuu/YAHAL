@@ -17,8 +17,8 @@
 class usb_interface;
 
 #include "usb_endpoint.h"
-
 #include "RP2040.h"
+
 using namespace _USBCTRL_DPRAM_;
 using namespace _USBCTRL_REGS_;
 using namespace _RESETS_;

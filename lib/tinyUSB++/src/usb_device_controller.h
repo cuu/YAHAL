@@ -14,8 +14,6 @@
 #ifndef TUPP_USB_DEVICE_CONTROLLER_H_
 #define TUPP_USB_DEVICE_CONTROLLER_H_
 
-#define MAX_DESCRIPTOR_SIZE 256
-
 class usb_device;
 #include "usb_config.h"
 #include "usb_dcd_interface.h"
@@ -30,8 +28,8 @@ public:
             usb_interface & interface,
             uint8_t         addr,
             ep_attributes_t type,
-            uint16_t        packet_size,
-            uint8_t         interval) {
+            uint16_t        packet_size = TUPP_DEFAULT_PAKET_SIZE,
+            uint8_t         interval    = TUPP_DEFAULT_POLL_INTERVAL) {
         return _driver.create_endpoint(addr, type, packet_size, interval, &interface);
     }
 
@@ -40,8 +38,8 @@ public:
             usb_interface & interface,
             direction_t     direction,
             ep_attributes_t type,
-            uint16_t        packet_size,
-            uint8_t         interval) {
+            uint16_t        packet_size = TUPP_DEFAULT_PAKET_SIZE,
+            uint8_t         interval    = TUPP_DEFAULT_POLL_INTERVAL) {
         return _driver.create_endpoint(direction, type, packet_size, interval, &interface);
     }
 
