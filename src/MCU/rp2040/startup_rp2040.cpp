@@ -34,6 +34,13 @@ int FUN() __attribute__ ((weak, alias(#FUN_ALIAS)));
 extern void     __cmsis_start(void);
 extern uint32_t __StackTop;
 
+/**********************/
+/* XOSC configuration */
+/**********************/
+#define XOSC_FREQUENCY  12000000
+#define XOSC_STARTUP_MS 10
+#define XOSC_STARTUP    (XOSC_FREQUENCY * XOSC_STARTUP_MS / 1000) / 256
+
 typedef void (*pFunc)(void);
 
 // Forward declaration of the implemented handlers.
@@ -159,7 +166,7 @@ void __attribute__((naked, noreturn)) Reset_Handler(void)
 
     // Start 12MHz crystal oscillator
     XOSC.CTRL.FREQ_RANGE              = CTRL_FREQ_RANGE__1_15MHZ;
-    XOSC.STARTUP                      = 50;
+    XOSC.STARTUP                      = XOSC_STARTUP;
     XOSC.CTRL.ENABLE                  = CTRL_ENABLE__ENABLE;
     while (XOSC.STATUS.ENABLED == 0) {}
 
