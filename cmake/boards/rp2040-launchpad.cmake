@@ -16,6 +16,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINKER_SCRIPT_FLAGS}")
 # Debug interface: The RP2040 LP has a
 # buildin picoprobe debug probe, which
 # is supported by OpenOCD.
+#    "-f" "interface/cmsis-dap.cfg" "-c" "adapter speed 5000" "-f" "target/rp2040-launchpad.cfg"
+#    "-f" "board/rp2040_launchpad.cfg"
 set(OPENOCD_CONFIG 
-    "-f" "interface/picoprobe.cfg" "-f" "target/rp2040.cfg"
+    "-d1" "-f" "interface/cmsis-dap.cfg" "-c" "adapter speed 5000" "-f" "target/rp2040.cfg"
     CACHE STRING "OpenOCD configuration")
