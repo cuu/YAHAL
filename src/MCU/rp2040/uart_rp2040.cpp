@@ -4,6 +4,8 @@
 #include <cassert>
 #include <cstring>
 
+using namespace _UART0_;
+using namespace _UART1_;
 using namespace _IO_BANK0_;
 using namespace _RESETS_;
 
@@ -85,7 +87,7 @@ void uart_rp2040::putc(char c) {
 }
 
 int uart_rp2040::puts(const char *s) {
-    unsigned int len = 0;
+    int len = 0;
     while(*s) {
         putc(*s++);
         len++;
@@ -106,11 +108,11 @@ void uart_rp2040::uartMode(uart_mode_t mode) {
         _uart->UARTLCR_H.PEN = 0;
     }
     if (mode & UART::EVEN_PARITY) {
-        _uart->UARTLCR_H.PEN = 0;
+        _uart->UARTLCR_H.PEN = 1;
         _uart->UARTLCR_H.EPS = 1;
     }
     if (mode & UART::ODD_PARITY) {
-        _uart->UARTLCR_H.PEN = 0;
+        _uart->UARTLCR_H.PEN = 1;
         _uart->UARTLCR_H.EPS = 0;
     }
     if (mode & UART::STOPBITS_1) {
@@ -134,6 +136,7 @@ void uart_rp2040::uartAttachIrq(function<void(char)> f) {
     if (!_init) init();
     _intHandler[_index] = f;
     // Enable RX interrupt
+    _uart_set->UARTIMSC.RXIM = 1;
     _uart_set->UARTIMSC.RTIM = 1;
     // Enable NVIC interrupt
     NVIC_EnableIRQ((IRQn_Type)(UART0_IRQ_IRQn + _index));
@@ -144,18 +147,22 @@ void uart_rp2040::uartDetachIrq () {
     // Disable NVIC interrupt
     NVIC_DisableIRQ((IRQn_Type)(UART0_IRQ_IRQn + _index));
     // Disable RX interrupt
+    _uart_clr->UARTIMSC.RXIM = 1;
     _uart_clr->UARTIMSC.RTIM = 1;
     // Clear pending interrupts
     _uart_set->UARTICR.RXIC = 1;
+    _uart_set->UARTICR.RTIC = 1;
     // Clear handler
     _intHandler[_index] = nullptr;
 }
 
 void uart_rp2040::uartEnableIrq () {
+    _uart_set->UARTIMSC.RXIM = 1;
     _uart_set->UARTIMSC.RTIM = 1;
 }
 
 void uart_rp2040::uartDisableIrq() {
+    _uart_clr->UARTIMSC.RXIM = 1;
     _uart_clr->UARTIMSC.RTIM = 1;
 }
 
@@ -164,11 +171,15 @@ void uart_rp2040::uartDisableIrq() {
 extern "C" {
 
 void UART0_IRQ_Handler(void) {
-    uart_rp2040::_intHandler[0]( UART0.UARTDR.DATA );
+    while(!UART0.UARTFR.RXFE) {
+        uart_rp2040::_intHandler[0](UART0.UARTDR.DATA);
+    }
 }
 
 void UART1_IRQ_Handler(void) {
-    uart_rp2040::_intHandler[1]( UART1.UARTDR.DATA );
+    while(!UART1.UARTFR.RXFE) {
+        uart_rp2040::_intHandler[1](UART1.UARTDR.DATA);
+    }
 }
 
 } // extern "C"

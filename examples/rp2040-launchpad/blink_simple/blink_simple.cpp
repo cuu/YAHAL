@@ -21,7 +21,7 @@
 int main(void)
 {
     // Use P1.0 as output
-    gpio_rp2040_pin led( 29 );
+    gpio_rp2040_pin led( 13 );
     led.gpioMode( GPIO::OUTPUT );
 
     // This loop will never end ...

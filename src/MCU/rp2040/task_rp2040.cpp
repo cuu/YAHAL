@@ -153,6 +153,7 @@ bool task::isUsingFloat() const {
 
 extern "C" {
 
+void SysTick_Handler(void) __attribute__((weak));
 void SysTick_Handler(void) {
     task::_tick_handler();
 }
@@ -221,8 +222,8 @@ void SVC_Handler(void) {
 
 void SVC_Handler_C(uint32_t * args) {
     // Get the SVC argument
-    uint16_t * pc = (uint16_t *)args[6];
-    uint16_t   svc_arg = pc[-1] & 0xff;
+    auto *   pc = (uint16_t *)args[6];
+    uint16_t svc_arg = pc[-1] & 0xff;
 
     // uint32_t p0 = args[0];
     // uint32_t p1 = args[1];
