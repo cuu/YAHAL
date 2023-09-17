@@ -174,8 +174,10 @@ bool usb_cdc_acm_device::write(uint8_t *buf, uint16_t len) {
 }
 
 void usb_cdc_acm_device::notify_serial_state(const USB::CDC::bmUartState_t & state) {
+    // Create serial state object and set attributes
     CDC::notif_serial_state_t serial_state;
     serial_state.wIndex         = _if_ctrl.descriptor.bInterfaceNumber;
     serial_state.bmUartState    = state;
+    // Send notification to host
     _ep_ctrl_in->start_transfer((uint8_t *)&serial_state, sizeof(serial_state));
 }

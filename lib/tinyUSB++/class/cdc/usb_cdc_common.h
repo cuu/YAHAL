@@ -210,7 +210,7 @@ namespace USB::CDC {
 
     struct __attribute__((__packed__)) notif_serial_state_t : public notification_t {
         notif_serial_state_t() {
-            // Set all known values
+            // Set all known values in base class
             bmRequestType.direction = direction_t::DIR_IN;
             bmRequestType.type      = type_t::TYPE_CLASS;
             bmRequestType.recipient = recipient_t::REC_INTERFACE;
@@ -220,6 +220,7 @@ namespace USB::CDC {
             wLength         = 2;
             bmUartState.val = 0;
         }
+        // Notification specific attributes
         bmUartState_t   bmUartState;
     };
     static_assert(sizeof(notif_serial_state_t) == 10);
