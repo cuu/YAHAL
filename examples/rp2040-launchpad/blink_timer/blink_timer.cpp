@@ -29,7 +29,7 @@
 // LED. The other timer is used to implement a delay-
 // method, which can be used in the user application.
 
-#include "gpio_rp2040.h"
+#include "ws2812_rp2040.h"
 #include "timer_rp2040.h"
 
 void delay(int us) {
@@ -52,17 +52,18 @@ void delay(int us) {
 int main(void)
 {
     // Setup two LEDs on the launchpad for blinking
-    gpio_rp2040_pin led1( 29); // Left red LED
-    gpio_rp2040_pin led2( 3 ); // red RGB LED
-    led1.gpioMode( GPIO::OUTPUT );
-    led2.gpioMode( GPIO::OUTPUT );
+    ws2812_rp2040 leds(29, 8);
+    led_rgb_interface & led_red = leds[0];
+    led_rgb_interface & led_blue = leds[1];
+    led_red.set_on_color(0x040000);
+    led_blue.set_on_color(0x000010);
 
     // Setup the first timer with a timeout of 500ms
     // in periodic mode
     timer_rp2040 timer1(1);
     timer1.setPeriod(500000, TIMER::PERIODIC);
     // Set the callback method to toggle the LED
-    timer1.setCallback([&]() { led1.gpioToggle(); });
+    timer1.setCallback([&]() { led_red.toggle(); });
     timer1.start();
 
     // The second timer is used within the
@@ -78,7 +79,7 @@ int main(void)
     // running in PERIODC mode, the interval is
     // exactly 500ms!
     while(true) {
-        delay(500000);      // wait 500ms
-        led2.gpioToggle();  // toggle the LED
+        delay(500000);        // wait 500ms
+        led_blue.toggle();    // toggle the LED
     }
 }

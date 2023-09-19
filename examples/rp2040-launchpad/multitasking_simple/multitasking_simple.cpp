@@ -22,37 +22,41 @@
 // a more complete and fully featured multitasking
 // kernel, use YAHAL's task class.
 
-#include "gpio_rp2040.h"
+#include "ws2812_rp2040.h"
 #include "OS.h"
+
+#define WS2812_PIN 29
+
+ws2812_rp2040 leds(WS2812_PIN, 8);
+led_rgb_interface & led_red  = leds[0];
+led_rgb_interface & led_blue = leds[1];
 
 // Simple delay function
 void delay(int ms) {
-    for(int i=0; i < 1600 * ms; ++i) ;
+    for(int i=0; i < 3167 * ms; ++i) ;
 }
 
 // simple first task: Blink red LED
 void task1(void) {
-    gpio_rp2040_pin red_led( 2 );
-    red_led.gpioMode(GPIO::OUTPUT);
     while(true) {
         delay(500);
-        red_led.gpioToggle();
+        led_red.toggle();
     }
 }
 
 // simple second task: Blink blue LED
 void task2(void) {
-    gpio_rp2040_pin blue_led( 3 );
-    blue_led.gpioMode(GPIO::OUTPUT);
     while(true) {
         delay(300);
-        blue_led.gpioToggle();
+        led_blue.toggle();
     }
 }
 
-
 int main(void)
 {
+    led_red.set_on_color (0x040000);
+    led_blue.set_on_color(0x000010);
+    
     // Add two tasks to our mini-OS
     OS_add_task(task1);
     OS_add_task(task2);
