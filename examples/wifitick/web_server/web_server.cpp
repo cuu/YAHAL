@@ -44,12 +44,12 @@ const char *password = "your WLAN passwort";
 
 ESP8266WebServer server(80);
 
-const int led = 2;
+const int led = 4;
 
 void setup(void)
 {
     pinMode(led, OUTPUT);
-    digitalWrite(led, 1);
+    digitalWrite(led, 0);
     Serial.begin(115200);
     WiFi.begin(ssid, password);
     Serial.println("");
@@ -114,7 +114,7 @@ void drawGraph()
 
 void handleRoot()
 {
-    digitalWrite(led, 0);
+    digitalWrite(led, 1);
     char temp[400];
     int sec = millis() / 1000;
     int min = sec / 60;
@@ -136,12 +136,12 @@ void handleRoot()
         "</body>"
     "</html>",  hr, min % 60, sec % 60);
     server.send(200, "text/html", temp);
-    digitalWrite(led, 1);
+    digitalWrite(led, 0);
 }
 
 void handleNotFound()
 {
-    digitalWrite(led, 0);
+    digitalWrite(led, 1);
     String message = "File Not Found\n\n";
     message += "URI: ";
     message += server.uri();
@@ -157,6 +157,6 @@ void handleNotFound()
     }
 
     server.send(404, "text/plain", message);
-    digitalWrite(led, 1);
+    digitalWrite(led, 0);
 }
 
