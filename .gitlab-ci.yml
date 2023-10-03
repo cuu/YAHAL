@@ -10,3 +10,14 @@ msp432_examples:
     - make -j 4
   tags:
     - shared
+
+rp2040_examples:
+  before_script:
+    - cd examples/rp2040-launchpad
+    - mkdir build
+    - cd build
+  script:
+    - cmake ..
+    - make #-j 4
+  tags:
+    - shared
