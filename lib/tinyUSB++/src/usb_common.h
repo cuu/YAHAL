@@ -15,6 +15,8 @@
 #define TUPP_USB_COMMON_H_
 
 #include "usb_cdc_defines.h"
+#include "usb_msc_defines.h"
+
 #include <cstdint>
 
 namespace USB {
@@ -34,7 +36,8 @@ namespace USB {
         REQ_GET_INTERFACE       = 10,
         REQ_SET_INTERFACE       = 11,
         REQ_SYNCH_FRAME         = 12,
-        CDC_CS_REQUESTS
+        CDC_REQUESTS,
+        MSC_REQUESTS
     };
 
     enum class direction_t : uint8_t {
@@ -55,17 +58,10 @@ namespace USB {
         REC_OTHER               = 3
     };
 
-    union bmRequestType_t {
-        struct __attribute__((__packed__)) {
-            recipient_t recipient : 5;
-            type_t      type      : 2;
-            direction_t direction : 1;
-        };
-        uint8_t val;
-    };
-
     struct __attribute__((__packed__)) setup_packet_t {
-        bmRequestType_t     bmRequestType;
+        recipient_t         recipient : 5;
+        type_t              type      : 2;
+        direction_t         direction : 1;
         bRequest_t          bRequest;
         uint16_t            wValue;
         uint16_t            wIndex;
@@ -91,9 +87,9 @@ namespace USB {
     };
 
     enum class bDeviceClass_t : uint8_t {
-        CLASS_APPLICATION_SPECIFIC = 0xFE,
-        CLASS_VENDOR_SPECIFIC      = 0xFF,
-        CDC_CS_DEVICE_CLASSES
+        DEV_CLASS_APPLICATION_SPECIFIC = 0xFE,
+        DEV_CLASS_VENDOR_SPECIFIC      = 0xFF,
+        CDC_DEVICE_CLASSES
     };
 
     struct __attribute__((__packed__)) device_descriptor_t {
@@ -120,7 +116,7 @@ namespace USB {
 
     union __attribute__((__packed__)) conf_attr_t {
         struct __attribute__((__packed__)) {
-            uint8_t     reserved        : 5 {0};
+            uint8_t                     : 5;
             uint8_t     remote_wakeup   : 1;
             uint8_t     self_powered    : 1;
             uint8_t     bus_powered     : 1;
@@ -145,20 +141,23 @@ namespace USB {
     ///////////////////////////
 
     enum class bInterfaceClass_t : uint8_t {
-        CLASS_APPLICATION_SPECIFIC = 0xFE,
-        CLASS_VENDOR_SPECIFIC      = 0xFF,
-        CDC_CS_INTERFACE_CLASSES
+        IF_CLASS_APPLICATION_SPECIFIC = 0xFE,
+        IF_CLASS_VENDOR_SPECIFIC      = 0xFF,
+        CDC_INTERFACE_CLASSES,
+        MSC_INTERFACE_CLASSES
     };
 
     enum class bInterfaceSubClass_t : uint8_t {
-        CDC_CS_INTERFACE_SUBCLASSES
+        CDC_INTERFACE_SUBCLASSES,
+        MSC_INTERFACE_SUBCLASSES
     };
 
     enum class bInterfaceProtocol_t : uint8_t {
-        PROTOCOL_NONE               = 0x00,
-        PROTOCOL_FROM_DESCRIPTOR    = 0xfe,
-        PROTOCOL_VENDOR_SPECIFIC    = 0xff,
-        CDC_CS_PROTOCOLS
+        IF_PROTOCOL_NONE               = 0x00,
+        IF_PROTOCOL_FROM_DESCRIPTOR    = 0xfe,
+        IF_PROTOCOL_VENDOR_SPECIFIC    = 0xff,
+        CDC_INTERFACE_PROTOCOLS,
+        MSC_INTERFACE_PROTOCOLS
     };
 
     struct __attribute__((__packed__)) interface_descriptor_t {

@@ -77,7 +77,7 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
         _ep0_in->next_pid  = 1;
         _ep0_out->next_pid = 1;
         // Process standard requests
-        if (pkt->bmRequestType.type == type_t::TYPE_STANDARD) {
+        if (pkt->type == type_t::TYPE_STANDARD) {
             switch (pkt->bRequest) {
                 // Device requests
                 case REQ_SET_ADDRESS:
@@ -117,19 +117,19 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
                     handle_set_feature(pkt);
                     break;
                 default:
-                    printf("Unknown standard setup request %d\n", (int)pkt->bmRequestType.type);
+                    printf("Unknown standard setup request %d\n", (int)pkt->type);
             }
         } else {
             // We received a non-standard request.
             // Find the proper destination and forward it.
-            switch(pkt->bmRequestType.recipient) {
-                case recipient_t::REC_DEVICE: {
+            switch(pkt->recipient) {
+                case REC_DEVICE: {
                     if (_device.setup_handler) {
                         _device.setup_handler(pkt);
                     }
                     break;
                 }
-                case recipient_t::REC_INTERFACE: {
+                case REC_INTERFACE: {
                     auto config = _device.find_configuration(_active_configuration);
                     if (config) {
                         auto interface = config->_interfaces[pkt->wIndex];
@@ -141,7 +141,7 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
                     }
                     break;
                 }
-                case recipient_t::REC_ENDPOINT: {
+                case REC_ENDPOINT: {
                     auto ep = _driver.addr_to_ep(pkt->wIndex);
                     if (ep) {
                         if (ep->setup_handler) {
@@ -151,7 +151,7 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
                     break;
                 }
                 default: {
-                    printf("Could not find recipient %d\n", (int)pkt->bmRequestType.recipient);
+                    printf("Could not find recipient %d\n", (int)pkt->recipient);
                 }
             }
         }
@@ -159,8 +159,8 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
 }
 
 void usb_device_controller::handle_set_address(setup_packet_t * pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_OUT);
-    assert(pkt->bmRequestType.recipient == recipient_t::REC_DEVICE);
+    assert(pkt->direction == DIR_OUT);
+    assert(pkt->recipient == REC_DEVICE);
     assert(pkt->wIndex  == 0);
     assert(pkt->wLength == 0);
     _driver.set_address(pkt->wValue & 0xff);
@@ -169,8 +169,8 @@ void usb_device_controller::handle_set_address(setup_packet_t * pkt) {
 }
 
 void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_IN);
-    assert(pkt->bmRequestType.recipient == recipient_t::REC_DEVICE);
+    assert(pkt->direction == DIR_IN);
+    assert(pkt->recipient == REC_DEVICE);
     // Extract type and index
     uint8_t desc_index = pkt->wValue & 0xff;
     auto desc_type = (USB::bDescriptorType_t)(pkt->wValue >> 8);
@@ -257,23 +257,23 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
 }
 
 void usb_device_controller::handle_set_descriptor(setup_packet_t * pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_OUT);
-    assert(pkt->bmRequestType.recipient == recipient_t::REC_DEVICE);
+    assert(pkt->direction == DIR_OUT);
+    assert(pkt->recipient == REC_DEVICE);
     // Status stage
     _ep0_in->send_zlp_data1();
 }
 
-void usb_device_controller::handle_get_configuration(USB::setup_packet_t *pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_IN);
-    assert(pkt->bmRequestType.recipient == recipient_t::REC_DEVICE);
+void usb_device_controller::handle_get_configuration(setup_packet_t *pkt) {
+    assert(pkt->direction == DIR_IN);
+    assert(pkt->recipient == REC_DEVICE);
     _ep0_in->start_transfer((uint8_t *)(&_active_configuration), 1);
     // Status stage
     _ep0_out->send_zlp_data1();
 }
 
-void usb_device_controller::handle_set_configuration(USB::setup_packet_t *pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_OUT);
-    assert(pkt->bmRequestType.recipient == recipient_t::REC_DEVICE);
+void usb_device_controller::handle_set_configuration(setup_packet_t *pkt) {
+    assert(pkt->direction == DIR_OUT);
+    assert(pkt->recipient == REC_DEVICE);
     uint8_t index = pkt->wValue & 0xff;
     // Check if we change the configuration
     usb_configuration * conf = nullptr;
@@ -300,9 +300,9 @@ void usb_device_controller::handle_set_configuration(USB::setup_packet_t *pkt) {
     _ep0_in->send_zlp_data1();
 }
 
-void usb_device_controller::handle_get_interface(USB::setup_packet_t *pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_IN);
-    assert(pkt->bmRequestType.recipient == recipient_t::REC_INTERFACE);
+void usb_device_controller::handle_get_interface(setup_packet_t *pkt) {
+    assert(pkt->direction == DIR_IN);
+    assert(pkt->recipient == REC_INTERFACE);
     uint8_t index = pkt->wIndex & 0xff;
     if (_active_configuration) {
         auto interface = _device._configurations[_active_configuration]->_interfaces[index];
@@ -314,9 +314,9 @@ void usb_device_controller::handle_get_interface(USB::setup_packet_t *pkt) {
     _ep0_out->send_zlp_data1();
 }
 
-void usb_device_controller::handle_set_interface(USB::setup_packet_t *pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_OUT);
-    assert(pkt->bmRequestType.recipient == recipient_t::REC_INTERFACE);
+void usb_device_controller::handle_set_interface(setup_packet_t *pkt) {
+    assert(pkt->direction == DIR_OUT);
+    assert(pkt->recipient == REC_INTERFACE);
     uint8_t index = pkt->wIndex & 0xff;
     if (_active_configuration) {
         auto interface = _device._configurations[_active_configuration]->_interfaces[index];
@@ -328,9 +328,9 @@ void usb_device_controller::handle_set_interface(USB::setup_packet_t *pkt) {
     _ep0_in->send_zlp_data1();
 }
 
-void usb_device_controller::handle_synch_frame(USB::setup_packet_t *pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_IN);
-    assert(pkt->bmRequestType.recipient == recipient_t::REC_ENDPOINT);
+void usb_device_controller::handle_synch_frame(setup_packet_t *pkt) {
+    assert(pkt->direction == DIR_IN);
+    assert(pkt->recipient == REC_ENDPOINT);
     uint8_t addr = pkt->wIndex & 0xff;
     // Find endpoint and forward request
     auto ep = _driver.addr_to_ep(addr);
@@ -341,12 +341,12 @@ void usb_device_controller::handle_synch_frame(USB::setup_packet_t *pkt) {
     }
 }
 
-void usb_device_controller::handle_get_status(USB::setup_packet_t * pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_IN);
+void usb_device_controller::handle_get_status(setup_packet_t * pkt) {
+    assert(pkt->direction == DIR_IN);
     assert(pkt->wValue  == 0);
     assert(pkt->wLength == 2);
     uint16_t data;
-    switch(pkt->bmRequestType.recipient) {
+    switch(pkt->recipient) {
         case REC_DEVICE: {
             data = 0;
             break;
@@ -360,7 +360,7 @@ void usb_device_controller::handle_get_status(USB::setup_packet_t * pkt) {
             break;
         }
         default:
-            printf("Unknown recipient of get status: %d\n", (int)pkt->bmRequestType.recipient);
+            printf("Unknown recipient of get status: %d\n", (int)pkt->recipient);
     }
     // Send status
     _ep0_in->start_transfer((uint8_t *)&data, 2);
@@ -368,9 +368,9 @@ void usb_device_controller::handle_get_status(USB::setup_packet_t * pkt) {
     _ep0_out->send_zlp_data1();
 }
 
-void usb_device_controller::handle_clear_feature(USB::setup_packet_t *pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_IN);
-    switch(pkt->bmRequestType.recipient) {
+void usb_device_controller::handle_clear_feature(setup_packet_t *pkt) {
+    assert(pkt->direction == DIR_IN);
+    switch(pkt->recipient) {
         case REC_DEVICE: {
             break;
         }
@@ -378,15 +378,15 @@ void usb_device_controller::handle_clear_feature(USB::setup_packet_t *pkt) {
             break;
         }
         default:
-            printf("Unknown recipient of clear feature: %d\n", (int)pkt->bmRequestType.recipient);
+            printf("Unknown recipient of clear feature: %d\n", (int)pkt->recipient);
     }
     // Status stage
     _ep0_out->send_zlp_data1();
 }
 
-void usb_device_controller::handle_set_feature(USB::setup_packet_t *pkt) {
-    assert(pkt->bmRequestType.direction == direction_t::DIR_IN);
-    switch(pkt->bmRequestType.recipient) {
+void usb_device_controller::handle_set_feature(setup_packet_t *pkt) {
+    assert(pkt->direction == DIR_IN);
+    switch(pkt->recipient) {
         case REC_DEVICE: {
             break;
         }
@@ -394,7 +394,7 @@ void usb_device_controller::handle_set_feature(USB::setup_packet_t *pkt) {
             break;
         }
         default:
-            printf("Unknown recipient of set feature: %d\n", (int)pkt->bmRequestType.recipient);
+            printf("Unknown recipient of set feature: %d\n", (int)pkt->recipient);
     }
     // Status stage
     _ep0_out->send_zlp_data1();

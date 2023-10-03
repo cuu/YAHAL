@@ -183,7 +183,9 @@ namespace USB::CDC {
     };
 
     struct __attribute__((__packed__)) notification_t {
-        bmRequestType_t     bmRequestType;
+        recipient_t         recipient : 5;
+        type_t              type      : 2;
+        direction_t         direction : 1;
         bNotification_t     bNotification;
         uint16_t            wValue;
         uint16_t            wIndex;
@@ -211,9 +213,9 @@ namespace USB::CDC {
     struct __attribute__((__packed__)) notif_serial_state_t : public notification_t {
         notif_serial_state_t() {
             // Set all known values in base class
-            bmRequestType.direction = direction_t::DIR_IN;
-            bmRequestType.type      = type_t::TYPE_CLASS;
-            bmRequestType.recipient = recipient_t::REC_INTERFACE;
+            direction       = direction_t::DIR_IN;
+            type            = type_t::TYPE_CLASS;
+            recipient       = recipient_t::REC_INTERFACE;
             bNotification   = bNotification_t::NOTIF_SERIAL_STATE;
             wValue          = 0;
             wIndex          = 0;

@@ -30,18 +30,18 @@ usb_cdc_acm_device::usb_cdc_acm_device(
 {
     // USB interface association descriptor config
     //////////////////////////////////////////////
-    _assoc.set_bFunctionClass   (CLASS_CDC);
-    _assoc.set_bFunctionSubClass(CLASS_ABSTRACT_CONTROL_MODEL);
-    _assoc.set_bFunctionProtocol(PROTOCOL_NONE);
+    _assoc.set_bFunctionClass   (IF_CLASS_CDC);
+    _assoc.set_bFunctionSubClass(IF_SUBCLASS_ABSTRACT_CONTROL_MODEL);
+    _assoc.set_bFunctionProtocol(IF_PROTOCOL_NONE);
 
     // USB interface descriptors config
     ///////////////////////////////////
-    _if_ctrl.set_bInterfaceClass   (CLASS_CDC);
-    _if_ctrl.set_bInterfaceSubClass(CLASS_ABSTRACT_CONTROL_MODEL);
-    _if_ctrl.set_bInterfaceProtocol(PROTOCOL_NONE);
+    _if_ctrl.set_bInterfaceClass   (IF_CLASS_CDC);
+    _if_ctrl.set_bInterfaceSubClass(IF_SUBCLASS_ABSTRACT_CONTROL_MODEL);
+    _if_ctrl.set_bInterfaceProtocol(IF_PROTOCOL_NONE);
 
-    _if_data.set_bInterfaceClass   (CLASS_CDC_DATA);
-    _if_data.set_bInterfaceProtocol(PROTOCOL_NONE);
+    _if_data.set_bInterfaceClass   (IF_CLASS_CDC_DATA);
+    _if_data.set_bInterfaceProtocol(IF_PROTOCOL_NONE);
 
     // USB Functional Descriptors config
     ////////////////////////////////////
@@ -103,7 +103,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
     ////////////////////////////////////////
     _if_ctrl.setup_handler = [&](USB::setup_packet_t *pkt) {
         switch(pkt->bRequest) {
-            case bRequest_t::CDC_REQ_SET_LINE_CODING: {
+            case bRequest_t::REQ_CDC_SET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
                 // Prepare status stage
                 controller._ep0_in->send_zlp_data1();
@@ -113,14 +113,14 @@ usb_cdc_acm_device::usb_cdc_acm_device(
                 controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 break;
             }
-            case bRequest_t::CDC_REQ_GET_LINE_CODING: {
+            case bRequest_t::REQ_CDC_GET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
                 controller._ep0_in->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 // Status stage
                 controller._ep0_out->send_zlp_data1();
                 break;
             }
-            case bRequest_t::CDC_REQ_SET_CONTROL_LINE_STATE: {
+            case bRequest_t::REQ_CDC_SET_CONTROL_LINE_STATE: {
                 // Prepare status stage
                 controller._ep0_in->send_zlp_data1();
                 // Call user handler
@@ -130,7 +130,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
                 }
                 break;
             }
-            case bRequest_t::CDC_REQ_SEND_BREAK: {
+            case bRequest_t::REQ_CDC_SEND_BREAK: {
                 // Prepare status stage
                 controller._ep0_in->send_zlp_data1();
                 // Call user handler
