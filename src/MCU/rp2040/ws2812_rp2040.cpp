@@ -38,11 +38,6 @@ void ws2812_rp2040::LED::set_on_color(uint32_t rgb) {
     _on_color = _ws2812_rp2040->xRGB_to_GRBx(rgb);
 }
 
-void ws2812_rp2040::LED::operator = (bool b) {
-    _color = b ? _on_color : 0;
-    _ws2812_rp2040->update(_index);
-}
-
 // ws2812_rp2040 implementation
 ///////////////////////////////
 ws2812_rp2040::ws2812_rp2040(gpio_pin_t pin,
@@ -64,7 +59,6 @@ ws2812_rp2040::~ws2812_rp2040() {
 
 void ws2812_rp2040::init() {
     // configure GPIO pin
-    _gpio.gpioMode(GPIO::DRIVE_12mA);
     _gpio.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
     // Set up the PIO state machine
     _sm = pio_rp2040::pio0.loadProgram(ws2812_program);
@@ -73,7 +67,7 @@ void ws2812_rp2040::init() {
     // set flag
     _init = true;
     // initialize LEDs
-    update(_size);
+    update(_size-1);
 }
 
 void ws2812_rp2040::set_colors(uint32_t * values, uint16_t size) {
@@ -106,11 +100,11 @@ void ws2812_rp2040::update(uint16_t index) {
     // Update the LEDs. A mutex will not help here because
     // the critical section could still be interrupted. But
     // WS2812 timing is critical...
-    task::enterCritical();
+    __disable_irq();
     for(uint16_t i=0; i <= index; ++i) {
         _sm->writeTxFifo(_leds[i]._color);
     }
-    task::leaveCritical();
+    __enable_irq();
     // Store timer value
     _last = time_us();
 }
