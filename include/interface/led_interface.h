@@ -19,15 +19,18 @@
 
 #include <cstdint>
 
-// Plain one-color LED, typically connrcted to a GPIO pin
+// Plain one-color LED, typically connected to a GPIO pin
 class led_interface {
 public:
     // Switch LED on and off
     virtual void on()  = 0;
     virtual void off() = 0;
     virtual void toggle() = 0;
+
     // Assignment operator for easier access
-    virtual void operator = (bool) = 0;
+    inline void operator = (bool v) {
+        if (v) on(); else off();
+    }
     
 protected:
     virtual ~led_interface() = default;
@@ -52,6 +55,13 @@ public:
     // Set the color of the LED if it is used as
     // a plain on/off LED (24-bit RGB value)
     virtual void set_on_color(uint32_t rgb) = 0;
+
+    // Assignment operator for easier access. We
+    // use int as parameter type, so we don't need
+    // a cast when writing rgb_led = 0x121212;
+    inline void operator = (int rgb) {
+        set_color(rgb);
+    }
 
 protected:
     virtual ~led_rgb_interface() = default;
