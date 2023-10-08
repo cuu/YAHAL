@@ -56,4 +56,10 @@
 #define TUPP_DEFAULT_POLL_INTERVAL 10
 #endif
 
+// Default block size for MSC devices
+#ifndef TUPP_MSC_BLOCK_SIZE
+#define TUPP_MSC_BLOCK_SIZE 512
+#endif
+
+
 #endif // _TUPP_USB_CONFIG_H_

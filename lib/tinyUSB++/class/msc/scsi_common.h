@@ -29,8 +29,8 @@ namespace SCSI {
         MODE_SENSE_6                    = 0x1A,
         START_STOP_UNIT                 = 0x1B,
         PREVENT_ALLOW_MEDIUM_REMOVAL    = 0x1E,
+        READ_FORMAT_CAPACITIES          = 0x23,
         READ_CAPACITY_10                = 0x25,
-        READ_FORMAT_CAPACITY            = 0x23,
         READ_10                         = 0x28,
         WRITE_10                        = 0x2A
     };
@@ -174,6 +174,29 @@ namespace SCSI {
         uint32_t    block_length;
     };
     static_assert(sizeof(read_capacity_10_t) == 10);
+
+
+    // READ FORMAT CAPACITY
+    ///////////////////////
+    struct __attribute__((__packed__)) read_format_capacity_10_t {
+        scsi_cmd_t  cmd_code;
+        uint8_t     reserved[6];
+        uint16_t    alloc_length;
+        uint8_t     control;
+    };
+    static_assert(sizeof(read_format_capacity_10_t) == 10);
+
+    struct __attribute__((__packed__)) read_format_capacity_10_response_t {
+        uint8_t     reserved[3];
+        uint8_t     list_length; /// must be 8*n, length in bytes of formattable capacity descriptor followed it.
+
+        uint32_t    block_num; /// Number of Logical Blocks
+        uint8_t     descriptor_type; // 00: reserved, 01 unformatted media , 10 Formatted media, 11 No media present
+
+        uint8_t     reserved2;
+        uint16_t    block_size_u16;
+    };
+    static_assert(sizeof(read_format_capacity_10_t) == 10);
 
     // READ 10
     //////////

@@ -46,7 +46,7 @@ public:
     bool write(uint8_t *buf, uint16_t len);
 
     // Send a serial state notification to this device.
-    void notify_serial_state(const USB::CDC::bmUartState_t & state);
+    bool notify_serial_state(const USB::CDC::bmUartState_t & state);
 
     // Callback handlers
     std::function<void(uint8_t *,uint16_t)> line_coding_handler;

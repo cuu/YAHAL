@@ -32,15 +32,18 @@ public:
     void handle_request();
 
     // Callback handlers
-    std::function<uint32_t ()>               capacity_handler;
-    std::function<void(uint8_t *, uint32_t)> read_handler;
-    std::function<void(uint8_t *, uint32_t)> write_handler;
+    std::function<void(uint16_t & block_size, uint32_t & block_count)> capacity_handler;
+    std::function<void(uint8_t * buff, uint32_t block)> read_handler;
+    std::function<void(uint8_t * buff, uint32_t block)> write_handler;
+    std::function<void(bool read, bool write)> activity_handler;
 
 private:
 
     enum class state_t : uint8_t {
         RECEIVE_CBW = 0,
-        SEND_CSW    = 1
+        DATA_READ   = 1,
+        DATA_WRITE  = 2,
+        SEND_CSW    = 3
     };
 
     // CDC ACM descriptor tree
@@ -58,17 +61,20 @@ private:
 
     // Internal data buffers
     volatile uint16_t           _buffer_out_len;
-    uint8_t                     _buffer_out[512];
-
-    uint16_t                    _data_out_len;
-    uint8_t                     _data_out[512];
-    uint8_t                     _data_in[512];
+    uint8_t                     _buffer_out[TUPP_MSC_BLOCK_SIZE];
+    uint8_t                     _buffer_in [TUPP_MSC_BLOCK_SIZE];
 
     SCSI::inquiry_response_t    _inquiry_response;
     SCSI::read_capacity_10_response_t _read_capacity_10_response;
+    SCSI::read_format_capacity_10_response_t _read_format_capacity_10_response;
     SCSI::mode_sense_6_response_t _mode_sense_6_response;
 
     void process_scsi_command();
+
+    // Data transfer parameters
+    uint16_t                    _blocks_to_transfer;
+    uint16_t                    _blocks_transferred;
+    uint32_t                    _block_addr;
 };
 
 #endif  // TUPP_USB_MSC_BOT_DEVICE_H

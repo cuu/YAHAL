@@ -34,7 +34,7 @@ bitloop:    out     pins, 1         side 1        ; Output a single bit on ..
 void setRate(SM * pcm_sm, /*SM * timer_sm,*/ uint32_t Hz) {
     static uint32_t last_Hz = 0;
     if (Hz != last_Hz) {
-        pcm_sm  ->setRegister(out_dest_t::Y, SM_CLK/Hz - CYCLES_PER_SAMPLE);
+        pcm_sm->setRegister(out_dest_t::Y, SM_CLK/Hz - CYCLES_PER_SAMPLE);
         last_Hz = Hz;
     }
 }
@@ -58,7 +58,7 @@ void configure_SM(SM * pcm_sm, uint8_t mosi_pin, uint8_t sclk_pin, uint8_t sync_
     pcm_sm->regs.SM_EXECCTRL.STATUS_N    = 3;
 
     // Set the wrap values
-    pcm_sm  ->setWrap(dac8311_wrap_target, dac8311_wrap);
+    pcm_sm->setWrap(dac8311_wrap_target, dac8311_wrap);
 
     // Configure SHIFTCTRL register 
     pcm_sm->regs.SM_SHIFTCTRL.FJOIN_TX     = 1;

@@ -20,10 +20,6 @@ public:
         void set_color(uint32_t rgb) override;
         void set_on_color(uint32_t rgb) override;
 
-        // Use the pre-defined assignment operators
-        using led_interface::operator= ;
-        using led_rgb_interface::operator= ;
-
       private:
         ws2812_rp2040 * _ws2812_rp2040;
         uint16_t _index;

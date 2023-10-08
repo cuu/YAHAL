@@ -42,6 +42,9 @@ public:
     // Set LED brightness (0 min, 255 max) 
     virtual void set_brightness(uint8_t b) = 0;
 
+    // Use the pre-defined bool assignment operator
+    using led_interface::operator= ;
+
 protected:
     virtual ~led_dim_interface() = default;
 };
@@ -56,7 +59,10 @@ public:
     // a plain on/off LED (24-bit RGB value)
     virtual void set_on_color(uint32_t rgb) = 0;
 
-    // Assignment operator for easier access. We
+    // Use the pre-defined bool assignment operator
+    using led_interface::operator= ;
+
+    // RGB Assignment operator for easier access. We
     // use int as parameter type, so we don't need
     // a cast when writing rgb_led = 0x121212;
     inline void operator = (int rgb) {

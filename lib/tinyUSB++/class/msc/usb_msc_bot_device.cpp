@@ -13,10 +13,11 @@
 //
 #include "usb_msc_bot_device.h"
 #include "usb_common.h"
+
 #include <cstdio>
 #include <cassert>
 #include <cstring>
-#include "machine/endian.h"
+#include <machine/endian.h>
 
 using namespace USB;
 using enum USB::bInterfaceClass_t;
@@ -45,34 +46,22 @@ usb_msc_bot_device::usb_msc_bot_device(
 
     // Prepare new request to receive data
     //////////////////////////////////////
-    _ep_out->start_transfer(_buffer_out, 512);
+    _ep_out->start_transfer(_buffer_out, TUPP_MSC_BLOCK_SIZE);
 
-    // Endpoint handlers
-    ////////////////////
+    // Endpoint handler
+    ///////////////////
     _ep_out->data_handler = [&](uint8_t *, uint16_t len) {
-//        printf("Data handler out %d\n", len);
-        if (len) {
-            // Stop incoming data
-            _ep_out->send_NAK(true);
-            // Sent length to signal new data
-            _buffer_out_len = len;
+//        printf("data_handler len:%d\n", len);
+        if (_buffer_out_len) {
+            printf("WARN: Unconsumed data!!\n");
         }
-        // Trigger a new receive
-        _ep_out->start_transfer(_buffer_out, 512);
-    };
-
-    _ep_in->data_handler = [&](uint8_t *, uint16_t len) {
-//        printf("Data handler in %d\n", len);
-        // Check if we have more data to send
-//        for(len = 0; len < _ep_in->descriptor.wMaxPacketSize; ++len) {
-//            if (!_transmit.get(_buffer_in[len])) {
-//                break;
-//            }
-//        }
-        // Trigger a new transmit
-//        if (len) {
-//            _ep_in->start_transfer(_data_in, len);
-//        }
+        // New data has arrived from the host!
+        // Stop incoming data ...
+        _ep_out->send_NAK(true);
+        // ... and set length to signal new data
+        _buffer_out_len = len;
+        // Finally trigger a new receive
+        _ep_out->start_transfer(_buffer_out, TUPP_MSC_BLOCK_SIZE);
     };
 
     // Handler for CDC ACM specific requests
@@ -124,21 +113,15 @@ usb_msc_bot_device::usb_msc_bot_device(
 
 void usb_msc_bot_device::handle_request() {
     switch(_state) {
+
         case state_t::RECEIVE_CBW: {
+
             // Did we receive some data?
             if (_buffer_out_len) {
+                //printf("STATE: RECEIVE_CBW\n");
                 // Create pointer to CBW
                 MSC::cbw_t *cbw = (MSC::cbw_t *) _buffer_out;
 
-//                printf("*** NEW COMMAND ***\n");
-//                printf("tag: %d\n", cbw->dCBWTag);
-//                printf("len: %d\n", cbw->dCBWDataTransferLength);
-//                printf("dir: %d\n", cbw->direction);
-//                printf("cb len: %d\n",cbw->bCBWCBLength);
-//                for(int i=0; i < cbw->bCBWCBLength; ++i) {
-//                    printf("%02x ", cbw->CBWCB[i]);
-//                }
-//                printf("\n*******************\n");
 
                 // Prepare the command status wrapper
                 _csw.dCSWSignature   = MSC::csw_signature;
@@ -163,19 +146,56 @@ void usb_msc_bot_device::handle_request() {
                     return;
                 }
 
+                // Continue with sending the CSW
+                _state = state_t::SEND_CSW;
+
                 process_scsi_command();
 
-                _ep_out->send_NAK(false);
                 // Signal that data has been processed
                 _buffer_out_len = 0;
-                // Continue with sending the CSW
+                _ep_out->send_NAK(false);
+
+            }
+            break;
+        }
+        case state_t::DATA_READ: {
+            //printf("STATE: DATA_READ\n");
+            if (_ep_in->is_active()) {
+                break;
+            }
+            // Read data from device
+            read_handler(_buffer_in, _block_addr++);
+            _ep_in->start_transfer(_buffer_in, TUPP_MSC_BLOCK_SIZE);
+            _blocks_transferred++;
+            if (_blocks_transferred == _blocks_to_transfer) {
                 _state = state_t::SEND_CSW;
             }
             break;
         }
+        case state_t::DATA_WRITE: {
+            //printf("STATE: DATA_WRITE\n");
+            if (_buffer_out_len == 0) {
+                break;
+            }
+            assert(_buffer_out_len == 512);
+            // Write data to device
+            write_handler(_buffer_out, _block_addr++);
+            _blocks_transferred++;
+            // Mark as consumed
+            _buffer_out_len = 0;
+            if (_blocks_transferred == _blocks_to_transfer) {
+                _state = state_t::SEND_CSW;
+            }
+            _buffer_out_len = 0;
+            _ep_out->send_NAK(false);
+            break;
+        }
         case state_t::SEND_CSW: {
-            printf("STATE: SEND_CSW\n");
-            while (_ep_in->is_active()) ;
+            //printf("STATE: SEND_CSW\n");
+            activity_handler(false, false);
+            if (_ep_in->is_active()) {
+                break;
+            }
             _ep_in->start_transfer((uint8_t *)&_csw, sizeof(_csw));
             _state = state_t::RECEIVE_CBW;
             break;
@@ -189,22 +209,22 @@ void usb_msc_bot_device::process_scsi_command() {
 
     switch(*cmd) {
         case SCSI::scsi_cmd_t::TEST_UNIT_READY: {
-            printf("CMD: TEST UNIT READY\n");
-            assert(cbw->bCBWCBLength           == sizeof(SCSI::test_unit_ready_t));
+            //printf("CMD: TEST UNIT READY\n");
+            assert(cbw->bCBWCBLength == sizeof(SCSI::test_unit_ready_t));
             assert(cbw->dCBWDataTransferLength == 0);
             break;
         }
         case SCSI::scsi_cmd_t::INQUIRY: {
-            printf("CMD: INQUIRY\n");
-            assert(cbw->bCBWCBLength           == sizeof(SCSI::inquiry_t));
-            assert(cbw->dCBWDataTransferLength == sizeof(SCSI::inquiry_response_t));
+            //printf("CMD: INQUIRY\n");
+            assert(cbw->bCBWCBLength == sizeof(SCSI::inquiry_t));
+            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength - sizeof(SCSI::inquiry_response_t);
             // Send the response
             while(_ep_in->is_active()) ;
             _ep_in->start_transfer((uint8_t *)&_inquiry_response, sizeof(SCSI::inquiry_response_t));
             break;
         }
         case SCSI::scsi_cmd_t::MODE_SENSE_6: {
-            assert(cbw->bCBWCBLength           == sizeof(SCSI::mode_sense_6_t));
+            assert(cbw->bCBWCBLength == sizeof(SCSI::mode_sense_6_t));
             _mode_sense_6_response.mode_data_length = 3;
             _mode_sense_6_response.medium_type      = 0;
             _mode_sense_6_response.write_protect    = 0;
@@ -214,52 +234,80 @@ void usb_msc_bot_device::process_scsi_command() {
             _ep_in->start_transfer((uint8_t *)&_mode_sense_6_response, sizeof(SCSI::mode_sense_6_response_t));
             break;
         }
+        case SCSI::scsi_cmd_t::START_STOP_UNIT: {
+            break;
+        }
+        case SCSI::scsi_cmd_t::PREVENT_ALLOW_MEDIUM_REMOVAL: {
+            break;
+        }
         case SCSI::scsi_cmd_t::READ_CAPACITY_10: {
-            printf("CMD: READ CAPACITY 10\n");
-            assert(cbw->bCBWCBLength           == sizeof(SCSI::read_capacity_10_t));
-            assert(cbw->dCBWDataTransferLength == sizeof(SCSI::read_capacity_10_response_t));
-            _read_capacity_10_response.logical_block_address = __htonl(capacity_handler());
-            _read_capacity_10_response.block_length          = __htonl(512);
+            //printf("CMD: READ CAPACITY 10\n");
+            assert(cbw->bCBWCBLength == sizeof(SCSI::read_capacity_10_t));
+            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength - sizeof(SCSI::read_capacity_10_response_t);
+            uint16_t block_size = 0;
+            uint32_t block_count= 0;
+            capacity_handler(block_size, block_count);
+            assert(block_size == TUPP_MSC_BLOCK_SIZE);
+            _read_capacity_10_response.logical_block_address = __htonl(block_count-1);
+            _read_capacity_10_response.block_length          = __htonl(block_size);
             // Send the response
             while(_ep_in->is_active()) ;
             _ep_in->start_transfer((uint8_t *)&_read_capacity_10_response, sizeof(SCSI::read_capacity_10_response_t));
             break;
         }
+        case SCSI::scsi_cmd_t::READ_FORMAT_CAPACITIES: {
+            assert(cbw->bCBWCBLength == sizeof(SCSI::read_format_capacity_10_t));
+            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength - sizeof(SCSI::read_format_capacity_10_response_t);
+            uint16_t block_size = 0;
+            uint32_t block_count= 0;
+            capacity_handler(block_size, block_count);
+            assert(block_size == TUPP_MSC_BLOCK_SIZE);
+            _read_format_capacity_10_response.list_length = 8;
+            _read_format_capacity_10_response.descriptor_type = 2;
+            _read_format_capacity_10_response.block_size_u16 = block_size;
+            _read_format_capacity_10_response.block_num   = block_count;
+            // Send the response
+            while(_ep_in->is_active()) ;
+            _ep_in->start_transfer((uint8_t *)&_read_format_capacity_10_response, sizeof(SCSI::read_format_capacity_10_response_t));
+            break;
+        }
         case SCSI::scsi_cmd_t::READ_10: {
-            printf("CMD: READ 10\n");
-            assert(cbw->bCBWCBLength           == sizeof(SCSI::read_10_t));
-            SCSI::read_10_t * read_cmd = (SCSI::read_10_t *)&cbw->CBWCB;
-            uint16_t count = __ntohs(read_cmd->transfer_length);
-            uint32_t block = __ntohl(read_cmd->logical_block_address);
-            for (uint16_t i=0; i < count; ++i) {
-                // Read data from device
-                read_handler(_data_in, block+i);
-                // Send the response
-                while(_ep_in->is_active()) ;
-                _ep_in->start_transfer(_data_in, 512);
-            }
+            //printf("CMD: READ 10\n");
+            activity_handler(true, false);
+            assert(cbw->bCBWCBLength == sizeof(SCSI::read_10_t));
+            auto * read_cmd = (SCSI::read_10_t *)&cbw->CBWCB;
+            _blocks_to_transfer = __ntohs(read_cmd->transfer_length);
+            _blocks_transferred = 0;
+            _block_addr = __ntohl(read_cmd->logical_block_address);
+            _state = state_t::DATA_READ;
             break;
         }
         case SCSI::scsi_cmd_t::WRITE_10: {
             _buffer_out_len = 0;
-            printf("CMD: WRITE 10\n");
+            //printf("CMD: WRITE 10\n");
+            activity_handler(false, true);
             assert(cbw->bCBWCBLength == sizeof(SCSI::write_10_t));
-            SCSI::read_10_t * write_cmd = (SCSI::read_10_t *)&cbw->CBWCB;
-            uint16_t count = __ntohs(write_cmd->transfer_length);
-            uint32_t block = __ntohl(write_cmd->logical_block_address);
-
+            auto * write_cmd = (SCSI::read_10_t *)&cbw->CBWCB;
+            _blocks_to_transfer = __ntohs(write_cmd->transfer_length);
+            _blocks_transferred = 0;
+            _block_addr = __ntohl(write_cmd->logical_block_address);
+            _state = state_t::DATA_WRITE;
+            // Let the next block arrive
+            _buffer_out_len = 0;
             _ep_out->send_NAK(false);
-//            _ep_out->start_transfer(_buffer_out, 512);
-
-            for (uint16_t i=0; i < count; ++i) {
-                while(_buffer_out_len == 0) ;
-//                printf("_buffer_out_len %d\n", _buffer_out_len);
-                assert(_buffer_out_len == 512);
-                _buffer_out_len = 0;
-                // Write data to device
-                write_handler(_buffer_out, block+i);
-                _ep_out->send_NAK(false);
+            break;
+        }
+        default: {
+            printf("sig: %08lx\n", cbw->dCBWSignature);
+            printf("tag: %08lx\n", cbw->dCBWTag);
+            printf("len: %08lx\n", cbw->dCBWDataTransferLength);
+            printf("dir: %hd\n",   cbw->direction);
+            printf("lun: %d\n",    cbw->bCBWLUN);
+            printf("cb len: %d\n", cbw->bCBWCBLength);
+            for(int i=0; i < cbw->bCBWCBLength; ++i) {
+                printf("%02x ", cbw->CBWCB[i]);
             }
+            printf("\n");
             break;
         }
     }
