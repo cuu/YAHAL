@@ -31,7 +31,9 @@ ws2812_rp2040 leds(WS2812_PIN, 8);
 led_rgb_interface & led_red  = leds[0];
 led_rgb_interface & led_blue = leds[1];
 
-// Simple delay function
+// Simple delay function. It is not very
+// precise and depends on the CPU clock
+// and compiler optimizations.
 void delay(int ms) {
     for(int i=0; i < 3167 * ms; ++i) ;
 }
@@ -54,6 +56,7 @@ void task2(void) {
 
 int main(void)
 {
+    // Set LED colors
     led_red.set_on_color (0x040000);
     led_blue.set_on_color(0x000010);
     

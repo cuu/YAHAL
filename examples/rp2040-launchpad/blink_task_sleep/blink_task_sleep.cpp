@@ -11,8 +11,8 @@
 //
 // ---------------------------------------------
 //
-// A simple blink example using the red LED on
-// Port 1 pin 0 and the green LED on Port 2 pin 1.
+// A simple blink example using two WS2812 LEDs on
+// the rp2040-launchpad.
 // This program uses the multitasking kernel of YAHAL.
 // A task can be defined in two different ways:
 //
@@ -38,14 +38,14 @@
 
 #include "gpio_rp2040.h"
 #include "uart_rp2040.h"
+#include "ws2812_rp2040.h"
 #include "posix_io.h"
 #include "task.h"
 #include "task_monitor.h"
 
-// Use macros to define the ports
-// and pins of the LEDs to use
-#define RED_LED   29
-#define GREEN_LED 3
+// WS2812 GPIO mumber
+#define WS2812_PIN  29	// GPIO Pin controlling the WS2812 LEDs
+#define WS2812_COUNT 8  // Number of WS2812 LEDs
 
 // This class defines a new task class. The task
 // code in run() only toggles a gpio with a delay
@@ -58,73 +58,71 @@ public:
     // The base class 'task' has to be called with
     // the name of the task, and optionally (as the second
     // parameter) the stack size of the task.
-    blink_task(const char * name, gpio_pin_t gpio, int delay)
-    : task(name), _delay(delay) {
-        // Initialize the gpio as output
-        _led.setGpio ( gpio );
-        _led.gpioMode( GPIO::OUTPUT );
-    }
+    blink_task(const char * name, led_interface & led, int delay)
+    : task(name), _led(led), _delay(delay) { }
 
     // This is the task code, which is
     // run by the multitasking kernel
     void run() override {
-        // Endless loop
+        // Endless loop toggling the LED
         while(1) {
-            _led.gpioToggle();
             sleep( _delay );
+            _led.toggle();
         }
     }
 
 private:
-    gpio_rp2040_pin _led;
+    led_interface & _led;
     int             _delay;
 };
 
 
 int main(void)
 {
-    // Redirect stdout to our backchannel UART,
+    // Set up the LEDs
+    ws2812_rp2040 leds(WS2812_PIN, WS2812_COUNT);
+
+    leds[0].set_on_color(0x080000);	// LED0 is red
+    leds[1].set_on_color(0x000600);	// LED1 is green
+
+    // Redirect stdout and stderr to our backchannel UART,
     // so we can see the output of the task monitor
     uart_rp2040 uart;
     posix_io::inst.register_stdout(uart);
+    posix_io::inst.register_stderr(uart);
 
     // Instantiate the tasks to blink the red LED.
-    // The class is derived from task.
-    blink_task t1("red blinker", RED_LED, 500 );
+    // The class is derived from task (see above).
+    // Blink the red LED with a delay of 300 ms!
+    blink_task t1("t1 blinker", leds[0], 300 );
 
     // Instantiate the tasks to blink the green LED.
     // Here the code is provided as the first parameter
     // (in this case a lambda expression) to task.
-    // The GPIO is defined outside of task to
+    // The LED (leds[1]) is defined outside of task to
     // demonstrate the capture of external variables.
-    gpio_rp2040_pin led( GREEN_LED );
-    led.gpioMode( GPIO::OUTPUT );
+    // Toggle the green LED with a delay of 500 ms!
 
     task t2([&]() {
         // Endless loop
         while(true) {
-            led.gpioToggle();
+            leds[1].toggle();
             task::sleep(500);
         }
-    }, "green blinker");
+    }, "t2 blinker");
 
-    // Start both tasks. This means that
-    // the tasks are put into a circular
-    // list for scheduling and marked as
-    // 'ready' to run. But the kernel is
-    // not yet started, so no task code
-    // is run after the two next lines!
+    // Start both tasks. This means that the tasks are put into a circular
+    // list for scheduling and marked as 'ready' to run. But the kernel is
+    // not yet started, so no task code is run after the two next lines!
     t1.start();
     t2.start();
 
-    // Start the task monitor. When a terminal
-    // is connected to /dev/ttyACM0, then the
-    // task status can be seen!
+    // Start the task monitor. When a terminal is connected to /dev/ttyACM0,
+    // then the task status can be seen!
     task_monitor monitor;
     monitor.start();
 
     // Start the multitasking kernel.
-    // This call is blocking (it will
-    // never return ...).
+    // This call is blocking (it will never return ...)!
     task::start_scheduler();
 }

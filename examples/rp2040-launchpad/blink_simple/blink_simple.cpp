@@ -12,37 +12,32 @@
 // ---------------------------------------------
 //
 // A simple blink example using the red LED on
-// Port 1 pin 0. The delay is implemented with
-// a simple for-loop.
+// GPIO 13. The delays are implemented with
+// task:sleep(uint32_t ms), which pauses the
+// execution by the given number of milliseconds.
+// In a non-multitasking environment (as in this
+// example), the sysTick-Timer is used internally
+// for sleep(), resulting in a precise delay. 
 
 #include "gpio_rp2040.h"
 #include "task.h"
 
+// Build-in red LED on rp2040-launchpad
+#define RED_LED 13
+
 int main(void)
 {
-    // Use P1.0 as output
-    gpio_rp2040_pin led( 13 );
+    // Use GPIO 13 (buildin LED) as output
+    gpio_rp2040_pin led( RED_LED );
     led.gpioMode( GPIO::OUTPUT );
 
     // This loop will never end ...
     while(1) {
         // switch on the LED
         led = HIGH;
-
-        // Simple delay using an empty loop.
-        // This will only work if the compiler does
-        // not optimize away this code ...
         task::sleep(500);
-//        for(int i=0; i < 5000000; ++i) ;
-
         // switch off the LED
         led = LOW;
-
-        // Delay using the non-multitasking version
-        // of sleep. This delay uses the SysTick timer,
-        // and is independent from the CPU clock
-        // frequency and compiler optimizations!
-//        for(int i=0; i < 5000000; ++i) ;
         task::sleep(500);
     }
 }

@@ -11,11 +11,11 @@
 //
 // ---------------------------------------------
 //
-// A simple blink example using a 32-bit timer.
-// The rp2040 CPU contains 2 high-resolution
-// 32-bit timer, which can be used to measure
-// time or to run some code in specified intervals.
-// The timers have a resolution of 1 microsecond!
+// A simple blink example using two of the four
+// 64-bit timers on the RP2040, which can be used
+// to measure time or to run some code in specified
+// intervals. The timers have a resolution of one
+// microsecond!
 // The timers operate in a ONE_SHOT or PERIODIC
 // mode (see timer_interface.h). In ONE_SHOT mode,
 // the timer is stopped after the time has expired,
@@ -32,6 +32,12 @@
 #include "ws2812_rp2040.h"
 #include "timer_rp2040.h"
 
+#define WS2812_PIN  29
+#define WS2812_COUNT 8
+
+// A microsecond delay method based on a timer.
+// The second timer is used here (constructor
+// parameter 1, range is 0..3).
 void delay(int us) {
     // Setup the second time in ONE_SHOT mode
     // and simply wait until the callback
@@ -40,10 +46,10 @@ void delay(int us) {
     // lambda expression, which can access this
     // variable (capture [&]).
     bool expired = false;
-    timer_rp2040 timer2(2);
-    timer2.setPeriod(us, TIMER::ONE_SHOT);
-    timer2.setCallback([&]() { expired = true; });
-    timer2.start();
+    timer_rp2040 timer1(1);
+    timer1.setPeriod(us, TIMER::ONE_SHOT);
+    timer1.setCallback([&]() { expired = true; });
+    timer1.start();
     // Now (actively) wait until the callback
     // method has changed the 'expired' variable...
     while(!expired) ;
@@ -52,34 +58,31 @@ void delay(int us) {
 int main(void)
 {
     // Setup two LEDs on the launchpad for blinking
-    ws2812_rp2040 leds(29, 8);
+    ws2812_rp2040 leds(WS2812_PIN, WS2812_COUNT);
     led_rgb_interface & led_red = leds[0];
     led_rgb_interface & led_blue = leds[1];
     led_red.set_on_color(0x040000);
     led_blue.set_on_color(0x000010);
 
     // Setup the first timer with a timeout of 500ms
-    // in periodic mode
-    timer_rp2040 timer1(1);
-    timer1.setPeriod(500000, TIMER::PERIODIC);
+    // in periodic mode. This will let the red LED
+    // blink with a delay of _exactly_ 500 ms!
+    timer_rp2040 timer0(0);
+    timer0.setPeriod(500000, TIMER::PERIODIC);
     // Set the callback method to toggle the LED
-    timer1.setCallback([&]() { led_red.toggle(); });
-    timer1.start();
+    timer0.setCallback([&]() { led_red.toggle(); });
+    timer0.start();
 
-    // The second timer is used within the
-    // delay-method, which is now very precise
-    // and has a high resolution (1 microsecond).
-    //
-    // After observing the 2 blinking LEDs you
-    // will notice, that the second LED (on the
-    // right, code below) will blink a _little_
+    // After observing the 2 blinking LEDs for a
+    // longer time, you will notice, that the blue
+    // LED (see code below) will blink a _little_
     // bit slower, because calling the toggle()
     // method and calling delay() adds some small
-    // time to the 500ms. Since the first LED is
-    // running in PERIODC mode, the interval is
-    // exactly 500ms!
+    // time to the 500ms. Since the first (red) LED
+    // is running in PERIODC mode, the blink interval
+    // is _exactly_ 500ms!
     while(true) {
         delay(500000);        // wait 500ms
-        led_blue.toggle();    // toggle the LED
+        led_blue.toggle();    // toggle the blue LED
     }
 }

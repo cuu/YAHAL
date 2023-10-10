@@ -14,7 +14,7 @@
 // This file implements a very simple multitasking
 // kernel.
 
-#include <OS.h>
+#include "OS.h"
 #include <cstdint>
 #include <RP2040.h>
 
@@ -142,7 +142,7 @@ void OS_start_scheduler(int Hz) {
     // Set the stack pointer of the first task and run that task
 //    register uint32_t * __attribute__((unused)) sp asm("sp");
 //    sp = run_ptr->sp;
-//   asm volatile("pop     {r4-r11}");  // restore R4-R11
+//    asm volatile("pop     {r4-r11}");  // restore R4-R11
 //    asm volatile("pop     {r0-r3} ");  // restore R0-R3
 //    asm volatile("pop     {r12}   ");  // restore R12
 //    asm volatile("pop     {lr}    ");  // load LR (the task_exit routine)
@@ -221,7 +221,7 @@ void SysTick_Handler(void) {
     asm volatile("mov     r9, r5 ");
     asm volatile("mov     r10, r6");
     asm volatile("mov     r11, r7");
-    asm volatile("pop     {r4-r7}");  // restore R4-R11 from new stack
+    asm volatile("pop     {r4-r7}");   // restore R4-R11 from new stack
     asm volatile("cpsie   i       ");  // enable interrupts
     asm volatile("bx      lr      ");  // return from interrupt
                                        // (restore R0-R3,R12,LR,PC,PSR)
