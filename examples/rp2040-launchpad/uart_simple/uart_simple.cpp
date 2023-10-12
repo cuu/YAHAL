@@ -14,7 +14,7 @@
 // This program uses the backchannel UART
 // to read and write data to/from a terminal.
 // Backchannel uart means, that the serial
-// data, which is produced in the MSP432,
+// data, which is produced in the RP2040,
 // is forwarded to the debug module on the
 // launchpad. The debug module has a USB
 // connection to the PC, and generates a
