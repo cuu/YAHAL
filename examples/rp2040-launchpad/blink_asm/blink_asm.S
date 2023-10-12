@@ -21,14 +21,14 @@
                 .text                           @ put the following code in the text (code) section
 
                 .func
-gpio_init:      ldr         r1, GPIO13_CTRL     @ load r1 with the word located atGPIO13_CTRL
+gpio_init:      ldr         r1, GPIO13_CTRL     @ load r1 with the word located at GPIO13_CTRL
                 movs        r2, 5               @ 5 is SIO mode
-                str         r2, [r1]            @ store back P1SEL1
+                str         r2, [r1]            @ Set GPIO 13 to SIO mode
 
-                ldr         r1, GPIO_OE_SET
-                movs        r2, 1
-                lsls        r2, 13
-                str         r2, [r1]
+                ldr         r1, GPIO_OE_SET     @ load addr of register GPIO_OE_SET
+                movs        r2, 1               @ Create a mask for GPIO 13
+                lsls        r2, 13              @ (1 << 13) in register R2
+                str         r2, [r1]            @ Enable GPIO 13 for output
                 bx          lr                  @ return from subroutine
                 .endfunc
 
@@ -49,10 +49,10 @@ tmp1:           subs        r4, #1              @ decrement counter
                                                 @ starting point of the program!)
                 .func
 main:           bl          gpio_init           @ Call subroutine GPIO_Init
-                ldr         r1, GPIO_OUT_XOR    @ load r1 with address of P1OUT
-                movs        r2, 1
-                lsls        r2, 13
-loop:           str         r2, [r1]            @ store P1OUT
+                ldr         r1, GPIO_OUT_XOR    @ load r1 with address of register GPIO_OUT_XOR
+                movs        r2, 1		@ Create a mask for GPIO 13
+                lsls        r2, 13              @ (1 << 13) in register R2
+loop:           str         r2, [r1]            @ Toggle output bit
                 bl          delay               @ call delay subroutine
                 b           loop                @ jump back to loop:
                 .endfunc
