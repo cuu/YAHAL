@@ -43,7 +43,6 @@
 
 #include "task.h"
 #include "sd_reader_task.h"
-#include "audio_output.h"
 #include "mp3_decoder_task.h"
 #include "ff.h"
 #include <cassert>
@@ -78,10 +77,8 @@ public:
 
     void run() override {
 
-        audio_output     audio_output;
         sd_reader_task   sd_reader;
-        mp3_decoder_task decoder(sd_reader, audio_output);
-        audio_output.start();
+        mp3_decoder_task decoder(sd_reader);
 
         // Mount the SD card.
         // If button S1 is not pressed during reset, auto-partition mode is

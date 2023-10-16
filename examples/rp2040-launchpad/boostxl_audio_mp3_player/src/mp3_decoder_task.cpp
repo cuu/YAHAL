@@ -16,11 +16,17 @@
 #include <memory.h>
 #include <cassert>
 
-mp3_decoder_task::mp3_decoder_task(sd_reader_task & sd, audio_output & ao) :
+#define	MOSI_PIN   7
+#define SCLK_PIN   22
+#define SYNC_PIN   15
+#define EN_PIN     5
+#define LED_PIN    13
+
+mp3_decoder_task::mp3_decoder_task(sd_reader_task & sd) :
     task("MP3 decoder", 8200),
     _sd_reader(sd),
-    _audio_output(ao),
-    _led(29)
+    _dac8311(MOSI_PIN, SCLK_PIN, SYNC_PIN, EN_PIN),
+    _led(LED_PIN)
 {
     _led.gpioMode( GPIO::OUTPUT );
 }
@@ -31,10 +37,10 @@ void mp3_decoder_task::run() {
                      this,      // parameter for callback functions
                      input,     // input callback
                      header,    // header callback
-                     0,         // filter callback
+                     nullptr,   // filter callback
                      output,    // output callback
                      error,     // error  callback
-                     0);        // message callback
+                     nullptr);  // message callback
 
     mad_decoder_run(&_decoder, MAD_DECODER_MODE_SYNC);
 
@@ -121,7 +127,7 @@ enum mad_flow mp3_decoder_task::input(void *data, struct mad_stream *stream) {
 
 enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * header) {
     mp3_decoder_task * _this = (mp3_decoder_task *)data;
-    _this->_audio_output.setRate( header->samplerate );
+    _this->_dac8311.setPcmRate( header->samplerate );
     return MAD_FLOW_CONTINUE;
 }
 
@@ -134,17 +140,19 @@ enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad
     mp3_decoder_task * _this = (mp3_decoder_task *)data;
 
     // Wait until the PCM result can be written
-    while (_this->_audio_output.fifo_available_put() < pcm->length) {
-        _this->sleep(5);
+    while (_this->_dac8311.pcmFifoAvailablePut() < pcm->length) {
+        task::sleep(5);
     }
     // Copy PCM samples to PCM fifo. We only have a MONO
     // audio channel, so we calculate the mean value of
     // the left and right channel.
     mad_fixed_t const * left_ch  = pcm->samples[MAD_PCM_CHANNEL_STEREO_LEFT];
     mad_fixed_t const * right_ch = pcm->samples[MAD_PCM_CHANNEL_STEREO_RIGHT];
+    pcm_value_t pcm_value;
     for (int i=0; i < pcm->length; ++i) {
-        mad_fixed_t mono = (left_ch[i] + right_ch[i]) / 2;
-        _this->_audio_output.fifo_put( scale( mono ) );
+        pcm_value.left  = scale(left_ch[i]);
+        pcm_value.right = scale(right_ch[i]);
+        _this->_dac8311.pcmFifoPut(pcm_value);
     }
     return MAD_FLOW_CONTINUE;
 }
