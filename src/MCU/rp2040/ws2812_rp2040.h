@@ -35,7 +35,7 @@ public:
     virtual ~ws2812_rp2040();
 
     // Index operator to access a single LEDs
-    inline LED & operator[](uint16_t i) {
+    inline led_rgb_interface & operator[](uint16_t i) {
         assert(i < _size);
         return _leds[i];
     }
