@@ -22,15 +22,8 @@
 #ifndef _MAIN_TASK_H_
 #define _MAIN_TASK_H_
 
-#include "audio_output.h"
-#include "decoder_task.h"
-
-//#include "gpio_rp2040.h"
-//#include "spi_rp2040.h"
-//#include "sd_spi_drv.h"
 #include "task.h"
-
-#include <cmath>
+#include "decoder_task.h"
 
 class main_task : public task
 {
@@ -40,12 +33,7 @@ public:
 
     void run() override {
 
-        audio_output audio_output;
-        decoder_task decoder(audio_output);
-        audio_output.enable_output(true);
-        audio_output.setRate(44000);
-        audio_output.start();
-
+        decoder_task decoder;
         // Start decoder tasks to play the MP3
         decoder.start();
 

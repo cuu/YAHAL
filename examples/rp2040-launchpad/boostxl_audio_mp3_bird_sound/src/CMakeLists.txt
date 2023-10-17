@@ -1,7 +1,6 @@
 
 target_sources(boostxl_audio_mp3_bird_sound PRIVATE
     boostxl_audio_mp3_bird_sound.cpp
-    audio_output.cpp
     decoder_task.cpp
 )
 

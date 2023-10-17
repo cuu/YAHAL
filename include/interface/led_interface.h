@@ -39,7 +39,7 @@ protected:
 // Plain one-color LED with brigthness control
 class led_dim_interface : public led_interface {
 public:
-    // Set LED brightness (0 min, 255 max) 
+    // Set LED brightness (0 min, 255 max)
     virtual void set_brightness(uint8_t b) = 0;
 
     // Use the pre-defined bool assignment operator

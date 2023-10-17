@@ -24,11 +24,6 @@ file_to_cpp(boostxl_audio_mp3_bird_sound
     OUTPUT_FILE gen/birds.cpp
 )
 
-# Generate the PIO header file
-generate_pio_header(boostxl_audio_mp3_bird_sound
-                    ${CMAKE_CURRENT_LIST_DIR}/pio/dac8311.pio
-                    OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
-
 yahal_add_custom_targets(boostxl_audio_mp3_bird_sound)
 yahal_add_extra_outputs(boostxl_audio_mp3_bird_sound)
 

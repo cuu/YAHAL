@@ -40,7 +40,7 @@ public:
     virtual uint32_t getPeriod() = 0;
 
     // set the callback function
-    virtual void	 setCallback(function<void()> f) = 0;
+    virtual void     setCallback(function<void()> f) = 0;
 
     // starting and stopping the timer
     virtual void     start() = 0;
