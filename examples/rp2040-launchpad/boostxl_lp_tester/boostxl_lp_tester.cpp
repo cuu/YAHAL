@@ -113,7 +113,7 @@ int main(void)
     gpio_cy.gpioMode( LED_GREEN, GPIO::OUTPUT | GPIO::INIT_LOW);
     gpio_cy.gpioMode( LED_BLUE,  GPIO::OUTPUT | GPIO::INIT_LOW);
 
-    // Set up RP2040 analog in multiplexer pin
+    // Set up RP2040 multiplexer ctrl pin
     gpio_rp.gpioMode( 18, GPIO::OUTPUT);
 
     printf("**** RP2040 Launchpad Tester ****\n");
@@ -148,7 +148,7 @@ int main(void)
         gpio_rp.gpioMode(rp_pin, GPIO::OUTPUT);
 
         gpio_rp.gpioWrite(rp_pin,   true);
-        gpio_cy.gpioWrite(LED_BLUE, true);
+        gpio_cy.gpioWrite(LED_RED, true);
         res = gpio_cy.gpioRead(cy_pin);
         if (res != true) {
             errors++;
@@ -156,7 +156,7 @@ int main(void)
         }
 
         gpio_rp.gpioWrite(rp_pin,   false);
-        gpio_cy.gpioWrite(LED_BLUE, false);
+        gpio_cy.gpioWrite(LED_RED, false);
         res = gpio_cy.gpioRead(cy_pin);
         if (res != false) {
             errors++;
@@ -171,7 +171,7 @@ int main(void)
         gpio_cy.gpioMode(cy_pin, GPIO::OUTPUT);
 
         gpio_cy.gpioWrite(cy_pin,   true);
-        gpio_cy.gpioWrite(LED_BLUE, true);
+        gpio_cy.gpioWrite(LED_GREEN, true);
         res = gpio_rp.gpioRead(rp_pin);
         if (res != true) {
             errors++;
@@ -179,7 +179,7 @@ int main(void)
         }
 
         gpio_cy.gpioWrite(cy_pin,   false);
-        gpio_cy.gpioWrite(LED_BLUE, false);
+        gpio_cy.gpioWrite(LED_GREEN, false);
         res = gpio_rp.gpioRead(rp_pin);
         if (res != false) {
             errors++;

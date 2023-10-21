@@ -6,40 +6,41 @@
  */
 
 #include "cy8c95xxa_drv.h"
-#include "yahal_assert.h"
+#include <cassert>
 
 namespace CY8C95XXA {
-// Chip register addresses
-static const uint8_t INPUT_REG   = 0x00;
-static const uint8_t OUTPUT_REG  = 0x08;
-static const uint8_t INT_STATUS  = 0x10;
-static const uint8_t PRT_SEL_REG = 0x18;
-static const uint8_t INT_MSK_REG = 0x19;
-static const uint8_t SEL_PWM_REG = 0x1a;
+    // Chip register addresses
+    static const uint8_t INPUT_REG = 0x00;
+    static const uint8_t OUTPUT_REG = 0x08;
+    static const uint8_t INT_STATUS = 0x10;
+    static const uint8_t PRT_SEL_REG = 0x18;
+    static const uint8_t INT_MSK_REG = 0x19;
+    static const uint8_t SEL_PWM_REG = 0x1a;
 //  static const uint8_t INVERSE_REG = 0x1b;
-static const uint8_t PIN_DIR_REG = 0x1c;
-static const uint8_t PULLUP_REG  = 0x1d;
-static const uint8_t PULLDN_REG  = 0x1e;
-static const uint8_t OD_HIGH_REG = 0x1f;
-static const uint8_t OD_LOW_REG  = 0x20;
-static const uint8_t STRONG_REG  = 0x21;
-static const uint8_t SLOWST_REG  = 0x22;
-static const uint8_t HIGHZ_REG   = 0x23;
-static const uint8_t PWM_SEL_REG = 0x28;
-static const uint8_t DIVIDER_REG = 0x2c;
-static const uint8_t ENABLE_REG  = 0x2d;
-static const uint8_t DEV_ID_REG  = 0x2e;
-static const uint8_t COMMAND_REG = 0x30;
+    static const uint8_t PIN_DIR_REG = 0x1c;
+    static const uint8_t PULLUP_REG = 0x1d;
+    static const uint8_t PULLDN_REG = 0x1e;
+    static const uint8_t OD_HIGH_REG = 0x1f;
+    static const uint8_t OD_LOW_REG = 0x20;
+    static const uint8_t STRONG_REG = 0x21;
+    static const uint8_t SLOWST_REG = 0x22;
+    static const uint8_t HIGHZ_REG = 0x23;
+    static const uint8_t PWM_SEL_REG = 0x28;
+    static const uint8_t DIVIDER_REG = 0x2c;
+    static const uint8_t ENABLE_REG = 0x2d;
+    static const uint8_t DEV_ID_REG = 0x2e;
+    static const uint8_t COMMAND_REG = 0x30;
 
-int8_t gpio_to_pwm[8][8] = {
-                            7,  5,  3,  1,  7,  5,  3,  1,
-                            6,  4,  2,  0,  6,  4,  2,  0,
-                            14, 12,  8, 11, -1, -1, -1, -1,
-                            7,  5,  3,  1, 15, 13, 11,  9,
-                            6,  4,  2,  0, 14, 12, 10,  8,
-                            10,  8, 11,  9, 12, 14, 13, 15,
-                            0,  1,  2,  3,  4,  5,  6,  7,
-                            8,  9, 10, 11, 12, 13, 14, 15 };
+    int8_t gpio_to_pwm[8][8] = {
+             7,  5,  3,  1,  7,  5,  3,  1,
+             6,  4,  2,  0,  6,  4,  2,  0,
+            14, 12,  8, 11, -1, -1, -1, -1,
+             7,  5,  3,  1, 15, 13, 11,  9,
+             6,  4,  2,  0, 14, 12, 10,  8,
+            10,  8, 11,  9, 12, 14, 13, 15,
+             0,  1,  2,  3,  4,  5,  6,  7,
+             8,  9, 10, 11, 12, 13, 14, 15
+    };
 };
 
 cy8c95xxa_drv::cy8c95xxa_drv(i2c_interface & hw, uint8_t addr)
@@ -50,7 +51,7 @@ cy8c95xxa_drv::cy8c95xxa_drv(i2c_interface & hw, uint8_t addr)
     case 0x20: _pwm_mask = 0x03; break;
     case 0x40: _pwm_mask = 0x07; break;
     case 0x60: _pwm_mask = 0x0f; break;
-    default: yahal_assert(false);
+    default: assert(false);
     }
 
     // Reset the chip
@@ -117,7 +118,7 @@ void cy8c95xxa_drv::gpioMode(uint16_t gpio, uint16_t mode) {
         break;
     }
     default: {
-        yahal_assert(false);
+        assert(false);
     }
     }
     if (mode & GPIO::INIT_HIGH) gpioWrite(gpio, true);
@@ -158,7 +159,7 @@ void cy8c95xxa_drv::gpioAttachIrq(uint16_t gpio,
                                   function<void()> handler) {
     uint8_t port = PORT(gpio);
     uint8_t pin  = PIN (gpio);
-    yahal_assert(!(mode & ~GPIO::RISING & ~GPIO::FALLING));
+    assert(!(mode & ~GPIO::RISING & ~GPIO::FALLING));
     intHandler[port][pin] = handler;
     intMode   [port][pin] = mode;
     gpioEnableIrq(gpio);
@@ -236,7 +237,7 @@ bool cy8c95xxa_drv::configPWM (uint8_t port, uint8_t pin,
                                uint8_t period, uint8_t width) {
     uint8_t buf[5];
     int8_t pwm = CY8C95XXA::gpio_to_pwm[port][pin];
-    yahal_assert(pwm != -1);
+    assert(pwm != -1);
     buf[0] = CY8C95XXA::PWM_SEL_REG;
     buf[1] = pwm & _pwm_mask;
     buf[2] = clk;
