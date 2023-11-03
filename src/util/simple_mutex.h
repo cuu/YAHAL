@@ -11,7 +11,7 @@ class simple_mutex : public mutex_interface {
 public:
 
     simple_mutex() : _lock(false) { }
-    virtual ~simple_mutex();
+    virtual ~simple_mutex() { }
 
     void lock() override {
         while(_lock) ;
