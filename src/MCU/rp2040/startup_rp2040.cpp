@@ -1,24 +1,13 @@
+#include "system_rp2040.h"
 
 #include "RP2040.h"
-#include "system_rp2040.h"
-#include <stdint.h>
-
-using namespace _CLOCKS_;
-using namespace _PLL_SYS_;
-using namespace _PLL_USB_;
 using namespace _PPB_;
-using namespace _RESETS_;
-using namespace _SIO_;
-using namespace _WATCHDOG_;
-using namespace _XOSC_;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*********************/
-/* Macro Definitions */
-/*********************/
+// Macro Definitions
 #define WEAK_FUNC(FUN) \
 void FUN(void) __attribute__ ((weak));
 #define WEAK_INT_FUNC(FUN) \
@@ -28,18 +17,9 @@ void FUN(void) __attribute__ ((weak, alias(#FUN_ALIAS)));
 #define WEAK_ALIAS_INT_FUNC(FUN, FUN_ALIAS) \
 int FUN() __attribute__ ((weak, alias(#FUN_ALIAS)));
 
-/************************************/
-/* External variables and functions */
-/************************************/
+// External variables and functions
 extern void     __cmsis_start(void);
 extern uint32_t __StackTop;
-
-/**********************/
-/* XOSC configuration */
-/**********************/
-#define XOSC_FREQUENCY  12000000
-#define XOSC_STARTUP_MS 10
-#define XOSC_STARTUP    (XOSC_FREQUENCY * XOSC_STARTUP_MS / 1000) / 256
 
 typedef void (*pFunc)(void);
 
@@ -49,42 +29,41 @@ WEAK_FUNC(Reset_Handler)
 WEAK_INT_FUNC(return_0)
 
 // Cortex-M0+ Processor Exceptions
-WEAK_ALIAS_FUNC(NMI_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(HardFault_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(SVC_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(PendSV_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(SysTick_Handler, Default_Handler)
+WEAK_ALIAS_FUNC(NMI_Handler,           Default_Handler)
+WEAK_ALIAS_FUNC(HardFault_Handler,     Default_Handler)
+WEAK_ALIAS_FUNC(SVC_Handler,           Default_Handler)
+WEAK_ALIAS_FUNC(PendSV_Handler,        Default_Handler)
+WEAK_ALIAS_FUNC(SysTick_Handler,       Default_Handler)
 
 // Device specific interrupt handler
-WEAK_ALIAS_FUNC(TIMER_IRQ_0_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(TIMER_IRQ_1_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(TIMER_IRQ_2_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(TIMER_IRQ_3_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(PWM_IRQ_WRAP_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(USBCTRL_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(XIP_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(PIO0_IRQ_0_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(PIO0_IRQ_1_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(PIO1_IRQ_0_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(PIO1_IRQ_1_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(DMA_IRQ_0_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(DMA_IRQ_1_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(IO_IRQ_BANK0_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(IO_IRQ_QSPI_Handler, Default_Handler)
+WEAK_ALIAS_FUNC(TIMER_IRQ_0_Handler,   Default_Handler)
+WEAK_ALIAS_FUNC(TIMER_IRQ_1_Handler,   Default_Handler)
+WEAK_ALIAS_FUNC(TIMER_IRQ_2_Handler,   Default_Handler)
+WEAK_ALIAS_FUNC(TIMER_IRQ_3_Handler,   Default_Handler)
+WEAK_ALIAS_FUNC(PWM_IRQ_WRAP_Handler,  Default_Handler)
+WEAK_ALIAS_FUNC(USBCTRL_IRQ_Handler,   Default_Handler)
+WEAK_ALIAS_FUNC(XIP_IRQ_Handler,       Default_Handler)
+WEAK_ALIAS_FUNC(PIO0_IRQ_0_Handler,    Default_Handler)
+WEAK_ALIAS_FUNC(PIO0_IRQ_1_Handler,    Default_Handler)
+WEAK_ALIAS_FUNC(PIO1_IRQ_0_Handler,    Default_Handler)
+WEAK_ALIAS_FUNC(PIO1_IRQ_1_Handler,    Default_Handler)
+WEAK_ALIAS_FUNC(DMA_IRQ_0_Handler,     Default_Handler)
+WEAK_ALIAS_FUNC(DMA_IRQ_1_Handler,     Default_Handler)
+WEAK_ALIAS_FUNC(IO_IRQ_BANK0_Handler,  Default_Handler)
+WEAK_ALIAS_FUNC(IO_IRQ_QSPI_Handler,   Default_Handler)
 WEAK_ALIAS_FUNC(SIO_IRQ_PROC0_Handler, Default_Handler)
 WEAK_ALIAS_FUNC(SIO_IRQ_PROC1_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(CLOCKS_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(SPI0_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(SPI1_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(UART0_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(UART1_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(ADC_IRQ_FIFO_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(I2C0_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(I2C1_IRQ_Handler, Default_Handler)
-WEAK_ALIAS_FUNC(RTC_IRQ_Handler, Default_Handler)
+WEAK_ALIAS_FUNC(CLOCKS_IRQ_Handler,    Default_Handler)
+WEAK_ALIAS_FUNC(SPI0_IRQ_Handler,      Default_Handler)
+WEAK_ALIAS_FUNC(SPI1_IRQ_Handler,      Default_Handler)
+WEAK_ALIAS_FUNC(UART0_IRQ_Handler,     Default_Handler)
+WEAK_ALIAS_FUNC(UART1_IRQ_Handler,     Default_Handler)
+WEAK_ALIAS_FUNC(ADC_IRQ_FIFO_Handler,  Default_Handler)
+WEAK_ALIAS_FUNC(I2C0_IRQ_Handler,      Default_Handler)
+WEAK_ALIAS_FUNC(I2C1_IRQ_Handler,      Default_Handler)
+WEAK_ALIAS_FUNC(RTC_IRQ_Handler,       Default_Handler)
 
-
-// Interrupt vector table.
+// The interrupt vector table.
 void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) = {
     (pFunc) &__StackTop,            // The initial stack pointer
 
@@ -132,7 +111,9 @@ void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) 
     RTC_IRQ_Handler                 //  25 RTC_IRQ
 };
 
-void __attribute__((naked, noreturn)) _elf_entry_point() {
+// The ELF entry point. This code will hand over control to the ROM at 0x0,
+// which in turn will check the Flash for a runnable binary.
+void _elf_entry_point() {
     PPB.VTOR.TBLOFF = 0;
     uint32_t top_of_stack = *(uint32_t *)0x0;
     uint32_t reset_func   = *(uint32_t *)0x4;
@@ -141,121 +122,22 @@ void __attribute__((naked, noreturn)) _elf_entry_point() {
 }
 
 // The reset irq handler
-void __attribute__((naked, noreturn)) Reset_Handler(void)
-{
-    // Check if core 1 is executing this code
-    // and let it sleep in the bootrom
-    if (SIO.CPUID != 0) {
-        while(1) ;
-    }
-
-    SCB->VTOR = 0x10000100;
-
-    // Reset peripherals
-    RESETS.RESET = 0xfbcdbf;
-    RESETS.RESET = 0xc38001;
-
-    /////////////////////////
-    // Set up clock system //
-    /////////////////////////
-
-    WATCHDOG.TICK.CYCLES             = 12;
-    WATCHDOG_SET.TICK.ENABLE       <<= 1;
-
-    CLOCKS.CLK_SYS_RESUS_CTRL        = 0;
-
-    // Start 12MHz crystal oscillator
-    XOSC.CTRL.FREQ_RANGE              = CTRL_FREQ_RANGE__1_15MHZ;
-    XOSC.STARTUP                      = XOSC_STARTUP;
-    XOSC.CTRL.ENABLE                  = CTRL_ENABLE__ENABLE;
-    while (XOSC.STATUS.ENABLED == 0) {}
-
-    CLOCKS.CLK_REF_CTRL.SRC           = CLK_REF_CTRL_SRC__rosc_clksrc_ph;
-    while (CLOCKS.CLK_REF_SELECTED != 0x1) {}
-    CLOCKS.CLK_SYS_CTRL.SRC           = CLK_SYS_CTRL_SRC__clk_ref;
-    while (CLOCKS.CLK_SYS_SELECTED != 0x1) {}
-
-    // Set up PLL_SYS
-    RESETS_SET.RESET.pll_sys        <<= 1;
-    RESETS_CLR.RESET.pll_sys        <<= 1;
-    while (RESETS.RESET_DONE.pll_sys == 0) {}
-    PLL_SYS.CS.REFDIV                 = 1;
-    PLL_SYS.FBDIV_INT                 = 125;
-    PLL_SYS_CLR.PWR.VCOPD           <<= 1;
-    PLL_SYS_CLR.PWR.PD              <<= 1;
-    while (PLL_SYS.CS.LOCK != 1) {}
-    PLL_SYS.PRIM.POSTDIV1             = 6;
-    PLL_SYS.PRIM.POSTDIV2             = 2;
-    PLL_SYS_CLR.PWR.POSTDIVPD       <<= 1;
-
-    // Set up PLL_USB
-    RESETS_SET.RESET.pll_usb        <<= 1;
-    RESETS_CLR.RESET.pll_usb        <<= 1;
-    while (RESETS.RESET_DONE.pll_usb == 0) {}
-    PLL_USB.CS.REFDIV                 = 1;
-    PLL_USB.FBDIV_INT                 = 100;
-    PLL_USB_CLR.PWR.VCOPD           <<= 1;
-    PLL_USB_CLR.PWR.PD              <<= 1;
-    while (PLL_USB.CS.LOCK != 1) {}
-    PLL_USB.PRIM.POSTDIV1             = 5;
-    PLL_USB.PRIM.POSTDIV2             = 5;
-    PLL_USB_CLR.PWR.POSTDIVPD       <<= 1;
-
-    CLOCKS.CLK_REF_CTRL.AUXSRC        = CLK_REF_CTRL_AUXSRC__clksrc_pll_usb;
-    CLOCKS.CLK_REF_CTRL.SRC           = CLK_REF_CTRL_SRC__xosc_clksrc;
-    CLOCKS.CLK_REF_DIV.INT            = 1;
-
-    CLOCKS.CLK_SYS_CTRL.AUXSRC        = CLK_SYS_CTRL_AUXSRC__clksrc_pll_sys;
-    CLOCKS.CLK_SYS_CTRL.SRC           = CLK_SYS_CTRL_SRC__clksrc_clk_sys_aux;
-    CLOCKS.CLK_SYS_DIV.INT            = 1;
-    CLOCKS.CLK_SYS_DIV.FRAC           = 0;
-
-    CLOCKS_CLR.CLK_USB_CTRL.ENABLE  <<= 1;
-    CLOCKS.CLK_USB_CTRL.AUXSRC        = CLK_USB_CTRL_AUXSRC__clksrc_pll_usb;
-    CLOCKS.CLK_USB_DIV.INT            = 1;
-    CLOCKS_SET.CLK_USB_CTRL.PHASE   <<= 1;
-    CLOCKS_SET.CLK_USB_CTRL.ENABLE  <<= 1;
-
-    CLOCKS_CLR.CLK_ADC_CTRL.ENABLE  <<= 1;
-    CLOCKS.CLK_ADC_CTRL.AUXSRC        = CLK_ADC_CTRL_AUXSRC__clksrc_pll_usb;
-    CLOCKS.CLK_ADC_DIV.INT            = 1;
-    CLOCKS_SET.CLK_ADC_CTRL.PHASE   <<= 1;
-    CLOCKS_SET.CLK_ADC_CTRL.ENABLE  <<= 1;
-
-    CLOCKS_CLR.CLK_RTC_CTRL.ENABLE  <<= 1;
-    CLOCKS.CLK_RTC_CTRL.AUXSRC        = CLK_RTC_CTRL_AUXSRC__clksrc_pll_usb;
-    CLOCKS.CLK_RTC_DIV.INT            = 1024;
-    CLOCKS.CLK_RTC_DIV.FRAC           = 0;
-    CLOCKS_SET.CLK_RTC_CTRL.PHASE   <<= 1;
-    CLOCKS_SET.CLK_RTC_CTRL.ENABLE  <<= 1;
-
-    CLOCKS_CLR.CLK_PERI_CTRL.ENABLE <<= 1;
-    CLOCKS.CLK_PERI_CTRL.AUXSRC       = CLK_PERI_CTRL_AUXSRC__clk_sys;
-    CLOCKS_SET.CLK_PERI_CTRL.ENABLE <<= 1;
-
-    RESETS.RESET = 0;
-
-    // Call system initialization routine. Remember that
-    // data and bss sections are NOT yet initialized, but
-    // copied AFTER this call!
-    SystemInit();
-
-    // Let CMSIS code do the initialization of the C++
-    // runtime and jump to main
+void Reset_Handler(void) {
+    // Let CMSIS code do the initialization of the C++ runtime and jump to main.
+    // The SystemInit() method is marked as a global constructor, so it will not
+    // be called here but after the data and bss regions have been initialized.
     __cmsis_start();
 }
 
 // This is the code that gets called when the processor receives an unexpected
-// interrupt.  This simply enters an infinite loop, preserving the system state
+// interrupt. This simply enters an infinite loop, preserving the system state
 // for examination by a debugger.
-void Default_Handler(void)
-{
+void Default_Handler(void) {
     // Enter an infinite loop.
-    while (1) { }
+    while (true) { }
 }
 
-// Dummy Posix File IO functions
-// to suppress linker warnings
+// Dummy Posix File IO functions to suppress linker warnings
 WEAK_ALIAS_INT_FUNC( _read,   return_0 );
 WEAK_ALIAS_INT_FUNC( _write,  return_0 );
 WEAK_ALIAS_INT_FUNC( _open,   return_0 );

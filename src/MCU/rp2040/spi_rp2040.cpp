@@ -18,6 +18,7 @@
 // higher layers or automatically in this driver.
 
 #include "spi_rp2040.h"
+#include "system_rp2040.h"
 #include <cassert>
 
 using namespace _IO_BANK0_;
@@ -192,7 +193,7 @@ void spi_rp2040::setSpeed(uint32_t baud)
 {
     if (!_init) init();
 
-    uint32_t freq_in = 125000000;
+    uint32_t freq_in = CLK_PERI;
     uint32_t prescale, postdiv;
 
     // Find smallest prescale value which puts output frequency in range of

@@ -39,7 +39,7 @@
 // The second timer is used here (constructor
 // parameter 1, range is 0..3).
 void delay(int us) {
-    // Setup the second time in ONE_SHOT mode
+    // Set up the second time in ONE_SHOT mode
     // and simply wait until the callback
     // method has changed the 'expired' variable.
     // The interrupt handler is realized as a
@@ -55,7 +55,7 @@ void delay(int us) {
     while(!expired) ;
 }
 
-int main(void)
+int main()
 {
     // Setup two LEDs on the launchpad for blinking
     ws2812_rp2040 leds(WS2812_PIN, WS2812_COUNT);
@@ -64,7 +64,7 @@ int main(void)
     led_red.set_on_color(0x040000);
     led_blue.set_on_color(0x000010);
 
-    // Setup the first timer with a timeout of 500ms
+    // Set up the first timer with a timeout of 500ms
     // in periodic mode. This will let the red LED
     // blink with a delay of _exactly_ 500 ms!
     timer_rp2040 timer0(0);
@@ -77,9 +77,9 @@ int main(void)
     // longer time, you will notice, that the blue
     // LED (see code below) will blink a _little_
     // bit slower, because calling the toggle()
-    // method and calling delay() adds some small
+    // method and calling delay() adds some extra
     // time to the 500ms. Since the first (red) LED
-    // is running in PERIODC mode, the blink interval
+    // is running in PERIODIC mode, the blink interval
     // is _exactly_ 500ms!
     while(true) {
         delay(500000);        // wait 500ms

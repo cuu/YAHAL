@@ -22,9 +22,8 @@ using namespace _PPB_;
 #include "yahal_config.h"
 #include "task.h"
 #include "task_idle.h"
+#include "system_rp2040.h"
 #include <cassert>
-
-extern uint32_t SystemCoreClock;
 
 //////////////////
 // System call API
@@ -93,7 +92,7 @@ void task::_context_switch() {
 
 void task::_nonOS_sleep(uint32_t ms) {
     // Configure SysTick as 1 ms timer
-    SysTick->LOAD = SystemCoreClock / 1000 - 1;
+    SysTick->LOAD = CLK_SYS / 1000 - 1;
     SysTick->VAL  = 0;
     SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                     SysTick_CTRL_ENABLE_Msk;
@@ -245,7 +244,7 @@ void SVC_Handler_C(uint32_t * args) {
             NVIC_SetPriority(PendSV_IRQn, 0xff);
 
             // set SysTick to TICK_FREQUENCY
-            SysTick_Config(SystemCoreClock / TICK_FREQUENCY);
+            SysTick_Config(CLK_SYS / TICK_FREQUENCY);
 
             // Return to thread mode and use PSP
             _exec_ret = EXC_RETURN_THREAD_PSP;

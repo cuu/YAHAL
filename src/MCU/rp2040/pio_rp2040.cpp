@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include "pio_rp2040.h"
+#include "system_rp2040.h"
 
 using namespace _PIO0_;
 using namespace _PIO1_;
@@ -57,9 +58,9 @@ void SM::setRegister(out_dest_t reg, uint32_t val,
 }
 
 void SM::setClock(uint32_t hz) {
-    regs.SM_CLKDIV.INT = 125000000 / hz;
-    uint64_t frac = ((125000000 % hz) << 8);
-    frac /= hz;
+    regs.SM_CLKDIV.INT  =   CLK_SYS / hz;
+    uint64_t frac       = ((CLK_SYS % hz) << 8);
+    frac               /= hz;
     regs.SM_CLKDIV.FRAC = frac;
 }
 

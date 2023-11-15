@@ -1,8 +1,8 @@
 
 #include "uart_rp2040.h"
 #include "gpio_rp2040.h"
+#include "system_rp2040.h"
 #include <cassert>
-#include <cstring>
 
 using namespace _UART0_;
 using namespace _UART1_;
@@ -125,7 +125,7 @@ void uart_rp2040::uartMode(uart_mode_t mode) {
 
 void uart_rp2040::setBaudrate(uint32_t baud) {
     _baud = baud;
-    uint32_t baud_div = (8*125000000) / _baud;
+    uint32_t baud_div = (8 * CLK_PERI) / _baud;
     _uart->UARTIBRD =  (baud_div >> 7);
     _uart->UARTFBRD = ((baud_div & 0x7f) + 1) / 2;
     // dummy write
