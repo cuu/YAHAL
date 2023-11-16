@@ -25,7 +25,7 @@ using namespace _SIO_;
 
 int main(void)
 {
-    // Set 2ma drive current
+    // Set 4ma drive current
     PADS_BANK0.GPIO[13].DRIVE = GPIO_DRIVE__4mA;
     // Switch GPIO mode to SIO
     IO_BANK0.GPIO13_CTRL.FUNCSEL = GPIO_CTRL_FUNCSEL__sio;

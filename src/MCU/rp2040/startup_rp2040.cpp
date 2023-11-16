@@ -123,9 +123,9 @@ void _elf_entry_point() {
 
 // The reset irq handler
 void Reset_Handler(void) {
+    // Initialize the hardware
+    SystemInit();
     // Let CMSIS code do the initialization of the C++ runtime and jump to main.
-    // The SystemInit() method is marked as a global constructor, so it will not
-    // be called here but after the data and bss regions have been initialized.
     __cmsis_start();
 }
 

@@ -50,7 +50,7 @@ tmp1:           subs        r4, #1              @ decrement counter
                 .func
 main:           bl          gpio_init           @ Call subroutine GPIO_Init
                 ldr         r1, GPIO_OUT_XOR    @ load r1 with address of register GPIO_OUT_XOR
-                movs        r2, 1		@ Create a mask for GPIO 13
+                movs        r2, 1               @ Create a mask for GPIO 13
                 lsls        r2, 13              @ (1 << 13) in register R2
 loop:           str         r2, [r1]            @ Toggle output bit
                 bl          delay               @ call delay subroutine

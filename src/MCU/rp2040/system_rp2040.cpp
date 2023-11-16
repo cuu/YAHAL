@@ -31,7 +31,7 @@ uint32_t CLK_RTC  = 0;
 /*---------------------------------------------------------------------------
   System initialization function
  *---------------------------------------------------------------------------*/
-void __attribute__((constructor)) SystemInit (void)
+void SystemInit (void)
 {
     // Check if core 1 is executing this code
     // and let it sleep in the bootrom
@@ -135,7 +135,7 @@ void __attribute__((constructor)) SystemInit (void)
 
 // Updates the system clocks with current
 // settings from hardware registers.
-void ClockUpdate (void) {
+void __attribute__((constructor)) ClockUpdate (void) {
     // CLK_REF is running from XOSC
     CLK_REF  = XOSC_FREQ;
     CLK_REF /= CLOCKS.CLK_REF_DIV.INT;
