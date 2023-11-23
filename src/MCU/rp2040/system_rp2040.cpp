@@ -24,6 +24,7 @@ extern "C" {
 uint32_t CLK_SYS  = 0;
 uint32_t CLK_REF  = 0;
 uint32_t CLK_PERI = 0;
+uint32_t CLK_TICK = 0;
 uint32_t CLK_USB  = 0;
 uint32_t CLK_ADC  = 0;
 uint32_t CLK_RTC  = 0;
@@ -94,7 +95,7 @@ void SystemInit (void)
 
     // Configure CLK_REF
     CLOCKS.CLK_REF_CTRL.AUXSRC        = CLK_REF_CTRL_AUXSRC__clksrc_pll_usb;
-    CLOCKS.CLK_REF_CTRL.SRC           = CLK_REF_CTRL_SRC__xosc_clksrc;
+    CLOCKS.CLK_REF_CTRL.SRC           = CLK_REF_CTRL_SRC__clksrc_clk_ref_aux;
     CLOCKS.CLK_REF_DIV.INT            = 1;
 
     // Configure CLK_SYS
@@ -136,15 +137,6 @@ void SystemInit (void)
 // Updates the system clocks with current
 // settings from hardware registers.
 void __attribute__((constructor)) ClockUpdate (void) {
-    // CLK_REF is running from XOSC
-    CLK_REF  = XOSC_FREQ;
-    CLK_REF /= CLOCKS.CLK_REF_DIV.INT;
-
-    // Update the divisor for CLK_TICK
-    WATCHDOG_CLR.TICK.ENABLE <<= 1;
-    WATCHDOG.TICK.CYCLES = CLK_REF / 1000000;
-    WATCHDOG_SET.TICK.ENABLE <<= 1;
-
     // Calculate PLL frequencies
     uint32_t pll_sys = XOSC_FREQ;
     pll_sys /= PLL_SYS.CS.REFDIV;
@@ -158,9 +150,16 @@ void __attribute__((constructor)) ClockUpdate (void) {
     pll_usb /= PLL_USB.PRIM.POSTDIV1;
     pll_usb /= PLL_USB.PRIM.POSTDIV2;
 
+    // Update the divisor for CLK_TICK
+    WATCHDOG_CLR.TICK.ENABLE <<= 1;
+    WATCHDOG.TICK.CYCLES = 1;
+    WATCHDOG_SET.TICK.ENABLE <<= 1;
+
     // Set the remaining CLK values
+    CLK_REF  = pll_usb / CLOCKS.CLK_REF_DIV.INT;
     CLK_SYS  = pll_sys / CLOCKS.CLK_SYS_DIV.INT;
     CLK_PERI = pll_usb;
+    CLK_TICK = CLK_REF / WATCHDOG.TICK.CYCLES;
     CLK_USB  = pll_usb / CLOCKS.CLK_USB_DIV.INT;
     CLK_ADC  = pll_usb / CLOCKS.CLK_ADC_DIV.INT;
     CLK_RTC  = pll_usb / CLOCKS.CLK_RTC_DIV.INT;

@@ -145,7 +145,7 @@ void i2c_rp2040::setSpeed(uint32_t freq) {
     if (!_initialized) initialize();
 
     // I2C is synchronous design that runs from clk_sys
-    uint32_t freq_in = CLK_PERI;
+    uint32_t freq_in = CLK_SYS;
 
     // TODO there are some subtleties to I2C timing which we are completely ignoring here
     uint32_t period = (freq_in + freq / 2) / freq;

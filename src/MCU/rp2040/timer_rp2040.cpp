@@ -6,6 +6,7 @@
  */
 
 #include "timer_rp2040.h"
+#include "system_rp2040.h"
 #include <cassert>
 
 timer_rp2040 *   timer_rp2040::_timerinst[4];
@@ -20,6 +21,8 @@ timer_rp2040::timer_rp2040(uint32_t index) {
     _ALARM      = &(_TIMER_::TIMER.ALARM0) + index;
     _mode       = TIMER::ONE_SHOT;
     _period_us  = 0;
+    // Calculate factor
+    _tick_factor= CLK_TICK / 1000000;
     // Register timer instance pointer
     _timerinst[index] = this;
     // Enable timer interrupt
@@ -34,7 +37,12 @@ timer_rp2040::~timer_rp2040() {
 }
 
 void timer_rp2040::setPeriod(uint32_t us, TIMER::timer_mode mode) {
-    _period_us = us;
+    _period_us = us * _tick_factor;
+    _mode      = mode;
+}
+
+void timer_rp2040::setPeriod_ns(uint32_t ns, TIMER::timer_mode mode) {
+    _period_us = (ns * _tick_factor) / 1000;
     _mode      = mode;
 }
 

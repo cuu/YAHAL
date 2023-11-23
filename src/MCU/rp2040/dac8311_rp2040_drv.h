@@ -34,7 +34,7 @@ public:
         _enable.gpioWrite(!v);
     }
 
-    void setPcmRate(uint32_t Hz = 44100);
+    void setPcmRate(uint32_t Hz = 44100) override;
 
 private:
     gpio_rp2040_pin _enable;    // Audio enable Pin

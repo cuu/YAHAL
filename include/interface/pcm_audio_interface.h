@@ -33,7 +33,7 @@ public:
 
     // Set the PCM outout rate in Hz.
     // Default is 44.1 kHz
-    void setPcmRate(uint32_t Hz = 44100);
+    virtual void setPcmRate(uint32_t Hz = 44100) = 0;
 
     // Check how many values can be written to
     // the PCM FIFO.

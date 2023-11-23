@@ -12,6 +12,7 @@ extern "C" {
 extern uint32_t CLK_SYS;
 extern uint32_t CLK_REF;
 extern uint32_t CLK_PERI;
+extern uint32_t CLK_TICK;
 extern uint32_t CLK_USB;
 extern uint32_t CLK_ADC;
 extern uint32_t CLK_RTC;

@@ -18,26 +18,28 @@
 // nothing (see below).
 
 #include "gpio_rp2040.h"
+#include "ws2812_rp2040.h"
 #include "RP2040.h"
 
-#define LED_RED1    2  // left  red LED
-#define LED_RED2    3  // right red RGB LED
-#define BUTTON1     16 // left  S1 button
-#define BUTTON2     17 // right S2 button
+// GPIO defines
+#define BUTTON1     16  // left  S1 button
+#define BUTTON2     17  // right S2 button
+#define WS2812_PIN  29  // GPIO Pin controlling the WS2812 LEDs
+#define WS2812_COUNT 8  // Number of WS2812 LEDs
 
 int main()
 {
-    // GPIO pins with LEDs
-    gpio_rp2040_pin red_led1 (LED_RED1);
-    gpio_rp2040_pin red_led2 (LED_RED2);
+    // Set up the LEDs
+    ws2812_rp2040 leds(WS2812_PIN, WS2812_COUNT);
+
+    leds[0].set_on_color(0x080000);	// left  LED is red
+    leds[7].set_on_color(0x000600);	// right LED is green
 
     // GPIO pins with buttons
     gpio_rp2040_pin button_S1(BUTTON1); // left button
     gpio_rp2040_pin button_S2(BUTTON2); // right button
 
     // Setup GPIO modes
-    red_led1. gpioMode(GPIO::OUTPUT | GPIO::DRIVE_12mA);
-    red_led2. gpioMode(GPIO::OUTPUT);
     button_S1.gpioMode(GPIO::INPUT | GPIO::PULLUP);
     button_S2.gpioMode(GPIO::INPUT | GPIO::PULLUP);
 
@@ -51,10 +53,10 @@ int main()
     // a falling edge!)
     // The right LED will change its status when S2 is _released_!
     button_S1.gpioAttachIrq(GPIO::FALLING, [&]() {
-        red_led1.gpioToggle();
+        leds[0].toggle();
     });
     button_S2.gpioAttachIrq(GPIO::RISING, [&]() {
-        red_led2.gpioToggle();
+        leds[7].toggle();
     });
 
     // Endless loop, which is only 'interrupted' by

@@ -6,6 +6,7 @@ target_sources(${YAHAL_TARGET} PRIVATE
         gpio_rp2040.cpp
         i2c_rp2040.cpp
         lock_base_rp2040.cpp
+        pcm_pwm_rp2040_drv.cpp
         pio_rp2040.cpp
         spi_rp2040.cpp
         task_rp2040.cpp
