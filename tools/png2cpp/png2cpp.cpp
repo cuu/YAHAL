@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 
     // Generate output file
     cout << "Generating file '" << outfile << "' ..." << endl;
-    ofstream ofs(outfile.c_str());
+    ofstream ofs(outfile.c_str(), raw ? std::ios_base::binary : std::ios_base::out);
     if (!ofs) {
         cerr << "Problem creating output file '" << outfile << "'" << endl;
         exit(1);
