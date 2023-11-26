@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     
     // Process the input file name
     std::filesystem::path filepath{infile};
-    string name_we = filepath.filename();
+    string name_we = filepath.filename().string();
     size_t dot = name_we.find_last_of('.');
     if (dot != string::npos) {
         name_we = name_we.substr(0, dot);
