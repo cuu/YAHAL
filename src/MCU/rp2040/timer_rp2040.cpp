@@ -47,7 +47,7 @@ void timer_rp2040::setPeriod_ns(uint32_t ns, TIMER::timer_mode mode) {
 }
 
 uint32_t timer_rp2040::getPeriod() {
-    return _period_us;
+    return _period_us / _tick_factor;
 }
 
 void timer_rp2040::setCallback(function<void()> f) {

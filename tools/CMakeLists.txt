@@ -97,12 +97,13 @@ function(file_to_cpp TARGET FILE)
     endif()
 
     # Parse argument
-    cmake_parse_arguments(file_to_cpp "" "OUTPUT_FILE" "" ${ARGN} )
+    cmake_parse_arguments(file_to_cpp "" "OUTPUT_DIR" "" ${ARGN} )
 
     # Paramters are all relative to current CMakeList.txt
-    set(FILE    "${CMAKE_CURRENT_LIST_DIR}/${FILE}")
-    set(CPPFILE "${CMAKE_CURRENT_LIST_DIR}/${file_to_cpp_OUTPUT_FILE}")
+    set(INFILE  "${CMAKE_CURRENT_LIST_DIR}/${FILE}")
+    set(OUT_DIR "${CMAKE_CURRENT_LIST_DIR}/${file_to_cpp_OUTPUT_DIR}")
     get_filename_component(NAME_WE ${FILE} NAME_WE)
+    set(CPPFILE "${OUT_DIR}/${NAME_WE}.cpp")
 
     #Add a new target which depends on the cpp file
     set(FILE_TARGET "${PROJECT_NAME}_${NAME_WE}_cpp")
@@ -110,9 +111,11 @@ function(file_to_cpp TARGET FILE)
 
     add_custom_command(
         OUTPUT          ${CPPFILE}
-        MAIN_DEPENDENCY ${FILE}
-        COMMAND FILE2CPP -o ${CPPFILE} ${FILE}
+        MAIN_DEPENDENCY ${INFILE}
+        COMMAND FILE2CPP -o ${OUT_DIR} ${INFILE}
     )
 
     add_dependencies(${TARGET} ${FILE_TARGET})
+
+    target_include_directories(${TARGET} PRIVATE ${OUT_DIR})
 endfunction()

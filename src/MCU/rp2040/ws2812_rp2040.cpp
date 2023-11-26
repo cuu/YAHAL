@@ -96,7 +96,7 @@ void ws2812_rp2040::update(uint16_t index) {
     // Sending the whole FIFO takes 80us. The reset time
     // for a WS2812 is at least 280us, so we wait approx.
     // 400us before sending a new packet.
-    while ((time_us() - _last) < 400) { }
+    while ((time_us() - _last) < 48*1000) { }
     // Update the LEDs. A mutex will not help here because
     // the critical section could still be interrupted. But
     // WS2812 timing is critical...

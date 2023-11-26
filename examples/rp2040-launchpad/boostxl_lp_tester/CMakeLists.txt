@@ -6,14 +6,14 @@ set(YAHAL_BOARD "rp2040-launchpad")
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
 
-project(boostxl_lp_tester)
+project(lp_tester)
 
-add_executable(boostxl_lp_tester
-    boostxl_lp_tester.cpp
+add_executable(lp_tester
+    lp_tester.cpp
 )
 
 # Add YAHAL
-yahal_add_me(boostxl_lp_tester)
+yahal_add_me(lp_tester)
 
-yahal_add_custom_targets(boostxl_lp_tester)
-yahal_add_extra_outputs(boostxl_lp_tester)
+yahal_add_custom_targets(lp_tester)
+yahal_add_extra_outputs(lp_tester)

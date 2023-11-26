@@ -10,7 +10,7 @@ endif()
 # Check if we need to locate the YAHAL root directory
 if (NOT YAHAL_DIR)
     message("Trying to find YAHAL ...")
-    find_path(YAHAL_DIR .yahal_version . .. ../.. ../../..)
+    find_path(YAHAL_DIR .yahal_version . .. ../.. ../../.. ../../../..)
 endif ()
 
 # Try to resolve a relative path
