@@ -25,7 +25,7 @@
 #include "usb_fd_call_mgmt.h"
 #include "usb_fd_acm.h"
 #include "usb_fd_union.h"
-#include "fifo.h"
+#include "usb_fifo.h"
 #include <functional>
 #include <utility>
 

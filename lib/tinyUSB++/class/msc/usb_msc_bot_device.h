@@ -20,7 +20,6 @@
 #include "usb_interface.h"
 #include "usb_endpoint.h"
 #include "usb_device_controller.h"
-#include "fifo.h"
 #include "usb_config.h"
 #include <array>
 
