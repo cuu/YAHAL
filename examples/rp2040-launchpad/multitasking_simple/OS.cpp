@@ -15,6 +15,7 @@
 // kernel.
 
 #include "OS.h"
+#include "system_rp2040.h"
 #include <cstdint>
 #include <RP2040.h>
 
@@ -137,15 +138,25 @@ void OS_start_scheduler(int Hz) {
     run_ptr = head;
 
     // Start the systick timer
-    SysTick_Config(125000000 / Hz);
+    SysTick_Config(CLK_SYS / Hz);
 
     // Set the stack pointer of the first task and run that task
 //    register uint32_t * __attribute__((unused)) sp asm("sp");
 //    sp = run_ptr->sp;
-//    asm volatile("pop     {r4-r11}");  // restore R4-R11
+//    asm volatile("pop     {r0-r7} ");
+//    asm volatile("mov     r11, r7 ");
+//    asm volatile("mov     r10, r6 ");
+//    asm volatile("mov     r9, r5  ");
+//    asm volatile("mov     r8, r4  ");
+//    asm volatile("mov     r7, r3  ");
+//    asm volatile("mov     r6, r2  ");
+//    asm volatile("mov     r5, r1  ");
+//    asm volatile("mov     r4, r0  ");
 //    asm volatile("pop     {r0-r3} ");  // restore R0-R3
-//    asm volatile("pop     {r12}   ");  // restore R12
-//    asm volatile("pop     {lr}    ");  // load LR (the task_exit routine)
+//    asm volatile("pop     {r0}    ");  // restore R12
+//    asm volatile("mov     r12, r0 ");
+//    asm volatile("pop     {r0}    ");  // restore LR
+//    asm volatile("mov     lr, r0 ");
 //    asm volatile("pop     {r0}    ");  // load PC (entry point) in R0
 //    asm volatile("pop     {r1}    ");  // load PSR in R1 (is discarded)
 //    asm volatile("cpsie   i       ");  // run task with interrupts enabled
@@ -158,14 +169,16 @@ void OS_start_scheduler(int Hz) {
 
     // Set the stack pointer of the first task and run that task
     register uint32_t * __attribute__((unused)) sp asm("sp");
+    register uint32_t   __attribute__((unused)) lr asm("lr");
+    // Restore sp and lr
     sp = run_ptr->sp + 16;
-    void (*task)(void) = (void(*)(void))sp[-2];
-    task();
+    lr = sp[-3];
+    ((void(*)(void))sp[-2])();
 }
 
 
 // The systick interrupt service routine is
-// defined in the file startup_msp432p401r_gcc.c
+// defined in the file startup_rp2040.cpp
 // The following method overrides the handler
 // definition in the startup file, and must
 // have C-linkage.

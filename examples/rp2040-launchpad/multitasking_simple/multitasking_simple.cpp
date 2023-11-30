@@ -23,6 +23,10 @@
 // kernel, use YAHAL's task class.
 
 #include "ws2812_rp2040.h"
+#include "uart_rp2040.h"
+#include "posix_io.h"
+#include <cstdio>
+
 #include "OS.h"
 
 #define WS2812_PIN 29
@@ -54,17 +58,33 @@ void task2(void) {
     }
 }
 
+int global = 0;
+
+// simple task to increment a global variable
+void task3(void) {
+    for (int i=0; i < 50000; ++i) {
+        ++global;
+    }
+    printf("Task 3 ending. global is: %d\n", global);
+}
+
 int main(void)
 {
-    // Set LED colors
-    led_red.set_on_color (0x040000);
-    led_blue.set_on_color(0x000010);
-    
+    // Set up UART and enable stdin/stdout
+    uart_rp2040 uart; // default is backchannel UART!
+    posix_io::inst.register_stdin ( uart );
+    posix_io::inst.register_stdout( uart );
+    posix_io::inst.register_stderr( uart );
+
     // Add two tasks to our mini-OS
     OS_add_task(task1);
     OS_add_task(task2);
 
+    // Add two tasks which should increment the
+    // global integer by 50000 each.
+    OS_add_task(task3);
+    OS_add_task(task3);
+
     // Start the scheduler. This method will never return...
     OS_start_scheduler();
 }
-
