@@ -61,5 +61,29 @@
 #define TUPP_MSC_BLOCK_SIZE 512
 #endif
 
+// Default number of capabilities in BOS descriptor
+#ifndef TUPP_MAX_BOS_CAPABILITIES
+#define TUPP_MAX_BOS_CAPABILITIES 1
+#endif
+
+// Default size of a MS registry property descriptor
+#ifndef TUPP_MS_REG_PROP_SIZE
+#define TUPP_MS_REG_PROP_SIZE 200
+#endif
+
+// Default number of MS config subsets
+#ifndef TUPP_MAX_MS_CONFIG_SUBSETS
+#define TUPP_MAX_MS_CONFIG_SUBSETS 1
+#endif
+
+// Default number of MS config subsets
+#ifndef TUPP_MAX_MS_FUNC_SUBSETS
+#define TUPP_MAX_MS_FUNC_SUBSETS 1
+#endif
+
+// Default number of registry properties
+#ifndef TUPP_MAX_MS_REG_PROP
+#define TUPP_MAX_MS_REG_PROP 1
+#endif
 
 #endif // _TUPP_USB_CONFIG_H_

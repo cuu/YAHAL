@@ -4,9 +4,12 @@ target_sources(${PROJECT_NAME} PRIVATE
     usb_interface_association.cpp
     usb_interface.cpp
     usb_endpoint.cpp
+    usb_bos.cpp
     usb_strings.cpp
     usb_device_controller.cpp
 )
+
+add_subdirectory(usb_ms)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}

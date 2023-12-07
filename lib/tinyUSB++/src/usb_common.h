@@ -83,7 +83,9 @@ namespace USB {
         DESC_INTERFACE_POWER       = 8,
         DESC_OTG                   = 9,
         DESC_DEBUG                 = 10,
-        DESC_INTERFACE_ASSOCIATION = 11
+        DESC_INTERFACE_ASSOCIATION = 11,
+        DESC_BOS                   = 15,
+        DESC_DEVICE_CAPABILITY     = 16
     };
 
     enum class bDeviceClass_t : uint8_t {
@@ -209,6 +211,50 @@ namespace USB {
         uint8_t             bInterval;
     };
     static_assert(sizeof(endpoint_descriptor_t) == 7);
+
+    /////////////////////
+    // BOS descriptors //
+    /////////////////////
+
+    struct __attribute__((__packed__)) bos_descriptor_t {
+        uint8_t             bLength;
+        bDescriptorType_t   bDescriptorType;
+        uint16_t            wTotalLength;
+        uint8_t             bNumDeviceCaps;
+    };
+    static_assert(sizeof(bos_descriptor_t) == 5);
+
+    enum class bDevCapabilityType_t : uint8_t {
+        CAP_WIRELESS_USB                = 0x01,
+        CAP_USB20_EXTENSION             = 0x02,
+        CAP_SUPERSPEED_USB              = 0x03,
+        CAP_CONTAINER_ID                = 0x04,
+        CAP_PLATFORM                    = 0x05,
+        CAP_POWER_DELIVERY              = 0x06,
+        CAP_BATTERY_INFO                = 0x07,
+        CAP_PD_CONSUMER_PORT            = 0x08,
+        CAP_PD_PROVIDER_PORT            = 0x09,
+        CAP_SUPERSPEED_PLUS             = 0x0A,
+        CAP_PRECESION_TIME_MEASUREMENT  = 0x0B,
+        CAP_WIRELESS_USB_EXT            = 0x0C,
+        CAP_BILLBOARD                   = 0x0D,
+        CAP_AUTHENTICATION              = 0x0E,
+        CAP_BILLBOARD_EX                = 0x0F,
+        CAP_CONFIGURATION_SUMMARY       = 0x10,
+        CAP_FW_STATUS                   = 0x11
+    };
+
+    struct __attribute__((__packed__)) dev_capability_t {
+        uint8_t                 bLength;
+        bDescriptorType_t       bDescriptorType;
+        bDevCapabilityType_t    bDevCapabilityType;
+    };
+
+    struct __attribute__((__packed__)) dev_cap_platform_t : public dev_capability_t {
+        uint8_t                 bReserved;
+        uint8_t                 PlatformCapabilityUUID[16];
+    };
+
 };
 
 #endif // TUPP_USB_COMMON_H_

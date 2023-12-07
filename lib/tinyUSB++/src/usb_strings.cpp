@@ -56,3 +56,15 @@ uint8_t usb_strings::prepare_buffer(uint8_t index, uint8_t * buffer) {
     }
     return bLength;
 }
+
+uint16_t usb_strings::prepare_buffer(const char * str, uint8_t * buffer) {
+    uint8_t * buffer_start = buffer;
+    // Store the string in UTF16LE
+    while (*str) {
+        *buffer++ = *str++;
+        *buffer++ = 0;
+    }
+    *buffer++ = 0;
+    *buffer++ = 0;
+    return buffer - buffer_start;
+}
