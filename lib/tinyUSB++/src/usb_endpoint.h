@@ -81,7 +81,7 @@ public:
     virtual void send_NAK(bool b) = 0;
 
     // Send a stall
-    virtual void send_stall() = 0;
+    virtual void send_stall(bool b) = 0;
 
 protected:
     // The endpoint CTOR is only accessible from the
