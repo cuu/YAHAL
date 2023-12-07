@@ -17,7 +17,7 @@
 #include <cassert>
 
 usb_device::usb_device()
-: descriptor(_descriptor), _descriptor{}, _configurations{nullptr}
+: descriptor(_descriptor), _descriptor{}, _configurations{nullptr}, _bos{nullptr}
 {
     // Set descriptor length
     _descriptor.bLength = sizeof(USB::device_descriptor_t);
@@ -40,15 +40,21 @@ void usb_device::set_SerialNumber(const char * n) {
 void usb_device::add_configuration(usb_configuration * config) {
     int i=0;
     // Find an empty slot
-    for (i=0; i < 5; ++i) {
+    for (i=0; i < TUPP_MAX_CONF_PER_DEVICE; ++i) {
         if (!_configurations[i]) {
              _configurations[i] = config;
             break;
         }
     }
-    assert(i != 5);
+    assert(i != TUPP_MAX_CONF_PER_DEVICE);
     // Set number of configurations in our own descriptor
     _descriptor.bNumConfigurations = i+1;
+}
+
+void usb_device::add_bos(usb_bos * bos) {
+    // We may only add one BOS
+    assert(!_bos);
+    _bos = bos;
 }
 
 usb_configuration * usb_device::find_configuration(uint8_t i) {

@@ -15,6 +15,7 @@
 #define TUPP_USB_DEVICE_H_
 
 class usb_configuration;
+class usb_bos;
 #include "usb_common.h"
 #include "usb_config.h"
 #include <array>
@@ -63,6 +64,9 @@ public:
     // Add a new configuration to this device
     void add_configuration(usb_configuration * config);
 
+    // Add a BOS descriptor
+    void add_bos(usb_bos * bos);
+
     // Find a configuration based on its bConfigurationValue
     // Return nullptr if not found
     usb_configuration * find_configuration(uint8_t i);
@@ -81,6 +85,9 @@ private:
 
     // Array of pointers to our configurations
     std::array<usb_configuration *, TUPP_MAX_CONF_PER_DEVICE> _configurations;
+
+    // Optional BOS descriptor
+    usb_bos * _bos;
 };
 
 #endif // TUPP_USB_DEVICE_H_
