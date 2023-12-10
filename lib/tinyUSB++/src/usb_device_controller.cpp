@@ -17,6 +17,8 @@
 #include "usb_configuration.h"
 #include "usb_interface.h"
 #include "usb_interface_association.h"
+#include "usb_bos.h"
+#include "usb_bos_dev_cap.h"
 
 #include "usb_common.h"
 #include "usb_fd_base.h"
@@ -234,7 +236,8 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
             printf("DESC_STRING\n");
             uint8_t index = pkt->wValue & 0xff;
             uint8_t len = usb_strings::inst.prepare_buffer(index, _buf);
-            assert(len <= pkt->wLength);
+            if (len > pkt->wLength) len = pkt->wLength;
+//            assert(len <= pkt->wLength);
             _ep0_in->start_transfer(_buf, len);
             break;
         }
@@ -245,6 +248,33 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
         }
         case DESC_DEBUG: {
             printf("DESC_DEBUG\n");
+            _ep0_in->start_transfer(nullptr, 0);
+            break;
+        }
+        case DESC_BOS: {
+            printf("DESC_BOS %d\n", pkt->wLength);
+            if (_device._bos) {
+                // We have a BOS descriptor
+                tmp_ptr = _buf;
+                assert(sizeof(USB::bos_descriptor_t) <= TUPP_MAX_DESC_SIZE);
+                memcpy(tmp_ptr, &_device._bos->descriptor, sizeof(USB::bos_descriptor_t));
+                tmp_ptr += sizeof(USB::bos_descriptor_t);
+                for (int i=0; i < _device._bos->descriptor.bNumDeviceCaps; ++i) {
+                    uint16_t cap_len = _device._bos->_capabilities[i]->get_bLength();
+                    assert((tmp_ptr - _buf + cap_len) <= TUPP_MAX_DESC_SIZE);
+                    memcpy(tmp_ptr, _device._bos->_capabilities[i]->get_desc_ptr(), cap_len);
+                    tmp_ptr += cap_len;
+                }
+                uint16_t len = tmp_ptr - _buf;
+                if (pkt->wLength < len) len = pkt->wLength;
+                _ep0_in->start_transfer(_buf, len);
+            } else {
+                // No BOS descriptor, return empty packet
+                _ep0_in->start_transfer(nullptr, 0);
+            }
+            break;
+        }
+        case DESC_DEVICE_QUALIFIER: {
             _ep0_in->start_transfer(nullptr, 0);
             break;
         }
