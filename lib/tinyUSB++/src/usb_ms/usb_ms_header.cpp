@@ -16,7 +16,7 @@
 #include <cassert>
 
 usb_ms_header::usb_ms_header(usb_bos_dev_cap_platform_ms & cap)
-: descriptor{_descriptor}, _descriptor{}, _dev_cap_platform_ms{cap}, _config_subsets{}
+: descriptor{_descriptor}, _config_subsets{}, _descriptor{}, _dev_cap_platform_ms{cap}
 {
     // Set header values
     _descriptor.wLength         = sizeof(USB::ms_header_t);

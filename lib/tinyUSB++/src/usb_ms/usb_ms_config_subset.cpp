@@ -17,7 +17,7 @@
 #include <cassert>
 
 usb_ms_config_subset::usb_ms_config_subset(usb_ms_header & header)
-: descriptor{_descriptor}, _descriptor{}, _ms_header{header}, _func_subsets{}
+: descriptor{_descriptor}, _func_subsets{}, _descriptor{}, _ms_header{header}
 {
     // Set header values
     _descriptor.wLength             = sizeof(USB::ms_config_subset_header_t);

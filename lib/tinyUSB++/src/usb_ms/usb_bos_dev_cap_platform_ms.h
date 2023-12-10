@@ -24,7 +24,7 @@
 class usb_bos_dev_cap_platform_ms : public usb_bos_dev_cap {
 public:
     explicit usb_bos_dev_cap_platform_ms(usb_bos & bos)
-    : usb_bos_dev_cap(bos), descriptor{_descriptor}
+    : usb_bos_dev_cap(bos), descriptor{_descriptor}, _descriptor{}
     {
         _descriptor.bLength             = sizeof(USB::dev_cap_platform_ms_os_20_t);
         _descriptor.bDescriptorType     = USB::bDescriptorType_t::DESC_DEVICE_CAPABILITY;

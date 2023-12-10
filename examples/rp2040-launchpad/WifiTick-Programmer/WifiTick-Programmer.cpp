@@ -1,6 +1,13 @@
 #include "usb_cdc_acm_device.h"
 #include "usb_device.h"
 #include "usb_configuration.h"
+#include "usb_bos.h"
+#include "usb_bos_dev_cap_platform_ms.h"
+#include "usb_ms_header.h"
+#include "usb_ms_config_subset.h"
+#include "usb_ms_func_subset.h"
+#include "usb_ms_compatible_ID.h"
+#include "usb_ms_registry_property.h"
 
 #include "usb_dcd_rp2040.h"
 #include "usb_device_controller.h"
@@ -11,6 +18,7 @@
 #include "task_monitor.h"
 #include "posix_io.h"
 #include <cstdio>
+#include <cstring>
 
 int main() {
     uart_rp2040 uart; // default is backchannel UART!
@@ -50,8 +58,8 @@ int main() {
     ////////////////////////
     device.set_bcdUSB         (0x0110);
     device.set_bMaxPacketSize0(64);
-    device.set_idVendor       (0x0000);
-    device.set_idProduct      (0x0001);
+    device.set_idVendor       (0x2e8a);
+    device.set_idProduct      (0x0010);
     device.set_Manufacturer   ("FH Aachen");
     device.set_Product        ("WifiTick Programmer");
 
@@ -65,12 +73,105 @@ int main() {
                                .bus_powered   = 1 } );
     config.set_bMaxPower_mA(100);
 
+    ////////////////////////
+    // USB BOS descriptor //
+    ////////////////////////
+    // {d8dd60df-4589-4cc7-9cd2-659d9e648a9f}
+    uint8_t uuid[16] = {0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C,
+                        0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F};
+
+    uint32_t win_version    = 0x06030000;
+
+    usb_bos                     bos(device);
+    usb_bos_dev_cap_platform_ms cap_platform(bos);
+
+    cap_platform.set_PlatformCapabilityUUID ( uuid );
+    cap_platform.set_dwWindowsVersion       ( win_version );
+    cap_platform.set_bMS_VendorCode         ( USB::bRequest_t::REQ_GET_DESCRIPTOR );
+    cap_platform.set_bAltEnumCode           ( 0 );
+
+    usb_ms_header ms_header                 ( cap_platform );
+    ms_header.set_dwWindowsVersion          ( win_version );
+    usb_ms_config_subset ms_config_subset   ( ms_header );
+    usb_ms_func_subset ms_func_subset       ( ms_config_subset );
+    usb_ms_compatible_ID ms_compat_id       ( ms_func_subset );
+    ms_compat_id.set_compatible_id          ( "WINUSB" );
+    ms_compat_id.set_sub_compatible_id      ( "" );
+    usb_ms_registry_property ms_reg_prop    ( ms_func_subset );
+    ms_reg_prop.add_property_name           ( "DeviceInterfaceGUIDs\0" );
+    ms_reg_prop.add_property_value          ( "{CDB3B5AD-293B-4663-AA36-1AAE46463776}" );
+
+//    printf("Header len %04x\n", ms_header.descriptor.wLength);
+//    printf("Header ttl %04x\n", ms_header.descriptor.wTotalLength);
+//    printf("Config len %04x\n", ms_config_subset.descriptor.wLength);
+//    printf("Config ttl %04x\n", ms_config_subset.descriptor.wTotalLength);
+//    printf("Func   len %04x\n", ms_func_subset.descriptor.wLength);
+//    printf("Func   sub %04x\n", ms_func_subset.descriptor.wSubsetLength);
+//    printf("Compat len %04x\n", ms_compat_id.descriptor.wLength);
+//    printf("Prop   len %04x\n", ms_reg_prop.get_length());
+
+    uint8_t buff[256];
+    uint8_t * tmp_ptr = buff;
+
+    auto * ptr = &ms_header.descriptor;
+    auto   len =  ms_header.descriptor.wLength;
+    memcpy(tmp_ptr, ptr, len);
+    tmp_ptr += len;
+    for (uint16_t c=0; c < ms_header._config_subsets.size(); ++c) {
+        auto * ptr = &ms_header._config_subsets[c]->descriptor;
+        auto   len =  ms_header._config_subsets[c]->descriptor.wLength;
+        memcpy(tmp_ptr, ptr, len);
+        tmp_ptr += len;
+        for (uint16_t f=0; f < ms_header._config_subsets[c]->_func_subsets.size(); ++f) {
+            auto  ptr = &ms_header._config_subsets[c]->_func_subsets[f]->descriptor;
+            auto  len  = ms_header._config_subsets[c]->_func_subsets[f]->descriptor.wLength;
+            memcpy(tmp_ptr, ptr, len);
+            tmp_ptr += len;
+            if (ms_header._config_subsets[c]->_func_subsets[f]->_compat_id) {
+                auto ptr = &ms_header._config_subsets[c]->_func_subsets[f]->_compat_id->descriptor;
+                auto len =  ms_header._config_subsets[c]->_func_subsets[f]->_compat_id->descriptor.wLength;
+                memcpy(tmp_ptr, ptr, len);
+                tmp_ptr += len;
+            }
+            for (uint16_t p=0; p < ms_header._config_subsets[c]->_func_subsets[f]->_reg_props.size(); ++p) {
+                auto ptr = ms_header._config_subsets[c]->_func_subsets[f]->_reg_props[p]->descriptor();
+                auto len = ms_header._config_subsets[c]->_func_subsets[f]->_reg_props[p]->get_length();
+                memcpy(tmp_ptr, ptr, len);
+                tmp_ptr += len;
+            }
+        }
+    }
+
+    printf("MS size %04x\n", tmp_ptr-buff);
+//    printf("-----------\n");
+//    for(int i=0; i < (tmp_ptr-buff); ++i) {
+//        printf("%02x ", buff[i]);
+//    }
+//    printf("-----------\n");
+
+    device.setup_handler = [&] (USB::setup_packet_t * packet) {
+        printf("In device vendor handler! %d\n", packet->wLength);
+        // Prepare status stage
+        controller._ep0_out->send_zlp_data1();
+        if ( (packet->bRequest == USB::bRequest_t::REQ_GET_DESCRIPTOR) &&
+             (packet->wValue   == 0) && (packet->wIndex == 7) ) {
+            // Header
+            printf("Send MS WEBUSB Descriptor!\n");
+            controller._ep0_in->start_transfer(buff, tmp_ptr-buff);
+        } else {
+            controller._ep0_in->start_transfer(nullptr, 0);
+        }
+    };
+
     /////////////////////
     // USB CDC ACM device
     /////////////////////
     usb_cdc_acm_device acm_device(controller, config);
 
     acm_device.line_coding_handler = ([&](uint8_t *,uint16_t) {
+        controller._ep0_out->data_handler = nullptr;
+        //controller._ep0_in->send_zlp_data1();
+
         const char * parity[5] = {"N", "O", "E", "M", "S"};
         const char * stop[3]   = {"1", "1.5", "2"};
         printf("Line coding set to %d baud %d%s%s\n",
@@ -171,6 +272,7 @@ int main() {
         // Handle buttons in main loop
         if (button_s1 == LOW) {
             esp_reset = LOW;
+            esp_gpio0 = HIGH;
             uart_esp.setBaudrate(74880);
             in_prgm_mode = false;
             while(!button_s1) ;

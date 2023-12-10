@@ -61,7 +61,7 @@ void usb_endpoint::start_transfer(uint8_t * buffer, uint16_t len) {
 }
 
 void usb_endpoint::handle_buffer_in(uint16_t) {
-    assert(_active);
+    //assert(_active);
     // Entering this method means that the hw controller
     // has sent a packet of data to the host.
     // Check if we need to change the hw address
