@@ -118,6 +118,9 @@ void usb_endpoint_rp2040::trigger_transfer(uint16_t len) {
     _buff_ctrl->FULL_0      = is_IN() ? 1 : 0;
     _buff_ctrl->LENGTH_0    = len;
     next_pid ^= 1;
+    asm("nop\n");
+    asm("nop\n");
+    asm("nop\n");
     // Finally mark this buffer as ready
     _buff_ctrl->AVAILABLE_0 = 1;
 }

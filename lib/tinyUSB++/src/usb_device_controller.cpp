@@ -37,7 +37,7 @@ using enum USB::direction_t;
 
 usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_device & device)
     : active_configuration(_active_configuration), _ep0_in(nullptr), _ep0_out(nullptr),
-     _driver(driver), _device(device), _active_configuration(0), _buf{0}
+     handler{nullptr}, _driver(driver), _device(device), _active_configuration(0), _buf{0}
 {
     // Create standard endpoints 0. Since these are the first
     // two endpoints, address 0 will be used automatically
@@ -48,10 +48,14 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
 //    _ep0_in->data_handler = [&](uint8_t *, uint16_t) {
 //        printf("EP 80 IN handler - %d sent to host!!\n", len);
 //    };
-    _ep0_out->data_handler = [&](uint8_t *, uint16_t len) {
+    _ep0_out->data_handler = [&](uint8_t * data, uint16_t len) {
+        if (handler) {
+            handler(data, len);
+            handler = nullptr;
+        }
         // Reply to received data with zero-length packet
         if (len) _ep0_in->send_zlp_data1();
-        printf("EP 00 OUT handler - %d received from host\n", len);
+        //        printf("EP 00 OUT handler - %d received from host\n", len);
     };
 
     ////////////////////////////
@@ -82,6 +86,9 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
         _ep0_out->send_stall(false);
         _ep0_in->next_pid  = 1;
         _ep0_out->next_pid = 1;
+        _ep0_in->_active = false;
+        _ep0_out->_active = false;
+
         // Process standard requests
         if (pkt->type == type_t::TYPE_STANDARD) {
             switch (pkt->bRequest) {

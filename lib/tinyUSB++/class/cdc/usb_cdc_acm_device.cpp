@@ -106,7 +106,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
             case bRequest_t::REQ_CDC_SET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
                 // Set the user handler
-                controller._ep0_out->data_handler = line_coding_handler;
+                controller.handler = line_coding_handler;
                 // Receive line coding info
                 controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
 //                // Prepare status stage

@@ -37,6 +37,7 @@ usb_endpoint::usb_endpoint(
 }
 
 void usb_endpoint::start_transfer(uint8_t * buffer, uint16_t len) {
+    assert(!_active) ;
     // Mark this endpoint as active
     _active = true;
     // Store transfer parameters

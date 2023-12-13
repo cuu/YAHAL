@@ -83,6 +83,8 @@ public:
     // Send a stall
     virtual void send_stall(bool b) = 0;
 
+    friend class usb_device_controller;
+
 protected:
     // The endpoint CTOR is only accessible from the
     // derived implementations of this class

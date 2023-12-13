@@ -192,9 +192,6 @@ int main() {
     usb_cdc_acm_device acm_device(controller, config);
 
     acm_device.line_coding_handler = ([&](uint8_t *,uint16_t) {
-        controller._ep0_out->data_handler = nullptr;
-//        controller._ep0_in->send_zlp_data1();
-
         const char * parity[5] = {"N", "O", "E", "M", "S"};
         const char * stop[3]   = {"1", "1.5", "2"};
         printf("Line coding set to %d baud %d%s%s\n",
@@ -227,7 +224,6 @@ int main() {
         }
         uart_esp.uartMode(mode);
         uart_esp.setBaudrate(acm_device.line_coding.dwDTERate);
-        controller._ep0_in->send_zlp_data1();
     });
 
     bool in_prgm_mode = false;

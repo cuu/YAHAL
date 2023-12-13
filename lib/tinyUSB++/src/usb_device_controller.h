@@ -18,6 +18,7 @@ class usb_device;
 #include "usb_config.h"
 #include "usb_dcd_interface.h"
 #include "usb_endpoint.h"
+#include <functional>
 
 class usb_device_controller {
 public:
@@ -48,6 +49,8 @@ public:
     // Standard endpoints 0
     usb_endpoint * _ep0_in;
     usb_endpoint * _ep0_out;
+
+    std::function<void(uint8_t *, uint16_t)> handler;
 
 private:
 
