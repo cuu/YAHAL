@@ -49,6 +49,9 @@ public:
     // Returns the total length of the constructed descriptor.
     uint8_t prepare_buffer(uint8_t index, uint8_t * buffer);
 
+    uint8_t prepare_buffer_utf8(uint8_t index, uint8_t * buffer);
+
+
     // Store a string in a given buffer as a UTF16 string including
     // a (double) NULL-character. Return the size of the generated
     // array.

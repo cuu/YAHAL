@@ -63,7 +63,7 @@
 
 // Default number of capabilities in BOS descriptor
 #ifndef TUPP_MAX_BOS_CAPABILITIES
-#define TUPP_MAX_BOS_CAPABILITIES 1
+#define TUPP_MAX_BOS_CAPABILITIES 2
 #endif
 
 // Default size of a MS registry property descriptor

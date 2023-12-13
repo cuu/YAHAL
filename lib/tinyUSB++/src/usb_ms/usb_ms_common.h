@@ -18,12 +18,21 @@
 
 namespace USB {
 
+    struct __attribute__((__packed__)) dev_cap_platform_ms_webusb_t : public dev_cap_platform_t {
+        uint16_t                bcdVersion;
+        bRequest_t              bVendorCode;
+        uint8_t                 iLandingPage;
+    };
+    static_assert(sizeof(dev_cap_platform_ms_webusb_t) == 24);
+
+
     struct __attribute__((__packed__)) dev_cap_platform_ms_os_20_t : public dev_cap_platform_t {
         uint32_t                dwWindowsVersion;
         uint16_t                wMSOSDescriptorSetTotalLength;
         bRequest_t              bMS_VendorCode;
         uint8_t                 bAltEnumCode;
     };
+    static_assert(sizeof(dev_cap_platform_ms_os_20_t) == 28);
 
     enum class wDescriptorType_t : uint16_t {
         DESC_HEADER         = 0,

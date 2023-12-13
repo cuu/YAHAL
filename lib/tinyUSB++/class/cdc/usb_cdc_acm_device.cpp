@@ -105,19 +105,19 @@ usb_cdc_acm_device::usb_cdc_acm_device(
         switch(pkt->bRequest) {
             case bRequest_t::REQ_CDC_SET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
-                // Prepare status stage
-                controller._ep0_in->send_zlp_data1();
                 // Set the user handler
                 controller._ep0_out->data_handler = line_coding_handler;
                 // Receive line coding info
                 controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
+//                // Prepare status stage
+//                controller._ep0_in->send_zlp_data1();
                 break;
             }
             case bRequest_t::REQ_CDC_GET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
-                controller._ep0_in->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 // Status stage
                 controller._ep0_out->send_zlp_data1();
+                controller._ep0_in->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 break;
             }
             case bRequest_t::REQ_CDC_SET_CONTROL_LINE_STATE: {

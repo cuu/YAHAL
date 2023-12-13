@@ -57,6 +57,23 @@ uint8_t usb_strings::prepare_buffer(uint8_t index, uint8_t * buffer) {
     return bLength;
 }
 
+uint8_t usb_strings::prepare_buffer_utf8(uint8_t index, uint8_t * buffer) {
+    assert(_strings[index]);
+    // Every ascii char takes 2 bytes plus bLength and bDescriptorType
+    uint8_t bLength = strlen(_strings[index]);
+    bLength += 2;
+    // Store the descriptor length
+    *buffer++ = bLength;
+    // Store the descriptor type
+    *buffer++ = (uint8_t)bDescriptorType_t::DESC_STRING;
+    // Store the string in UTF16LE (except language id)
+    const char *str = _strings[index];
+    while (*str) *buffer++ = *str++;
+    return bLength;
+}
+
+
+
 uint16_t usb_strings::prepare_buffer(const char * str, uint8_t * buffer) {
     uint8_t * buffer_start = buffer;
     // Store the string in UTF16LE
@@ -68,3 +85,4 @@ uint16_t usb_strings::prepare_buffer(const char * str, uint8_t * buffer) {
     *buffer++ = 0;
     return buffer - buffer_start;
 }
+

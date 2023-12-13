@@ -48,9 +48,11 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
 //    _ep0_in->data_handler = [&](uint8_t *, uint16_t) {
 //        printf("EP 80 IN handler - %d sent to host!!\n", len);
 //    };
-//    _ep0_out->data_handler = [](uint8_t *, uint16_t) {
-//        printf("EP 00 OUT handler - %d received from host\n", len);
-//    };
+    _ep0_out->data_handler = [&](uint8_t *, uint16_t len) {
+        // Reply to received data with zero-length packet
+        if (len) _ep0_in->send_zlp_data1();
+        printf("EP 00 OUT handler - %d received from host\n", len);
+    };
 
     ////////////////////////////
     // Handler for USB bus reset
@@ -76,6 +78,8 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
     /////////////////////////////
     _driver.setup_handler = [&](USB::setup_packet_t *pkt) {
         // Reset PID to 1 for EP0
+        _ep0_in->send_stall(false);
+        _ep0_out->send_stall(false);
         _ep0_in->next_pid  = 1;
         _ep0_out->next_pid = 1;
         // Process standard requests
@@ -182,6 +186,8 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
         case DESC_DEVICE: {
             printf("DESC_DEVICE\n");
             assert(_device.descriptor.bLength <= pkt->wLength);
+            // Status stage
+            _ep0_out->send_zlp_data1();
             _ep0_in->start_transfer((uint8_t *) &_device.descriptor, _device.descriptor.bLength);
             break;
         }
@@ -229,29 +235,39 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
             }
             uint32_t len = (uint32_t)tmp_ptr - (uint32_t)_buf;
             assert(len <= pkt->wLength);
+            // Status stage
+            _ep0_out->send_zlp_data1();
             _ep0_in->start_transfer(_buf, len);
             break;
         }
         case DESC_STRING: {
-            printf("DESC_STRING\n");
+            // Status stage
+            _ep0_out->send_zlp_data1();
+            printf("DESC_STRING [%d], %d\n", pkt->wValue & 0xff, pkt->wLength);
             uint8_t index = pkt->wValue & 0xff;
             uint8_t len = usb_strings::inst.prepare_buffer(index, _buf);
-            if (len > pkt->wLength) len = pkt->wLength;
+//            if (len > pkt->wLength) len = pkt->wLength;
 //            assert(len <= pkt->wLength);
             _ep0_in->start_transfer(_buf, len);
             break;
         }
         case DESC_OTG: {
+            // Status stage
+            _ep0_out->send_zlp_data1();
             printf("DESC_OTG\n");
             _ep0_in->start_transfer(nullptr, 0);
             break;
         }
         case DESC_DEBUG: {
+            // Status stage
+            _ep0_out->send_zlp_data1();
             printf("DESC_DEBUG\n");
             _ep0_in->start_transfer(nullptr, 0);
             break;
         }
         case DESC_BOS: {
+            // Status stage
+            _ep0_out->send_zlp_data1();
             printf("DESC_BOS %d\n", pkt->wLength);
             if (_device._bos) {
                 // We have a BOS descriptor
@@ -275,20 +291,25 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
             break;
         }
         case DESC_DEVICE_QUALIFIER: {
-            _ep0_in->start_transfer(nullptr, 0);
+            printf("DESC_DEV_QUALIFIER %d\n", pkt->wLength);
+            _ep0_in->send_stall(true);
+            _ep0_out->send_stall(true);
+            printf("After stall\n");
+//            _ep0_in->start_transfer(nullptr, 0);
             break;
         }
         default:
             printf("Unknown GET_DESCRIPTOR %d\n", (int)desc_type);
+            // Status stage
+            _ep0_out->send_zlp_data1();
             _ep0_in->start_transfer(nullptr, 0);
     }
-    // Status stage
-    _ep0_out->send_zlp_data1();
 }
 
 void usb_device_controller::handle_set_descriptor(setup_packet_t * pkt) {
     assert(pkt->direction == DIR_OUT);
     assert(pkt->recipient == REC_DEVICE);
+    assert(!"Not supported!");
     // Status stage
     _ep0_in->send_zlp_data1();
 }
@@ -296,9 +317,9 @@ void usb_device_controller::handle_set_descriptor(setup_packet_t * pkt) {
 void usb_device_controller::handle_get_configuration(setup_packet_t *pkt) {
     assert(pkt->direction == DIR_IN);
     assert(pkt->recipient == REC_DEVICE);
-    _ep0_in->start_transfer((uint8_t *)(&_active_configuration), 1);
     // Status stage
     _ep0_out->send_zlp_data1();
+    _ep0_in->start_transfer((uint8_t *)(&_active_configuration), 1);
 }
 
 void usb_device_controller::handle_set_configuration(setup_packet_t *pkt) {
@@ -337,11 +358,11 @@ void usb_device_controller::handle_get_interface(setup_packet_t *pkt) {
     if (_active_configuration) {
         auto interface = _device._configurations[_active_configuration]->_interfaces[index];
         if (interface) {
+            // Status stage
+            _ep0_out->send_zlp_data1();
             _ep0_in->start_transfer(&interface->_descriptor.bAlternateSetting, 1);
         }
     }
-    // Status stage
-    _ep0_out->send_zlp_data1();
 }
 
 void usb_device_controller::handle_set_interface(setup_packet_t *pkt) {
@@ -392,13 +413,15 @@ void usb_device_controller::handle_get_status(setup_packet_t * pkt) {
         default:
             printf("Unknown recipient of get status: %d\n", (int)pkt->recipient);
     }
-    // Send status
-    _ep0_in->start_transfer((uint8_t *)&data, 2);
     // Status stage
     _ep0_out->send_zlp_data1();
+    // Send status
+    _ep0_in->start_transfer((uint8_t *)&data, 2);
 }
 
 void usb_device_controller::handle_clear_feature(setup_packet_t *pkt) {
+    printf("clear feature\n");
+    assert(!"Not supported!");
     assert(pkt->direction == DIR_IN);
     switch(pkt->recipient) {
         case REC_DEVICE: {
@@ -415,6 +438,7 @@ void usb_device_controller::handle_clear_feature(setup_packet_t *pkt) {
 }
 
 void usb_device_controller::handle_set_feature(setup_packet_t *pkt) {
+    printf("set feature\n");
     assert(pkt->direction == DIR_IN);
     switch(pkt->recipient) {
         case REC_DEVICE: {

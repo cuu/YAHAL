@@ -100,13 +100,14 @@ void usb_endpoint_rp2040::send_NAK(bool b) {
 void usb_endpoint_rp2040::send_stall(bool b) {
     if (b) {
         if ((descriptor.bEndpointAddress & 0xf) == 0) {
-            _USBCTRL_REGS_::USBCTRL_REGS_SET.EP_STALL_ARM.EP0_IN = _mask;
+            _USBCTRL_REGS_::USBCTRL_REGS_SET.EP_STALL_ARM = _mask;
         }
         _buff_ctrl->STALL = 1;
-//        next_pid = 0;
+        next_pid = 0;
     } else {
         next_pid = 0;
         _buff_ctrl->STALL = 0;
+        _buff_ctrl->AVAILABLE_0 = 0;
     }
 }
 
