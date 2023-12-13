@@ -3,6 +3,8 @@
 #include "usb_configuration.h"
 #include "usb_bos.h"
 #include "usb_bos_dev_cap_platform_ms.h"
+#include "usb_bos_dev_cap_webusb_ms.h"
+
 #include "usb_ms_header.h"
 #include "usb_ms_config_subset.h"
 #include "usb_ms_func_subset.h"
@@ -56,10 +58,10 @@ int main() {
     ////////////////////////
     // USB device descriptor
     ////////////////////////
-    device.set_bcdUSB         (0x0110);
+    device.set_bcdUSB         (0x0210);
     device.set_bMaxPacketSize0(64);
     device.set_idVendor       (0x2e8a);
-    device.set_idProduct      (0x0010);
+    device.set_idProduct      (0x0110);
     device.set_Manufacturer   ("FH Aachen");
     device.set_Product        ("WifiTick Programmer");
 
@@ -76,16 +78,26 @@ int main() {
     ////////////////////////
     // USB BOS descriptor //
     ////////////////////////
+    // {3408b638-09a9-47a0-8bfd-a0768815b665}
+    uint8_t uuid1[16] = { 0x38, 0xB6, 0x08, 0x34, 0xA9, 0x09, 0xA0, 0x47,
+                          0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65};
+
     // {d8dd60df-4589-4cc7-9cd2-659d9e648a9f}
-    uint8_t uuid[16] = {0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C,
-                        0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F};
+    uint8_t uuid2[16] = {0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C,
+                         0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F};
 
     uint32_t win_version    = 0x06030000;
 
     usb_bos                     bos(device);
-    usb_bos_dev_cap_platform_ms cap_platform(bos);
 
-    cap_platform.set_PlatformCapabilityUUID ( uuid );
+    usb_bos_dev_cap_webusb_ms web_platform(bos);
+    web_platform.set_PlatformCapabilityUUID ( uuid1 );
+    web_platform.set_bcdVersion             ( 0x0100 );
+    web_platform.set_bVendorCode            ( USB::bRequest_t::REQ_GET_STATUS );
+    web_platform.set_iLandingPage           ( "\x01google.de");
+
+    usb_bos_dev_cap_platform_ms cap_platform(bos);
+    cap_platform.set_PlatformCapabilityUUID ( uuid2 );
     cap_platform.set_dwWindowsVersion       ( win_version );
     cap_platform.set_bMS_VendorCode         ( USB::bRequest_t::REQ_GET_DESCRIPTOR );
     cap_platform.set_bAltEnumCode           ( 0 );
@@ -111,6 +123,7 @@ int main() {
 //    printf("Prop   len %04x\n", ms_reg_prop.get_length());
 
     uint8_t buff[256];
+    uint8_t buff_url[32] {};
     uint8_t * tmp_ptr = buff;
 
     auto * ptr = &ms_header.descriptor;
@@ -143,23 +156,33 @@ int main() {
     }
 
     printf("MS size %04x\n", tmp_ptr-buff);
-//    printf("-----------\n");
-//    for(int i=0; i < (tmp_ptr-buff); ++i) {
-//        printf("%02x ", buff[i]);
-//    }
-//    printf("-----------\n");
+    printf("-----------\n");
+    for(int i=0; i < (tmp_ptr-buff); ++i) {
+        printf("%02x ", buff[i]);
+    }
+    printf("-----------\n");
 
-    device.setup_handler = [&] (USB::setup_packet_t * packet) {
-        printf("In device vendor handler! %d\n", packet->wLength);
+    device.setup_handler = [&] (USB::setup_packet_t * pkt) {
         // Prepare status stage
         controller._ep0_out->send_zlp_data1();
-        if ( (packet->bRequest == USB::bRequest_t::REQ_GET_DESCRIPTOR) &&
-             (packet->wValue   == 0) && (packet->wIndex == 7) ) {
+        printf("In device vendor handler! %d\n", pkt->wLength);
+        if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_STATUS) &&
+             (pkt->wIndex == 2) ) {
+            // URL
+            printf("Get Landing page!\n");
+            uint8_t len = usb_strings::inst.prepare_buffer_utf8(pkt->wValue, buff_url);
+            if (len > pkt->wLength) len = pkt->wLength;
+            puts((const char *)buff_url);
+            controller._ep0_in->start_transfer(buff_url, len);
+        } else if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_DESCRIPTOR) &&
+                    (pkt->wValue   == 0) && (pkt->wIndex == 7) ) {
             // Header
             printf("Send MS WEBUSB Descriptor!\n");
             controller._ep0_in->start_transfer(buff, tmp_ptr-buff);
         } else {
             controller._ep0_in->start_transfer(nullptr, 0);
+//            controller._ep0_in->send_stall(true);
+//            controller._ep0_out->send_stall(true);
         }
     };
 
@@ -170,7 +193,7 @@ int main() {
 
     acm_device.line_coding_handler = ([&](uint8_t *,uint16_t) {
         controller._ep0_out->data_handler = nullptr;
-        //controller._ep0_in->send_zlp_data1();
+//        controller._ep0_in->send_zlp_data1();
 
         const char * parity[5] = {"N", "O", "E", "M", "S"};
         const char * stop[3]   = {"1", "1.5", "2"};
@@ -204,6 +227,7 @@ int main() {
         }
         uart_esp.uartMode(mode);
         uart_esp.setBaudrate(acm_device.line_coding.dwDTERate);
+        controller._ep0_in->send_zlp_data1();
     });
 
     bool in_prgm_mode = false;
