@@ -80,21 +80,21 @@ int main() {
     ////////////////////////
     // {3408b638-09a9-47a0-8bfd-a0768815b665}
     uint8_t uuid1[16] = { 0x38, 0xB6, 0x08, 0x34, 0xA9, 0x09, 0xA0, 0x47,
-                          0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65};
+                          0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65 };
 
     // {d8dd60df-4589-4cc7-9cd2-659d9e648a9f}
-    uint8_t uuid2[16] = {0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C,
-                         0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F};
+    uint8_t uuid2[16] = { 0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C,
+                          0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F };
 
     uint32_t win_version    = 0x06030000;
 
-    usb_bos                     bos(device);
+    usb_bos bos(device);
 
     usb_bos_dev_cap_webusb_ms web_platform(bos);
     web_platform.set_PlatformCapabilityUUID ( uuid1 );
     web_platform.set_bcdVersion             ( 0x0100 );
     web_platform.set_bVendorCode            ( USB::bRequest_t::REQ_GET_STATUS );
-    web_platform.set_iLandingPage           ( "\x01google.de");
+    web_platform.set_iLandingPage           ( "\x01" "fh-aachen.de");
 
     usb_bos_dev_cap_platform_ms cap_platform(bos);
     cap_platform.set_PlatformCapabilityUUID ( uuid2 );
@@ -104,11 +104,15 @@ int main() {
 
     usb_ms_header ms_header                 ( cap_platform );
     ms_header.set_dwWindowsVersion          ( win_version );
+
     usb_ms_config_subset ms_config_subset   ( ms_header );
+
     usb_ms_func_subset ms_func_subset       ( ms_config_subset );
+
     usb_ms_compatible_ID ms_compat_id       ( ms_func_subset );
     ms_compat_id.set_compatible_id          ( "WINUSB" );
     ms_compat_id.set_sub_compatible_id      ( "" );
+
     usb_ms_registry_property ms_reg_prop    ( ms_func_subset );
     ms_reg_prop.add_property_name           ( "DeviceInterfaceGUIDs\0" );
     ms_reg_prop.add_property_value          ( "{CDB3B5AD-293B-4663-AA36-1AAE46463776}" );
@@ -155,34 +159,21 @@ int main() {
         }
     }
 
-    printf("MS size %04x\n", tmp_ptr-buff);
-    printf("-----------\n");
-    for(int i=0; i < (tmp_ptr-buff); ++i) {
-        printf("%02x ", buff[i]);
-    }
-    printf("-----------\n");
-
     device.setup_handler = [&] (USB::setup_packet_t * pkt) {
-        // Prepare status stage
-        controller._ep0_out->send_zlp_data1();
         printf("In device vendor handler! %d\n", pkt->wLength);
         if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_STATUS) &&
              (pkt->wIndex == 2) ) {
             // URL
-            printf("Get Landing page!\n");
             uint8_t len = usb_strings::inst.prepare_buffer_utf8(pkt->wValue, buff_url);
             if (len > pkt->wLength) len = pkt->wLength;
-            puts((const char *)buff_url);
             controller._ep0_in->start_transfer(buff_url, len);
         } else if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_DESCRIPTOR) &&
                     (pkt->wValue   == 0) && (pkt->wIndex == 7) ) {
             // Header
-            printf("Send MS WEBUSB Descriptor!\n");
             controller._ep0_in->start_transfer(buff, tmp_ptr-buff);
         } else {
-            controller._ep0_in->start_transfer(nullptr, 0);
-//            controller._ep0_in->send_stall(true);
-//            controller._ep0_out->send_stall(true);
+            controller._ep0_in->send_stall(true);
+            controller._ep0_out->send_stall(true);
         }
     };
 
@@ -191,46 +182,16 @@ int main() {
     /////////////////////
     usb_cdc_acm_device acm_device(controller, config);
 
-    acm_device.line_coding_handler = ([&](uint8_t *,uint16_t) {
-        const char * parity[5] = {"N", "O", "E", "M", "S"};
-        const char * stop[3]   = {"1", "1.5", "2"};
-        printf("Line coding set to %d baud %d%s%s\n",
-               (int)acm_device.line_coding.dwDTERate,
-               (int)acm_device.line_coding.bDataBits,
-               parity[(int)acm_device.line_coding.bParityType],
-               stop[(int)acm_device.line_coding.bCharFormat]);
+    bool line_code_updated = false;
 
-        uart_mode_t mode = 0;
-        switch((int)acm_device.line_coding.bDataBits) {
-            case 7: mode |= UART::BITS_7; break;
-            case 8: mode |= UART::BITS_8; break;
-            default: printf("Wrong number of bits!!\n");
-        }
-        switch((int)acm_device.line_coding.bParityType) {
-            case (int)CDC::bParityType_t::PARITY_NONE:
-                mode |= UART::NO_PARITY; break;
-            case (int)CDC::bParityType_t::PARITY_EVEN:
-                mode |= UART::EVEN_PARITY; break;
-            case (int)CDC::bParityType_t::PARITY_ODD:
-                mode |= UART::ODD_PARITY; break;
-            default: printf("Wrong parity!\n");
-        }
-        switch((int)acm_device.line_coding.bCharFormat) {
-            case (int)CDC::bCharFormat_t::STOP_BITS_1:
-                mode |= UART::STOPBITS_1; break;
-            case (int)CDC::bCharFormat_t::STOP_BITS_2:
-                mode |= UART::STOPBITS_2; break;
-            default: printf("Wrong stop bits!\n");
-        }
-        uart_esp.uartMode(mode);
-        uart_esp.setBaudrate(acm_device.line_coding.dwDTERate);
+    acm_device.line_coding_handler = ([&](uint8_t *,uint16_t) {
+        line_code_updated = true;
     });
 
     bool in_prgm_mode = false;
 
     acm_device.control_line_handler = ([&](bool dtr, bool rts) {
-        printf("Control signals DTR=%d, RTS=%d\n", dtr, rts);
-
+//        printf("Control signals DTR=%d, RTS=%d\n", dtr, rts);
         if (esp_reset == LOW && rts == LOW) {
             if (dtr) {
                 // Programming mode
@@ -244,7 +205,6 @@ int main() {
                 in_prgm_mode = false;
             }
         }
-
         esp_gpio0 = !dtr;
         esp_reset = !rts;
     });
@@ -289,6 +249,54 @@ int main() {
 
     uint8_t buf[64];
     while (1) {
+        if (line_code_updated) {
+//            const char *parity[5] = {"N", "O", "E", "M", "S"};
+//            const char *stop[3] = {"1", "1.5", "2"};
+//            printf("Line coding set to %d baud %d%s%s\n",
+//                   (int) acm_device.line_coding.dwDTERate,
+//                   (int) acm_device.line_coding.bDataBits,
+//                   parity[(int) acm_device.line_coding.bParityType],
+//                   stop[(int) acm_device.line_coding.bCharFormat]);
+
+            uart_mode_t mode = 0;
+            switch ((int) acm_device.line_coding.bDataBits) {
+                case 7:
+                    mode |= UART::BITS_7;
+                    break;
+                case 8:
+                    mode |= UART::BITS_8;
+                    break;
+                default:
+                    printf("Wrong number of bits!!\n");
+            }
+            switch ((int) acm_device.line_coding.bParityType) {
+                case (int) CDC::bParityType_t::PARITY_NONE:
+                    mode |= UART::NO_PARITY;
+                    break;
+                case (int) CDC::bParityType_t::PARITY_EVEN:
+                    mode |= UART::EVEN_PARITY;
+                    break;
+                case (int) CDC::bParityType_t::PARITY_ODD:
+                    mode |= UART::ODD_PARITY;
+                    break;
+                default:
+                    printf("Wrong parity!\n");
+            }
+            switch ((int) acm_device.line_coding.bCharFormat) {
+                case (int) CDC::bCharFormat_t::STOP_BITS_1:
+                    mode |= UART::STOPBITS_1;
+                    break;
+                case (int) CDC::bCharFormat_t::STOP_BITS_2:
+                    mode |= UART::STOPBITS_2;
+                    break;
+                default:
+                    printf("Wrong stop bits!\n");
+            }
+            uart_esp.uartMode(mode);
+            uart_esp.setBaudrate(acm_device.line_coding.dwDTERate);
+            line_code_updated = false;
+        }
+
         // Handle buttons in main loop
         if (button_s1 == LOW) {
             esp_reset = LOW;

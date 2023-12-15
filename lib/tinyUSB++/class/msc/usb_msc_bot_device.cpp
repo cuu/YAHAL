@@ -60,7 +60,7 @@ usb_msc_bot_device::usb_msc_bot_device(
         _ep_out->send_NAK(true);
         // ... and set length to signal new data
         _buffer_out_len = len;
-        // Finally trigger a new receive
+        // Finally trigger a new reception
         _ep_out->start_transfer(_buffer_out, TUPP_MSC_BLOCK_SIZE);
     };
 

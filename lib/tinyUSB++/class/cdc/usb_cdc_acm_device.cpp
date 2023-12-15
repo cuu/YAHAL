@@ -105,40 +105,40 @@ usb_cdc_acm_device::usb_cdc_acm_device(
         switch(pkt->bRequest) {
             case bRequest_t::REQ_CDC_SET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
-                // Set the user handler
+                // Set the data handler
                 controller.handler = line_coding_handler;
                 // Receive line coding info
                 controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
-//                // Prepare status stage
-//                controller._ep0_in->send_zlp_data1();
                 break;
             }
             case bRequest_t::REQ_CDC_GET_LINE_CODING: {
                 assert(pkt->wLength == sizeof(_line_coding) );
-                // Status stage
-                controller._ep0_out->send_zlp_data1();
                 controller._ep0_in->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 break;
             }
             case bRequest_t::REQ_CDC_SET_CONTROL_LINE_STATE: {
-                // Prepare status stage
-                controller._ep0_in->send_zlp_data1();
-                // Call user handler
+                // Call user handler (should be short)
                 if (control_line_handler) {
                     control_line_handler(pkt->wValue & 0x0001,
                                          pkt->wValue & 0x0002);
                 }
+                // Status stage
+                controller._ep0_in->send_zlp_data1();
                 break;
             }
             case bRequest_t::REQ_CDC_SEND_BREAK: {
-                // Prepare status stage
+                // Call user handler (should be short)
+                if (break_handler) {
+                    break_handler(pkt->wValue);
+                }
+                // Status stage
                 controller._ep0_in->send_zlp_data1();
-                // Call user handler
-                if (break_handler) break_handler(pkt->wValue);
                 break;
             }
             default: {
                 printf("Unsupported CDC command 0x%02x\n", (int)pkt->bRequest);
+                controller._ep0_in->send_stall(true);
+                controller._ep0_out->send_stall(true);
             }
         }
     };
