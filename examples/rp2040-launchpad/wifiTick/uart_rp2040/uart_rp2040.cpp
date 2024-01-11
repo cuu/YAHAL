@@ -57,6 +57,14 @@ int main(void)
         }
     });
 
+    // GPIO3 is connected to ESP8266 GPIO15, which controls the
+    // boot-mode of the ESP8266. The WiFiTick-board pulls this
+    // pin to LOW, but the EDU-MKII pulls it to HIGH (because it
+    // is the READY-line of the temperature sensor). So force
+    // this pin to low so the ESP8266 is booting correctly.
+    gpio_rp2040_pin gpio3 (3);
+    gpio3.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
+
     // Reset the ESP8266
     gpio_rp2040_pin esp_reset(6);
     esp_reset.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
