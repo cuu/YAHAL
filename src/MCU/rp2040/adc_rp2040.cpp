@@ -43,7 +43,7 @@ uint16_t adc_rp2040::adcReadRaw(uint8_t channel) {
     _ADC_::ADC.CS.START_ONCE = 1;
     while(!_ADC_::ADC.CS.READY) ;
     uint16_t result = _ADC_::ADC.RESULT;
-    gpio_rp2040::inst.gpioWrite(18, HIGH);
+//    gpio_rp2040::inst.gpioWrite(18, HIGH);
     // Our ADC has no real 8 or 10 bit modes, so we simulate
     // the behaviour by shifting the result...
     switch(_modes[channel]) {

@@ -7,6 +7,7 @@
 
 #include <ssd2119_drv.h>
 #include "pixel_stream_const.h"
+#include "task.h"
 
 // Hardware Configurations
 //////////////////////////
@@ -132,14 +133,6 @@ namespace SSD2119 {
 #define ENTRY_MODE_DEFAULT 0x6830
 #define MAKE_ENTRY_MODE(x) ((ENTRY_MODE_DEFAULT & 0xFF00) | (x))
 
-
-void delay(int t)
-{
-    int j = 0;
-    for (int i = 0; i < t * 1000; ++i)
-        j++;
-}
-
 ssd2119_drv::ssd2119_drv(spi_interface & spi, gpio_pin & rst_pin,
                          gpio_pin & dc_pin, config & lcd,
                          mutex_interface * mutex)
@@ -155,8 +148,8 @@ ssd2119_drv::ssd2119_drv(spi_interface & spi, gpio_pin & rst_pin,
     _dc_pin. gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
 
     // Make a HW-reset
-    _rst_pin.gpioWrite(LOW);    delay(200);
-    _rst_pin.gpioWrite(HIGH);   delay(200);
+    _rst_pin.gpioWrite(LOW);    task::sleep(100);
+    _rst_pin.gpioWrite(HIGH);   task::sleep(100);
 
     // Activate CS
     spi.setCS(LOW);
@@ -177,7 +170,7 @@ ssd2119_drv::ssd2119_drv(spi_interface & spi, gpio_pin & rst_pin,
 
     // Wake up from sleep mode
     writeCmdData(SSD2119::SLEEP_MODE_1_REG,     0x0000);
-    delay(30);
+    task::sleep(200);
 
     writeCmdData(SSD2119::ENTRY_MODE_REG,       ENTRY_MODE_DEFAULT);
     writeCmdData(SSD2119::SLEEP_MODE_2_REG,     0x0999);

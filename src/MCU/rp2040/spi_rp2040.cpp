@@ -98,6 +98,22 @@ int16_t spi_rp2040::spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
         while(_cs.gpioRead()) ;
     }
 
+    // Never have more transfers in flight than will fit into the RX FIFO,
+    // else FIFO will overflow if this code is heavily interrupted.
+//    const uint16_t fifo_depth = 8;
+//    uint16_t rx_remaining = len, tx_remaining = len;
+//
+//    while (rx_remaining || tx_remaining) {
+//        if (tx_remaining && _spi->SSPSR.TNF && rx_remaining < tx_remaining + fifo_depth) {
+//            _spi->SSPDR.DATA = (*txbuf++);
+//            --tx_remaining;
+//        }
+//        if (rx_remaining && _spi->SSPSR.RNE) {
+//            *rxbuf++ = (uint8_t)(_spi->SSPDR.DATA);
+//            --rx_remaining;
+//        }
+//    }
+
     for (int i = 0; i < len; ++i)
     {
         // Wait until next byte can be written
