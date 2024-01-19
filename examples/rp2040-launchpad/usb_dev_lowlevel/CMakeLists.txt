@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 # Set the target board
 set(YAHAL_BOARD "rp2040-launchpad")
-set(YAHAL_OPT_FLAGS -Ofast)
+# set(YAHAL_OPT_FLAGS -Ofast)
 
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
