@@ -1,23 +1,39 @@
 image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-image
 
-msp432_examples:
+.common:
   before_script:
-    - cd examples/msp432-launchpad
-    - mkdir build
-    - cd build
+    - cd examples/$EXAMLE_FOLDER
+    - mkdir build && cd build
   script:
     - cmake ..
     - make -j 4
   tags:
     - shared
 
+msp432_examples:
+  extends: .common
+  variables:
+    EXAMLE_FOLDER: "msp432-launchpad"
+  only:
+    changes:
+      - .gitlab-ci.yml
+      - cmake/**/*
+      - include/**/*
+      - lib/**/*
+      - src/**/*
+      - tools/**/*
+      - examples/msp432-launchpad/**/*
+
 rp2040_examples:
-  before_script:
-    - cd examples/rp2040-launchpad
-    - mkdir build
-    - cd build
-  script:
-    - cmake ..
-    - make -j 4
-  tags:
-    - shared
+  extends: .common
+  variables:
+    EXAMLE_FOLDER: "rp2040-launchpad"
+  only:
+    changes:
+      - .gitlab-ci.yml
+      - cmake/**/*
+      - include/**/*
+      - lib/**/*
+      - src/**/*
+      - tools/**/*
+      - examples/rp2040-launchpad/**/*
