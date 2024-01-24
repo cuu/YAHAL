@@ -129,11 +129,14 @@ function(mp3pcm_to_cpp TARGET FILE)
 
     # Parse argument
     cmake_parse_arguments(mp3pcm_to_cpp "" "MODE;OUTPUT_DIR" "" ${ARGN} )
-
     # Paramters are all relative to current CMakeList.txt
     set(INFILE  "${CMAKE_CURRENT_LIST_DIR}/${FILE}")
     set(OUT_DIR "${CMAKE_CURRENT_LIST_DIR}/${mp3pcm_to_cpp_OUTPUT_DIR}")
-    set(MODE    "${mp3pcm_to_cpp_MODE}")
+    if (mp3pcm_to_cpp_MODE)
+        set(MODE    "${mp3pcm_to_cpp_MODE}")
+    else()
+        set(MODE    "stereo")
+    endif()
     get_filename_component(NAME_WE ${FILE} NAME_WE)
     set(CPPFILE "${OUT_DIR}/${NAME_WE}.cpp")
     set(HFILE   "${OUT_DIR}/${NAME_WE}.h")

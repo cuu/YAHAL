@@ -11,20 +11,16 @@
 //
 // ---------------------------------------------
 //
-///////////////////////////////////////////
-// Play a single MP3 file from flash memory
-///////////////////////////////////////////
-//
-// main() only prepares the infrastructure, namely:
-//  - redirects stdout/stderr
-//  - starts the main task
-//  - starts the task monitor
-//  - starts the scheduler
-// The program logic is contained in the main_task
-// and not here!
+/////////////////////////////////////////////////
+// Play a single PCM dataset on the audio adapter
+/////////////////////////////////////////////////
 
 #include "pcm_pwm_rp2040_drv.h"
-#include "gen/surprise.h"
+// Some samples
+#include "gen/hat1.h"
+#include "gen/hat2.h"
+#include "gen/kick.h"
+#include "gen/snare.h"
 
 int main(void)
 {
@@ -35,22 +31,55 @@ int main(void)
     pcm_pwm_rp2040_drv pcm_if(9, 11);
 
     // The PCM rate can be seen as a comment in the
-    // generated files (here surprise.h/.cpp), and 
-    // has to be set manually.
-    pcm_if.setPcmRate(32000);
+    // generated files (here e.g. hat1.h), and 
+    // has to be set manually:
+    pcm_if.setPcmRate(44100);
 
     // A single PCM value with left/right data
     pcm_value_t pcm;
-    
-    // Loop over all PCM samples. Note that sizeof() report
-    // the size of the PCM array in BYTES!
-    for (uint32_t i=0; i < sizeof(surprise)/sizeof(int16_t); ++i) {
+    int left, right;
+    int count;
+    // Loop over all PCM samples for 1 seconds. Because
+    // the MP3 and PCM data is stereo, we have 2*44100
+    // PCM values per second.
+    for (uint32_t i=0; i < 88200; i += 2) {
+        // Reset values
+        count = 0;
+        left  = 0;
+        right = 0;
+        // Add PCM samples to left/right
+        if (i < sizeof(hat1)/sizeof(int16_t)) {
+            left  += (int16_t)hat1[i];
+            right += (int16_t)hat1[i+1];
+            count++;
+        }
+        if (i < sizeof(hat2)/sizeof(int16_t)) {
+            left  += (int16_t)hat2[i];
+            right += (int16_t)hat2[i+1];
+            count++;
+        }
+        if (i < sizeof(kick)/sizeof(int16_t)) {
+            left  += (int16_t)kick[i];
+            right += (int16_t)kick[i+1];
+            count++;
+        }
+        if (i < sizeof(snare)/sizeof(int16_t)) {
+            left  += (int16_t)snare[i];
+            right += (int16_t)snare[i+1];
+            count++;
+        }
+        // Scale the output so we do not get
+        // overflows for int16_t
+        left  /= count;
+        right /= count;
         // Wait for a free entry in the FIFO
         while (!pcm_if.pcmFifoAvailablePut()) ;
-        // Load the next PCM value ...
-        pcm.left  = (int16_t)surprise[i];
-        pcm.right = (int16_t)surprise[i];
-        // ... and put it to the FIFO
+        // Load the next PCM value. Since surprise.mp3
+        // has only one audio channel (left), store the
+        // same PCM value into both output channels.
+        pcm.left  = (int16_t)left;
+        pcm.right = (int16_t)right;
+        // Put the PCM value into the FIFO
         pcm_if.pcmFifoPut(pcm);
     }
 }
