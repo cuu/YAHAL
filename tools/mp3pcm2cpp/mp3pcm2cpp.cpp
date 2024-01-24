@@ -316,7 +316,7 @@ int main(int argc, char *argv[]) {
     // Dashes are not valid in variable names, so replace them
     std::replace(base.begin(), base.end(), '-', '_');
 
-    mp3_file = fopen(infile.c_str(), "r");
+    mp3_file = fopen(infile.c_str(), "rb");
     ofs_cpp.open(outfile_cpp, raw ? std::ios_base::binary : std::ios_base::out);
     ofs_h.open(outfile_h);
 
