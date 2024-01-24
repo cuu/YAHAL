@@ -21,6 +21,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <filesystem>
 #include <string>
 #include <algorithm>
 #include <cstdint>
@@ -49,11 +50,11 @@ int pass = 1;
 uint32_t pcm_size = 0;
 
 void usage() {
-    cout << "Usage: mp3pcm2cpp [-r] [-m <mode>] [-o outfile] file.mp3"   << endl;
+    cout << "Usage: mp3pcm2cpp [-r] [-m <mode>] [-o dir] file.mp3"   << endl;
     cout << endl;
-    cout << "-r          : Generate raw binary data"                     << endl;
+    cout << "-r          : Generate raw binary data" << endl;
     cout << "-m <mode>   : mode is: mono, stereo (default), left, right" << endl;
-    cout << "-o outfile  : The output filename. Default is file.cpp"     << endl;
+    cout << "-o dir      : The output directory. Default is ." << endl;
     cout << "file.mp3    : A valid MP3 file" << endl;
     exit(1);
 }
@@ -250,8 +251,7 @@ enum mad_flow decoder_error(void *data,mad_stream *stream, mad_frame *frame)
 int main(int argc, char *argv[]) {
     // Process the command line arguments
     string      infile;
-    string      outfile_cpp;
-    string      outfile_h;
+    string      outdir = ".";
 
     int opt;
     while ((opt = getopt(argc, argv, ":rm:o:")) != -1) {
@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
                 break;
             }
             case 'o': {
-                outfile_cpp = optarg;
+                outdir = optarg;
                 break;
             }
             case ':': {
@@ -299,22 +299,19 @@ int main(int argc, char *argv[]) {
         usage();
     }
 
-    // Process the file name
-    size_t dot = infile.find_last_of('.');
-    string name_we;
+    // Process the input file name
+    std::filesystem::path filepath{infile};
+    string name_we = filepath.filename().string();
+    size_t dot = name_we.find_last_of('.');
     if (dot != string::npos) {
-        name_we = infile.substr(0, dot);
-    } else {
-        name_we = infile;
+        name_we = name_we.substr(0, dot);
     }
-    if (outfile_cpp.size()==0) {
-        // Set the default output name
-        outfile_cpp = name_we;
-        if (raw) outfile_cpp += ".bin";
-        else     outfile_cpp += ".cpp";
+    string outfile_h   = outdir + "/" + name_we + ".h";
+    string outfile_cpp = outdir + "/" + name_we + ".cpp";
+    if (raw) {
+        outfile_cpp = outdir + "/" + name_we + ".bin";
     }
-    outfile_h = name_we + ".h";
-
+    
     string base = basename( (char*)name_we.c_str() );
     // Dashes are not valid in variable names, so replace them
     std::replace(base.begin(), base.end(), '-', '_');
@@ -322,6 +319,19 @@ int main(int argc, char *argv[]) {
     mp3_file = fopen(infile.c_str(), "r");
     ofs_cpp.open(outfile_cpp, raw ? std::ios_base::binary : std::ios_base::out);
     ofs_h.open(outfile_h);
+
+    if (!mp3_file) {
+        cerr << "Error: Could not open input file " << infile << endl;
+        exit(1);
+    }
+    if (!ofs_h) {
+        cerr << "Error: Could not open output file " << outfile_h << endl;
+        exit(1);
+    }
+    if (!ofs_cpp) {
+        cerr << "Error: Could not open output file " << outfile_cpp << endl;
+        exit(1);
+    }
 
     mad_decoder decoder;
 
