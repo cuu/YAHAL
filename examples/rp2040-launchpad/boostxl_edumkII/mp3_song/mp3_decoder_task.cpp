@@ -98,7 +98,7 @@ int16_t mp3_decoder_task::scale(mad_fixed_t sample)
     // values in the range betwenn -MAD_F_ONE and MAD_F_ONE.
     // Therefore rounding and clipping is normally not
     // necessary!
-#if 0
+
     // round
     sample += (1L << (MAD_F_FRACBITS - 16));
     // clip
@@ -106,9 +106,10 @@ int16_t mp3_decoder_task::scale(mad_fixed_t sample)
         sample = MAD_F_ONE - 1;
     else if (sample < -MAD_F_ONE)
         sample = -MAD_F_ONE;
-#endif
+
     // Convert to a standard 16 bit PCM value
     // (signed) in the range of -32768...32767
     sample >>= (MAD_F_FRACBITS + 1 - 16);
-    return sample;
+    // Reduce volume, so divide by 4
+    return sample / 4;
 }
