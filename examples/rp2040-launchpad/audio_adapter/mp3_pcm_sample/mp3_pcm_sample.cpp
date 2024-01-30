@@ -74,12 +74,10 @@ int main(void)
         right /= count;
         // Wait for a free entry in the FIFO
         while (!pcm_if.pcmFifoAvailablePut()) ;
-        // Load the next PCM value. Since surprise.mp3
-        // has only one audio channel (left), store the
-        // same PCM value into both output channels.
+        // Prepare the next PCM value ...
         pcm.left  = (int16_t)left;
         pcm.right = (int16_t)right;
-        // Put the PCM value into the FIFO
+        // ... and put it into the FIFO
         pcm_if.pcmFifoPut(pcm);
     }
 }
