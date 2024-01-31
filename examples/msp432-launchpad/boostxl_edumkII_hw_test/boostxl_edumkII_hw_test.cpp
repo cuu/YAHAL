@@ -129,28 +129,28 @@ public:
             if (tmp != _accel_x) {
                 _accel_x = tmp;
                 s  = to_String(tmp-2048) + "  ";
-                _gui.PutString(70, 70, s);
+                _gui.PutString(70, 70, s.c_str());
                 sleep(20);
             }
             tmp = HW::inst()->accel_y.adcReadScan();
             if (tmp != _accel_y) {
                 _accel_y = tmp;
                 s  = to_String(tmp-2048) + "  ";
-                _gui.PutString(70, 80, s);
+                _gui.PutString(70, 80, s.c_str());
                 sleep(20);
             }
             tmp = HW::inst()->accel_z.adcReadScan();
             if (tmp != _accel_z) {
                 _accel_z = tmp;
                 s  = to_String(tmp-2048) + "  ";
-                _gui.PutString(70, 90, s);
+                _gui.PutString(70, 90, s.c_str());
                 sleep(20);
             }
             tmp = HW::inst()->sen_light.get_light();
             if (tmp != _light) {
                 _light = tmp;
                 s  = to_String(tmp) + " lux  ";
-                _gui.PutString(55, 105, s);
+                _gui.PutString(55, 105, s.c_str());
                 sleep(20);
             }
 
@@ -163,7 +163,7 @@ public:
             if (temp != _temp) {
                 _temp = temp;
                 s = to_String(temp/32) + "." + to_String(temp%32*3) + " °C";
-                _gui.PutString(55,115, s);
+                _gui.PutString(55,115, s.c_str());
                 sleep(20);
             }
             sleep(100);
