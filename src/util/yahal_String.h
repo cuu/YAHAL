@@ -88,7 +88,9 @@ public:
     String fill_right(uint16_t width, const char c=' ');
 
     // Conversions
-    operator const char * () { return _ptr; }
+    // NOTE: This operator makes trouble when String == "literal" 
+    // is used, so comment it out .. Use c_str() instead !
+//    operator const char * () { return _ptr; }
 
 protected:
     uint16_t _len;
