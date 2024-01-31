@@ -63,14 +63,16 @@ void timer_rp2040::setCallback(function<void()> f) {
 }
 
 void timer_rp2040::start() {
-    uint32_t  tl = _TIMER_::TIMER.TIMERAWL;
-    *_ALARM = tl + (_period - (_stop_value * _tick_factor));
+    *_ALARM = _TIMER_::TIMER.TIMERAWL + _period - _stop_value;
 }
 
 void timer_rp2040::stop() {
-    // Clear 'armed'-bit
-    _stop_value = getCounter();
-    _TIMER_::TIMER.ARMED = _mask;
+    if (isRunning()) {
+        // Get the current counter value
+        _stop_value = _period - *_ALARM + _TIMER_::TIMER.TIMERAWL;
+        // Clear 'armed'-bit
+        _TIMER_::TIMER.ARMED = _mask;
+    }
 }
 
 bool timer_rp2040::isRunning() {
@@ -78,12 +80,11 @@ bool timer_rp2040::isRunning() {
 }
 
 uint32_t timer_rp2040::getCounter() {
+    uint32_t val = _stop_value;
     if (isRunning()) {
-        uint32_t tl = _TIMER_::TIMER.TIMERAWL;
-        return (_period - (*_ALARM - tl) + _stop_value) / _tick_factor;
-    } else {
-        return _stop_value;
+        val += _period - *_ALARM + _TIMER_::TIMER.TIMERAWL;
     }
+    return val / _tick_factor;
 }
 
 void timer_rp2040::resetCounter() {
