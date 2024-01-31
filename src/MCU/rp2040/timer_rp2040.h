@@ -19,7 +19,9 @@ void TIMER_IRQ_3_Handler(void);
 
 class timer_rp2040: public timer_interface {
 public:
-    explicit timer_rp2040(uint32_t index);
+    // The index is in the range of 0...3 (4 timers).
+    // When no index is given (-1), the next free timer will be used!
+    explicit timer_rp2040(int8_t index = -1);
     virtual ~timer_rp2040();
 
     void setPeriod   (uint32_t us, TIMER::timer_mode mode = TIMER::ONE_SHOT) override;
@@ -48,12 +50,13 @@ private:
     static timer_rp2040 *   _timerinst[4];
     static function<void()> _callback[4];
 
-    uint32_t    _index;
+    uint8_t     _index;
     uint32_t    _mask;
     uint32_t *  _ALARM;
     TIMER::timer_mode _mode;
-    uint32_t    _period_us;
+    uint32_t    _period;
     uint32_t    _tick_factor;
+    uint32_t    _stop_value;
 };
 
 #endif // _TIMER_RP2040_H_

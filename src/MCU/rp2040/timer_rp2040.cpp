@@ -12,7 +12,13 @@
 timer_rp2040 *   timer_rp2040::_timerinst[4];
 function<void()> timer_rp2040::_callback[4];
 
-timer_rp2040::timer_rp2040(uint32_t index) {
+timer_rp2040::timer_rp2040(int8_t index) {
+    if (index == -1) {
+        // Find next free timer
+        for (index=0; index < 4; ++index) {
+            if (!_timerinst[index]) break;
+        }
+    }
     assert(index < 4);
     assert(_timerinst[index] == nullptr);
     // Initialize members
@@ -20,9 +26,11 @@ timer_rp2040::timer_rp2040(uint32_t index) {
     _mask       = 1 << index;
     _ALARM      = &(_TIMER_::TIMER.ALARM0) + index;
     _mode       = TIMER::ONE_SHOT;
-    _period_us  = 0;
+    _period     = 0;
     // Calculate factor
     _tick_factor= CLK_TICK / 1000000;
+    // Stop value
+    _stop_value = 0;
     // Register timer instance pointer
     _timerinst[index] = this;
     // Enable timer interrupt
@@ -37,17 +45,17 @@ timer_rp2040::~timer_rp2040() {
 }
 
 void timer_rp2040::setPeriod(uint32_t us, TIMER::timer_mode mode) {
-    _period_us = us * _tick_factor;
-    _mode      = mode;
+    _period = us * _tick_factor;
+    _mode   = mode;
 }
 
 void timer_rp2040::setPeriod_ns(uint32_t ns, TIMER::timer_mode mode) {
-    _period_us = (ns * _tick_factor) / 1000;
-    _mode      = mode;
+    _period = (ns * _tick_factor) / 1000;
+    _mode   = mode;
 }
 
 uint32_t timer_rp2040::getPeriod() {
-    return _period_us / _tick_factor;
+    return _period / _tick_factor;
 }
 
 void timer_rp2040::setCallback(function<void()> f) {
@@ -56,11 +64,12 @@ void timer_rp2040::setCallback(function<void()> f) {
 
 void timer_rp2040::start() {
     uint32_t  tl = _TIMER_::TIMER.TIMERAWL;
-    *_ALARM = tl + _period_us;
+    *_ALARM = tl + (_period - (_stop_value * _tick_factor));
 }
 
 void timer_rp2040::stop() {
     // Clear 'armed'-bit
+    _stop_value = getCounter();
     _TIMER_::TIMER.ARMED = _mask;
 }
 
@@ -69,20 +78,30 @@ bool timer_rp2040::isRunning() {
 }
 
 uint32_t timer_rp2040::getCounter() {
-    uint32_t tl = _TIMER_::TIMER.TIMERAWL;
-    return _period_us - (*_ALARM - tl);
+    if (isRunning()) {
+        uint32_t tl = _TIMER_::TIMER.TIMERAWL;
+        return (_period - (*_ALARM - tl) + _stop_value) / _tick_factor;
+    } else {
+        return _stop_value;
+    }
 }
 
 void timer_rp2040::resetCounter() {
+    // Reset the stop value
+    _stop_value = 0;
+    // If timer is running, immediately
+    // trigger a re-start.
     if (isRunning()) start();
 }
 
 void timer_rp2040::irqHandler() {
     // Clear interrupt
     _TIMER_::TIMER.INTR = _mask;
+    // Reset stop value
+    _stop_value = 0;
     // Re-trigger timer if periodic
     if (_mode == TIMER::PERIODIC) {
-        *_ALARM += _period_us;
+        *_ALARM += _period;
     }
     // Call the user-provided handler
     _callback[_index]();
