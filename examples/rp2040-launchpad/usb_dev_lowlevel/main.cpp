@@ -72,7 +72,7 @@ int main() {
     device.set_idVendor       (0x2e8a);
     device.set_idProduct      (0x0111);
     device.set_Manufacturer   ("FH Aachen");
-    device.set_Product        ("MSC test device");
+    device.set_Product        ("MSC Test Device");
 
     ////////////////////////
     // USB BOS descriptor //
@@ -133,25 +133,25 @@ int main() {
     auto   len =  ms_header.descriptor.wLength;
     memcpy(tmp_ptr, ptr, len);
     tmp_ptr += len;
-    for (uint16_t c=0; c < ms_header._config_subsets.size(); ++c) {
-        auto * ptr = &ms_header._config_subsets[c]->descriptor;
-        auto   len =  ms_header._config_subsets[c]->descriptor.wLength;
+    for (auto & _config_subset : ms_header._config_subsets) {
+        auto * ptr = &_config_subset->descriptor;
+        auto   len =  _config_subset->descriptor.wLength;
         memcpy(tmp_ptr, ptr, len);
         tmp_ptr += len;
-        for (uint16_t f=0; f < ms_header._config_subsets[c]->_func_subsets.size(); ++f) {
-            auto  ptr = &ms_header._config_subsets[c]->_func_subsets[f]->descriptor;
-            auto  len  = ms_header._config_subsets[c]->_func_subsets[f]->descriptor.wLength;
+        for (auto & _func_subset : _config_subset->_func_subsets) {
+            auto  ptr = &_func_subset->descriptor;
+            auto  len  = _func_subset->descriptor.wLength;
             memcpy(tmp_ptr, ptr, len);
             tmp_ptr += len;
-            if (ms_header._config_subsets[c]->_func_subsets[f]->_compat_id) {
-                auto ptr = &ms_header._config_subsets[c]->_func_subsets[f]->_compat_id->descriptor;
-                auto len =  ms_header._config_subsets[c]->_func_subsets[f]->_compat_id->descriptor.wLength;
+            if (_func_subset->_compat_id) {
+                auto ptr = &_func_subset->_compat_id->descriptor;
+                auto len =  _func_subset->_compat_id->descriptor.wLength;
                 memcpy(tmp_ptr, ptr, len);
                 tmp_ptr += len;
             }
-            for (uint16_t p=0; p < ms_header._config_subsets[c]->_func_subsets[f]->_reg_props.size(); ++p) {
-                auto ptr = ms_header._config_subsets[c]->_func_subsets[f]->_reg_props[p]->descriptor();
-                auto len = ms_header._config_subsets[c]->_func_subsets[f]->_reg_props[p]->get_length();
+            for (auto & _reg_prop : _func_subset->_reg_props) {
+                auto ptr = _reg_prop->descriptor();
+                auto len = _reg_prop->get_length();
                 memcpy(tmp_ptr, ptr, len);
                 tmp_ptr += len;
             }
@@ -163,7 +163,7 @@ int main() {
         if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_STATUS) &&
              (pkt->wIndex == 2) ) {
             // URL
-            uint8_t len = usb_strings::inst.prepare_buffer_utf8(pkt->wValue, buff_url);
+            uint8_t len = usb_strings::inst.prepare_desc_utf8(pkt->wValue, buff_url);
             if (len > pkt->wLength) len = pkt->wLength;
             controller._ep0_in->start_transfer(buff_url, len);
         } else if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_DESCRIPTOR) &&
@@ -189,7 +189,12 @@ int main() {
     /////////////////////
     // USB CDC ACM device
     /////////////////////
+    usb_log::inst.setLevel(LOG_INFO);
+
     usb_msc_bot_device msc_device(controller, config);
+    msc_device.set_vendor_id  ("FH AC");
+    msc_device.set_product_id ("MSC Test Device");
+    msc_device.set_product_rev("1.0");
 
     // Set callback handlers
     msc_device.capacity_handler = [&](uint16_t & block_size,

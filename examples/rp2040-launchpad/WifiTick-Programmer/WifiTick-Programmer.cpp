@@ -21,6 +21,7 @@
 #include "posix_io.h"
 #include <cstdio>
 #include <cstring>
+#include "usb_log.h"
 
 int main() {
     uart_rp2040 uart; // default is backchannel UART!
@@ -48,6 +49,7 @@ int main() {
 
     printf("WifiTick Programmer\n");
 
+    TUPP_LOG_LEVEL(LOG_INFO);
     // USB Device driver
     usb_dcd_rp2040 & driver = usb_dcd_rp2040::inst();
     // USB device: Root object of USB descriptor tree
@@ -86,7 +88,7 @@ int main() {
     uint8_t uuid2[16] = { 0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C,
                           0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F };
 
-    uint32_t win_version    = 0x06030000;
+    uint32_t win_version = 0x06030000;
 
     usb_bos bos(device);
 
@@ -164,7 +166,7 @@ int main() {
         if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_STATUS) &&
              (pkt->wIndex == 2) ) {
             // URL
-            uint8_t len = usb_strings::inst.prepare_buffer_utf8(pkt->wValue, buff_url);
+            uint8_t len = usb_strings::inst.prepare_desc_utf8(pkt->wValue, buff_url);
             if (len > pkt->wLength) len = pkt->wLength;
             controller._ep0_in->start_transfer(buff_url, len);
         } else if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_DESCRIPTOR) &&
@@ -230,9 +232,9 @@ int main() {
     // Wait until USB enumeration has finished
     //////////////////////////////////////////
     printf("Waiting for USB connection on USB TARGET..\n");
-    while (!controller.active_configuration) {
-        task::sleep(100);
-    }
+//    while (!controller.active_configuration) {
+//        task::sleep(100);
+//    }
 
     CDC::bmUartState_t uart_state;
     uart_state.bRxCarrier_DCD = 1;
