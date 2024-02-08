@@ -9,12 +9,11 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #include "usb_cdc_acm_device.h"
 #include "usb_common.h"
-#include <cstdio>
-#include <cassert>
+#include "usb_log.h"
 
 using namespace USB;
 using enum USB::bInterfaceClass_t;
@@ -28,6 +27,8 @@ usb_cdc_acm_device::usb_cdc_acm_device(
         usb_configuration & configuration)
 : line_coding(_line_coding), _configuration(configuration)
 {
+    TUPP_LOG(LOG_DEBUG, "usb_cdc_acm_device() @%x", this);
+
     // USB interface association descriptor config
     //////////////////////////////////////////////
     _assoc.set_bFunctionClass   (IF_CLASS_CDC);
@@ -77,23 +78,28 @@ usb_cdc_acm_device::usb_cdc_acm_device(
     ////////////////////
     _ep_data_out->data_handler = [&](uint8_t *buf, uint16_t len) {
         // Check if we need to stop incoming data.
-        if (_received.available_put() < 2 * _ep_data_out->descriptor.wMaxPacketSize) {
+        if (_received_data.available_put() < (2 * _ep_data_out->descriptor.wMaxPacketSize)) {
             _ep_data_out->send_NAK(true);
         }
         // Copy all available bytes to the fifo
-        for (int i=0; i < len; ++i) assert(_received.put(buf[i]));
+        for (int i=0; i < len; ++i) {
+            bool b = _received_data.put(buf[i]);
+            assert(b);
+        }
         // Trigger a new receive
         _ep_data_out->start_transfer(_buffer_out, _ep_data_out->descriptor.wMaxPacketSize);
     };
 
     _ep_data_in->data_handler = [&](uint8_t *, uint16_t len) {
-        // Check if we have more data to send
+        // Value of len is discarded, use it as a local variable!
+        // Try to send as much data as possible up to MaxPacketSize
         for(len = 0; len < _ep_data_in->descriptor.wMaxPacketSize; ++len) {
-            if (!_transmit.get(_buffer_in[len])) {
+            if (!_data_to_transmit.get(_buffer_in[len])) {
                 break;
             }
         }
-        // Trigger a new transmit
+        // Trigger a new transmit if we have sent something before
+        // (which might indicate there is more data to sent...)
         if (len) {
             _ep_data_in->start_transfer(_buffer_in, len);
         }
@@ -104,6 +110,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
     _if_ctrl.setup_handler = [&](USB::setup_packet_t *pkt) {
         switch(pkt->bRequest) {
             case bRequest_t::REQ_CDC_SET_LINE_CODING: {
+                TUPP_LOG(LOG_INFO, "Handling REQ_CDC_SET_LINE_CODING");
                 assert(pkt->wLength == sizeof(_line_coding) );
                 // Set the data handler
                 controller.handler = line_coding_handler;
@@ -112,11 +119,13 @@ usb_cdc_acm_device::usb_cdc_acm_device(
                 break;
             }
             case bRequest_t::REQ_CDC_GET_LINE_CODING: {
+                TUPP_LOG(LOG_INFO, "Handling REQ_CDC_GET_LINE_CODING");
                 assert(pkt->wLength == sizeof(_line_coding) );
                 controller._ep0_in->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 break;
             }
             case bRequest_t::REQ_CDC_SET_CONTROL_LINE_STATE: {
+                TUPP_LOG(LOG_INFO, "Handling REQ_CDC_SET_CONTROL_LINE_STATE");
                 // Call user handler (should be short)
                 if (control_line_handler) {
                     control_line_handler(pkt->wValue & 0x0001,
@@ -127,6 +136,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
                 break;
             }
             case bRequest_t::REQ_CDC_SEND_BREAK: {
+                TUPP_LOG(LOG_INFO, "Handling REQ_CDC_SEND_BREAK");
                 // Call user handler (should be short)
                 if (break_handler) {
                     break_handler(pkt->wValue);
@@ -136,7 +146,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
                 break;
             }
             default: {
-                printf("Unsupported CDC command 0x%02x\n", (int)pkt->bRequest);
+                TUPP_LOG(LOG_ERROR, "Unsupported CDC command 0x%x", pkt->bRequest);
                 controller._ep0_in->send_stall(true);
                 controller._ep0_out->send_stall(true);
             }
@@ -148,32 +158,36 @@ uint16_t usb_cdc_acm_device::read(uint8_t *buf, uint16_t max_len) {
     uint8_t  val = 0;
     uint16_t len;
     for (len=0; len < max_len; ++len) {
-        if (_received.get(val)) {
+        if (_received_data.get(val)) {
             buf[len] = val;
         } else break;
     }
     // Check if we can receive more data
-    if (_received.available_get() < 2 * _ep_data_out->descriptor.wMaxPacketSize) {
+    if (_received_data.available_get() < (2 * _ep_data_out->descriptor.wMaxPacketSize)) {
         _ep_data_out->send_NAK(false);
     }
     return len;
 }
 
 bool usb_cdc_acm_device::write(uint8_t *buf, uint16_t len) {
-    if (_transmit.available_put() < len) {
+    if (_data_to_transmit.available_put() < len) {
         return false;
     }
     for(int i=0; i < len; ++i) {
-        _transmit.put(buf[i]);
+        _data_to_transmit.put(buf[i]);
     }
-    // Check if we need a new transfer
+    // Check if we need a new initial transfer
+    // if the endpoint is currently not active.
     if (!_ep_data_in->is_active()) {
+        // Parameters are discarded. The in data handler
+        // looks at the FIFO to decide whether to send data!
         _ep_data_in->data_handler(nullptr, 0);
     }
     return true;
 }
 
 bool usb_cdc_acm_device::notify_serial_state(const USB::CDC::bmUartState_t & state) {
+    TUPP_LOG(LOG_DEBUG, "notify_serial_state()");
     if (_ep_ctrl_in->is_active()) {
         return false;
     }

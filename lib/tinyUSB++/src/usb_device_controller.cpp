@@ -9,7 +9,7 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #include "usb_device_controller.h"
 
@@ -250,7 +250,7 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
         case DESC_STRING: {
             printf("DESC_STRING [%d], %d\n", pkt->wValue & 0xff, pkt->wLength);
             uint8_t index = pkt->wValue & 0xff;
-            uint8_t len = usb_strings::inst.prepare_buffer(index, _buf);
+            uint8_t len = usb_strings::inst.prepare_desc_utf16(index, _buf);
             if (len > pkt->wLength) len = pkt->wLength;
             assert(len <= pkt->wLength);
             _ep0_in->start_transfer(_buf, len);

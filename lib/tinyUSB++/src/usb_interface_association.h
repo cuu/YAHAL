@@ -9,13 +9,16 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
+// This class represents a USB interface association descriptor,
+// which can be added to a USB configuration.
 //
 #ifndef TUPP_USB_INTERFACE_ASSOCIATION_H_
 #define TUPP_USB_INTERFACE_ASSOCIATION_H_
 
-// Forward declarations (to prevent
-// mutual inclusions of header files)
+// Forward declarations
+// (to prevent mutual inclusions of header files)
 class usb_configuration;
 class usb_interface;
 

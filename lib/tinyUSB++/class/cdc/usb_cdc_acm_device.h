@@ -9,7 +9,7 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #ifndef TUPP_USB_CDC_ACM_DEVICE_H
 #define TUPP_USB_CDC_ACM_DEVICE_H
@@ -39,7 +39,7 @@ public:
     // Return value is the actual amount of data read.
     uint16_t read(uint8_t *buf, uint16_t max_len);
 
-    // Write data to this device. THe buffer and its size
+    // Write data to this device. The buffer and its size
     // are passed as parameters. The return value signals
     // if the writing was successful. Either all or no data
     // is written!
@@ -76,12 +76,12 @@ private:
     CDC::line_coding_t          _line_coding;
 
     // Fifos for received data and data to be transmitted.
-    fifo<uint8_t, 256>          _received;
-    fifo<uint8_t, 256>          _transmit;
+    fifo<uint8_t, TUPP_CDC_ACM_FIFO_SIZE> _received_data;
+    fifo<uint8_t, TUPP_CDC_ACM_FIFO_SIZE> _data_to_transmit;
 
     // Internal data buffers
-    uint8_t                     _buffer_out[64] {0};
-    uint8_t                     _buffer_in [64] {0};
+    uint8_t _buffer_out[TUPP_DEFAULT_PAKET_SIZE] {0};
+    uint8_t _buffer_in [TUPP_DEFAULT_PAKET_SIZE] {0};
 };
 
 #endif  // TUPP_USB_CDC_ACM_DEVICE_H

@@ -11,7 +11,3 @@ add_subdirectory(class)
 add_subdirectory(drivers)
 add_subdirectory(src)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${YAHAL_DIR}/include/MCU/rp2040
-    PUBLIC ${YAHAL_DIR}/include/CPU/CMSIS
-)

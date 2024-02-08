@@ -13,21 +13,22 @@
 //
 #include "usb_dcd_rp2040.h"
 #include "usb_endpoint_rp2040.h"
-#include "RP2040.h"
 #include <cassert>
 #include <cstdio>
 
-using namespace _USBCTRL_REGS_;
-using namespace USB;
+#include "hardware/structs/usb.h"
 
-uint8_t * usb_endpoint_rp2040::_next_free_buffer = (uint8_t *)&USBCTRL_DPRAM + 0x180;
+#define usb_hw_set   ((usb_hw_t *)hw_set_alias_untyped(usb_hw))
+#define usb_hw_clear ((usb_hw_t *)hw_clear_alias_untyped(usb_hw))
+
+uint8_t * usb_endpoint_rp2040::_next_free_buffer = (uint8_t *)USBCTRL_DPRAM_BASE + 0x180;
 
 usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
                                          ep_attributes_t transfer_type,
                                          uint16_t packet_size,
                                          uint8_t  interval,
                                          usb_interface * interface)
-: usb_endpoint(addr, transfer_type, packet_size, interval, interface)
+        : usb_endpoint(addr, transfer_type, packet_size, interval, interface)
 {
     // Align packet size to multiples of 64 byte
     if (packet_size & 0x3f) packet_size += 64;
@@ -38,29 +39,30 @@ usb_endpoint_rp2040::usb_endpoint_rp2040(uint8_t  addr,
     uint8_t offset = (addr & 0x0f) << 1;
 
     if (offset) {
-        _endp_ctrl = (EP_CONTROL_t *)&USBCTRL_DPRAM + offset;
+        _endp_ctrl = (io_rw_32 *)USBCTRL_DPRAM_BASE + offset;
         if (!is_IN()) _endp_ctrl++;
         // Set buffer address in DPRAM
         _hw_buffer = _next_free_buffer;
         _next_free_buffer += packet_size;
         _hw_buffer_size = packet_size;
-        assert(_next_free_buffer <= (uint8_t *)&USBCTRL_DPRAM + 0x1000);
+        assert(_next_free_buffer <= (uint8_t *)USBCTRL_DPRAM_BASE + 0x1000);
     } else {
         // Handle special case EP0
         _endp_ctrl = nullptr;
-        _hw_buffer = (uint8_t *)&USBCTRL_DPRAM + 0x100;
+        _hw_buffer = (uint8_t *)USBCTRL_DPRAM_BASE + 0x100;
         _hw_buffer_size = packet_size;
         assert(_hw_buffer_size == 64);
     }
-    _buff_ctrl = (EP_BUFFER_CONTROL_t *)&USBCTRL_DPRAM.EP0_IN_BUFFER_CONTROL + offset;
+    _buff_ctrl = (io_rw_32 *)&usb_dpram->ep_buf_ctrl + offset;
     if (!is_IN()) _buff_ctrl++;
 
     // Set endpoint control register
     if (_endp_ctrl) {
-        _endp_ctrl->BUFFER_ADDRESS     = (uint32_t)_hw_buffer & 0xffff;
-        _endp_ctrl->INTERRUPT_PER_BUFF = 1;
-        _endp_ctrl->ENDPOINT_TYPE      = (uint32_t)descriptor.bmAttributes;
-        _endp_ctrl->ENABLE             = 0;
+        uint32_t reg = (uint32_t)_hw_buffer & 0xffff;
+        reg |= EP_CTRL_INTERRUPT_PER_BUFFER;
+        reg |= (uint32_t)descriptor.bmAttributes << EP_CTRL_BUFFER_TYPE_LSB;
+        reg |= EP_CTRL_ENABLE_BITS;
+        *_endp_ctrl = reg;
     }
 
     // Initial PID value
@@ -78,51 +80,50 @@ void usb_endpoint_rp2040::_process_buffer() {
     // Dispatch request according endpoint direction
     if (is_IN()) {
         usb_dcd_rp2040::inst().check_address();
-        handle_buffer_in(_buff_ctrl->LENGTH_0);
+        handle_buffer_in(*_buff_ctrl & USB_BUF_CTRL_LEN_MASK);
     } else {
-        handle_buffer_out(_buff_ctrl->LENGTH_0);
+        handle_buffer_out(*_buff_ctrl & USB_BUF_CTRL_LEN_MASK);
     }
 }
 
 void usb_endpoint_rp2040::enable_endpoint(bool b) {
     printf("EP %2x enabled: %d\n", descriptor.bEndpointAddress, b);
-     if (_endp_ctrl) {
-         _endp_ctrl->ENABLE = b;
-     }
+    if (b) {
+        *_endp_ctrl |=  EP_CTRL_ENABLE_BITS;
+    } else {
+        *_endp_ctrl &= ~EP_CTRL_ENABLE_BITS;
+    }
 }
 
 void usb_endpoint_rp2040::send_NAK(bool b) {
     if (b) {
-        _USBCTRL_REGS_::USBCTRL_REGS_SET.EP_ABORT = _mask;
+        usb_hw_set->abort = _mask;
     } else {
-        _USBCTRL_REGS_::USBCTRL_REGS_CLR.EP_ABORT = _mask;
+        usb_hw_clear->abort = _mask;
     }
 }
 
 void usb_endpoint_rp2040::send_stall(bool b) {
     if (b) {
         if ((descriptor.bEndpointAddress & 0xf) == 0) {
-            _USBCTRL_REGS_::USBCTRL_REGS_SET.EP_STALL_ARM = _mask;
+            usb_hw_set->ep_stall_arm = _mask;
         }
-        _buff_ctrl->STALL = 1;
+        *_buff_ctrl |= USB_BUF_CTRL_STALL;
         next_pid = 0;
     } else {
         next_pid = 0;
-        _buff_ctrl->STALL = 0;
-        _buff_ctrl->AVAILABLE_0 = 0;
+        *_buff_ctrl &= ~(USB_BUF_CTRL_STALL | USB_BUF_CTRL_AVAIL);
     }
 }
 
 void usb_endpoint_rp2040::trigger_transfer(uint16_t len) {
-    assert(_buff_ctrl->AVAILABLE_0 == 0);
-    // Set pid and flip for next transfer
-    _buff_ctrl->PID_0       = next_pid;
-    _buff_ctrl->FULL_0      = is_IN() ? 1 : 0;
-    _buff_ctrl->LENGTH_0    = len;
+    assert((*_buff_ctrl & USB_BUF_CTRL_AVAIL) == 0);
+    // Prepare buffer control value
+    uint32_t reg = len | USB_BUF_CTRL_AVAIL;
+    reg |= next_pid ? USB_BUF_CTRL_DATA1_PID : USB_BUF_CTRL_DATA0_PID;
+    reg |= is_IN()  ? USB_BUF_CTRL_FULL : 0;
+    // Flip PID
     next_pid ^= 1;
-//    asm("nop\n");
-//    asm("nop\n");
-//    asm("nop\n");
-    // Finally mark this buffer as ready
-    _buff_ctrl->AVAILABLE_0 = 1;
+    // Write value to register
+    *_buff_ctrl = reg;
 }

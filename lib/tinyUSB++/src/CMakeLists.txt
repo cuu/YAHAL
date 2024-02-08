@@ -7,6 +7,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     usb_bos.cpp
     usb_strings.cpp
     usb_device_controller.cpp
+        usb_log.cpp
 )
 
 add_subdirectory(usb_ms)

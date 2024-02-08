@@ -15,29 +15,35 @@
 #include "usb_configuration.h"
 #include "usb_strings.h"
 #include <cassert>
+#include "usb_log.h"
 
 usb_device::usb_device()
 : descriptor(_descriptor), _descriptor{}, _configurations{nullptr}, _bos{nullptr}
 {
+    TUPP_LOG(LOG_DEBUG, "usb_device() @%x", this);
     // Set descriptor length
     _descriptor.bLength = sizeof(USB::device_descriptor_t);
     // Set descriptor type
     _descriptor.bDescriptorType = USB::bDescriptorType_t::DESC_DEVICE;
 }
 
-void usb_device::set_Manufacturer(const char * n) {
-    _descriptor.iManufacturer = usb_strings::inst.add_string(n);
+void usb_device::set_Manufacturer(const char * s) {
+    TUPP_LOG(LOG_DEBUG, "set_Manufacturer(%s)", s);
+    _descriptor.iManufacturer = usb_strings::inst.add_string(s);
 }
 
-void usb_device::set_Product(const char * n) {
-    _descriptor.iProduct = usb_strings::inst.add_string(n);
+void usb_device::set_Product(const char * s) {
+    TUPP_LOG(LOG_DEBUG, "set_Product(%s)", s);
+    _descriptor.iProduct = usb_strings::inst.add_string(s);
 }
 
-void usb_device::set_SerialNumber(const char * n) {
-    _descriptor.iSerialNumber = usb_strings::inst.add_string(n);
+void usb_device::set_SerialNumber(const char * s) {
+    TUPP_LOG(LOG_DEBUG, "set_SerialNumber(%s)", s);
+    _descriptor.iSerialNumber = usb_strings::inst.add_string(s);
 }
 
 void usb_device::add_configuration(usb_configuration * config) {
+    TUPP_LOG(LOG_DEBUG, "set_configuration()");
     int i=0;
     // Find an empty slot
     for (i=0; i < TUPP_MAX_CONF_PER_DEVICE; ++i) {
@@ -58,6 +64,7 @@ void usb_device::add_bos(usb_bos * bos) {
 }
 
 usb_configuration * usb_device::find_configuration(uint8_t i) {
+    TUPP_LOG(LOG_DEBUG, "find_configuration(%d)", i);
     for (usb_configuration * config : _configurations) {
         if (config && config->descriptor.bConfigurationValue == i)
             return config;

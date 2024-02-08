@@ -32,7 +32,7 @@ usb_ms_registry_property::usb_ms_registry_property(usb_ms_func_subset & func_sub
 
 void usb_ms_registry_property::add_property_name(const char * name) {
     // Prepare the string as UTF16 (PropertyName)
-    uint16_t len = usb_strings::inst.prepare_buffer(name, _next_free_byte+2);
+    uint16_t len = usb_strings::inst.convert_to_utf16(name, _next_free_byte + 2);
     // Store wPropertyNameLength
     _next_free_byte[0] = len & 0xff;
     _next_free_byte[1] = len >> 8;
@@ -44,7 +44,7 @@ void usb_ms_registry_property::add_property_name(const char * name) {
 
 void usb_ms_registry_property::add_property_value(const char * value) {
     // Prepare the string as UTF16
-    usb_strings::inst.prepare_buffer(value, _next_free_byte+2);
+    usb_strings::inst.convert_to_utf16(value, _next_free_byte + 2);
     // Store the length
     _next_free_byte[0] = 0x50;
     _next_free_byte[1] = 0x00;

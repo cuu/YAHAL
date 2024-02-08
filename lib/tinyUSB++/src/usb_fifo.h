@@ -9,7 +9,10 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
+// Template implementation of a generic FIFO with fixed
+// size. The FIFO data type and size are the template parameters.
 //
 #ifndef TUPP_FIFO_H_
 #define TUPP_FIFO_H_

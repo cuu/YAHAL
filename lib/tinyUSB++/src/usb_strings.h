@@ -9,13 +9,11 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 // This is a small utility class for handling strings in
 // USB descriptors. The maximum number of stored strings
-// is fixed (see TUPP_MAX_STRINGS in usb_config.h). New
-// C-type strings can be added, and generated as a USB
-// string descriptor in a given buffer.
+// is fixed (see TUPP_MAX_STRINGS in usb_config.h).
 //
 #ifndef TUPP_USB_STRINGS_H_
 #define TUPP_USB_STRINGS_H_
@@ -43,26 +41,32 @@ public:
     // string descriptor. The string to process is selected
     // by the index parameter. buffer has to point to an
     // allocated buffer, which has to have a minimum size
+    // of strlen(string)+2. Two bytes are needed for
+    // the descriptor length and type. One byte is needed
+    // for every character (the generated string is UTF8).
+    // Returns the total length of the constructed descriptor.
+    uint8_t prepare_desc_utf8(uint8_t index, uint8_t * buffer);
+
+    // Set up a USB buffer so that it conforms to a USB
+    // string descriptor. The string to process is selected
+    // by the index parameter. buffer has to point to an
+    // allocated buffer, which has to have a minimum size
     // of strlen(string)*2+2. Two bytes are needed for
     // the descriptor length and type. Two bytes are needed
-    // for every character (USB strings are UTF16).
+    // for every character (the generated string is UTF16).
     // Returns the total length of the constructed descriptor.
-    uint8_t prepare_buffer(uint8_t index, uint8_t * buffer);
+    uint8_t prepare_desc_utf16(uint8_t index, uint8_t * buffer);
 
-    uint8_t prepare_buffer_utf8(uint8_t index, uint8_t * buffer);
-
-
-    // Store a string in a given buffer as a UTF16 string including
-    // a (double) NULL-character. Return the size of the generated
-    // array.
-    uint16_t prepare_buffer(const char * str, uint8_t * buffer);
+    // Convert a given C-string into a UTF16 string including a
+    // (double) NULL-termination character. The generated string
+    // is stored in the given buffer. Return the size of the
+    // generated UTF16 string.
+    uint16_t convert_to_utf16(const char * str, uint8_t * buffer);
 
 private:
     // Standard CTOR. It adds a default entry (index 0)
     // with the language descriptor (US english).
-    usb_strings() : _strings{nullptr} {
-        add_string("\x09\x04");
-    }
+    usb_strings();
 
     // Array to store pointers to the (static) strings
     std::array<const char *, TUPP_MAX_STRINGS> _strings;

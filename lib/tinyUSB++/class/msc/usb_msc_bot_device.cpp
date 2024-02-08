@@ -9,14 +9,13 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #include "usb_msc_bot_device.h"
 #include "usb_common.h"
+#include "usb_log.h"
 
-#include <cstdio>
 #include <cassert>
-#include <cstring>
 #include <machine/endian.h>
 
 using namespace USB;
@@ -51,12 +50,10 @@ usb_msc_bot_device::usb_msc_bot_device(
     // Endpoint handler
     ///////////////////
     _ep_out->data_handler = [&](uint8_t *, uint16_t len) {
-//        printf("data_handler len:%d\n", len);
         if (_buffer_out_len) {
-            printf("WARN: Unconsumed data!!\n");
+            TUPP_LOG(LOG_WARNING, "Unconsumed data!");
         }
-        // New data has arrived from the host!
-        // Stop incoming data ...
+        // New data has arrived from the host! Stop incoming data ...
         _ep_out->send_NAK(true);
         // ... and set length to signal new data
         _buffer_out_len = len;
@@ -69,22 +66,20 @@ usb_msc_bot_device::usb_msc_bot_device(
     _interface.setup_handler = [&](USB::setup_packet_t *pkt) {
         switch(pkt->bRequest) {
             case bRequest_t::REQ_MSC_BOT_RESET: {
-                printf("MSC_BBB_RESET\n");
+                TUPP_LOG(LOG_INFO, "REQ_MSC_BOT_RESET");
                 assert(pkt->wValue  == 0);
                 assert(pkt->wLength == 0);
                 break;
             }
             case bRequest_t::REQ_MSC_GET_MAX_LUN: {
-                printf("GET_MAX_LUN\n");
+                TUPP_LOG(LOG_INFO, "REQ_MSC_GET_MAX_LUN");
                 assert(pkt->wValue  == 0);
                 assert(pkt->wLength == 1);
                 controller._ep0_in->start_transfer(&_max_lun, 1);
-                // Status stage
-                controller._ep0_out->send_zlp_data1();
                 break;
             }
             default: {
-                printf("Unsupported MSC command 0x%02x\n", (int)pkt->bRequest);
+                TUPP_LOG(LOG_ERROR, "Unsupported MSC command 0x%x", pkt->bRequest);
             }
         }
     };
@@ -96,32 +91,28 @@ usb_msc_bot_device::usb_msc_bot_device(
     _inquiry_response.removable_media      = 1;
     _inquiry_response.version              = SCSI::version_t::NO_STANDARD;
     _inquiry_response.response_data_format = 2;
-    _inquiry_response.hierarchical_support = 0;
-    _inquiry_response.normal_aca_support   = 0;
+//    _inquiry_response.hierarchical_support = 0;
+//    _inquiry_response.normal_aca_support   = 0;
     _inquiry_response.additional_length    = sizeof(SCSI::inquiry_response_t) - 5;
-    _inquiry_response.protect              = 0;
-    _inquiry_response.third_party_copy     = 0;
-    _inquiry_response.access_controls_coordinator = 0;
-    _inquiry_response.scc_support          = 0;
-    _inquiry_response.multi_port           = 0;
-    _inquiry_response.enclosure_services   = 0;
-    _inquiry_response.command_queuing      = 0;
-    std::strcpy((char *)_inquiry_response.vendor_id,   "FH AC");
-    std::strcpy((char *)_inquiry_response.product_id,  "MSC DEVICE");
-    std::strcpy((char *)_inquiry_response.product_rev, "1.0");
+//    _inquiry_response.protect              = 0;
+//    _inquiry_response.third_party_copy     = 0;
+//    _inquiry_response.access_controls_coordinator = 0;
+//    _inquiry_response.scc_support          = 0;
+//    _inquiry_response.multi_port           = 0;
+//    _inquiry_response.enclosure_services   = 0;
+//    _inquiry_response.command_queuing      = 0;
 }
 
+// This method implements a simple state machine
+// according to the MSC BOT specification
 void usb_msc_bot_device::handle_request() {
     switch(_state) {
-
         case state_t::RECEIVE_CBW: {
-
             // Did we receive some data?
             if (_buffer_out_len) {
-                //printf("STATE: RECEIVE_CBW\n");
+                TUPP_LOG(LOG_DEBUG, "STATE: RECEIVE_CBW");
                 // Create pointer to CBW
                 MSC::cbw_t *cbw = (MSC::cbw_t *) _buffer_out;
-
 
                 // Prepare the command status wrapper
                 _csw.dCSWSignature   = MSC::csw_signature;
@@ -154,15 +145,14 @@ void usb_msc_bot_device::handle_request() {
                 // Signal that data has been processed
                 _buffer_out_len = 0;
                 _ep_out->send_NAK(false);
-
             }
             break;
         }
         case state_t::DATA_READ: {
-            //printf("STATE: DATA_READ\n");
             if (_ep_in->is_active()) {
                 break;
             }
+            TUPP_LOG(LOG_DEBUG, "STATE: DATA_READ");
             // Read data from device
             read_handler(_buffer_in, _block_addr++);
             _ep_in->start_transfer(_buffer_in, TUPP_MSC_BLOCK_SIZE);
@@ -173,11 +163,11 @@ void usb_msc_bot_device::handle_request() {
             break;
         }
         case state_t::DATA_WRITE: {
-            //printf("STATE: DATA_WRITE\n");
             if (_buffer_out_len == 0) {
                 break;
             }
-            assert(_buffer_out_len == 512);
+            TUPP_LOG(LOG_DEBUG, "STATE: DATA_WRITE");
+            assert(_buffer_out_len == TUPP_MSC_BLOCK_SIZE);
             // Write data to device
             write_handler(_buffer_out, _block_addr++);
             _blocks_transferred++;
@@ -191,7 +181,7 @@ void usb_msc_bot_device::handle_request() {
             break;
         }
         case state_t::SEND_CSW: {
-            //printf("STATE: SEND_CSW\n");
+            TUPP_LOG(LOG_DEBUG, "STATE: SEND_CSW");
             activity_handler(false, false);
             if (_ep_in->is_active()) {
                 break;
@@ -204,26 +194,30 @@ void usb_msc_bot_device::handle_request() {
 }
 
 void usb_msc_bot_device::process_scsi_command() {
+    TUPP_LOG(LOG_DEBUG, "process_scsi_command()");
     MSC::cbw_t       * cbw = (MSC::cbw_t *) _buffer_out;
     SCSI::scsi_cmd_t * cmd = (SCSI::scsi_cmd_t *)&cbw->CBWCB;
 
     switch(*cmd) {
         case SCSI::scsi_cmd_t::TEST_UNIT_READY: {
-            //printf("CMD: TEST UNIT READY\n");
+            TUPP_LOG(LOG_INFO, "SCSI: TEST_UNIT_READY");
             assert(cbw->bCBWCBLength == sizeof(SCSI::test_unit_ready_t));
             assert(cbw->dCBWDataTransferLength == 0);
             break;
         }
         case SCSI::scsi_cmd_t::INQUIRY: {
-            //printf("CMD: INQUIRY\n");
+            TUPP_LOG(LOG_INFO, "SCSI: INQUIRY");
             assert(cbw->bCBWCBLength == sizeof(SCSI::inquiry_t));
-            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength - sizeof(SCSI::inquiry_response_t);
+            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength -
+                                   sizeof(SCSI::inquiry_response_t);
             // Send the response
             while(_ep_in->is_active()) ;
-            _ep_in->start_transfer((uint8_t *)&_inquiry_response, sizeof(SCSI::inquiry_response_t));
+            _ep_in->start_transfer((uint8_t *)&_inquiry_response,
+                                   sizeof(SCSI::inquiry_response_t));
             break;
         }
         case SCSI::scsi_cmd_t::MODE_SENSE_6: {
+            TUPP_LOG(LOG_INFO, "SCSI: MODE_SENSE_6");
             assert(cbw->bCBWCBLength == sizeof(SCSI::mode_sense_6_t));
             _mode_sense_6_response.mode_data_length = 3;
             _mode_sense_6_response.medium_type      = 0;
@@ -231,33 +225,41 @@ void usb_msc_bot_device::process_scsi_command() {
             _mode_sense_6_response.block_descriptor_length = 0;
             // Send the response
             while(_ep_in->is_active()) ;
-            _ep_in->start_transfer((uint8_t *)&_mode_sense_6_response, sizeof(SCSI::mode_sense_6_response_t));
+            _ep_in->start_transfer((uint8_t *)&_mode_sense_6_response,
+                                   sizeof(SCSI::mode_sense_6_response_t));
             break;
         }
         case SCSI::scsi_cmd_t::START_STOP_UNIT: {
+            TUPP_LOG(LOG_INFO, "SCSI: START_STOP_UNIT");
             break;
         }
         case SCSI::scsi_cmd_t::PREVENT_ALLOW_MEDIUM_REMOVAL: {
+            TUPP_LOG(LOG_INFO, "SCSI: PREVENT_ALLOW_MEDIUM_REMOVAL");
             break;
         }
         case SCSI::scsi_cmd_t::READ_CAPACITY_10: {
-            //printf("CMD: READ CAPACITY 10\n");
             assert(cbw->bCBWCBLength == sizeof(SCSI::read_capacity_10_t));
-            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength - sizeof(SCSI::read_capacity_10_response_t);
+            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength -
+                                   sizeof(SCSI::read_capacity_10_response_t);
             uint16_t block_size = 0;
             uint32_t block_count= 0;
             capacity_handler(block_size, block_count);
             assert(block_size == TUPP_MSC_BLOCK_SIZE);
             _read_capacity_10_response.logical_block_address = __htonl(block_count-1);
             _read_capacity_10_response.block_length          = __htonl(block_size);
+            TUPP_LOG(LOG_INFO, "SCSI: READ_CAPACITY_10 (block size:%d blocks:%d)",
+                     block_size, block_count);
             // Send the response
             while(_ep_in->is_active()) ;
-            _ep_in->start_transfer((uint8_t *)&_read_capacity_10_response, sizeof(SCSI::read_capacity_10_response_t));
+            _ep_in->start_transfer((uint8_t *)&_read_capacity_10_response,
+                                   sizeof(SCSI::read_capacity_10_response_t));
             break;
         }
         case SCSI::scsi_cmd_t::READ_FORMAT_CAPACITIES: {
+            TUPP_LOG(LOG_INFO, "SCSI: READ_FORMAT_CAPACITIES");
             assert(cbw->bCBWCBLength == sizeof(SCSI::read_format_capacity_10_t));
-            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength - sizeof(SCSI::read_format_capacity_10_response_t);
+            _csw.dCSWDataResidue = cbw->dCBWDataTransferLength -
+                                   sizeof(SCSI::read_format_capacity_10_response_t);
             uint16_t block_size = 0;
             uint32_t block_count= 0;
             capacity_handler(block_size, block_count);
@@ -268,11 +270,11 @@ void usb_msc_bot_device::process_scsi_command() {
             _read_format_capacity_10_response.block_num   = block_count;
             // Send the response
             while(_ep_in->is_active()) ;
-            _ep_in->start_transfer((uint8_t *)&_read_format_capacity_10_response, sizeof(SCSI::read_format_capacity_10_response_t));
+            _ep_in->start_transfer((uint8_t *)&_read_format_capacity_10_response,
+                                   sizeof(SCSI::read_format_capacity_10_response_t));
             break;
         }
         case SCSI::scsi_cmd_t::READ_10: {
-            //printf("CMD: READ 10\n");
             activity_handler(true, false);
             assert(cbw->bCBWCBLength == sizeof(SCSI::read_10_t));
             auto * read_cmd = (SCSI::read_10_t *)&cbw->CBWCB;
@@ -280,11 +282,11 @@ void usb_msc_bot_device::process_scsi_command() {
             _blocks_transferred = 0;
             _block_addr = __ntohl(read_cmd->logical_block_address);
             _state = state_t::DATA_READ;
+            TUPP_LOG(LOG_INFO, "SCSI: READ_10 (%d blocks)", _blocks_to_transfer);
             break;
         }
         case SCSI::scsi_cmd_t::WRITE_10: {
             _buffer_out_len = 0;
-            //printf("CMD: WRITE 10\n");
             activity_handler(false, true);
             assert(cbw->bCBWCBLength == sizeof(SCSI::write_10_t));
             auto * write_cmd = (SCSI::read_10_t *)&cbw->CBWCB;
@@ -292,40 +294,24 @@ void usb_msc_bot_device::process_scsi_command() {
             _blocks_transferred = 0;
             _block_addr = __ntohl(write_cmd->logical_block_address);
             _state = state_t::DATA_WRITE;
+            TUPP_LOG(LOG_INFO, "SCSI: WRITE_10 (%d blocks)", _blocks_to_transfer);
             // Let the next block arrive
             _buffer_out_len = 0;
             _ep_out->send_NAK(false);
             break;
         }
         default: {
-            printf("sig: %08lx\n", cbw->dCBWSignature);
-            printf("tag: %08lx\n", cbw->dCBWTag);
-            printf("len: %08lx\n", cbw->dCBWDataTransferLength);
-            printf("dir: %hd\n",   cbw->direction);
-            printf("lun: %d\n",    cbw->bCBWLUN);
-            printf("cb len: %d\n", cbw->bCBWCBLength);
+            TUPP_LOG(LOG_ERROR, "Unrecognized SCSI command:");
+            TUPP_LOG(LOG_ERROR, "sig: %x", cbw->dCBWSignature);
+            TUPP_LOG(LOG_ERROR, "tag: %x", cbw->dCBWTag);
+            TUPP_LOG(LOG_ERROR, "len: %x", cbw->dCBWDataTransferLength);
+            TUPP_LOG(LOG_ERROR, "dir: %d", cbw->direction);
+            TUPP_LOG(LOG_ERROR, "lun: %d", cbw->bCBWLUN);
+            TUPP_LOG(LOG_ERROR, "cb len: %d", cbw->bCBWCBLength);
             for(int i=0; i < cbw->bCBWCBLength; ++i) {
-                printf("%02x ", cbw->CBWCB[i]);
+                TUPP_LOG(LOG_ERROR, "  %x", cbw->CBWCB[i]);
             }
-            printf("\n");
             break;
         }
     }
 }
-
-
-
-#if 0
-printf("Data handler out %d\n", len);
-MSC::cbw_t * cbw = (MSC::cbw_t *)buf;
-printf("sig: %08x\n", cbw->dCBWSignature);
-printf("tag: %08x\n", cbw->dCBWTag);
-printf("len: %08x\n", cbw->dCBWDataTransferLength);
-printf("dir: %d\n",   cbw->direction);
-printf("lun: %d\n",   cbw->bCBWLUN);
-printf("cb len: %d\n",cbw->bCBWCBLength);
-for(int i=0; i < cbw->bCBWCBLength; ++i) {
-printf("%02x ", cbw->CBWCB[i]);
-}
-printf("\n");
-#endif

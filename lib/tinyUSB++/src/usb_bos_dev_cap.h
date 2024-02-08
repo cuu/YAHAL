@@ -35,7 +35,7 @@ public:
 protected:
 
     // The binary object store (BOS) descriptor
-    usb_bos &               _bos;
+    usb_bos & _bos;
 };
 
 #endif  // TUPP_USB_BOS_DEV_CAP_H_

@@ -9,7 +9,7 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #ifndef TUPP_SCSI_COMMON_H_
 #define TUPP_SCSI_COMMON_H_
@@ -91,41 +91,41 @@ namespace SCSI {
     };
 
     struct __attribute__((__packed__)) inquiry_response_t {
-        peripheral_device_type_t    peripheral_device   : 5;
-        peripheral_qualifier_type_t peripheral_qualifier: 3;
+        peripheral_device_type_t    peripheral_device   : 5 {0};
+        peripheral_qualifier_type_t peripheral_qualifier: 3 {0};
 
         uint8_t                             : 7;
-        uint8_t removable_media             : 1;
+        uint8_t removable_media             : 1 {0};
 
         version_t version;
 
-        uint8_t response_data_format        : 4;
-        uint8_t hierarchical_support        : 1;
-        uint8_t normal_aca_support          : 1;
+        uint8_t response_data_format        : 4 {0};
+        uint8_t hierarchical_support        : 1 {0};
+        uint8_t normal_aca_support          : 1 {0};
         uint8_t                             : 2;
 
         uint8_t additional_length;
 
-        uint8_t protect                     : 1;
+        uint8_t protect                     : 1 {0};
         uint8_t                             : 2;
-        uint8_t third_party_copy            : 1;
-        uint8_t target_port_group_support   : 2;
-        uint8_t access_controls_coordinator : 1;
-        uint8_t scc_support                 : 1;
+        uint8_t third_party_copy            : 1 {0};
+        uint8_t target_port_group_support   : 2 {0};
+        uint8_t access_controls_coordinator : 1 {0};
+        uint8_t scc_support                 : 1 {0};
 
         uint8_t                             : 4;
-        uint8_t multi_port                  : 1;
+        uint8_t multi_port                  : 1 {0};
         uint8_t                             : 1;
-        uint8_t enclosure_services          : 1;
+        uint8_t enclosure_services          : 1 {0};
         uint8_t                             : 1;
 
-        uint8_t                            : 1;
-        uint8_t command_queuing            : 1;
-        uint8_t                            : 6;
+        uint8_t                             : 1;
+        uint8_t command_queuing             : 1 {0};
+        uint8_t                             : 6;
 
-        uint8_t vendor_id[8];
-        uint8_t product_id[16];
-        uint8_t product_rev[4];
+        uint8_t vendor_id[8]   {0};
+        uint8_t product_id[16] {0};
+        uint8_t product_rev[4] {0};
     };
 
     // MODE SENSE 6
@@ -193,7 +193,7 @@ namespace SCSI {
         uint32_t    block_num; /// Number of Logical Blocks
         uint8_t     descriptor_type; // 00: reserved, 01 unformatted media , 10 Formatted media, 11 No media present
 
-        uint8_t     reserved2;
+        uint8_t     :8; //reserved2;
         uint16_t    block_size_u16;
     };
     static_assert(sizeof(read_format_capacity_10_t) == 10);
@@ -202,9 +202,9 @@ namespace SCSI {
     //////////
     struct __attribute__((__packed__)) read_10_t {
         scsi_cmd_t  cmd;
-        uint8_t     reserved;
+        uint8_t     :8; //reserved;
         uint32_t    logical_block_address;
-        uint8_t     reserved2;
+        uint8_t     :8; //reserved2;
         uint16_t    transfer_length;
         uint8_t     control;
     };
@@ -212,9 +212,9 @@ namespace SCSI {
 
     struct __attribute__((__packed__)) write_10_t {
         scsi_cmd_t  cmd;
-        uint8_t     reserved;
+        uint8_t     :8; //reserved;
         uint32_t    logical_block_address;
-        uint8_t     reserved2;
+        uint8_t     :8; //reserved2;
         uint16_t    transfer_length;
         uint8_t     control;
     };

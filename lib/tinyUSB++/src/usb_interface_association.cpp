@@ -9,17 +9,19 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #include "usb_interface.h"
 #include "usb_interface_association.h"
 #include "usb_configuration.h"
 #include "usb_strings.h"
+#include "usb_log.h"
 using namespace USB;
 
 usb_interface_association::usb_interface_association(usb_configuration & p)
     : descriptor(_descriptor), _parent(p), _descriptor{}
 {
+    TUPP_LOG(LOG_DEBUG, "usb_interface_association()");
     // Set descriptor length
     _descriptor.bLength = sizeof(interface_association_descriptor_t);
     // Set descriptor type
@@ -29,10 +31,12 @@ usb_interface_association::usb_interface_association(usb_configuration & p)
 }
 
 void usb_interface_association::set_FunctionName(const char * n) {
+    TUPP_LOG(LOG_DEBUG, "set_FunctionName(%s)", n);
     _descriptor.iFunction = usb_strings::inst.add_string(n);
 }
 
 void usb_interface_association::add_interface(usb_interface * interface) {
+    TUPP_LOG(LOG_DEBUG, "add_interface()");
     uint8_t index = _parent.add_interface(interface);
     if (!descriptor.bInterfaceCount) {
         // First interface for this association, so store

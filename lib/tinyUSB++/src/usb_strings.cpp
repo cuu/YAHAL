@@ -9,10 +9,11 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #include "usb_strings.h"
 #include "usb_common.h"
+#include "usb_log.h"
 #include <cassert>
 #include <cstring>
 using namespace USB;
@@ -20,7 +21,13 @@ using namespace USB;
 // The static singleton instance
 usb_strings usb_strings::inst;
 
+usb_strings::usb_strings() : _strings{nullptr} {
+    TUPP_LOG(LOG_DEBUG, "usb_strings() @%x", this);
+    add_string("\x09\x04");
+}
+
 uint8_t usb_strings::add_string(const char * str) {
+    TUPP_LOG(LOG_DEBUG, "add_string(%s)", str);
     int i=0;
     // Find free entry in array
     for (i=0; i < TUPP_MAX_STRINGS; ++i) {
@@ -36,7 +43,24 @@ uint8_t usb_strings::add_string(const char * str) {
     return 0;
 }
 
-uint8_t usb_strings::prepare_buffer(uint8_t index, uint8_t * buffer) {
+uint8_t usb_strings::prepare_desc_utf8(uint8_t index, uint8_t * buffer) {
+    TUPP_LOG(LOG_DEBUG, "prepare_desc_utf8([%d] %s)", index, _strings[index]);
+    assert(_strings[index]);
+    // Every ascii char takes 2 bytes plus bLength and bDescriptorType
+    uint8_t bLength = strlen(_strings[index]);
+    bLength += 2;
+    // Store the descriptor length
+    *buffer++ = bLength;
+    // Store the descriptor type
+    *buffer++ = (uint8_t)bDescriptorType_t::DESC_STRING;
+    // Store the string in UTF16LE (except language id)
+    const char *str = _strings[index];
+    while (*str) *buffer++ = *str++;
+    return bLength;
+}
+
+uint8_t usb_strings::prepare_desc_utf16(uint8_t index, uint8_t * buffer) {
+    TUPP_LOG(LOG_DEBUG, "prepare_desc_utf16([%d] %s)", index, _strings[index]);
     assert(_strings[index]);
     // Every ascii char takes 2 bytes plus bLength and bDescriptorType
     uint8_t bLength = strlen(_strings[index]);
@@ -57,30 +81,16 @@ uint8_t usb_strings::prepare_buffer(uint8_t index, uint8_t * buffer) {
     return bLength;
 }
 
-uint8_t usb_strings::prepare_buffer_utf8(uint8_t index, uint8_t * buffer) {
-    assert(_strings[index]);
-    // Every ascii char takes 2 bytes plus bLength and bDescriptorType
-    uint8_t bLength = strlen(_strings[index]);
-    bLength += 2;
-    // Store the descriptor length
-    *buffer++ = bLength;
-    // Store the descriptor type
-    *buffer++ = (uint8_t)bDescriptorType_t::DESC_STRING;
-    // Store the string in UTF16LE (except language id)
-    const char *str = _strings[index];
-    while (*str) *buffer++ = *str++;
-    return bLength;
-}
 
-
-
-uint16_t usb_strings::prepare_buffer(const char * str, uint8_t * buffer) {
+uint16_t usb_strings::convert_to_utf16(const char * str, uint8_t * buffer) {
+    TUPP_LOG(LOG_DEBUG, "convert_to_utf16(%s)", str);
     uint8_t * buffer_start = buffer;
     // Store the string in UTF16LE
     while (*str) {
         *buffer++ = *str++;
         *buffer++ = 0;
     }
+    // Double terminating NULL character
     *buffer++ = 0;
     *buffer++ = 0;
     return buffer - buffer_start;

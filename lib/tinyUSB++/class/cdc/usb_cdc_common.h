@@ -9,7 +9,7 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #ifndef TUPP_USB_CDC_COMMON_H_
 #define TUPP_USB_CDC_COMMON_H_
@@ -56,9 +56,9 @@ namespace USB::CDC {
     };
 
     struct __attribute__((__packed__)) func_device_descriptor_t {
-        uint8_t             bLength;
-        func_desc_type_t    bDescriptorType;
-        func_desc_subtype_t bDescriptorSubType;
+        uint8_t             bLength {0};
+        func_desc_type_t    bDescriptorType {0};
+        func_desc_subtype_t bDescriptorSubType {0};
     };
     static_assert(sizeof(func_device_descriptor_t) == 3);
 
@@ -66,7 +66,7 @@ namespace USB::CDC {
     // Header Functional Descriptor
     ///////////////////////////////
     struct __attribute__((__packed__)) func_desc_header_t : public func_device_descriptor_t {
-        uint16_t            bcdCDC;
+        uint16_t            bcdCDC {0};
     };
     static_assert(sizeof(func_desc_header_t) == 5);
 
@@ -75,8 +75,8 @@ namespace USB::CDC {
     //////////////////////////////
     template<int N>
     struct __attribute__((__packed__)) func_desc_union_t : public func_device_descriptor_t {
-        uint8_t             bControlInterface;
-        uint8_t             bSubordinateInterface[N];
+        uint8_t             bControlInterface {0};
+        uint8_t             bSubordinateInterface[N] {0};
     };
     static_assert(sizeof(func_desc_union_t<1>) == 5);
 
@@ -84,41 +84,35 @@ namespace USB::CDC {
     // Country Selection Functional Descriptor
     //////////////////////////////////////////
     struct __attribute__((__packed__)) func_desc_country_selector_t : public func_device_descriptor_t {
-        uint8_t             iCountryCodeReleaseDate;
-        uint16_t            wCountryCode0;
+        uint8_t             iCountryCodeReleaseDate {0};
+        uint16_t            wCountryCode0 {0};
     };
     static_assert(sizeof(func_desc_country_selector_t) == 6);
 
     /////////////////////////////////////////////
     // Call Management (CM) Functional Descriptor
     /////////////////////////////////////////////
-    union __attribute__((__packed__)) bmCmCapabilities_t {
-        struct __attribute__((__packed__)) {
-            uint8_t     handle_call_management          : 1;
-            uint8_t     call_management_via_data_class  : 1;
-            uint8_t     reserved                        : 6 {0};
-        };
-        uint8_t val;
+    struct __attribute__((__packed__)) bmCmCapabilities_t {
+        uint8_t     handle_call_management          : 1 {0};
+        uint8_t     call_management_via_data_class  : 1 {0};
+        uint8_t     reserved                        : 6 {0};
     };
 
     struct __attribute__((__packed__)) func_desc_cm_t : public func_device_descriptor_t {
-        bmCmCapabilities_t  bmCapabilities;
-        uint8_t             bDataInterface;
+        bmCmCapabilities_t  bmCapabilities {0};
+        uint8_t             bDataInterface {0};
     };
     static_assert(sizeof(func_desc_cm_t) == 5);
 
     //////////////////////////////////////////////////////////
     // Abstract Control Management (ACM) Functional Descriptor
     //////////////////////////////////////////////////////////
-    union __attribute__((__packed__)) bmAcmCapabilities_t {
-        struct __attribute__((__packed__)) {
-            uint8_t     comm_feature_support        : 1;
-            uint8_t     line_coding_support         : 1;
-            uint8_t     send_break_support          : 1;
-            uint8_t     network_connection_support  : 1;
-            uint8_t     reserved                    : 4 {0};
-        };
-        uint8_t val;
+    struct __attribute__((__packed__)) bmAcmCapabilities_t {
+        uint8_t     comm_feature_support        : 1 {0};
+        uint8_t     line_coding_support         : 1 {0};
+        uint8_t     send_break_support          : 1 {0};
+        uint8_t     network_connection_support  : 1 {0};
+        uint8_t     reserved                    : 4 {0};
     };
 
     struct __attribute__((__packed__)) func_desc_acm_t : public func_device_descriptor_t {
@@ -129,14 +123,11 @@ namespace USB::CDC {
     /////////////////////////////////////////////////////
     // Direct Line Management (DLM) Functional Descriptor
     /////////////////////////////////////////////////////
-    union __attribute__((__packed__)) bmDlmCapabilities_t {
-        struct __attribute__((__packed__)) {
-            uint8_t pulse_support       : 1;
-            uint8_t aux_support         : 1;
-            uint8_t extra_pulse_setup   : 1;
-            uint8_t reserved            : 5 {0};
-        };
-        uint8_t val;
+    struct __attribute__((__packed__)) bmDlmCapabilities_t {
+        uint8_t pulse_support       : 1 {0};
+        uint8_t aux_support         : 1 {0};
+        uint8_t extra_pulse_setup   : 1 {0};
+        uint8_t reserved            : 5 {0};
     };
 
     struct __attribute__((__packed__)) func_desc_direct_line_t  : public func_device_descriptor_t {
@@ -183,31 +174,28 @@ namespace USB::CDC {
     };
 
     struct __attribute__((__packed__)) notification_t {
-        recipient_t         recipient : 5;
-        type_t              type      : 2;
-        direction_t         direction : 1;
-        bNotification_t     bNotification;
-        uint16_t            wValue;
-        uint16_t            wIndex;
-        uint16_t            wLength;
+        recipient_t         recipient : 5 {0};
+        type_t              type      : 2 {0};
+        direction_t         direction : 1 {0};
+        bNotification_t     bNotification {0};
+        uint16_t            wValue  {0};
+        uint16_t            wIndex  {0};
+        uint16_t            wLength {0};
     };
     static_assert(sizeof(notification_t) == 8);
 
     ///////////////////////////////
     // Serial State notification //
     ///////////////////////////////
-    union __attribute__((__packed__)) bmUartState_t {
-        struct __attribute__((__packed__)) {
-            uint16_t    bRxCarrier_DCD  : 1 ;
-            uint16_t    bTxCarrier_DSR  : 1 ;
-            uint16_t    bBreak          : 1 ;
-            uint16_t    bRingSignal     : 1 ;
-            uint16_t    bFraming        : 1 ;
-            uint16_t    bParity         : 1 ;
-            uint16_t    bOverRun        : 1 ;
-            uint16_t    reserved        : 9 ;
-        };
-        uint16_t val;
+    struct __attribute__((__packed__))  bmUartState_t{
+        uint16_t    bRxCarrier_DCD  : 1 {0};
+        uint16_t    bTxCarrier_DSR  : 1 {0};
+        uint16_t    bBreak          : 1 {0};
+        uint16_t    bRingSignal     : 1 {0};
+        uint16_t    bFraming        : 1 {0};
+        uint16_t    bParity         : 1 {0};
+        uint16_t    bOverRun        : 1 {0};
+        uint16_t    reserved        : 9 {0};
     };
 
     struct __attribute__((__packed__)) notif_serial_state_t : public notification_t {
@@ -220,7 +208,6 @@ namespace USB::CDC {
             wValue          = 0;
             wIndex          = 0;
             wLength         = 2;
-            bmUartState.val = 0;
         }
         // Notification specific attributes
         bmUartState_t   bmUartState;

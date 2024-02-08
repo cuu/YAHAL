@@ -9,7 +9,7 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #ifndef TUPP_USB_INTERFACE_H_
 #define TUPP_USB_INTERFACE_H_
@@ -23,6 +23,7 @@ class usb_fd_base;
 
 #include "usb_common.h"
 #include "usb_config.h"
+#include "usb_log.h"
 #include <array>
 #include <functional>
 
@@ -42,21 +43,26 @@ public:
 
     // Methods to set the descriptor elements
     inline void set_bInterfaceNumber(uint8_t n) {
+        TUPP_LOG(LOG_DEBUG, "set_bInterfaceNumber(%d)", n);
         _descriptor.bInterfaceNumber = n;
     }
     inline void set_bAlternateSetting(uint8_t n) {
+        TUPP_LOG(LOG_DEBUG, "set_bAlternateSetting(%d)", n);
         _descriptor.bAlternateSetting = n;
     }
     inline void set_bInterfaceClass(USB::bInterfaceClass_t n) {
+        TUPP_LOG(LOG_DEBUG, "set_bInterfaceClass(%d)", n);
         _descriptor.bInterfaceClass = n;
     }
     inline void set_bInterfaceSubClass(USB::bInterfaceSubClass_t n) {
+        TUPP_LOG(LOG_DEBUG, "set_bInterfaceSubClass(%d)", n);
         _descriptor.bInterfaceSubClass = n;
     }
     inline void set_bInterfaceProtocol(USB::bInterfaceProtocol_t n) {
+        TUPP_LOG(LOG_DEBUG, "set_bInterfaceProtocol(%d)", n);
         _descriptor.bInterfaceProtocol = n;
     }
-    void set_InterfaceName(const char * n);
+    void set_InterfaceName(const char * s);
 
     // Add an endpoint to this interface
     void add_endpoint(usb_endpoint * ep);

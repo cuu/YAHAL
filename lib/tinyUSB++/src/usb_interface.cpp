@@ -9,7 +9,7 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #include "usb_interface.h"
 #include "usb_interface_association.h"
@@ -25,6 +25,7 @@ usb_interface::usb_interface(usb_configuration & conf)
 :  descriptor(_descriptor), _parent(conf), _descriptor{},
   _assoc_ptr(nullptr), _fd_ptr(nullptr), _endpoints{nullptr}
 {
+    TUPP_LOG(LOG_DEBUG, "usb_interface(conf) @%x", this);
     // Set descriptor length
     _descriptor.bLength = sizeof(interface_descriptor_t);
     // Set descriptor type
@@ -37,6 +38,7 @@ usb_interface::usb_interface(usb_interface_association & assoc)
 :  descriptor(_descriptor), _parent(assoc.get_parent()), _descriptor{},
   _assoc_ptr(nullptr), _fd_ptr(nullptr), _endpoints{nullptr}
 {
+    TUPP_LOG(LOG_DEBUG, "usb_interface(assoc) @%x", this);
     // Set descriptor length
     _descriptor.bLength = sizeof(interface_descriptor_t);
     // Set descriptor type
@@ -45,11 +47,13 @@ usb_interface::usb_interface(usb_interface_association & assoc)
     assoc.add_interface(this);
 }
 
-void usb_interface::set_InterfaceName(const char * n) {
-    _descriptor.iInterface = usb_strings::inst.add_string(n);
+void usb_interface::set_InterfaceName(const char * s) {
+    TUPP_LOG(LOG_DEBUG, "set_InterfaceName(%s)", s);
+    _descriptor.iInterface = usb_strings::inst.add_string(s);
 }
 
 void usb_interface::add_endpoint(usb_endpoint * ep) {
+    TUPP_LOG(LOG_DEBUG, "add_endpoint(0x%x)", ep->descriptor.bEndpointAddress);
     int i=0;
     for (i=0; i < TUPP_MAX_EP_PER_INTERFACE; ++i) {
         if (!_endpoints[i]) {
@@ -63,6 +67,7 @@ void usb_interface::add_endpoint(usb_endpoint * ep) {
 }
 
 void usb_interface::add_func_descriptor(usb_fd_base * desc) {
+    TUPP_LOG(LOG_DEBUG, "add_func_descriptor()");
     if (!_fd_ptr) {
         // First entry
         _fd_ptr = desc;
@@ -75,6 +80,7 @@ void usb_interface::add_func_descriptor(usb_fd_base * desc) {
 }
 
 uint16_t usb_interface::get_total_desc_length() {
+    TUPP_LOG(LOG_DEBUG, "get_total_desc_length()");
     // Start with size of own descriptor
     uint16_t len = _descriptor.bLength;
     // Add size of all functional descriptors
@@ -93,6 +99,7 @@ uint16_t usb_interface::get_total_desc_length() {
 }
 
 void usb_interface::activate_endpoints(bool b) {
+    TUPP_LOG(LOG_DEBUG, "activate_endpoints(%b)", b);
     for (usb_endpoint * ep : _endpoints) {
         if (ep) ep->enable_endpoint(b);
     }

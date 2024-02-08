@@ -56,11 +56,6 @@
 #define TUPP_DEFAULT_POLL_INTERVAL 10
 #endif
 
-// Default block size for MSC devices
-#ifndef TUPP_MSC_BLOCK_SIZE
-#define TUPP_MSC_BLOCK_SIZE 512
-#endif
-
 // Default number of capabilities in BOS descriptor
 #ifndef TUPP_MAX_BOS_CAPABILITIES
 #define TUPP_MAX_BOS_CAPABILITIES 2
@@ -84,6 +79,16 @@
 // Default number of registry properties
 #ifndef TUPP_MAX_MS_REG_PROP
 #define TUPP_MAX_MS_REG_PROP 1
+#endif
+
+// Default size of CDC ACM FIFOs
+#ifndef TUPP_CDC_ACM_FIFO_SIZE
+#define TUPP_CDC_ACM_FIFO_SIZE 256
+#endif
+
+// Default block size for MSC devices
+#ifndef TUPP_MSC_BLOCK_SIZE
+#define TUPP_MSC_BLOCK_SIZE 512
 #endif
 
 #endif // _TUPP_USB_CONFIG_H_
