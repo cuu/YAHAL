@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_MS_CONFIG_SUBSET_H_
-#define TUPP_USB_MS_CONFIG_SUBSET_H_
+#ifndef TUPP_USB_MS_CONFIG_SUBSET_H
+#define TUPP_USB_MS_CONFIG_SUBSET_H
 
 // Forward declarations (to prevent
 // mutual inclusions of header files)
@@ -51,4 +51,4 @@ private:
     usb_ms_header & _ms_header;
 };
 
-#endif  // TUPP_USB_MS_CONFIG_SUBSET_H_
+#endif  // TUPP_USB_MS_CONFIG_SUBSET_H

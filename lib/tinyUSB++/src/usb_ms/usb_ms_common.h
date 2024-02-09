@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_MS_COMMON_H_
-#define TUPP_USB_MS_COMMON_H_
+#ifndef TUPP_USB_MS_COMMON_H
+#define TUPP_USB_MS_COMMON_H
 
 #include "usb_common.h"
 
@@ -75,4 +75,4 @@ namespace USB {
 
 };
 
-#endif // TUPP_USB_MS_COMMON_H_
+#endif // TUPP_USB_MS_COMMON_H

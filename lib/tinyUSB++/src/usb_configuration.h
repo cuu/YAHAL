@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_CONFIGURATION_H_
-#define TUPP_USB_CONFIGURATION_H_
+#ifndef TUPP_USB_CONFIGURATION_H
+#define TUPP_USB_CONFIGURATION_H
 
 // Forward declarations (to prevent
 // mutual inclusions of header files)
@@ -75,4 +75,4 @@ private:
     std::array<usb_interface_association *, TUPP_MAX_ASSOC_PER_CONF> _associations;
 };
 
-#endif  // TUPP_USB_CONFIGURATION_H_
+#endif  // TUPP_USB_CONFIGURATION_H

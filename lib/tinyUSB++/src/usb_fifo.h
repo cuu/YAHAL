@@ -14,8 +14,8 @@
 // Template implementation of a generic FIFO with fixed
 // size. The FIFO data type and size are the template parameters.
 //
-#ifndef TUPP_FIFO_H_
-#define TUPP_FIFO_H_
+#ifndef TUPP_FIFO_H
+#define TUPP_FIFO_H
 
 template<typename T, int SIZE>
 class fifo {
@@ -77,4 +77,4 @@ private:
     volatile T * _put_ptr;
 };
 
-#endif // TUPP_FIFO_H_
+#endif // TUPP_FIFO_H

@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef _TUPP_USB_CONFIG_H_
-#define _TUPP_USB_CONFIG_H_
+#ifndef _TUPP_USB_CONFIG_H
+#define _TUPP_USB_CONFIG_H
 
 // Maximum number of strings in the complete
 // device descriptor. One entry will be used
@@ -91,4 +91,4 @@
 #define TUPP_MSC_BLOCK_SIZE 512
 #endif
 
-#endif // _TUPP_USB_CONFIG_H_
+#endif // _TUPP_USB_CONFIG_H

@@ -11,6 +11,12 @@
 // use library for USB host/device functionality.
 // (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
+// This class implements a CDC ACM device, which will be
+// recognized as a serial port (COM[x]: on Windows,
+// /dev/ttyACM[x] on Linux. The user interface are simple
+// read and write methods, plus some callback handlers
+// (see below).
+//
 #ifndef TUPP_USB_CDC_ACM_DEVICE_H
 #define TUPP_USB_CDC_ACM_DEVICE_H
 
@@ -36,22 +42,27 @@ public:
 
     // Reading data from this device. Parameters are the
     // buffer and the maximum size of bytes to be read.
-    // Return value is the actual amount of data read.
+    // The user has to make sure that the provided buffer
+    // is large enough.
+    // Return value is the actual amount of bytes read.
     uint16_t read(uint8_t *buf, uint16_t max_len);
+
+    // Return the number of available characters to read
+    uint16_t available();
 
     // Write data to this device. The buffer and its size
     // are passed as parameters. The return value signals
-    // if the writing was successful. Either all or no data
-    // is written!
-    bool write(uint8_t *buf, uint16_t len);
+    // if the writing was successful (true). Either all
+    // or no data is written!
+    bool write(const uint8_t *buf, uint16_t len);
 
     // Send a serial state notification to this device.
     bool notify_serial_state(const USB::CDC::bmUartState_t & state);
 
     // Callback handlers
-    std::function<void(uint8_t *,uint16_t)> line_coding_handler;
-    std::function<void(bool dtr, bool rts)> control_line_handler;
-    std::function<void(uint16_t millis)>    break_handler;
+    std::function<void(const CDC::line_coding_t & lc)>  line_coding_handler;
+    std::function<void(bool dtr, bool rts)>             control_line_handler;
+    std::function<void(uint16_t millis)>                break_handler;
 
     // Read only version of line coding information
     const CDC::line_coding_t & line_coding;

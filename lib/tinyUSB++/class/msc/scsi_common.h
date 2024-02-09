@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_SCSI_COMMON_H_
-#define TUPP_SCSI_COMMON_H_
+#ifndef TUPP_SCSI_COMMON_H
+#define TUPP_SCSI_COMMON_H
 
 #include <cstdint>
 
@@ -193,7 +193,7 @@ namespace SCSI {
         uint32_t    block_num; /// Number of Logical Blocks
         uint8_t     descriptor_type; // 00: reserved, 01 unformatted media , 10 Formatted media, 11 No media present
 
-        uint8_t     :8; //reserved2;
+        uint8_t     reserved2;
         uint16_t    block_size_u16;
     };
     static_assert(sizeof(read_format_capacity_10_t) == 10);
@@ -202,9 +202,9 @@ namespace SCSI {
     //////////
     struct __attribute__((__packed__)) read_10_t {
         scsi_cmd_t  cmd;
-        uint8_t     :8; //reserved;
+        uint8_t     reserved;
         uint32_t    logical_block_address;
-        uint8_t     :8; //reserved2;
+        uint8_t     reserved2;
         uint16_t    transfer_length;
         uint8_t     control;
     };
@@ -212,9 +212,9 @@ namespace SCSI {
 
     struct __attribute__((__packed__)) write_10_t {
         scsi_cmd_t  cmd;
-        uint8_t     :8; //reserved;
+        uint8_t     reserved;
         uint32_t    logical_block_address;
-        uint8_t     :8; //reserved2;
+        uint8_t     reserved2;
         uint16_t    transfer_length;
         uint8_t     control;
     };
@@ -222,4 +222,4 @@ namespace SCSI {
 
 }   // namespace SCSI
 
-#endif  // TUPP_SCSI_COMMON_H_
+#endif  // TUPP_SCSI_COMMON_H

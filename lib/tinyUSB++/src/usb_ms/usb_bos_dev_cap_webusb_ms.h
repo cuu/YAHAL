@@ -9,23 +9,19 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_BOS_DEV_CAP_WEBUSB_MS_H_
-#define TUPP_USB_BOS_DEV_CAP_WEBUSB_MS_H_
-
-// Forward declarations (to prevent
-// mutual inclusions of header files)
-#include "usb_bos.h"
+#ifndef TUPP_USB_BOS_DEV_CAP_WEBUSB_MS_H
+#define TUPP_USB_BOS_DEV_CAP_WEBUSB_MS_H
 
 #include "usb_ms_common.h"
+#include "usb_bos.h"
 #include "usb_bos_dev_cap.h"
 #include "usb_strings.h"
 
 class usb_bos_dev_cap_webusb_ms : public usb_bos_dev_cap {
 public:
-    explicit usb_bos_dev_cap_webusb_ms(usb_bos & bos)
-    : usb_bos_dev_cap(bos), descriptor{_descriptor}, _descriptor{}
+    explicit usb_bos_dev_cap_webusb_ms(usb_bos & bos) : descriptor{_descriptor}
     {
         _descriptor.bLength             = sizeof(USB::dev_cap_platform_ms_webusb_t);
         _descriptor.bDescriptorType     = USB::bDescriptorType_t::DESC_DEVICE_CAPABILITY;
@@ -74,4 +70,4 @@ private:
     USB::dev_cap_platform_ms_webusb_t _descriptor;
 };
 
-#endif  // TUPP_USB_BOS_DEV_CAP_WEBUSB_MS_H_
+#endif  // TUPP_USB_BOS_DEV_CAP_WEBUSB_MS_H

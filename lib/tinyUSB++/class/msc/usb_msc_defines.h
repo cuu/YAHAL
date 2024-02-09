@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_MSC_DEFINES_H_
-#define TUPP_USB_MSC_DEFINES_H_
+#ifndef TUPP_USB_MSC_DEFINES_H
+#define TUPP_USB_MSC_DEFINES_H
 
 //////////////////////////////
 // MSC class specific requests
@@ -48,4 +48,4 @@
     IF_PROTOCOL_MSC_BOT             = 0x50, \
     IF_PROTOCOL_MSC_UAS             = 0x62
 
-#endif  // TUPP_USB_MSC_DEFINES_H_
+#endif  // TUPP_USB_MSC_DEFINES_H

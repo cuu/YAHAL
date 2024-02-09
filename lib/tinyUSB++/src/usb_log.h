@@ -17,8 +17,8 @@
 //   TUPP_LOG(...)  to print a logging message on stdout, and
 //   TUPP_LOG_LEVEL(l) to set the logging level (see below).
 //
-#ifndef TUPP_LOG_H_
-#define TUPP_LOG_H_
+#ifndef TUPP_LOG_H
+#define TUPP_LOG_H
 
 enum log_level { LOG_OFF=0, LOG_ERROR=1, LOG_WARNING=2, LOG_INFO=3, LOG_DEBUG=4 };
 

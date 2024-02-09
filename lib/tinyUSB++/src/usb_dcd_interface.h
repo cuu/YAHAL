@@ -1,6 +1,18 @@
-
-#ifndef _USB_DCD_INTERFACE_H_
-#define _USB_DCD_INTERFACE_H_
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
+//
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
+#ifndef _USB_DCD_INTERFACE_H
+#define _USB_DCD_INTERFACE_H
 
 #include <functional>
 using std::function;
@@ -55,4 +67,4 @@ protected:
     virtual ~usb_dcd_interface() = default;
 };
 
-#endif // _USB_DCD_INTERFACE_H_
+#endif // _USB_DCD_INTERFACE_H

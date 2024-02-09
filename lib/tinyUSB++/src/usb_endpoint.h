@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_ENDPOINT_H_
-#define TUPP_USB_ENDPOINT_H_
+#ifndef TUPP_USB_ENDPOINT_H
+#define TUPP_USB_ENDPOINT_H
 
 class usb_interface;
 #include "usb_common.h"
@@ -117,4 +117,4 @@ private:
     USB::endpoint_descriptor_t _descriptor {};
 };
 
-#endif // TUPP_USB_ENDPOINT_H_
+#endif // TUPP_USB_ENDPOINT_H

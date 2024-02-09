@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_COMMON_H_
-#define TUPP_USB_COMMON_H_
+#ifndef TUPP_USB_COMMON_H
+#define TUPP_USB_COMMON_H
 
 #include "usb_cdc_defines.h"
 #include "usb_msc_defines.h"
@@ -249,12 +249,13 @@ namespace USB {
         bDescriptorType_t       bDescriptorType;
         bDevCapabilityType_t    bDevCapabilityType;
     };
+    static_assert(sizeof(dev_capability_t) == 3);
 
     struct __attribute__((__packed__)) dev_cap_platform_t : public dev_capability_t {
         uint8_t                 bReserved;
         uint8_t                 PlatformCapabilityUUID[16];
     };
-
+    static_assert(sizeof(dev_cap_platform_t) == 20);
 };
 
-#endif // TUPP_USB_COMMON_H_
+#endif // TUPP_USB_COMMON_H

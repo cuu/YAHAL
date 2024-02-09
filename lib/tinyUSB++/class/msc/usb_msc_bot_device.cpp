@@ -75,7 +75,8 @@ usb_msc_bot_device::usb_msc_bot_device(
                 TUPP_LOG(LOG_INFO, "REQ_MSC_GET_MAX_LUN");
                 assert(pkt->wValue  == 0);
                 assert(pkt->wLength == 1);
-                controller._ep0_in->start_transfer(&_max_lun, 1);
+                controller._ep0_in->send_stall(true);
+//                controller._ep0_in->start_transfer(&_max_lun, 1);
                 break;
             }
             default: {
@@ -207,7 +208,7 @@ void usb_msc_bot_device::process_scsi_command() {
         }
         case SCSI::scsi_cmd_t::INQUIRY: {
             TUPP_LOG(LOG_INFO, "SCSI: INQUIRY");
-            assert(cbw->bCBWCBLength == sizeof(SCSI::inquiry_t));
+//            assert(cbw->bCBWCBLength == sizeof(SCSI::inquiry_t));
             _csw.dCSWDataResidue = cbw->dCBWDataTransferLength -
                                    sizeof(SCSI::inquiry_response_t);
             // Send the response
@@ -241,8 +242,8 @@ void usb_msc_bot_device::process_scsi_command() {
             assert(cbw->bCBWCBLength == sizeof(SCSI::read_capacity_10_t));
             _csw.dCSWDataResidue = cbw->dCBWDataTransferLength -
                                    sizeof(SCSI::read_capacity_10_response_t);
-            uint16_t block_size = 0;
-            uint32_t block_count= 0;
+            uint16_t block_size  = 0;
+            uint32_t block_count = 0;
             capacity_handler(block_size, block_count);
             assert(block_size == TUPP_MSC_BLOCK_SIZE);
             _read_capacity_10_response.logical_block_address = __htonl(block_count-1);
@@ -260,14 +261,14 @@ void usb_msc_bot_device::process_scsi_command() {
             assert(cbw->bCBWCBLength == sizeof(SCSI::read_format_capacity_10_t));
             _csw.dCSWDataResidue = cbw->dCBWDataTransferLength -
                                    sizeof(SCSI::read_format_capacity_10_response_t);
-            uint16_t block_size = 0;
-            uint32_t block_count= 0;
+            uint16_t block_size  = 0;
+            uint32_t block_count = 0;
             capacity_handler(block_size, block_count);
             assert(block_size == TUPP_MSC_BLOCK_SIZE);
-            _read_format_capacity_10_response.list_length = 8;
+            _read_format_capacity_10_response.list_length     = 8;
             _read_format_capacity_10_response.descriptor_type = 2;
-            _read_format_capacity_10_response.block_size_u16 = block_size;
-            _read_format_capacity_10_response.block_num   = block_count;
+            _read_format_capacity_10_response.block_size_u16  = block_size;
+            _read_format_capacity_10_response.block_num       = block_count;
             // Send the response
             while(_ep_in->is_active()) ;
             _ep_in->start_transfer((uint8_t *)&_read_format_capacity_10_response,

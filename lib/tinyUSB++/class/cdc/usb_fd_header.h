@@ -13,8 +13,8 @@
 //
 // This class represents a header functional descriptor
 //
-#ifndef TUPP_USB_FD_HEADER_H_
-#define TUPP_USB_FD_HEADER_H_
+#ifndef TUPP_USB_FD_HEADER_H
+#define TUPP_USB_FD_HEADER_H
 
 #include "usb_cdc_common.h"
 #include "usb_fd_base.h"
@@ -37,4 +37,4 @@ private:
     USB::CDC::func_desc_header_t _descriptor {};
 };
 
-#endif  // TUPP_USB_FD_HEADER_H_
+#endif  // TUPP_USB_FD_HEADER_H

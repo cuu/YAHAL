@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_MS_HEADER_H_
-#define TUPP_USB_MS_HEADER_H_
+#ifndef TUPP_USB_MS_HEADER_H
+#define TUPP_USB_MS_HEADER_H
 
 // Forward declarations (to prevent
 // mutual inclusions of header files)
@@ -55,4 +55,4 @@ private:
     usb_bos_dev_cap_platform_ms & _dev_cap_platform_ms;
 };
 
-#endif  // TUPP_USB_MS_HEADER_H_
+#endif  // TUPP_USB_MS_HEADER_H

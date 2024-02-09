@@ -13,8 +13,8 @@
 //
 // This is the base class for various functional descriptors
 //
-#ifndef TUPP_USB_FD_BASE_H_
-#define TUPP_USB_FD_BASE_H_
+#ifndef TUPP_USB_FD_BASE_H
+#define TUPP_USB_FD_BASE_H
 
 class usb_interface;
 #include <cstdint>
@@ -43,4 +43,4 @@ protected:
     usb_interface & _parent;
 };
 
-#endif  // TUPP_USB_FD_BASE_H_
+#endif  // TUPP_USB_FD_BASE_H

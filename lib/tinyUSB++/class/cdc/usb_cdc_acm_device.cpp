@@ -14,6 +14,7 @@
 #include "usb_cdc_acm_device.h"
 #include "usb_common.h"
 #include "usb_log.h"
+#include <cassert>
 
 using namespace USB;
 using enum USB::bInterfaceClass_t;
@@ -113,7 +114,13 @@ usb_cdc_acm_device::usb_cdc_acm_device(
                 TUPP_LOG(LOG_INFO, "Handling REQ_CDC_SET_LINE_CODING");
                 assert(pkt->wLength == sizeof(_line_coding) );
                 // Set the data handler
-                controller.handler = line_coding_handler;
+                controller.handler = [&] (const uint8_t * data, uint16_t len) {
+                    assert(data == (uint8_t *)&line_coding);
+                    assert(len  == sizeof(CDC::line_coding_t));
+                    if (line_coding_handler) {
+                        line_coding_handler(line_coding);
+                    }
+                };
                 // Receive line coding info
                 controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
                 break;
@@ -169,7 +176,11 @@ uint16_t usb_cdc_acm_device::read(uint8_t *buf, uint16_t max_len) {
     return len;
 }
 
-bool usb_cdc_acm_device::write(uint8_t *buf, uint16_t len) {
+uint16_t usb_cdc_acm_device::available() {
+    return _received_data.available_get();
+}
+
+bool usb_cdc_acm_device::write(const uint8_t *buf, uint16_t len) {
     if (_data_to_transmit.available_put() < len) {
         return false;
     }
@@ -177,7 +188,7 @@ bool usb_cdc_acm_device::write(uint8_t *buf, uint16_t len) {
         _data_to_transmit.put(buf[i]);
     }
     // Check if we need a new initial transfer
-    // if the endpoint is currently not active.
+    // if the endpoint is currently not active
     if (!_ep_data_in->is_active()) {
         // Parameters are discarded. The in data handler
         // looks at the FIFO to decide whether to send data!
@@ -193,8 +204,8 @@ bool usb_cdc_acm_device::notify_serial_state(const USB::CDC::bmUartState_t & sta
     }
     // Create serial state object and set attributes
     CDC::notif_serial_state_t serial_state;
-    serial_state.wIndex         = _if_ctrl.descriptor.bInterfaceNumber;
-    serial_state.bmUartState    = state;
+    serial_state.wIndex      = _if_ctrl.descriptor.bInterfaceNumber;
+    serial_state.bmUartState = state;
     // Send notification to host
     _ep_ctrl_in->start_transfer((uint8_t *)&serial_state, sizeof(serial_state));
     return true;

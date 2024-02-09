@@ -15,8 +15,8 @@
 // USB descriptors. The maximum number of stored strings
 // is fixed (see TUPP_MAX_STRINGS in usb_config.h).
 //
-#ifndef TUPP_USB_STRINGS_H_
-#define TUPP_USB_STRINGS_H_
+#ifndef TUPP_USB_STRINGS_H
+#define TUPP_USB_STRINGS_H
 
 #include "usb_config.h"
 #include <cstdint>
@@ -72,4 +72,4 @@ private:
     std::array<const char *, TUPP_MAX_STRINGS> _strings;
 };
 
-#endif // TUPP_USB_STRINGS_H_
+#endif // TUPP_USB_STRINGS_H

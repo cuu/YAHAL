@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_CDC_DEFINES_H_
-#define TUPP_USB_CDC_DEFINES_H_
+#ifndef TUPP_USB_CDC_DEFINES_H
+#define TUPP_USB_CDC_DEFINES_H
 
 //////////////////////////////
 // CDC class specific requests
@@ -100,4 +100,4 @@
     IF_PROTOCOL_CDC_DATA_PROTOCOL_CAPI_COMMAND              = 0x93, \
     IF_PROTOCOL_CDC_DATA_PROTOCOL_HOST_BASED_DRIVER         = 0xFD
 
-#endif  // TUPP_USB_CDC_DEFINES_H_
+#endif  // TUPP_USB_CDC_DEFINES_H

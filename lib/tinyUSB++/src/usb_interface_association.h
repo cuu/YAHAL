@@ -14,8 +14,8 @@
 // This class represents a USB interface association descriptor,
 // which can be added to a USB configuration.
 //
-#ifndef TUPP_USB_INTERFACE_ASSOCIATION_H_
-#define TUPP_USB_INTERFACE_ASSOCIATION_H_
+#ifndef TUPP_USB_INTERFACE_ASSOCIATION_H
+#define TUPP_USB_INTERFACE_ASSOCIATION_H
 
 // Forward declarations
 // (to prevent mutual inclusions of header files)
@@ -64,4 +64,4 @@ private:
     USB::interface_association_descriptor_t _descriptor;
 };
 
-#endif  // TUPP_USB_INTERFACE_ASSOCIATION_H_
+#endif  // TUPP_USB_INTERFACE_ASSOCIATION_H

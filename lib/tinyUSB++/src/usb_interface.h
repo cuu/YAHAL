@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_INTERFACE_H_
-#define TUPP_USB_INTERFACE_H_
+#ifndef TUPP_USB_INTERFACE_H
+#define TUPP_USB_INTERFACE_H
 
 // Forward declarations (to prevent
 // mutual inclusions of header files)
@@ -107,4 +107,4 @@ private:
     std::array<usb_endpoint *, TUPP_MAX_EP_PER_INTERFACE> _endpoints;
 };
 
-#endif  // TUPP_USB_INTERFACE_H_
+#endif  // TUPP_USB_INTERFACE_H

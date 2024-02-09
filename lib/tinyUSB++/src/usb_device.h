@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_DEVICE_H_
-#define TUPP_USB_DEVICE_H_
+#ifndef TUPP_USB_DEVICE_H
+#define TUPP_USB_DEVICE_H
 
 class usb_configuration;
 class usb_bos;
@@ -90,4 +90,4 @@ private:
     usb_bos * _bos;
 };
 
-#endif // TUPP_USB_DEVICE_H_
+#endif // TUPP_USB_DEVICE_H

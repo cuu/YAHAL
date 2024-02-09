@@ -11,8 +11,13 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_BOS_H_
-#define TUPP_USB_BOS_H_
+// This class represents a Binary Object Storage (BOS), which
+// can be attached to a USB device. The BOS itself can contain
+// a number of device capability descriptors, which are handled
+// within this class.
+//
+#ifndef TUPP_USB_BOS_H
+#define TUPP_USB_BOS_H
 
 // Forward declarations (to prevent
 // mutual inclusions of header files)
@@ -31,7 +36,7 @@ public:
     usb_bos(const usb_bos &) = delete;
     usb_bos & operator= (const usb_bos &) = delete;
 
-    // Add a capability
+    // Add a capability to this BOS
     void add_capability(usb_bos_dev_cap * cap);
 
     // Calculate the total length of the BOS descriptor
@@ -50,4 +55,4 @@ private:
     std::array<usb_bos_dev_cap *, TUPP_MAX_BOS_CAPABILITIES> _capabilities;
 };
 
-#endif  // TUPP_USB_BOS_H_
+#endif  // TUPP_USB_BOS_H

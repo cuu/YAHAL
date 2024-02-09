@@ -13,8 +13,8 @@
 //
 // This class represents a call management functional descriptor
 //
-#ifndef TUPP_USB_FD_CALL_MGMT_H_
-#define TUPP_USB_FD_CALL_MGMT_H_
+#ifndef TUPP_USB_FD_CALL_MGMT_H
+#define TUPP_USB_FD_CALL_MGMT_H
 
 #include "usb_cdc_common.h"
 #include "usb_fd_base.h"
@@ -41,4 +41,4 @@ private:
     USB::CDC::func_desc_cm_t _descriptor {};
 };
 
-#endif  // TUPP_USB_FD_CALL_MGMT_H_
+#endif  // TUPP_USB_FD_CALL_MGMT_H

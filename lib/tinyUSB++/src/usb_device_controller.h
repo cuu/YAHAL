@@ -11,8 +11,8 @@
 // use library for USB host/device functionality.
 // (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
-#ifndef TUPP_USB_DEVICE_CONTROLLER_H_
-#define TUPP_USB_DEVICE_CONTROLLER_H_
+#ifndef TUPP_USB_DEVICE_CONTROLLER_H
+#define TUPP_USB_DEVICE_CONTROLLER_H
 
 class usb_device;
 #include "usb_config.h"
@@ -73,4 +73,4 @@ private:
     uint8_t             _buf[TUPP_MAX_DESC_SIZE];
 };
 
-#endif  // TUPP_USB_DEVICE_CONTROLLER_H_
+#endif  // TUPP_USB_DEVICE_CONTROLLER_H
