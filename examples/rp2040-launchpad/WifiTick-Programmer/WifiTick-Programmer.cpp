@@ -1,27 +1,28 @@
-#include "usb_cdc_acm_device.h"
-#include "usb_device.h"
-#include "usb_configuration.h"
-#include "usb_bos.h"
-#include "usb_bos_dev_cap_platform_ms.h"
-#include "usb_bos_dev_cap_webusb_ms.h"
-
-#include "usb_ms_header.h"
-#include "usb_ms_config_subset.h"
-#include "usb_ms_func_subset.h"
-#include "usb_ms_compatible_ID.h"
-#include "usb_ms_registry_property.h"
-
+//    _   _             _    _  _____ ____
+//   | | (_)           | |  | |/ ____|  _ \   _     _
+//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
+//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
+//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
+//    \__|_|_| |_|\__, |\____/|_____/|____/
+//                __/ |
+//               |___/
+//
+// This file is part of tinyUSB++, C++ based and easy to
+// use library for USB host/device functionality.
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//
 #include "usb_dcd_rp2040.h"
 #include "usb_device_controller.h"
+#include "usb_cdc_acm_device.h"
+#include "usb_ms_webusb_descriptor.h"
 
+#include "posix_io.h"
 #include "uart_rp2040.h"
 #include "gpio_rp2040.h"
 #include "task.h"
 #include "task_monitor.h"
-#include "posix_io.h"
+
 #include <cstdio>
-#include <cstring>
-#include "usb_log.h"
 
 int main() {
     uart_rp2040 uart; // default is backchannel UART!
@@ -77,107 +78,10 @@ int main() {
                                .bus_powered   = 1 } );
     config.set_bMaxPower_mA(100);
 
-    ////////////////////////
-    // USB BOS descriptor //
-    ////////////////////////
-    // {3408b638-09a9-47a0-8bfd-a0768815b665}
-    uint8_t uuid1[16] = { 0x38, 0xB6, 0x08, 0x34, 0xA9, 0x09, 0xA0, 0x47,
-                          0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65 };
-
-    // {d8dd60df-4589-4cc7-9cd2-659d9e648a9f}
-    uint8_t uuid2[16] = { 0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C,
-                          0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F };
-
-    uint32_t win_version = 0x06030000;
-
-    usb_bos bos(device);
-
-    usb_bos_dev_cap_webusb_ms web_platform(bos);
-    web_platform.set_PlatformCapabilityUUID ( uuid1 );
-    web_platform.set_bcdVersion             ( 0x0100 );
-    web_platform.set_bVendorCode            ( USB::bRequest_t::REQ_GET_STATUS );
-    web_platform.set_iLandingPage           ( "\x01" "fh-aachen.de");
-
-    usb_bos_dev_cap_platform_ms cap_platform(bos);
-    cap_platform.set_PlatformCapabilityUUID ( uuid2 );
-    cap_platform.set_dwWindowsVersion       ( win_version );
-    cap_platform.set_bMS_VendorCode         ( USB::bRequest_t::REQ_GET_DESCRIPTOR );
-    cap_platform.set_bAltEnumCode           ( 0 );
-
-    usb_ms_header ms_header                 ( cap_platform );
-    ms_header.set_dwWindowsVersion          ( win_version );
-
-    usb_ms_config_subset ms_config_subset   ( ms_header );
-
-    usb_ms_func_subset ms_func_subset       ( ms_config_subset );
-
-    usb_ms_compatible_ID ms_compat_id       ( ms_func_subset );
-    ms_compat_id.set_compatible_id          ( "WINUSB" );
-    ms_compat_id.set_sub_compatible_id      ( "" );
-
-    usb_ms_registry_property ms_reg_prop    ( ms_func_subset );
-    ms_reg_prop.add_property_name           ( "DeviceInterfaceGUIDs\0" );
-    ms_reg_prop.add_property_value          ( "{CDB3B5AD-293B-4663-AA36-1AAE46463776}" );
-
-//    printf("Header len %04x\n", ms_header.descriptor.wLength);
-//    printf("Header ttl %04x\n", ms_header.descriptor.wTotalLength);
-//    printf("Config len %04x\n", ms_config_subset.descriptor.wLength);
-//    printf("Config ttl %04x\n", ms_config_subset.descriptor.wTotalLength);
-//    printf("Func   len %04x\n", ms_func_subset.descriptor.wLength);
-//    printf("Func   sub %04x\n", ms_func_subset.descriptor.wSubsetLength);
-//    printf("Compat len %04x\n", ms_compat_id.descriptor.wLength);
-//    printf("Prop   len %04x\n", ms_reg_prop.get_length());
-
-    uint8_t buff[256];
-    uint8_t buff_url[32] {};
-    uint8_t * tmp_ptr = buff;
-
-    auto * ptr = &ms_header.descriptor;
-    auto   len =  ms_header.descriptor.wLength;
-    memcpy(tmp_ptr, ptr, len);
-    tmp_ptr += len;
-    for (uint16_t c=0; c < ms_header._config_subsets.size(); ++c) {
-        auto * ptr = &ms_header._config_subsets[c]->descriptor;
-        auto   len =  ms_header._config_subsets[c]->descriptor.wLength;
-        memcpy(tmp_ptr, ptr, len);
-        tmp_ptr += len;
-        for (uint16_t f=0; f < ms_header._config_subsets[c]->_func_subsets.size(); ++f) {
-            auto  ptr = &ms_header._config_subsets[c]->_func_subsets[f]->descriptor;
-            auto  len  = ms_header._config_subsets[c]->_func_subsets[f]->descriptor.wLength;
-            memcpy(tmp_ptr, ptr, len);
-            tmp_ptr += len;
-            if (ms_header._config_subsets[c]->_func_subsets[f]->_compat_id) {
-                auto ptr = &ms_header._config_subsets[c]->_func_subsets[f]->_compat_id->descriptor;
-                auto len =  ms_header._config_subsets[c]->_func_subsets[f]->_compat_id->descriptor.wLength;
-                memcpy(tmp_ptr, ptr, len);
-                tmp_ptr += len;
-            }
-            for (uint16_t p=0; p < ms_header._config_subsets[c]->_func_subsets[f]->_reg_props.size(); ++p) {
-                auto ptr = ms_header._config_subsets[c]->_func_subsets[f]->_reg_props[p]->descriptor();
-                auto len = ms_header._config_subsets[c]->_func_subsets[f]->_reg_props[p]->get_length();
-                memcpy(tmp_ptr, ptr, len);
-                tmp_ptr += len;
-            }
-        }
-    }
-
-    device.setup_handler = [&] (USB::setup_packet_t * pkt) {
-        printf("In device vendor handler! %d\n", pkt->wLength);
-        if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_STATUS) &&
-             (pkt->wIndex == 2) ) {
-            // URL
-            uint8_t len = usb_strings::inst.prepare_desc_utf8(pkt->wValue, buff_url);
-            if (len > pkt->wLength) len = pkt->wLength;
-            controller._ep0_in->start_transfer(buff_url, len);
-        } else if ( (pkt->bRequest == USB::bRequest_t::REQ_GET_DESCRIPTOR) &&
-                    (pkt->wValue   == 0) && (pkt->wIndex == 7) ) {
-            // Header
-            controller._ep0_in->start_transfer(buff, tmp_ptr-buff);
-        } else {
-            controller._ep0_in->send_stall(true);
-            controller._ep0_out->send_stall(true);
-        }
-    };
+    /////////////////
+    // BOS descriptor
+    /////////////////
+    usb_ms_webusb_descriptor webusb(controller, device);
 
     /////////////////////
     // USB CDC ACM device
@@ -185,13 +89,11 @@ int main() {
     usb_cdc_acm_device acm_device(controller, config);
 
     bool line_code_updated = false;
-
-    acm_device.line_coding_handler = ([&](uint8_t *,uint16_t) {
+    acm_device.line_coding_handler = [&](const CDC::line_coding_t &) {
         line_code_updated = true;
-    });
+    };
 
     bool in_prgm_mode = false;
-
     acm_device.control_line_handler = ([&](bool dtr, bool rts) {
 //        printf("Control signals DTR=%d, RTS=%d\n", dtr, rts);
         if (esp_reset == LOW && rts == LOW) {
