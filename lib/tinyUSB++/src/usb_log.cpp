@@ -55,6 +55,7 @@ void usb_log::print(const char *file, int line, log_level l, const char *fmt, ..
                     itoa(va_arg(args, int), buffer, 16);
                     break;
                 }
+                // boolean
                 case 'b': {
                     if(va_arg(args, int)) {
                         strcpy(buffer, "true");

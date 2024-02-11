@@ -9,12 +9,12 @@
 //
 // This file is part of tinyUSB++, C++ based and easy to
 // use library for USB host/device functionality.
-// (c) 2023 A. Terstegge  (Andreas.Terstegge@gmail.com)
+// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
 #include "usb_dcd_rp2040.h"
 #include "usb_endpoint_rp2040.h"
+#include "usb_log.h"
 #include <cstring>
-#include <cstdio>
 #include <cassert>
 
 usb_dcd_rp2040::usb_dcd_rp2040()
@@ -71,7 +71,7 @@ void usb_dcd_rp2040::irq_enable(bool e) {
 
 void usb_dcd_rp2040::set_address(uint8_t addr) {
     _new_addr = addr;
-    printf("Set address %d\n", _new_addr);
+    TUPP_LOG(LOG_INFO, "Set USB address %d", _new_addr);
     _should_set_address = true;
 }
 

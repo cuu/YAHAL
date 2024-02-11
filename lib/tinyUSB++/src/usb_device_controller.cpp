@@ -11,21 +11,26 @@
 // use library for USB host/device functionality.
 // (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
 //
+// This class is the central USB device controller. Its main
+// job is to set up EP0, and listen to USB request. The standard
+// requests are handled within this class, the device/interface/
+// endpoint-specific requests will be forwarded to the correct
+// destination.
+
 #include "usb_device_controller.h"
 
+#include "usb_structs.h"
 #include "usb_device.h"
 #include "usb_configuration.h"
 #include "usb_interface.h"
 #include "usb_interface_association.h"
 #include "usb_bos.h"
 #include "usb_bos_dev_cap.h"
-
-#include "usb_common.h"
 #include "usb_fd_base.h"
 #include "usb_strings.h"
+#include "usb_log.h"
 
 #include <cstring>
-#include <cstdio>
 #include <cassert>
 
 using namespace USB;
@@ -39,17 +44,16 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
     : active_configuration(_active_configuration), _ep0_in(nullptr), _ep0_out(nullptr),
      handler{nullptr}, _driver(driver), _device(device), _active_configuration(0), _buf{}
 {
+    TUPP_LOG(LOG_DEBUG, "usb_device_controller() @%x", this);
     // Create standard endpoints 0. Since these are the first
     // two endpoints, address 0 will be used automatically
     _ep0_in  = _driver.create_endpoint(DIR_IN,  TRANS_CONTROL);
     _ep0_out = _driver.create_endpoint(DIR_OUT, TRANS_CONTROL);
-
-
+    // The data handlers for EP0
     _ep0_in->data_handler = [&](uint8_t *, uint16_t len) {
         // Prepare to receive status stage from host
         if (len) _ep0_out->send_zlp_data1();
     };
-
     _ep0_out->data_handler = [&](uint8_t * data, uint16_t len) {
         // Reply to received data with zero-length packet
         if (len) _ep0_in->send_zlp_data1();
@@ -62,11 +66,9 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
         }
     };
 
-    ////////////////////////////
     // Handler for USB bus reset
-    ////////////////////////////
     _driver.bus_reset_handler = [&]() {
-        printf("BUS RESET\n");
+        TUPP_LOG(LOG_INFO, "USB BUS RESET");
         // Reset the USB address
         _driver.reset_address();
         // Deactivate configuration, if existing
@@ -75,24 +77,19 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
             if (conf) {
                 conf->activate_endpoints(false);
             } else{
-                printf("Could not deactivate configuration %d\n", _active_configuration);
+                TUPP_LOG(LOG_WARNING, "Could not deactivate configuration %d",
+                         _active_configuration);
             }
         }
         _active_configuration = 0;
     };
 
-    /////////////////////////////
     // Handler for setup requests
-    /////////////////////////////
     _driver.setup_handler = [&](USB::setup_packet_t *pkt) {
-        // Reset PID to 1 for EP0
-        _ep0_in->send_stall(false);
-        _ep0_out->send_stall(false);
-        _ep0_in->next_pid  = 1;
-        _ep0_out->next_pid = 1;
-        _ep0_in->_active = false;
-        _ep0_out->_active = false;
-
+        TUPP_LOG(LOG_DEBUG, "setup_handler()");
+        // Reset EP0
+        _ep0_in->reset();
+        _ep0_out->reset();
         // Process standard requests
         if (pkt->type == type_t::TYPE_STANDARD) {
             switch (pkt->bRequest) {
@@ -134,7 +131,7 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
                     handle_set_feature(pkt);
                     break;
                 default:
-                    printf("Unknown standard setup request %d\n", (int)pkt->type);
+                    TUPP_LOG(LOG_WARNING, "Unknown standard setup request type %d", pkt->type);
             }
         } else {
             // We received a non-standard request.
@@ -149,7 +146,7 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
                 case REC_INTERFACE: {
                     auto config = _device.find_configuration(_active_configuration);
                     if (config) {
-                        auto interface = config->_interfaces[pkt->wIndex];
+                        auto interface = config->interfaces[pkt->wIndex];
                         if (interface) {
                             if (interface->setup_handler) {
                                 interface->setup_handler(pkt);
@@ -168,7 +165,7 @@ usb_device_controller::usb_device_controller(usb_dcd_interface & driver, usb_dev
                     break;
                 }
                 default: {
-                    printf("Could not find recipient %d\n", (int)pkt->recipient);
+                    TUPP_LOG(LOG_WARNING, "Could not find recipient %d", pkt->recipient);
                 }
             }
         }
@@ -186,6 +183,7 @@ void usb_device_controller::handle_set_address(setup_packet_t * pkt) {
 }
 
 void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
+    TUPP_LOG(LOG_DEBUG, "handle_get_descriptor()");
     assert(pkt->direction == DIR_IN);
     assert(pkt->recipient == REC_DEVICE);
     // Extract type and index
@@ -195,14 +193,16 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
     uint8_t * tmp_ptr = _buf;
     switch (desc_type) {
         case DESC_DEVICE: {
-            printf("DESC_DEVICE\n");
+            TUPP_LOG(LOG_INFO, "Get device descriptor (len=%d)",
+                     pkt->wLength);
             assert(_device.descriptor.bLength <= pkt->wLength);
             _ep0_in->start_transfer((uint8_t *) &_device.descriptor, _device.descriptor.bLength);
             break;
         }
         case DESC_CONFIGURATION: {
-            printf("DESC_CONF %d len %d\n", desc_index, pkt->wLength);
-            auto conf = _device._configurations[desc_index];
+            TUPP_LOG(LOG_INFO, "Get configuration descriptor %d (len=%d)",
+                     desc_index, pkt->wLength);
+            auto conf = _device.configurations[desc_index];
             if (conf) {
                 assert(pkt->wLength >= sizeof(configuration_descriptor_t));
                 // Copy configuration descriptor first
@@ -211,7 +211,7 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
                 // Check if we need the big stuff
                 if (pkt->wLength >= conf->descriptor.wTotalLength) {
                     // Copy interface and endpoint descriptors
-                    for (auto interface : conf->_interfaces) {
+                    for (auto interface : conf->interfaces) {
                         if (interface) {
                             // Process interface association
                             if (interface->_assoc_ptr) {
@@ -248,79 +248,84 @@ void usb_device_controller::handle_get_descriptor(setup_packet_t * pkt) {
             break;
         }
         case DESC_STRING: {
-            printf("DESC_STRING [%d], %d\n", pkt->wValue & 0xff, pkt->wLength);
+            TUPP_LOG(LOG_INFO, "Get string descriptor [%d] (len=%d)",
+                     pkt->wValue & 0xff, pkt->wLength);
             uint8_t index = pkt->wValue & 0xff;
-            uint8_t len = usb_strings::inst.prepare_desc_utf16(index, _buf);
+            uint8_t len = usb_strings::inst.prepare_string_desc_utf16(index, _buf);
             if (len > pkt->wLength) len = pkt->wLength;
             assert(len <= pkt->wLength);
             _ep0_in->start_transfer(_buf, len);
             break;
         }
         case DESC_OTG: {
-            printf("DESC_OTG\n");
+            TUPP_LOG(LOG_INFO, "Get OTG descriptor (len=%d)", pkt->wLength);
             _ep0_in->send_stall(true);
             _ep0_out->send_stall(true);
             break;
         }
         case DESC_DEBUG: {
-            printf("DESC_DEBUG\n");
+            TUPP_LOG(LOG_INFO, "Get Debug descriptor (len=%d)", pkt->wLength);
             _ep0_in->send_stall(true);
             _ep0_out->send_stall(true);
             break;
         }
         case DESC_BOS: {
-            printf("DESC_BOS %d\n", pkt->wLength);
-            if (_device._bos) {
+            TUPP_LOG(LOG_INFO, "Get BOS descriptor (len=%d)", pkt->wLength);
+            if (_device.bos) {
                 // We have a BOS descriptor
                 tmp_ptr = _buf;
                 assert(sizeof(USB::bos_descriptor_t) <= TUPP_MAX_DESC_SIZE);
-                memcpy(tmp_ptr, &_device._bos->descriptor, sizeof(USB::bos_descriptor_t));
+                memcpy(tmp_ptr, &_device.bos->descriptor, sizeof(USB::bos_descriptor_t));
                 tmp_ptr += sizeof(USB::bos_descriptor_t);
-                for (int i=0; i < _device._bos->descriptor.bNumDeviceCaps; ++i) {
-                    uint16_t cap_len = _device._bos->_capabilities[i]->get_bLength();
+                for (int i=0; i < _device.bos->descriptor.bNumDeviceCaps; ++i) {
+                    uint16_t cap_len = _device.bos->_capabilities[i]->get_bLength();
                     assert((tmp_ptr - _buf + cap_len) <= TUPP_MAX_DESC_SIZE);
-                    memcpy(tmp_ptr, _device._bos->_capabilities[i]->get_desc_ptr(), cap_len);
+                    memcpy(tmp_ptr, _device.bos->_capabilities[i]->get_desc_ptr(), cap_len);
                     tmp_ptr += cap_len;
                 }
                 uint16_t len = tmp_ptr - _buf;
                 if (pkt->wLength < len) len = pkt->wLength;
                 _ep0_in->start_transfer(_buf, len);
             } else {
-                _ep0_in->send_stall(true);
-                _ep0_out->send_stall(true);
+                // No BOS, so stall the EP0
+//                _ep0_in->send_stall(true);
+//                _ep0_out->send_stall(true);
             }
             break;
         }
         case DESC_DEVICE_QUALIFIER: {
-            printf("DESC_DEV_QUALIFIER %d\n", pkt->wLength);
+            TUPP_LOG(LOG_INFO, "Get device qualifier descriptor (len=%d)",
+                     pkt->wLength);
             _ep0_in->send_stall(true);
             _ep0_out->send_stall(true);
             break;
         }
         default:
-            printf("Unknown GET_DESCRIPTOR %d\n", (int)desc_type);
-            // Status stage
+            TUPP_LOG(LOG_WARNING, "Unknown descriptor type %d", desc_type);
+            // Don't know what to report, so stall EP0
             _ep0_in->send_stall(true);
             _ep0_out->send_stall(true);
     }
 }
 
 void usb_device_controller::handle_set_descriptor(setup_packet_t * pkt) {
+    TUPP_LOG(LOG_INFO, "Set descriptor");
     assert(pkt->direction == DIR_OUT);
     assert(pkt->recipient == REC_DEVICE);
+    // Notimplemented so far
     _ep0_in->send_stall(true);
     _ep0_out->send_stall(true);
-    // Status stage
-    _ep0_in->send_zlp_data1();
 }
 
 void usb_device_controller::handle_get_configuration(setup_packet_t *pkt) {
+    TUPP_LOG(LOG_INFO, "Get descriptor");
     assert(pkt->direction == DIR_IN);
     assert(pkt->recipient == REC_DEVICE);
     _ep0_in->start_transfer((uint8_t *)(&_active_configuration), 1);
 }
 
 void usb_device_controller::handle_set_configuration(setup_packet_t *pkt) {
+    TUPP_LOG(LOG_DEBUG, "Set configuration");
     assert(pkt->direction == DIR_OUT);
     assert(pkt->recipient == REC_DEVICE);
     uint8_t index = pkt->wValue & 0xff;
@@ -332,7 +337,7 @@ void usb_device_controller::handle_set_configuration(setup_packet_t *pkt) {
             conf = _device.find_configuration(_active_configuration);
             if (conf) {
                 conf->activate_endpoints(false);
-                printf("Disabled configuration %d\n", _active_configuration);
+                TUPP_LOG(LOG_INFO, "Disabled configuration %d", _active_configuration);
             }
             _active_configuration = 0;
         }
@@ -340,7 +345,7 @@ void usb_device_controller::handle_set_configuration(setup_packet_t *pkt) {
             conf = _device.find_configuration(index);
             if (conf) {
                 conf->activate_endpoints(true);
-                printf("Enabled configuration %d\n", index);
+                TUPP_LOG(LOG_INFO, "Enabled configuration %d", index);
             }
             _active_configuration = index;
         }
@@ -350,23 +355,29 @@ void usb_device_controller::handle_set_configuration(setup_packet_t *pkt) {
 }
 
 void usb_device_controller::handle_get_interface(setup_packet_t *pkt) {
+    TUPP_LOG(LOG_INFO, "Get interface");
     assert(pkt->direction == DIR_IN);
     assert(pkt->recipient == REC_INTERFACE);
     uint8_t index = pkt->wIndex & 0xff;
     if (_active_configuration) {
-        auto interface = _device._configurations[_active_configuration]->_interfaces[index];
+        auto interface = _device.configurations[_active_configuration]->interfaces[index];
         if (interface) {
             _ep0_in->start_transfer(&interface->_descriptor.bAlternateSetting, 1);
+            return;
         }
     }
+    // We did not find the interface, so stall EP0
+    _ep0_in->send_stall(true);
+    _ep0_out->send_stall(true);
 }
 
 void usb_device_controller::handle_set_interface(setup_packet_t *pkt) {
+    TUPP_LOG(LOG_INFO, "Set interface");
     assert(pkt->direction == DIR_OUT);
     assert(pkt->recipient == REC_INTERFACE);
     uint8_t index = pkt->wIndex & 0xff;
     if (_active_configuration) {
-        auto interface = _device._configurations[_active_configuration]->_interfaces[index];
+        auto interface = _device.configurations[_active_configuration]->interfaces[index];
         if (interface) {
             interface->_descriptor.bAlternateSetting = pkt->wValue & 0xff;
         }
@@ -376,6 +387,7 @@ void usb_device_controller::handle_set_interface(setup_packet_t *pkt) {
 }
 
 void usb_device_controller::handle_synch_frame(setup_packet_t *pkt) {
+    TUPP_LOG(LOG_INFO, "Synch frame");
     assert(pkt->direction == DIR_IN);
     assert(pkt->recipient == REC_ENDPOINT);
     uint8_t addr = pkt->wIndex & 0xff;
@@ -389,6 +401,7 @@ void usb_device_controller::handle_synch_frame(setup_packet_t *pkt) {
 }
 
 void usb_device_controller::handle_get_status(setup_packet_t * pkt) {
+    TUPP_LOG(LOG_INFO, "Get status");
     assert(pkt->direction == DIR_IN);
     assert(pkt->wValue  == 0);
     assert(pkt->wLength == 2);
@@ -407,14 +420,15 @@ void usb_device_controller::handle_get_status(setup_packet_t * pkt) {
             break;
         }
         default:
-            printf("Unknown recipient of get status: %d\n", (int)pkt->recipient);
+            TUPP_LOG(LOG_WARNING, "Unknown recipient of get status: %d",
+                     pkt->recipient);
     }
     // Send status
     _ep0_in->start_transfer((uint8_t *)&data, 2);
 }
 
 void usb_device_controller::handle_clear_feature(setup_packet_t *pkt) {
-    printf("clear feature\n");
+    TUPP_LOG(LOG_DEBUG, "Clear feature");
     assert(pkt->direction == DIR_IN);
     switch(pkt->recipient) {
         case REC_DEVICE: {
@@ -424,12 +438,13 @@ void usb_device_controller::handle_clear_feature(setup_packet_t *pkt) {
             break;
         }
         default:
-            printf("Unknown recipient of clear feature: %d\n", (int)pkt->recipient);
+            TUPP_LOG(LOG_WARNING, "Unknown recipient of clear feature: %d",
+                     pkt->recipient);
     }
 }
 
 void usb_device_controller::handle_set_feature(setup_packet_t *pkt) {
-    printf("set feature\n");
+    TUPP_LOG(LOG_INFO, "Set feature");
     assert(pkt->direction == DIR_IN);
     switch(pkt->recipient) {
         case REC_DEVICE: {
@@ -439,6 +454,7 @@ void usb_device_controller::handle_set_feature(setup_packet_t *pkt) {
             break;
         }
         default:
-            printf("Unknown recipient of set feature: %d\n", (int)pkt->recipient);
+            TUPP_LOG(LOG_WARNING, "Unknown recipient of set feature: %d",
+                     pkt->recipient);
     }
 }
