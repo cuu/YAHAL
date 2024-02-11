@@ -1,20 +1,24 @@
-//    _   _             _    _  _____ ____
-//   | | (_)           | |  | |/ ____|  _ \   _     _
-//   | |_ _ _ __  _   _| |  | | (___ | |_) |_| |_ _| |_
-//   | __| | '_ \| | | | |  | |\___ \|  _ < _   _|_   _|
-//   | |_| | | | | |_| | |__| |____) | |_) | |_|   |_|
-//    \__|_|_| |_|\__, |\____/|_____/|____/
-//                __/ |
-//               |___/
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
 //
-// This file is part of tinyUSB++, C++ based and easy to
-// use library for USB host/device functionality.
-// (c) 2024 A. Terstegge  (Andreas.Terstegge@gmail.com)
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// This is a programmer for the WiFiTick Board.
+// When loaded on the RP2040, the lower (target)
+// USB port has to be used to program the ESP8266!
 //
 #include "usb_dcd_rp2040.h"
 #include "usb_device_controller.h"
 #include "usb_cdc_acm_device.h"
-#include "usb_ms_webusb_descriptor.h"
+#include "usb_ms_compat_descriptor.h"
 
 #include "posix_io.h"
 #include "uart_rp2040.h"
@@ -58,9 +62,7 @@ int main() {
     // Generic USB Device Controller on top
     usb_device_controller controller(driver, device);
 
-    ////////////////////////
     // USB device descriptor
-    ////////////////////////
     device.set_bcdUSB         (0x0210);
     device.set_bMaxPacketSize0(64);
     device.set_idVendor       (0x2e8a);
@@ -68,9 +70,7 @@ int main() {
     device.set_Manufacturer   ("FH Aachen");
     device.set_Product        ("WifiTick Programmer");
 
-    ///////////////////////////////
     // USB configuration descriptor
-    ///////////////////////////////
     usb_configuration config(device);
     config.set_bConfigurationValue(1);
     config.set_bmAttributes( { .remote_wakeup = 0,
@@ -78,14 +78,10 @@ int main() {
                                .bus_powered   = 1 } );
     config.set_bMaxPower_mA(100);
 
-    /////////////////
-    // BOS descriptor
-    /////////////////
-    usb_ms_webusb_descriptor webusb(controller, device);
+    // BOS descriptor (for Win compatibility)
+    usb_ms_compat_descriptor compat(controller, device);
 
-    /////////////////////
-    // USB CDC ACM device
-    /////////////////////
+    // USB CDC ACM device and its handlers
     usb_cdc_acm_device acm_device(controller, config);
 
     bool line_code_updated = false;
@@ -134,6 +130,7 @@ int main() {
     // Wait until USB enumeration has finished
     //////////////////////////////////////////
     printf("Waiting for USB connection on USB TARGET..\n");
+// No need to wait ...
 //    while (!controller.active_configuration) {
 //        task::sleep(100);
 //    }
@@ -150,8 +147,8 @@ int main() {
     uart_esp.uartAttachIrq([&](char c) {
         if (!in_prgm_mode && (c == 0xb0)) {
             uart_esp.setBaudrate(115200);
-            const char * foo = "\r\n---end of boot messages---\r\n\n";
-            acm_device.write((uint8_t *)foo, 31);
+            const char * msg = "\r\n---end of boot messages---\r\n\n";
+            acm_device.write((uint8_t *)msg, 31);
         } else {
             acm_device.write((uint8_t *)&c, 1);
         }
