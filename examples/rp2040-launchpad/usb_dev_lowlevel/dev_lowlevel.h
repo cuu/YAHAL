@@ -7,7 +7,7 @@
 #ifndef DEV_LOWLEVEL_H_
 #define DEV_LOWLEVEL_H_
 
-#include "usb_common.h"
+#include "usb_structs.h"
 #include "RP2040.h"
 using namespace USB;
 

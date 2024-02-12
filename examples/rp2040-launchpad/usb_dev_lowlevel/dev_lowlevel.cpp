@@ -12,7 +12,7 @@
 #include "uart_rp2040.h"
 #include "posix_io.h"
 // Include descriptors
-#include "usb_common.h"
+#include "usb_structs.h"
 #include "dev_lowlevel.h"
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
