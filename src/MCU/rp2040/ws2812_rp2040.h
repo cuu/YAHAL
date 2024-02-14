@@ -17,6 +17,7 @@ public:
         void on() override;
         void off() override;
         void toggle() override;
+        bool is_on() override;
         void set_color(uint32_t rgb) override;
         void set_on_color(uint32_t rgb) override;
 

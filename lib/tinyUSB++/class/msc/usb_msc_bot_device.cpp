@@ -75,8 +75,7 @@ usb_msc_bot_device::usb_msc_bot_device(
                 TUPP_LOG(LOG_INFO, "REQ_MSC_GET_MAX_LUN");
                 assert(pkt->wValue  == 0);
                 assert(pkt->wLength == 1);
-                controller._ep0_in->send_stall(true);
-//                controller._ep0_in->start_transfer(&_max_lun, 1);
+                controller._ep0_in->start_transfer(&_max_lun, 1);
                 break;
             }
             default: {
@@ -105,7 +104,7 @@ usb_msc_bot_device::usb_msc_bot_device(
 
 // This method implements a simple state machine
 // according to the MSC BOT specification
-void usb_msc_bot_device::handle_request() {
+bool usb_msc_bot_device::handle_request() {
     switch(_state) {
         case state_t::RECEIVE_CBW: {
             // Did we receive some data?
@@ -134,7 +133,7 @@ void usb_msc_bot_device::handle_request() {
                     _buffer_out_len = 0;
                     // Continue with sending the CSW
                     _state = state_t::SEND_CSW;
-                    return;
+                    return true;
                 }
 
                 // Continue with sending the CSW
@@ -145,8 +144,10 @@ void usb_msc_bot_device::handle_request() {
                 // Signal that data has been processed
                 _buffer_out_len = 0;
                 _ep_out->send_NAK(false);
+                return true;
+            } else {
+                break;
             }
-            break;
         }
         case state_t::DATA_READ: {
             if (_ep_in->is_active()) {
@@ -160,7 +161,7 @@ void usb_msc_bot_device::handle_request() {
             if (_blocks_transferred == _blocks_to_transfer) {
                 _state = state_t::SEND_CSW;
             }
-            break;
+            return true;
         }
         case state_t::DATA_WRITE: {
             if (_buffer_out_len == 0) {
@@ -178,19 +179,19 @@ void usb_msc_bot_device::handle_request() {
             if (_blocks_transferred == _blocks_to_transfer) {
                 _state = state_t::SEND_CSW;
             }
-            break;
+            return true;
         }
         case state_t::SEND_CSW: {
             TUPP_LOG(LOG_DEBUG, "STATE: SEND_CSW");
-
             if (_ep_in->is_active()) {
                 break;
             }
             _ep_in->start_transfer((uint8_t *)&_csw, sizeof(_csw));
             _state = state_t::RECEIVE_CBW;
-            break;
+            return true;
         }
     }
+    return false;
 }
 
 void usb_msc_bot_device::process_scsi_command() {

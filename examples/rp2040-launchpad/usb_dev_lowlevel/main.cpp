@@ -90,15 +90,19 @@ int main() {
         block_size  = 512;
         block_count = sd.getBlockCount();
     };
-    msc_device.read_handler = [&](uint8_t * buff, uint32_t block) {
-        sd.readBlock(buff, block, 1);
+    msc_device.read_handler = [&](uint8_t * buff, uint32_t blk_start, uint16_t blk_count) {
+        auto ret = sd.readBlock(buff, blk_start, blk_count);
+        if (ret != BLOCKIO::result_t::OK) {
+            TUPP_LOG(LOG_ERROR, "Reading SD card failed with %d", ret);
+        }
+        return blk_count;
     };
-    msc_device.write_handler = [&](uint8_t * buff, uint32_t block) {
-        sd.writeBlock(buff, block, 1);
-    };
-    msc_device.activity_handler = [&](bool r, bool w) {
-        led_green = r;
-        led_red   = w;
+    msc_device.write_handler = [&](uint8_t * buff, uint32_t blk_start, uint16_t blk_count) {
+        auto ret = sd.writeBlock(buff, blk_start, blk_count);
+        if (ret != BLOCKIO::result_t::OK) {
+            TUPP_LOG(LOG_ERROR, "Writing SD card failed with %d", ret);
+        }
+        return blk_count;
     };
 
     //////////////////////

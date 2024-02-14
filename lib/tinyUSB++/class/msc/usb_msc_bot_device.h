@@ -33,7 +33,9 @@ public:
     usb_msc_bot_device(usb_device_controller & controller,
                        usb_configuration     & configuration);
 
-    void handle_request();
+    // Handle next MSC request. Method will return true if
+    // some command has been handled, false if not.
+    bool handle_request();
 
     // Callback handler to get the block size and block count of the device.
     // block size should normally be TUPP_MSC_BLOCK_SIZE, other cases are

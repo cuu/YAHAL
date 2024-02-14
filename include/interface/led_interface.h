@@ -26,6 +26,7 @@ public:
     virtual void on()  = 0;
     virtual void off() = 0;
     virtual void toggle() = 0;
+    virtual bool is_on() = 0;
 
     // Assignment operator for easier access
     inline void operator = (bool v) {

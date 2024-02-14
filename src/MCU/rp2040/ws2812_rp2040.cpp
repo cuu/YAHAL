@@ -29,6 +29,10 @@ void ws2812_rp2040::LED::toggle() {
     _ws2812_rp2040->update(_index);
 }
 
+bool ws2812_rp2040::LED::is_on() {
+    return _color;
+}
+
 void ws2812_rp2040::LED::set_color(uint32_t rgb) {
     _color = _ws2812_rp2040->xRGB_to_GRBx(rgb);
     _ws2812_rp2040->update(_index);
