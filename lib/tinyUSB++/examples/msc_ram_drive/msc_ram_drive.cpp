@@ -27,6 +27,10 @@ const uint16_t BLOCK_SIZE  = 512;
 const uint32_t BLOCK_COUNT = 400;
 
 int main() {
+    // Initialize the LED
+    gpio_init   (PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+
     // USB Device driver
     usb_dcd_rp2040 & driver = usb_dcd_rp2040::inst();
     // USB device: Root object of USB descriptor tree
@@ -74,16 +78,19 @@ int main() {
     };
     msc_device.read_handler = [&](uint8_t * buff, uint32_t block) {
         memcpy(buff, ram_drive[block], BLOCK_SIZE);
+        gpio_put(PICO_DEFAULT_LED_PIN, 1);
     };
     msc_device.write_handler = [&](uint8_t * buff, uint32_t block) {
         memcpy(ram_drive[block], buff, BLOCK_SIZE);
+        gpio_put(PICO_DEFAULT_LED_PIN, 1);
     };
 
     // Activate USB device
     driver.pullup_enable(true);
     while (!controller.active_configuration) ;
 
-    uint8_t buff[16];
+    uint8_t  buff[16];
+    uint32_t count = 0;
     while(1) {
         // Check if key has been pressed
         if (acm_device.available()) {
@@ -96,6 +103,12 @@ int main() {
             while(written != len) {
                 written += acm_device.write(src+written, len-written);
             }
+        }
+        // Handle LED reset to off
+        count++;
+        if (count > 200000) {
+            count = 0;
+            gpio_put(PICO_DEFAULT_LED_PIN, 0);
         }
         // Handle MSC requests
         msc_device.handle_request();
