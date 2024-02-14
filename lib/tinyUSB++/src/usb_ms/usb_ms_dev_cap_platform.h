@@ -18,9 +18,9 @@
 #include "usb_bos_dev_cap.h"
 #include "usb_ms_structs.h"
 
-class usb_bos_dev_cap_platform_ms : public usb_bos_dev_cap {
+class usb_ms_dev_cap_platform : public usb_bos_dev_cap {
 public:
-    explicit usb_bos_dev_cap_platform_ms(usb_bos & bos) : descriptor(_descriptor)
+    explicit usb_ms_dev_cap_platform(usb_bos & bos) : descriptor(_descriptor)
     {
         _descriptor.bLength             = sizeof(USB::dev_cap_platform_ms_os_20_t);
         _descriptor.bDescriptorType     = USB::bDescriptorType_t::DESC_DEVICE_CAPABILITY;
@@ -31,8 +31,8 @@ public:
     }
 
     // No copy, no assignment
-    usb_bos_dev_cap_platform_ms(const usb_bos_dev_cap_platform_ms &) = delete;
-    usb_bos_dev_cap_platform_ms & operator= (const usb_bos_dev_cap_platform_ms &) = delete;
+    usb_ms_dev_cap_platform(const usb_ms_dev_cap_platform &) = delete;
+    usb_ms_dev_cap_platform & operator= (const usb_ms_dev_cap_platform &) = delete;
 
     uint16_t get_bLength() override {
         return _descriptor.bLength;
