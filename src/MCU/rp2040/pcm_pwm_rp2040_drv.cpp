@@ -19,7 +19,7 @@ using namespace _IO_BANK0_;
 using namespace _PWM_;
 
 pcm_pwm_rp2040_drv::pcm_pwm_rp2040_drv( gpio_pin_t left, gpio_pin_t right )
-    : pcm_audio_interface(PCM_FIFO_SIZE), _pcm_timer(0)
+    : pcm_audio_interface(PCM_FIFO_SIZE)
 {
     // Set up GPIO
     gpio_rp2040_pin gpio_left( left );
