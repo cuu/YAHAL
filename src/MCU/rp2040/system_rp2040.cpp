@@ -12,9 +12,8 @@ using namespace _XOSC_;
 // XOSC configuration
 /////////////////////
 #define XOSC_FREQ 12000000
-#define XOSC_STARTUP_MS 10
+#define XOSC_STARTUP_MS 64
 #define XOSC_STARTUP    (XOSC_FREQ * XOSC_STARTUP_MS / 1000) / 256
-
 
 #ifdef __cplusplus
 extern "C" {
