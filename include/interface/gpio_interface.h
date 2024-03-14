@@ -133,7 +133,7 @@ public:
     inline void gpioToggle() {
         _interf.gpioToggle(_gpio);
     }
-    inline void gpioAttachIrq (uint16_t         irq_mode,
+    inline void gpioAttachIrq (gpio_irq_t       irq_mode,
                                function<void()> handler) {
         _interf.gpioAttachIrq(_gpio, irq_mode, handler);
     }
