@@ -50,7 +50,7 @@ pages:
   script:
     - apk --no-cache add doxygen graphviz ttf-freefont
     - cd doc && doxygen Doxyfile
-    - mv doc/documentation/html/ public/
+    - mv documentation/html/ ../public/
   artifacts:
     paths:
       - public
