@@ -45,7 +45,7 @@ rp2040_examples:
 
 pages:
   image: alpine:3.19.1
-  stage: examples
+  stage: pages
   needs: []
   script:
     - apk --no-cache add doxygen graphviz ttf-freefont
