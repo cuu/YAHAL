@@ -64,4 +64,6 @@ pages:
       - include/**/*
       - lib/**/*
       - src/**/*
+  tags:
+    - shared
 
