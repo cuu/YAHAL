@@ -7,14 +7,14 @@ Under Windows, a rudimentary Unix environment must first be installed (MinGW64).
 For this we use [WinLibs](https://winlibs.com/), from whose site you can download the latest ZIP file with UCRT runtime 
 and without LLVM support:
 
-**BILD**
+**TODO: BILD**
 
 Unpack this ZIP file under C:\, then a new directory C:\mingw64 must exist.
 
 In order for the MinGW programs to be used on the command line, the corresponding paths to the programs must be entered
 in the path environment variable.
 To do this, start the system properties and click on the 'Environment variables' button under the 'Advanced' tab
-**(see right)**.
+**(see right) TODO: BILD**.
 
 Then select the Path environment variable in the lower area of the newly opened window and click on
 'Edit'.
@@ -26,7 +26,7 @@ Tip: In case of strange behavior (entries in the list are overwritten), it helps
 
 At the end, the window for editing the path environment variable should look something like this:
 
-**BILD**
+**TODO: BILD**
 
 Note: Entering new elements in the Path environment variable will also be used in the following steps!
 Under Linux and MacOS, please ensure that the tools gcc, g++, make and cmake are installed.
@@ -46,7 +46,7 @@ are necessary!).
 After completing the installation, you need to enter the path (see above).
 The window for the path environment variable will then look like this, for example:
 
-**BILD**
+**TODO: BILD**
 
 Under Linux and MacOS, either install the corresponding version from the page above, or install the GNU ARM 
 Crosscompiler via the package management of your operating system.
@@ -56,7 +56,7 @@ At https://git-scm.com/download/ you will find the latest 64-bit version of git 
 without modifying the installer settings. 
 The installation should automatically update the path environment variable:
 
-**BILD**
+**TODO: BILD**
 
 On Linux and MacOS, please make sure that git is installed.
 Use the package management of your operating system to do this.
@@ -70,7 +70,7 @@ For Windows, select e.g. the ZIP file xpack-openocd-0.12.0-1-win32-x64.zip, whic
 to C:\ (or another suitable location). 
 As always, enter the path afterwards:
 
-**BILD**
+**TODO: BILD**
 
 Under Linux and MacOS, download the corresponding installation file (.tar.gz), extract it to a suitable location and 
 make sure that the bin sub-folder (see above as for Windows) is in the path.
@@ -130,7 +130,7 @@ Now connect the RP2040 launchpad board to your computer.
 Windows (unlike Linux and MacOS) does not have USB drivers for this device by default, so this device, so you must now
 start `zadig-2.8` from the command line. 
 Click on the "Install Driver" button.
-Then please be **patient** the program takes a few seconds to start working.
+Then please be **patient** the program takes a few seconds to start working.<br>
 Exit the program and **repeat** this step!
 
 - Download and run the sample program:<br>
@@ -138,3 +138,5 @@ Exit the program and **repeat** this step!
   for Linux/MacOS: `make upload_blink_simple`
 
 If an <span style="color:red">**LED**</span> now flashes on your board, you have done it!!!
+
+TODO: BILD
