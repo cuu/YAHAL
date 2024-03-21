@@ -1,6 +1,11 @@
 image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-image
 
+stages:
+  - examples
+  - pages
+
 .common:
+  stage: examples
   before_script:
     - cd examples/$EXAMLE_FOLDER
     - mkdir build && cd build
@@ -37,3 +42,26 @@ rp2040_examples:
       - src/**/*
       - tools/**/*
       - examples/rp2040-launchpad/**/*
+
+pages:
+  image: alpine:3.19.1
+  stage: examples
+  needs: []
+  script:
+    - apk --no-cache add doxygen graphviz ttf-freefont
+    - cd doc && doxygen Doxyfile
+    - mv doc/documentation/html/ public/
+  artifacts:
+    paths:
+      - public
+  only:
+    refs:
+      - master
+    changes:
+      - .gitlab-ci.yml
+      - README.md
+      - doc/**/*
+      - include/**/*
+      - lib/**/*
+      - src/**/*
+
