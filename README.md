@@ -1,4 +1,8 @@
-<h1 align="center">YAHAL <br> Yet Another Hardware Abstraction Library</h1>
+<div align="center">
+  <a href="https://git.fh-aachen.de/Terstegge/YAHAL">
+  <h1>YAHAL <br> Yet Another Hardware Abstraction Library</h1>
+  </a>
+</div>
 
 ## Getting Started
 
