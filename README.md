@@ -1,7 +1,11 @@
 <div align="center">
   <a href="https://git.fh-aachen.de/Terstegge/YAHAL">
-  <h1>YAHAL <br> Yet Another Hardware Abstraction Library</h1>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="doc/assets/YAHAL_logo.png">
+      <img src="doc/assets/YAHAL_logo_transparent.png" height="237" alt="">
+    </picture>
   </a>
+  <h1>YAHAL <br> Yet Another Hardware Abstraction Library</h1>
 </div>
 
 ## Getting Started
