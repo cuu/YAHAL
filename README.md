@@ -15,14 +15,16 @@ Under Windows, a rudimentary Unix environment must first be installed (MinGW64).
 For this we use [WinLibs](https://winlibs.com/), from whose site you can download the latest ZIP file with UCRT runtime 
 and without LLVM support:
 
-**TODO: BILD**
+![WinLibs Download](doc/assets/getting-started_img1.png)
 
 Unpack this ZIP file under C:\, then a new directory C:\mingw64 must exist.
 
 In order for the MinGW programs to be used on the command line, the corresponding paths to the programs must be entered
 in the path environment variable.
 To do this, start the system properties and click on the 'Environment variables' button under the 'Advanced' tab
-**(see right) TODO: BILD**.
+(see image below).
+
+![Environment Variables](doc/assets/getting-started_img2.png)
 
 Then select the Path environment variable in the lower area of the newly opened window and click on
 'Edit'.
@@ -34,7 +36,7 @@ Tip: In case of strange behavior (entries in the list are overwritten), it helps
 
 At the end, the window for editing the path environment variable should look something like this:
 
-**TODO: BILD**
+![Adding MinGW to PATH](doc/assets/getting-started_img3.png)
 
 Note: Entering new elements in the Path environment variable will also be used in the following steps!
 Under Linux and MacOS, please ensure that the tools gcc, g++, make and cmake are installed.
@@ -54,7 +56,7 @@ are necessary!).
 After completing the installation, you need to enter the path (see above).
 The window for the path environment variable will then look like this, for example:
 
-**TODO: BILD**
+![Adding ARM GNU Toolchain to PATH](doc/assets/getting-started_img4.png)
 
 Under Linux and MacOS, either install the corresponding version from the page above, or install the GNU ARM 
 Crosscompiler via the package management of your operating system.
@@ -64,7 +66,7 @@ At https://git-scm.com/download/ you will find the latest 64-bit version of git 
 without modifying the installer settings. 
 The installation should automatically update the path environment variable:
 
-**TODO: BILD**
+![Adding git to PATH](doc/assets/getting-started_img5.png)
 
 On Linux and MacOS, please make sure that git is installed.
 Use the package management of your operating system to do this.
@@ -76,9 +78,9 @@ https://github.com/xpack-dev-tools/openocd-xpack/releases
 To see all files, you have to click on 'show all assets' at the bottom of the file list on this page!
 For Windows, select e.g. the ZIP file xpack-openocd-0.12.0-1-win32-x64.zip, which you download and extract e.g. 
 to C:\ (or another suitable location). 
-As always, enter the path afterwards:
+As always, enter the path afterward:
 
-**TODO: BILD**
+![Adding OpenOCD to PATH](doc/assets/getting-started_img6.png)
 
 Under Linux and MacOS, download the corresponding installation file (.tar.gz), extract it to a suitable location and 
 make sure that the bin sub-folder (see above as for Windows) is in the path.
@@ -147,4 +149,7 @@ Exit the program and **repeat** this step!
 
 If an <span style="color:red">**LED**</span> now flashes on your board, you have done it!!!
 
-TODO: BILD
+<div class="image">
+  <img src="doc/assets/getting-started_img7.png" alt="Good Job!" height="200px" 
+       onerror="this.onerror=null;this.src='getting-started_img7.png'"/>
+</div>
