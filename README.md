@@ -120,7 +120,11 @@ after the corresponding command has been entered manually:
 If these programs are not found, check the installation and the correctness of the entries in the PATH environment
 variable!
 
-<p style="color:green;text-align:center;font-weight:bold">You should now have all the necessary programs installed!</p>
+<div align="center">
+<span style="color:green;font-weight:bold">
+You should now have all the necessary programs installed!
+</span>
+</div>
 
 ### 9. Clone YAHAL
 The following step installs YAHAL, the software framework for our microcontroller used in this course.
