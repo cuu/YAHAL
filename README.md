@@ -121,8 +121,8 @@ If these programs are not found, check the installation and the correctness of t
 variable!
 
 <div align="center">
-<span style="color:green;font-weight:bold">
-You should now have all the necessary programs installed!
+<span style="color:green">
+<b>You should now have all the necessary programs installed!</b>
 </span>
 </div>
 
