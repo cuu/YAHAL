@@ -4140,7 +4140,7 @@
               <name>OUTFROMPERI</name>
             </field>
           </fields>
-          <name>GPIO[%s]_STATUS</name>
+          <name>GPIO%s_STATUS</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -4311,7 +4311,7 @@
               <name>FUNCSEL</name>
             </field>
           </fields>
-          <name>GPIO[%s]_CTRL</name>
+          <name>GPIO%s_CTRL</name>
           <resetValue>0x0000001f</resetValue>
         </register>
         <register>
@@ -13266,7 +13266,7 @@
               <name>SLEWFAST</name>
             </field>
           </fields>
-          <name>GPIO[%s]</name>
+          <name>GPIO%s</name>
           <resetValue>0x00000056</resetValue>
         </register>
         <register>
@@ -18700,7 +18700,7 @@
               <name>EN</name>
             </field>
           </fields>
-          <name>CH[%s]_CSR</name>
+          <name>CH%s_CSR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -18722,7 +18722,7 @@
               <name>FRAC</name>
             </field>
           </fields>
-          <name>CH[%s]_DIV</name>
+          <name>CH%s_DIV</name>
           <resetValue>0x00000010</resetValue>
         </register>
         <register>
@@ -18737,7 +18737,7 @@
               <name>CTR</name>
             </field>
           </fields>
-          <name>CH[%s]_CTR</name>
+          <name>CH%s_CTR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -18757,7 +18757,7 @@
               <name>A</name>
             </field>
           </fields>
-          <name>CH[%s]_CC</name>
+          <name>CH%s_CC</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -18772,7 +18772,7 @@
               <name>TOP</name>
             </field>
           </fields>
-          <name>CH[%s]_TOP</name>
+          <name>CH%s_TOP</name>
           <resetValue>0x0000ffff</resetValue>
         </register>
         <register>
@@ -19414,7 +19414,7 @@
           <access>read-write</access>
           <addressOffset>0x000c</addressOffset>
           <description>Scratch register. Information persists through soft reset of the chip.</description>
-          <name>SCRATCH[%s]</name>
+          <name>SCRATCH%s</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20290,7 +20290,7 @@
           <addressOffset>0x0000</addressOffset>
           <description>DMA Channel 0 Read Address pointer\n
             This register updates automatically each time a read completes. The current value is the next address to be read by this channel.</description>
-          <name>CH[%s]_READ_ADDR</name>
+          <name>CH%s_READ_ADDR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20300,7 +20300,7 @@
           <addressOffset>0x0004</addressOffset>
           <description>DMA Channel 0 Write Address pointer\n
             This register updates automatically each time a write completes. The current value is the next address to be written by this channel.</description>
-          <name>CH[%s]_WRITE_ADDR</name>
+          <name>CH%s_WRITE_ADDR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20313,7 +20313,7 @@
             When the channel is active, reading this register shows the number of transfers remaining, updating automatically each time a write transfer completes.\n\n
             Writing this register sets the RELOAD value for the transfer counter. Each time this channel is triggered, the RELOAD value is copied into the live transfer counter. The channel can be started multiple times, and will perform the same number of transfers each time, as programmed by most recent write.\n\n
             The RELOAD value can be observed at CHx_DBG_TCR. If TRANS_COUNT is used as a trigger, the written value is used immediately as the length of the new transfer sequence, as well as being written to RELOAD.</description>
-          <name>CH[%s]_TRANS_COUNT</name>
+          <name>CH%s_TRANS_COUNT</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20482,7 +20482,7 @@
               <name>EN</name>
             </field>
           </fields>
-          <name>CH[%s]_CTRL_TRIG</name>
+          <name>CH%s_CTRL_TRIG</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20491,7 +20491,7 @@
           <access>read-write</access>
           <addressOffset>0x0010</addressOffset>
           <description>Alias for channel 0 CTRL register</description>
-          <name>CH[%s]_AL1_CTRL</name>
+          <name>CH%s_AL1_CTRL</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20500,7 +20500,7 @@
           <access>read-write</access>
           <addressOffset>0x0014</addressOffset>
           <description>Alias for channel 0 READ_ADDR register</description>
-          <name>CH[%s]_AL1_READ_ADDR</name>
+          <name>CH%s_AL1_READ_ADDR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20509,7 +20509,7 @@
           <access>read-write</access>
           <addressOffset>0x0018</addressOffset>
           <description>Alias for channel 0 WRITE_ADDR register</description>
-          <name>CH[%s]_AL1_WRITE_ADDR</name>
+          <name>CH%s_AL1_WRITE_ADDR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20520,7 +20520,7 @@
           <description>Alias for channel 0 TRANS_COUNT register\n
             This is a trigger register (0xc). Writing a nonzero value will\n
             reload the channel counter and start the channel.</description>
-          <name>CH[%s]_AL1_TRANS_COUNT_TRIG</name>
+          <name>CH%s_AL1_TRANS_COUNT_TRIG</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20529,7 +20529,7 @@
           <access>read-write</access>
           <addressOffset>0x0020</addressOffset>
           <description>Alias for channel 0 CTRL register</description>
-          <name>CH[%s]_AL2_CTRL</name>
+          <name>CH%s_AL2_CTRL</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20538,7 +20538,7 @@
           <access>read-write</access>
           <addressOffset>0x0024</addressOffset>
           <description>Alias for channel 0 TRANS_COUNT register</description>
-          <name>CH[%s]_AL2_TRANS_COUNT</name>
+          <name>CH%s_AL2_TRANS_COUNT</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20547,7 +20547,7 @@
           <access>read-write</access>
           <addressOffset>0x0028</addressOffset>
           <description>Alias for channel 0 READ_ADDR register</description>
-          <name>CH[%s]_AL2_READ_ADDR</name>
+          <name>CH%s_AL2_READ_ADDR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20558,7 +20558,7 @@
           <description>Alias for channel 0 WRITE_ADDR register\n
             This is a trigger register (0xc). Writing a nonzero value will\n
             reload the channel counter and start the channel.</description>
-          <name>CH[%s]_AL2_WRITE_ADDR_TRIG</name>
+          <name>CH%s_AL2_WRITE_ADDR_TRIG</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20567,7 +20567,7 @@
           <access>read-write</access>
           <addressOffset>0x0030</addressOffset>
           <description>Alias for channel 0 CTRL register</description>
-          <name>CH[%s]_AL3_CTRL</name>
+          <name>CH%s_AL3_CTRL</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20576,7 +20576,7 @@
           <access>read-write</access>
           <addressOffset>0x0034</addressOffset>
           <description>Alias for channel 0 WRITE_ADDR register</description>
-          <name>CH[%s]_AL3_WRITE_ADDR</name>
+          <name>CH%s_AL3_WRITE_ADDR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20585,7 +20585,7 @@
           <access>read-write</access>
           <addressOffset>0x0038</addressOffset>
           <description>Alias for channel 0 TRANS_COUNT register</description>
-          <name>CH[%s]_AL3_TRANS_COUNT</name>
+          <name>CH%s_AL3_TRANS_COUNT</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20596,7 +20596,7 @@
           <description>Alias for channel 0 READ_ADDR register\n
             This is a trigger register (0xc). Writing a nonzero value will\n
             reload the channel counter and start the channel.</description>
-          <name>CH[%s]_AL3_READ_ADDR_TRIG</name>
+          <name>CH%s_AL3_READ_ADDR_TRIG</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20724,7 +20724,7 @@
               <name>Y</name>
             </field>
           </fields>
-          <name>TIMER[%s]</name>
+          <name>TIMER%s</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20894,7 +20894,7 @@
               <name>DBG_CTDREQ</name>
             </field>
           </fields>
-          <name>CH[%s]_DBG_CTDREQ</name>
+          <name>CH%s_DBG_CTDREQ</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -20903,7 +20903,7 @@
           <access>read-only</access>
           <addressOffset>0x0804</addressOffset>
           <description>Read to get channel TRANS_COUNT reload value, i.e. the length of the next transfer</description>
-          <name>CH[%s]_DBG_TCR</name>
+          <name>CH%s_DBG_TCR</name>
           <resetValue>0x00000000</resetValue>
         </register>
       </registers>
@@ -21033,7 +21033,7 @@
               <name>BUFFER_ADDRESS</name>
             </field>
           </fields>
-          <name>EP[%s]_CONTROL</name>
+          <name>EP%s_CONTROL</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -21142,7 +21142,7 @@
               <name>LENGTH_0</name>
             </field>
           </fields>
-          <name>EP[%s]_BUFFER_CONTROL</name>
+          <name>EP%s_BUFFER_CONTROL</name>
           <resetValue>0x00000000</resetValue>
         </register>
       </registers>
@@ -21215,7 +21215,7 @@
               <name>ADDRESS</name>
             </field>
           </fields>
-          <name>ADDR_ENDP_[%s]</name>
+          <name>ADDR_ENDP_%s</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -23548,7 +23548,7 @@
           <access>write-only</access>
           <addressOffset>0x0010</addressOffset>
           <description>Direct write access to the TX FIFO for a state machine. Each write pushes one word to the FIFO. Attempting to write to a full FIFO has no effect on the FIFO state or contents, and sets the sticky FDEBUG_TXOVER error flag for this FIFO.</description>
-          <name>TXF[%s]</name>
+          <name>TXF%s</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -23557,7 +23557,7 @@
           <access>read-only</access>
           <addressOffset>0x0020</addressOffset>
           <description>Direct read access to the RX FIFO for a state machine. Each read pops one word from the FIFO. Attempting to read from an empty FIFO has no effect on the FIFO state, and sets the sticky FDEBUG_RXUNDER error flag for this FIFO. The data returned to the system on a read from an empty FIFO is undefined.</description>
-          <name>RXF[%s]</name>
+          <name>RXF%s</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -23653,7 +23653,7 @@
               <name>INSTR</name>
             </field>
           </fields>
-          <name>INSTR_MEM[%s]</name>
+          <name>INSTR_MEM%s</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -23677,7 +23677,7 @@
               <name>FRAC</name>
             </field>
           </fields>
-          <name>SM[%s]_CLKDIV</name>
+          <name>SM%s_CLKDIV</name>
           <resetValue>0x00010000</resetValue>
         </register>
         <register>
@@ -23769,7 +23769,7 @@
               <name>STATUS_N</name>
             </field>
           </fields>
-          <name>SM[%s]_EXECCTRL</name>
+          <name>SM%s_EXECCTRL</name>
           <resetValue>0x0001f000</resetValue>
         </register>
         <register>
@@ -23833,7 +23833,7 @@
               <name>AUTOPUSH</name>
             </field>
           </fields>
-          <name>SM[%s]_SHIFTCTRL</name>
+          <name>SM%s_SHIFTCTRL</name>
           <resetValue>0x000c0000</resetValue>
         </register>
         <register>
@@ -23848,7 +23848,7 @@
               <name>ADDR</name>
             </field>
           </fields>
-          <name>SM[%s]_ADDR</name>
+          <name>SM%s_ADDR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -23864,7 +23864,7 @@
               <name>INSTR</name>
             </field>
           </fields>
-          <name>SM[%s]_INSTR</name>
+          <name>SM%s_INSTR</name>
           <resetValue>0x00000000</resetValue>
         </register>
         <register>
@@ -23916,7 +23916,7 @@
               <name>OUT_BASE</name>
             </field>
           </fields>
-          <name>SM[%s]_PINCTRL</name>
+          <name>SM%s_PINCTRL</name>
           <resetValue>0x14000000</resetValue>
         </register>
         <register>
@@ -25394,7 +25394,7 @@
             Writing (any value) releases the lock.\n
             If core 0 and core 1 attempt to claim the same lock simultaneously, core 0 wins.\n
             The value returned on success is 0x1 &lt;&lt; lock number.</description>
-          <name>SPINLOCK[%s]</name>
+          <name>SPINLOCK%s</name>
           <resetValue>0x00000000</resetValue>
         </register>
       </registers>

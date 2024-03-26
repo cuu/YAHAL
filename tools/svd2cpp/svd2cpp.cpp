@@ -17,8 +17,6 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
-#include <iomanip>
-#include <map>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -38,17 +36,17 @@ std::ostream& indent(std::ostream& os) {
     return os;
 }
 
-string pad_str(string val, int size) {
+string pad_str(const string & val, int size) {
     string res = val;
     while (res.size() < size) res += ' ';
     return res;
 }
 
-string named_register(string val, string index) {
+string named_register(const string & val, const string & index) {
     string res = val;
-    size_t pos = res.find("[%s]");
+    size_t pos = res.find("%s");
     if (pos != string::npos) {
-        res.replace(pos, 4, index);
+        res.replace(pos, 2, index);
     }
     return res;
 }
@@ -68,18 +66,18 @@ public:
     // Current register size in bits. This
     // value can be set by a peripheral, but
     // overwritten by a specific register.
-    int currentRegByteSize = 0;
+    uint32_t currentRegByteSize = 0;
 
     // List of registers for one peripheral
     struct register_info_t {
-        string type;       // Type of register
-        string name;       // Name of register
-        int size;          // Size of register in bytes
-        int dim;           // Dimension (array if > 1)
-        int dimInc;        // Increment for dim elements in bytes
-        bool userIndex;    // User-defined Index names
+        string type;            // Type of register
+        string name;            // Name of register
+        uint32_t size   {0};    // Size of register in bytes
+        uint32_t dim    {0};    // Dimension (array if > 1)
+        uint32_t dimInc {0};    // Increment for dim elements in bytes
+        bool userIndex  {false};// User-defined Index names
         vector<string> dimIndices; // Specific index names
-        uint32_t offset;   // Offset from base address in bytes
+        uint32_t offset {0};    // Offset from base address in bytes
     };
 
     class register_vector : public vector<register_info_t> {
@@ -107,23 +105,23 @@ public:
 
     // List of enum value properties
     struct enum_info_t {
-        const char *field;
-        const char *desc;
-        const char *name;
-        const char *value;
+        const char *field {nullptr};
+        const char *desc  {nullptr};
+        const char *name  {nullptr};
+        const char *value {nullptr};
     };
     vector<enum_info_t> enum_info;
 
     // List of interrupts
     struct irq_info_t {
-        const char *name;
-        int value;
+        const char *name{nullptr};
+        uint32_t    value{0};
     };
     vector<irq_info_t> irq_info;
 
     // Trim a string by deleting all tabs, spaces, newlines at
     // the beginning and at the end.
-    string Trim(string str) {
+    static string Trim(string str) {
         const char *typeOfWhitespaces = " \t\n";
         // Erase trailing whitespaces
         str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
@@ -141,31 +139,31 @@ public:
 
     // Get the value of a child element with name 'name'.
     // Return nullptr if child is not exiting or there is no value
-    const char* getChildElement(XMLElement *elem, const char *name) {
+    static const char* getChildElement(XMLElement *elem, const char *name) {
         XMLElement *child = elem->FirstChildElement(name);
         return child ? child->GetText() : nullptr;
     }
 
     // Check if a child node with name 'name' is existing
-    bool childExists(XMLElement *elem, const char *name) {
+    static bool childExists(XMLElement *elem, const char *name) {
         return elem->FirstChildElement(name) != nullptr;
     }
 
     // Parse a string with a numerical value to a uint32_t.
-    // Automatically detect hex and decimal values. Octal
-    // values are not supported right now.
-    uint32_t parseNumber(const char *val) {
+    // Automatically detect binary, decimal and hex values.
+    static uint32_t parseNumber(const char *val) {
         if (val == nullptr) {
             cerr << "Can not parse nullptr. Exit" << endl;
             exit(1);
         }
-        istringstream iss(val);
         uint32_t result;
-        int len = strlen(val);
+        size_t len = strlen(val);
         if (len > 1 && val[0] == '0' && tolower(val[1]) == 'x') {
-            iss >> hex >> result;
+            result = strtol(val, nullptr, 16);
+        } else if (len > 1 && val[0] == '#') {
+            result = strtol(val+1, nullptr, 2);
         } else {
-            iss >> dec >> result;
+            result = strtol(val, nullptr, 10);
         }
         return result;
     }
@@ -194,7 +192,7 @@ public:
 
     void ProcessComment(XMLElement *elem) {
         _ofs << "// " << indent << elem->Name();
-        if (elem->GetText() != NULL) {
+        if (elem->GetText() != nullptr) {
             _ofs << ": " << elem->GetText() << endl;
         } else
             _ofs << endl;
@@ -210,13 +208,13 @@ public:
         }
     }
 
-    void ProcessBitRange(XMLElement *field, int &bitOffset, int &bitWidth) {
+    static void ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &bitWidth) {
         // Try to find a bitRange Element
         const char *range = getChildElement(field, "bitRange");
         if (range != nullptr) {
             // Process bitRange
             string rangeStr = range;
-            size_t colon = rangeStr.find(":");
+            size_t colon = rangeStr.find(':');
             if (colon == string::npos) {
                 cerr << "Can not find colon in bitRange. Exit!" << endl;
                 exit(1);
@@ -249,10 +247,10 @@ public:
         const char *msb = getChildElement(field, "msb");
         if (lsb != nullptr && msb != nullptr) {
             // Process lsb and msb
-            int low   = parseNumber(lsb);
-            int high  = parseNumber(msb);
-            bitOffset = low;
-            bitWidth  = high - low + 1;
+            uint32_t low  = parseNumber(lsb);
+            uint32_t high = parseNumber(msb);
+            bitOffset     = low;
+            bitWidth      = high - low + 1;
             return;
         }
         cerr << "No valid bitrange found in field. Exit!" << endl;
@@ -275,7 +273,7 @@ public:
         }
 
         // Process the bit range
-        int bitOffset, bitWidth;
+        uint32_t bitOffset, bitWidth;
         ProcessBitRange(field, bitOffset, bitWidth);
 
         // Process access mode
@@ -305,11 +303,11 @@ public:
                         enu; enu  = enu->NextSiblingElement()) {
                 const char *ename = getChildElement(enu, "name");
                 const char *value = getChildElement(enu, "value");
-                const char *desc  = getChildElement(enu, "description");
+                const char *des   = getChildElement(enu, "description");
                 enum_info_t ei;
                 ei.name  = ename;
                 ei.value = value;
-                ei.desc  = desc;
+                ei.desc  = des;
                 ei.field = name;
                 enum_info.push_back(ei);
             }
@@ -344,7 +342,7 @@ public:
         }
 
         // Get the valid register size in bits
-        int regByteSize = 0;
+        uint32_t regByteSize = 0;
         if (size) {
             regByteSize = parseNumber(size) / 8;
         } else {
@@ -371,7 +369,7 @@ public:
             string index;
             string indices;
             if (dimIndex) {
-                ri.userIndex = 1;
+                ri.userIndex = true;
                 indices = dimIndex;
                 // Replace all commas by blanks
                 for (char & c : indices) if (c==',') c = ' ';
@@ -416,13 +414,13 @@ public:
         register_info.push_back(ri);
 
         // Handle enums for a register
-        if (enum_info.size()) {
+        if (!enum_info.empty()) {
             for (auto &ei : enum_info) {
                 outputAsComment(ei.desc);
                 _ofs << indent << "static const uint32_t "
                      << named_register(currentRegister, "")
                      << "_" << ei.field << "__"  << ei.name
-                     << " = " << ei.value << ";" << endl;
+                     << " = " << parseNumber(ei.value) << ";" << endl;
             }
             enum_info.clear();
             _ofs << endl;
@@ -449,7 +447,7 @@ public:
         }
 
         // Check if we are a derived peripheral
-        string derivedFrom = "";
+        string derivedFrom;
         const XMLAttribute *derived = peripheral->FindAttribute("derivedFrom");
         if (derived) {
             derivedFrom += derived->Value();
@@ -479,7 +477,7 @@ public:
         }
 
         string periType;
-        if (derivedFrom.size() == 0) {
+        if (derivedFrom.empty()) {
             _ofs << indent << "struct " << name << "_t {" << endl;
             indentRight();
             uint32_t curr_off = 0;
@@ -491,8 +489,8 @@ public:
                 register_info_t * reg = register_info.next_register();
                 // Check if we have to fill a gap with 'reserved'
                 if (curr_off != reg->offset) {
-                    int diff  = reg->offset - curr_off;
-                    int typelen = 1;
+                    uint32_t diff  = reg->offset - curr_off;
+                    uint32_t typelen = 1;
                     // Try to use same int length as register
                     if ((diff % reg->size) == 0) {
                         diff   /= reg->size;
@@ -526,7 +524,7 @@ public:
                     _ofs << "[" << dim_size << "]";
                 } else {
                     string index;
-                    if (reg->dimIndices.size()) {
+                    if (!reg->dimIndices.empty()) {
                         index = reg->dimIndices[0];
                         reg->dimIndices.erase(reg->dimIndices.begin());
                     }
@@ -566,7 +564,7 @@ public:
         _ofs << endl;
     }
 
-    void usage() {
+    static void usage() {
         cout << "Usage: svd2cpp [-o outfile] <file>.svd"<< endl;
         cout << endl;
         cout << "-o outfile  : The output filename. Default is <file>.cpp" << endl;
@@ -589,6 +587,7 @@ public:
                     usage();
                     break;
                 }
+                default:
                 case '?': {
                     cerr << "Unknown option '" << (char)optopt << "'" << endl;
                     usage();
@@ -612,7 +611,7 @@ public:
         } else {
             name_we = infile;
         }
-        if(outfile.size() == 0) {
+        if(outfile.empty()) {
             outfile = name_we + ".h";
         }
 
@@ -680,10 +679,10 @@ public:
                     return a.value < b.value;
         });
         _ofs << indent << "// Interrupt numbers" << endl;
-        for (auto &elem : irq_info) {
-            string tmp = "#define " + string(elem.name) + " ";
+        for (auto & irq : irq_info) {
+            string tmp = "#define " + string(irq.name) + " ";
             while (tmp.size() < 30) tmp += ' ';
-            _ofs << indent << tmp << dec << elem.value << endl;
+            _ofs << indent << tmp << dec << irq.value << endl;
         }
         return 0;
     }
