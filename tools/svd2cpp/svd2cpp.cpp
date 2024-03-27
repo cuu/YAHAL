@@ -138,7 +138,7 @@ public:
     }
 
     // Get the value of a child element with name 'name'.
-    // Return nullptr if child is not exiting or there is no value
+    // Return nullptr if child is not existing or there is no value
     static const char* getChildElement(XMLElement *elem, const char *name) {
         XMLElement *child = elem->FirstChildElement(name);
         return child ? child->GetText() : nullptr;
@@ -228,7 +228,7 @@ public:
             if (low > high)
                 swap(high, low);
             bitOffset = low;
-            bitWidth = high - low + 1;
+            bitWidth  = high - low + 1;
             return;
         }
 
@@ -238,7 +238,7 @@ public:
         if (offset != nullptr && width != nullptr) {
             // Process bitOffset and bitWidth
             bitOffset = parseNumber(offset);
-            bitWidth = parseNumber(width);
+            bitWidth  = parseNumber(width);
             return;
         }
 
@@ -249,11 +249,11 @@ public:
             // Process lsb and msb
             uint32_t low  = parseNumber(lsb);
             uint32_t high = parseNumber(msb);
-            bitOffset     = low;
-            bitWidth      = high - low + 1;
+            bitOffset = low;
+            bitWidth  = high - low + 1;
             return;
         }
-        cerr << "No valid bitrange found in field. Exit!" << endl;
+        cerr << "No valid bitrange: " << range  << endl;
         exit(1);
     }
 
@@ -302,12 +302,12 @@ public:
             for (XMLElement *enu  = enums->FirstChildElement("enumeratedValue");
                         enu; enu  = enu->NextSiblingElement()) {
                 const char *ename = getChildElement(enu, "name");
-                const char *value = getChildElement(enu, "value");
-                const char *des   = getChildElement(enu, "description");
+                const char *eval  = getChildElement(enu, "value");
+                const char *edesc = getChildElement(enu, "description");
                 enum_info_t ei;
                 ei.name  = ename;
-                ei.value = value;
-                ei.desc  = des;
+                ei.value = eval;
+                ei.desc  = edesc;
                 ei.field = name;
                 enum_info.push_back(ei);
             }
@@ -341,7 +341,7 @@ public:
             outputAsComment(tmp.c_str());
         }
 
-        // Get the valid register size in bits
+        // Get the valid register size in bytes
         uint32_t regByteSize = 0;
         if (size) {
             regByteSize = parseNumber(size) / 8;
@@ -365,20 +365,72 @@ public:
             ri.dimInc = parseNumber(dimIncrement);
             // Check if we have a specific register naming
             const char *dimIndex = getChildElement(register_, "dimIndex");
-            istringstream iss;
             string index;
-            string indices;
             if (dimIndex) {
+                string indices = dimIndex;
                 ri.userIndex = true;
-                indices = dimIndex;
-                // Replace all commas by blanks
-                for (char & c : indices) if (c==',') c = ' ';
-                iss.str(indices);
-            }
-            for(int i=0; i < ri.dim; ++i) {
-                if (dimIndex) iss >> index;
-                else index = to_string(i);
-                ri.dimIndices.push_back(index);
+                // Check for range
+                size_t dash = indices.find('-');
+                if (dash != string::npos) {
+                    // Range specification
+                    indices[dash] = ' ';
+                    if (dash > 0 && indices[dash-1] >= 'A' && indices[dash-1] <= 'Z') {
+                        // Letter range
+                        string from, to;
+                        istringstream iss(indices);
+                        iss >> from >> to;
+                        if (from.size() != 1 || to.size() != 1) {
+                            cerr << "Wrong dimIndex range: " << dimIndex << endl;
+                            exit(1);
+                        }
+                        for(char c=from[0]; c <= to[0]; ++c) {
+                            index = c;
+                            ri.dimIndices.push_back(index);
+                        }
+                        if (ri.dimIndices.size() != ri.dim) {
+                            cerr << "dim and dimIndex do not match in size: "
+                                 << ri.dim << " and " << dimIndex << endl;
+                            exit(1);
+                        }
+                    } else {
+                        // Numeric range
+                        int from, to;
+                        istringstream iss(indices);
+                        iss >> from >> to;
+                        if (from > to) {
+                            cerr << "Wrong dimIndex range: " << dimIndex << endl;
+                            exit(1);
+                        }
+                        for(int i=from; i <= to; ++i) {
+                            index = to_string(i);
+                            ri.dimIndices.push_back(index);
+                        }
+                        if (ri.dimIndices.size() != ri.dim) {
+                            cerr << "dim and dimIndex do not match in size: "
+                                 << ri.dim << " and " << dimIndex << endl;
+                            exit(1);
+                        }
+                    }
+                } else {
+                    // Comma-separated values:
+                    // Replace all commas by blanks
+                    for (char & c : indices) if (c==',') c = ' ';
+                    istringstream iss(indices);
+                    for(int i=0; i < ri.dim; ++i) {
+                        iss >> index;
+                        if (index.empty()) {
+                            cerr << "dimIndex List too short: " << dimIndex << endl;
+                            exit(1);
+                        }
+                        ri.dimIndices.push_back(index);
+                    }
+                }
+            } else {
+                // No dimIndex given -> fill dimIndices with sequential numbers from 0
+                for(int i=0; i < ri.dim; ++i) {
+                    index = to_string(i);
+                    ri.dimIndices.push_back(index);
+                }
             }
         } else {
             ri.dim = 1; // Default is one element
@@ -567,7 +619,7 @@ public:
     static void usage() {
         cout << "Usage: svd2cpp [-o outfile] <file>.svd"<< endl;
         cout << endl;
-        cout << "-o outfile  : The output filename. Default is <file>.cpp" << endl;
+        cout << "-o outfile  : The output filename. Default is <file>.h" << endl;
         cout << "<file>.svd  : A valid SVD file" << endl;
         exit(1);
     }
@@ -645,7 +697,7 @@ public:
 
         _ofs << string(75, '/') << endl;
         _ofs << "// This file was generated with svd2cpp, source file was "
-                << infile << endl;
+             << infile << endl;
         _ofs << "// DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN !!" << endl;
         _ofs << string(75, '/') << endl;
         _ofs << "//" << endl;
