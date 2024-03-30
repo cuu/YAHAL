@@ -1,4 +1,4 @@
-image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-image:13.1.0
+image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-image:13.2.0
 
 stages:
   - examples
