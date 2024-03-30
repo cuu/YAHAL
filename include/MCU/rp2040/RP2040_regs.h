@@ -1,28 +1,42 @@
 ///////////////////////////////////////////////////////////////////////////
-// This file was generated with svd2cpp, source file was RP2040_regs.svd
+// This file was generated with svd2cpp, source file was rp2040.svd
 // DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN !!
 ///////////////////////////////////////////////////////////////////////////
 //
 #include "bitfield_defs.h"
 
-// addressUnitBits: 8
 // vendor: Raspberry Pi
 // name: RP2040
+// version: 0.1
+// description: 
+// Dual-core Arm Cortex-M0+ processor, flexible clock running up to 133 MHz
+// 264KB on-chip SRAM
+// 2 x UART, 2 x SPI controllers, 2 x I2C controllers, 16 x PWM channels
+// 1 x USB 1.1 controller and PHY, with host and device support
+// 8 x Programmable I/O (PIO) state machines for custom peripheral support
+// Supported input power 1.8-5.5V DC
+// Operating temperature -20C to +85C
+// Drag-and-drop programming using mass storage over USB
+// Low-power sleep and dormant modes
+// Accurate on-chip clock
+// Temperature sensor
+// Accelerated integer and floating-point libraries on-chip
+// licenseText: 
 // Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
 // 
 // SPDX-License-Identifier: BSD-3-Clause
-// version: 0.1
-// width: 32
 // cpu
-//   name: CM0PLUS
-//   revision: r0p1
-//   endian: little
-//   mpuPresent: true
-//   fpuPresent: false
-//   nvicPrioBits: 2
-//   vtorPresent: 1
-//   vendorSystickConfig: false
-//   deviceNumInterrupts: 26
+//     name: CM0PLUS
+//     revision: r0p1
+//     endian: little
+//     mpuPresent: true
+//     fpuPresent: false
+//     vtorPresent: 1
+//     nvicPrioBits: 2
+//     vendorSystickConfig: false
+//     deviceNumInterrupts: 26
+// addressUnitBits: 8
+// width: 32
 
 // QSPI flash execute-in-place block
 namespace _XIP_CTRL_  {
@@ -141,31 +155,31 @@ namespace _XIP_CTRL_  {
 } // _XIP_CTRL_
 
 // DW_apb_ssi has the following features:
-// * APB interface – Allows for easy integration into a DesignWare Synthesizable Components for AMBA 2 implementation.
+// * APB interface - Allows for easy integration into a DesignWare Synthesizable Components for AMBA 2 implementation.
 // * APB3 and APB4 protocol support.
-// * Scalable APB data bus width – Supports APB data bus widths of 8, 16, and 32 bits.
-// * Serial-master or serial-slave operation – Enables serial communication with serial-master or serial-slave peripheral devices.
+// * Scalable APB data bus width - Supports APB data bus widths of 8, 16, and 32 bits.
+// * Serial-master or serial-slave operation - Enables serial communication with serial-master or serial-slave peripheral devices.
 // * Programmable Dual/Quad/Octal SPI support in Master Mode.
 // * Dual Data Rate (DDR) and Read Data Strobe (RDS) Support - Enables the DW_apb_ssi master to perform operations with the device in DDR and RDS modes when working in Dual/Quad/Octal mode of operation.
 // * Data Mask Support - Enables the DW_apb_ssi to selectively update the bytes in the device. This feature is applicable only in enhanced SPI modes.
 // * eXecute-In-Place (XIP) support - Enables the DW_apb_ssi master to behave as a memory mapped I/O and fetches the data from the device based on the APB read request. This feature is applicable only in enhanced SPI modes.
-// * DMA Controller Interface – Enables the DW_apb_ssi to interface to a DMA controller over the bus using a handshaking interface for transfer requests.
-// * Independent masking of interrupts – Master collision, transmit FIFO overflow, transmit FIFO empty, receive FIFO full, receive FIFO underflow, and receive FIFO overflow interrupts can all be masked independently.
-// * Multi-master contention detection – Informs the processor of multiple serial-master accesses on the serial bus.
-// * Bypass of meta-stability flip-flops for synchronous clocks – When the APB clock (pclk) and the DW_apb_ssi serial clock (ssi_clk) are synchronous, meta-stable flip-flops are not used when transferring control signals across these clock domains.
+// * DMA Controller Interface - Enables the DW_apb_ssi to interface to a DMA controller over the bus using a handshaking interface for transfer requests.
+// * Independent masking of interrupts - Master collision, transmit FIFO overflow, transmit FIFO empty, receive FIFO full, receive FIFO underflow, and receive FIFO overflow interrupts can all be masked independently.
+// * Multi-master contention detection - Informs the processor of multiple serial-master accesses on the serial bus.
+// * Bypass of meta-stability flip-flops for synchronous clocks - When the APB clock (pclk) and the DW_apb_ssi serial clock (ssi_clk) are synchronous, meta-stable flip-flops are not used when transferring control signals across these clock domains.
 // * Programmable delay on the sample time of the received serial data bit (rxd); enables programmable control of routing delays resulting in higher serial data-bit rates.
 // * Programmable features:
-// - Serial interface operation – Choice of Motorola SPI, Texas Instruments Synchronous Serial Protocol or National Semiconductor Microwire.
-// - Clock bit-rate – Dynamic control of the serial bit rate of the data transfer; used in only serial-master mode of operation.
-// - Data Item size (4 to 32 bits) – Item size of each data transfer under the control of the programmer.
+// - Serial interface operation - Choice of Motorola SPI, Texas Instruments Synchronous Serial Protocol or National Semiconductor Microwire.
+// - Clock bit-rate - Dynamic control of the serial bit rate of the data transfer; used in only serial-master mode of operation.
+// - Data Item size (4 to 32 bits) - Item size of each data transfer under the control of the programmer.
 // * Configured features:
-// - FIFO depth – 16 words deep. The FIFO width is fixed at 32 bits.
+// - FIFO depth - 16 words deep. The FIFO width is fixed at 32 bits.
 // - 1 slave select output.
-// - Hardware slave-select – Dedicated hardware slave-select line.
+// - Hardware slave-select - Dedicated hardware slave-select line.
 // - Combined interrupt line - one combined interrupt line from the DW_apb_ssi to the interrupt controller.
-// - Interrupt polarity – active high interrupt lines.
-// - Serial clock polarity – low serial-clock polarity directly after reset.
-// - Serial clock phase – capture on first edge of serial-clock directly after reset.
+// - Interrupt polarity - active high interrupt lines.
+// - Serial clock polarity - low serial-clock polarity directly after reset.
+// - Serial clock phase - capture on first edge of serial-clock directly after reset.
 namespace _XIP_SSI_  {
 
     // Control register 0
@@ -7452,10 +7466,10 @@ namespace _DMA_  {
         // Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel halts when it encounters any bus error, and always raises its channel IRQ flag.
         ADD_BITFIELD_RO(AHB_ERROR, 31, 1)
         // If 1, the channel received a read bus error. Write one to clear.
-        // READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)
+        // READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)
         ADD_BITFIELD_RW(READ_ERROR, 30, 1)
         // If 1, the channel received a write bus error. Write one to clear.
-        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)
+        // WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)
         ADD_BITFIELD_RW(WRITE_ERROR, 29, 1)
         // This flag goes high when the channel starts a new transfer sequence, and low when the last transfer of that sequence completes. Clearing EN while BUSY is high pauses the channel, and BUSY will stay high while paused.
         // 
@@ -7583,7 +7597,7 @@ namespace _DMA_  {
         // This can be used vector different channel interrupts to different ISRs: this might be done to allow NVIC IRQ preemption for more time-critical channels, or to spread IRQ load across different cores.
         // 
         // It is also valid to ignore this behaviour and just use INTE0/INTS0/IRQ 0.
-        ADD_BITFIELD_RO(INTR, 0, 16)
+        ADD_BITFIELD_RW(INTR, 0, 16)
     END_TYPE()
 
     // Interrupt Enables for IRQ 0
@@ -8843,6 +8857,8 @@ namespace _PIO0_  {
         // Write 1 to instantly clear internal SM state which may be otherwise difficult to access and will affect future execution.
         // 
         // Specifically, the following are cleared: input and output shift counters; the contents of the input shift register; the delay counter; the waiting-on-IRQ state; any stalled instruction written to SMx_INSTR or run by OUT/MOV EXEC; any pin write left asserted due to OUT_STICKY.
+        // 
+        // The program counter, the contents of the output shift register and the X/Y scratch registers are not affected.
         ADD_BITFIELD_RW(SM_RESTART, 4, 4)
         // Enable/disable each of the four state machines by writing 1/0 to each of these four bits. When disabled, a state machine will cease executing instructions, except those written directly to SMx_INSTR by the system. Multiple bits can be set/cleared at once to run/halt multiple state machines simultaneously.
         ADD_BITFIELD_RW(SM_ENABLE, 0, 4)
@@ -8887,11 +8903,11 @@ namespace _PIO0_  {
         ADD_BITFIELD_RO(TX0, 0, 4)
     END_TYPE()
 
-    // Direct write access to the TX FIFO for a state machine. Each write pushes one word to the FIFO. Attempting to write to a full FIFO has no effect on the FIFO state or contents, and sets the sticky FDEBUG_TXOVER error flag for this FIFO.
+    // Direct write access to the TX FIFO for this state machine. Each write pushes one word to the FIFO. Attempting to write to a full FIFO has no effect on the FIFO state or contents, and sets the sticky FDEBUG_TXOVER error flag for this FIFO.
     // Reset value: 0x00000000
     typedef uint32_t TXF_t;
 
-    // Direct read access to the RX FIFO for a state machine. Each read pops one word from the FIFO. Attempting to read from an empty FIFO has no effect on the FIFO state, and sets the sticky FDEBUG_RXUNDER error flag for this FIFO. The data returned to the system on a read from an empty FIFO is undefined.
+    // Direct read access to the RX FIFO for this state machine. Each read pops one word from the FIFO. Attempting to read from an empty FIFO has no effect on the FIFO state, and sets the sticky FDEBUG_RXUNDER error flag for this FIFO. The data returned to the system on a read from an empty FIFO is undefined.
     // Reset value: 0x00000000
     typedef uint32_t RXF_t;
 
