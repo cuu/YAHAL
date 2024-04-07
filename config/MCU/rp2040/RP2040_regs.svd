@@ -13216,9 +13216,9 @@
           </fields>
         </register>
         <register>
-          <name>GPIO%s</name>
           <dim>30</dim>
           <dimIncrement>4</dimIncrement>
+          <name>GPIO%s</name>
           <description>Pad control register</description>
           <addressOffset>0x0004</addressOffset>
           <resetValue>0x00000056</resetValue>
