@@ -19,10 +19,14 @@ adc_rp2040::adc_rp2040() {
     // Prepare GPIO18
     gpio_rp2040::inst.gpioMode(18, GPIO::OUTPUT | GPIO::INIT_HIGH);
     // Prepare ADC inputs
-    gpio_rp2040::inst.setSEL(26, _IO_BANK0_::GPIO_CTRL_FUNCSEL__null);
-    gpio_rp2040::inst.setSEL(27, _IO_BANK0_::GPIO_CTRL_FUNCSEL__null);
-    gpio_rp2040::inst.setSEL(28, _IO_BANK0_::GPIO_CTRL_FUNCSEL__null);
-    gpio_rp2040::inst.setSEL(29, _IO_BANK0_::GPIO_CTRL_FUNCSEL__null);
+    for (int i=26; i <= 29; ++i) {
+        // Disable pull-resistors and any output
+        _PADS_BANK0_::PADS_BANK0.GPIO[i].PUE = 0;
+        _PADS_BANK0_::PADS_BANK0.GPIO[i].PDE = 0;
+        _PADS_BANK0_::PADS_BANK0.GPIO[i].OD  = 1;
+        // Set FUNCSEL to none -> no function
+        gpio_rp2040::inst.setSEL(i, _IO_BANK0_::GPIO_CTRL_FUNCSEL__null);
+    }
 }
 
 void adc_rp2040::adcMode(uint8_t channel, uint16_t mode) {
@@ -43,7 +47,7 @@ uint16_t adc_rp2040::adcReadRaw(uint8_t channel) {
     _ADC_::ADC.CS.START_ONCE = 1;
     while(!_ADC_::ADC.CS.READY) ;
     uint16_t result = _ADC_::ADC.RESULT;
-//    gpio_rp2040::inst.gpioWrite(18, HIGH);
+    gpio_rp2040::inst.gpioWrite(18, HIGH);
     // Our ADC has no real 8 or 10 bit modes, so we simulate
     // the behaviour by shifting the result...
     switch(_modes[channel]) {
