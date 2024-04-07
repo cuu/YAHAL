@@ -29,14 +29,18 @@ public:
     // This class is a singleton
     static svd2cpp inst;
 
+    // Convert the SVD-infile to a C++ structure
+    // and write it to outfile. The root element
+    // of the XML DOM is the third parameter.
     void processSvdFile(const string & infile,
                         const string & outfile,
-                        XMLElement *root);
-private:
+                        XMLElement *root,
+                        bool generateIrqNumbers);
+ private:
     // Singleton, so no public CTOR
     svd2cpp() = default;
 
-    //
+    // Process a peripheral with all its registers and enums
     void ProcessPeripheral(XMLElement *peripheral);
 
     void ProcessRegister(XMLElement *register_);
@@ -70,9 +74,9 @@ private:
     // the beginning and at the end.
     static string Trim(string str);
 
-    static string pad_str(const string & val, int size);
+    static void pad_str(string & val, int size);
 
-    static string named_register(const string & val, const string & index);
+    static string named_register(string val, const string & index);
 
     /////////////
     // Attributes

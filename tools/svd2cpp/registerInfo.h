@@ -1,3 +1,19 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// This class/data structure stores all information
+// for all registers of a peripheral
+//
 #include <string>
 #include <vector>
 using namespace std;
@@ -32,7 +48,8 @@ public:
 
     // Find the next register to be processed.
     // This method looks for the smallest offset
-    // in all unprocessed (dim > 0) registers.
+    // from the register base address in all
+    // unprocessed (dim > 0) registers.
     register_info_t * next_register() {
         uint32_t min = 0xffffffff;
         register_info_t * res = nullptr;

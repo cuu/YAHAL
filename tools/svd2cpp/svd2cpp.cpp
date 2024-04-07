@@ -24,6 +24,7 @@ using namespace tinyxml2;
 
 svd2cpp svd2cpp::inst;
 
+// Stream output manipulator for indentation
 std::ostream& indent(std::ostream& os) {
     os << string(svd2cpp::inst._currentIndent, ' ');
     return os;
@@ -31,7 +32,8 @@ std::ostream& indent(std::ostream& os) {
 
 void svd2cpp::processSvdFile(const string & infile,
                              const string & outfile,
-                             XMLElement *elem) {
+                             XMLElement *elem,
+                             bool generateIrqNumbers) {
     // Get the MCU name
     if (!childExists(elem, "name")) {
         cerr << "Can not find MCU name in file " << infile
@@ -42,7 +44,7 @@ void svd2cpp::processSvdFile(const string & infile,
 
     // Open out file
     cout << "Writing file " << outfile << endl;
-    _ofs.open(outfile.c_str(), ios::binary | ios::out);
+    _ofs.open(outfile.c_str(), ios::out);
 
     _ofs << string(75, '/') << endl;
     _ofs << "// This file was generated with svd2cpp, source file was "
@@ -67,28 +69,28 @@ void svd2cpp::processSvdFile(const string & infile,
                 ProcessPeripheral(peripheral);
             }
         }
-//        else if (elemName == "licenseText" || elemName == "description") {
-//            outputAsComment(elem->GetText());
-//        }
         else {
+            // All other first-level items are written as a comment
             ProcessComment(elem);
         }
         elem = elem->NextSiblingElement();
     }
 
-    // Sort the interrupts by number and print them
-    std::sort(irq_info.begin(), irq_info.end(),
-              [](irq_info_t &a, irq_info_t &b) {
-                  return a.value < b.value;
-              });
-    _ofs << indent << "// Interrupt numbers" << endl;
-    for (auto & irq : irq_info) {
-        string tmp = "#define " + string(irq.name) + " ";
-        while (tmp.size() < 30) tmp += ' ';
-        _ofs << indent << tmp << dec << irq.value << endl;
+    // Generate IRQ numbers if required
+    if(generateIrqNumbers) {
+        // Sort the interrupts by number and print them
+        std::sort(irq_info.begin(), irq_info.end(),
+                  [](irq_info_t &a, irq_info_t &b) {
+                      return a.value < b.value;
+                  });
+        _ofs << indent << "// Interrupt numbers" << endl;
+        for (auto & irq : irq_info) {
+            string tmp = "#define " + string(irq.name) + " ";
+            while (tmp.size() < 30) tmp += ' ';
+            _ofs << indent << tmp << dec << irq.value << endl;
+        }
     }
 }
-
 
 void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
     const char *name     = getChildElement(peripheral, "name");
@@ -96,6 +98,7 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
     const char *baseAddr = getChildElement(peripheral, "baseAddress");
     const char *desc     = getChildElement(peripheral, "description");
 
+    // Some sanity checks
     if (name == nullptr) {
         cerr << "Can not find name for peripheral. Exit." << endl;
         exit(1);
@@ -104,6 +107,8 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
         cerr << "Can not find base address for peripheral. Exit." << endl;
         exit(1);
     }
+
+    // Get base address and default register size in bytes
     uint32_t baseAddr_int = parseNumber(baseAddr);
     if (size) {
         _curRegSizeBytes = parseNumber(size) / 8;
@@ -116,7 +121,7 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
         derivedFrom += derived->Value();
     }
 
-    // Check if we have some interrupt definitons
+    // Check if we have some interrupt information
     for (XMLElement *irq = peripheral->FirstChildElement("interrupt"); irq;
          irq = irq->NextSiblingElement("interrupt")) {
         irq_info_t i;
@@ -128,28 +133,41 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
     // Print out description if available
     outputAsComment(desc);
 
+    // Start a new namespace for every peripheral
     _ofs << indent << "namespace _" << name << "_  {" << endl << endl;
     incIndent();
 
+    // Loop over all registers. This will output all register
+    // field definitions and optionally related enum-values.
     XMLElement *registers = peripheral->FirstChildElement("registers");
     if (registers) {
-        for (XMLElement *register_ = registers->FirstChildElement("register");
-             register_; register_ = register_->NextSiblingElement()) {
-            ProcessRegister(register_);
+        for (XMLElement *reg = registers->FirstChildElement("register");
+             reg; reg = reg->NextSiblingElement()) {
+            ProcessRegister(reg);
         }
     }
 
+    // Generate and output the peripheral struct
     string periType;
-    if (derivedFrom.empty()) {
-        _ofs << indent << "struct " << name << "_t {" << endl;
+    if (!derivedFrom.empty()) {
+        // Set the derived peripheral type
+        periType = "_" + derivedFrom + "_::" + derivedFrom + "_t";
+    } else {
+        // Set the standard peripheral type
+        periType = named_register(name,"") + "_t";
+
+        // Start the register struct
+        _ofs << indent << "struct " << periType << " {" << endl;
         incIndent();
+
+        // Loop over all registers
         uint32_t curr_off = 0;
         int res_index     = 0;
-        string tmp;
-
+        //string tmp;
         while(_registerInfo.registers_left()) {
-            // Get next register
+            // Get next register with the smallest offset
             register_info_t * reg = _registerInfo.next_register();
+
             // Check if we have to fill a gap with 'reserved'
             if (curr_off != reg->offset) {
                 uint32_t diff  = reg->offset - curr_off;
@@ -160,8 +178,8 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
                     typelen = reg->size;
                 }
                 string type = "uint" + to_string(typelen * 8) + "_t";
-                tmp = pad_str(type, 30);
-                _ofs << indent << tmp << "reserved"
+                pad_str(type, 30);
+                _ofs << indent << type << "reserved"
                      << to_string(res_index++);
                 if (diff > 1) {
                     _ofs << "[" << diff << "]";
@@ -169,46 +187,67 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
                 _ofs << ";" << endl;
                 curr_off = reg->offset;
             }
-            // Check if we have an array
-            int dim_size = 0;
-            do {
-                dim_size++;
-                curr_off += reg->size;
-                reg->dim--;
-                reg->offset += reg->dimInc;
-                if (reg->dim == 0) break;
-                if (reg->userIndex) break;
-            } while(curr_off == reg->offset);
-            // Output the register
-            tmp = pad_str( named_register(reg->type, ""), 30);
-            _ofs << indent << tmp;
-            if (dim_size > 1) {
-                _ofs << named_register(reg->name, "");
-                _ofs << "[" << dim_size << "]";
-            } else {
-                string index;
-                if (!reg->dimIndices.empty()) {
-                    index = reg->dimIndices[0];
-                    reg->dimIndices.erase(reg->dimIndices.begin());
+
+            // Output the register type
+            string reg_type = named_register(reg->type, "");
+            pad_str(reg_type , 30);
+            _ofs << indent << reg_type;
+
+            // Output the register name
+            if (reg->name.find("[%s]") != string::npos) {
+                // The register is an array in the SVD file
+                if (reg->userIndex) {
+                    cerr << "Warning: dimIndex given for register array " << reg->name << endl;
                 }
-                _ofs << named_register(reg->name, index);
+                _ofs << named_register(reg->name, to_string(reg->dim));
+                // Mark register as processed
+                curr_off += reg->size * reg->dim;
+                reg->dim = 0;
+            } else {
+                // The register is no array. Try to sum up as many
+                // as possible consecutive array elements
+                int dim_size = 0;
+                do {
+                    dim_size++;
+                    curr_off += reg->size;
+                    reg->dim--;
+                    reg->offset += reg->dimInc;
+                    if (reg->dim == 0) break;
+                    if (reg->userIndex) break;
+                } while(curr_off == reg->offset);
+
+                // Check if we found an array
+                if (dim_size > 1) {
+                    // We did find an array!
+                    _ofs << named_register(reg->name, "");
+                    _ofs << "[" << dim_size << "]";
+                } else {
+                    string index;
+                    if (!reg->dimIndices.empty()) {
+                        index = reg->dimIndices[0];
+                        reg->dimIndices.erase(reg->dimIndices.begin());
+                    }
+                    _ofs << named_register(reg->name, index);
+                }
             }
             _ofs << ";" << endl;
         }
-
+        // Clear the registerInfo for the next peripheral
         _registerInfo.clear();
 
+        // Finalize the peripheral struct
         decIndent();
         _ofs << indent << "};" << endl;
         _ofs << endl;
-        periType = string(name) + "_t";
-    } else {
-        periType = "_" + derivedFrom + "_::" + derivedFrom + "_t";
     }
 
+    // Generate the final register struct instance
     _ofs << indent << "static "  << periType << " & "
          << name << "     = (*(" << periType << " *)0x" << hex
          << baseAddr_int << ");" << endl;
+
+    // Generate additional register struct instances,
+    // depending on the MCU type
     if (_mcu == "RP2040" && ((baseAddr_int >> 28) <= 5)) {
         _ofs << indent << "static " << periType << " & "
              << name << "_XOR = (*(" << periType << " *)0x" << hex
@@ -220,8 +259,9 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
              << name << "_CLR = (*(" << periType << " *)0x" << hex
              << baseAddr_int + 0x3000 << ");" << endl;
     }
-    _ofs << endl;
 
+    // Finalize the peripheral namespace
+    _ofs << endl;
     decIndent();
     _ofs << indent << "} // _" << name << "_" << endl;
     _ofs << endl;
@@ -427,12 +467,14 @@ void svd2cpp::ProcessField(XMLElement *field) {
 
     // Print out description if available
     outputAsComment(desc);
+
+    // Output the field
     _ofs << indent << dec << "ADD_BITFIELD_"
          << accessMode;
     _ofs << "(" << name << ", " << bitOffset << ", " << bitWidth << ")";
     _ofs << endl;
 
-    // Check if we have some enum values
+    // Add enum values if available
     if (childExists(field, "enumeratedValues")) {
         XMLElement *enums = field->FirstChildElement("enumeratedValues");
         for (XMLElement *enu  = enums->FirstChildElement("enumeratedValue");
@@ -449,7 +491,6 @@ void svd2cpp::ProcessField(XMLElement *field) {
         }
     }
 }
-
 
 void svd2cpp::ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &bitWidth) {
     // Try to find a bitRange Element
@@ -547,8 +588,6 @@ void svd2cpp::outputAsComment(const char *desc, bool continueLine) {
     }
 }
 
-
-
 uint32_t svd2cpp::parseNumber(const char *val) {
     if (val == nullptr) {
         cerr << "Can not parse nullptr. Exit" << endl;
@@ -565,7 +604,6 @@ uint32_t svd2cpp::parseNumber(const char *val) {
     }
     return result;
 }
-
 
 const char* svd2cpp::getChildElement(XMLElement *elem, const char *name) {
     XMLElement *child = elem->FirstChildElement(name);
@@ -594,18 +632,20 @@ string svd2cpp::Trim(string str) {
     return str;
 }
 
-string svd2cpp::pad_str(const string & val, int size) {
-    string res = val;
-    while (res.size() < size) res += ' ';
-    return res;
+void svd2cpp::pad_str(string & val, int size) {
+    while (val.size() < size) val += ' ';
 }
 
-string svd2cpp::named_register(const string & val, const string & index) {
-    string res = val;
-    size_t pos = res.find("%s");
+string svd2cpp::named_register(string val, const string & index) {
+    size_t pos = val.find("%s");
     if (pos != string::npos) {
-        res.replace(pos, 2, index);
+        val.replace(pos, 2, index);
     }
-    return res;
+    // Did we end up with empty index brackets?
+    // -> remove them!
+    pos = val.find("[]");
+    if (pos != string::npos) {
+        val.replace(pos, 2, "");
+    }
+    return val;
 }
-

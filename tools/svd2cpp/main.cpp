@@ -12,7 +12,8 @@
 // ---------------------------------------------
 //
 // Small program to convert a SVD file into a C++
-// structure. Not all features of SVD are yet supported!
+// structure. Not all (but many) features of the
+// SVD specification are supported!
 //
 #include <string>
 #include <iostream>
@@ -25,21 +26,27 @@ using namespace std;
 using namespace tinyxml2;
 
 void usage() {
-    cout << "Usage: svd2cpp [-o outfile] <svd-file>"<< endl;
+    cout << "Usage: svd2cpp [-o outfile] <name>.svd"<< endl;
     cout << endl;
-    cout << "-o outfile  : The output filename. Default is <file>.h" << endl;
-    cout << "<svd-file>  : A valid SVD file" << endl;
+    cout << "-i          : Generate IRQ numbers. Default is off." << endl;
+    cout << "-o outfile  : The output filename.  Default is <name>.h" << endl;
+    cout << "<name>.svd  : A valid SVD file" << endl;
     exit(1);
 }
 
 int main(int argc, char *argv[]) {
     string infile;
     string outfile;
+    bool generateIrqNumbers = false;
     int opt;
-    while ((opt = getopt(argc, argv, ":o:")) != -1) {
+    while ((opt = getopt(argc, argv, ":o:i")) != -1) {
         switch (opt) {
             case 'o': {
                 outfile = optarg;
+                break;
+            }
+            case 'i': {
+                generateIrqNumbers = true;
                 break;
             }
             case ':': {
@@ -87,14 +94,15 @@ int main(int argc, char *argv[]) {
     }
 
     // Find the root element
-    XMLElement *elem = svd.RootElement();
-    if (elem == nullptr) {
+    XMLElement *root = svd.RootElement();
+    if (root == nullptr) {
         cerr << "Can not find root element in file " << infile
              << endl;
         exit(1);
     }
 
     // Start the translation process
-    svd2cpp::inst.processSvdFile(infile, outfile, elem);
+    svd2cpp::inst.processSvdFile(infile, outfile, root,
+                                 generateIrqNumbers);
     return 0;
 }
