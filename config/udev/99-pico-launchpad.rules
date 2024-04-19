@@ -1,2 +1,4 @@
 # 2e8a:0004 Raspberry Pi picoprobe
 SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="000c", MODE:="666"
+
+# Run `sudo udevadm control --reload-rules && sudo udevadm trigger` to refresh the udev rules!
