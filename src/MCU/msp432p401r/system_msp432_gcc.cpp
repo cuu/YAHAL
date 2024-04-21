@@ -281,6 +281,10 @@ void SystemInit(void)
     SystemCoreClockUpdate();
 }
 
+// Start the SysTick Timer
+void __attribute__((constructor)) StartSysTick (void) {
+    SysTick_Config(SystemCoreClock / 1000);
+}
 
 //
 // Calculate the DCO clock using the DCO tune value

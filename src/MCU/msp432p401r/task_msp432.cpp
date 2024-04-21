@@ -65,7 +65,7 @@ struct Stack_Frame {
     uint32_t    r3;     // .
     uint32_t    r12;    // register R12
     uint32_t    lr;     // register R14 (=LR)
-    void        (*pc)(void);  //    R15 (=PC)
+    void        (*pc)();// register R15 (=PC)
     uint32_t    psr;    // PSR
 };
 
@@ -75,7 +75,7 @@ void task::_setup_stack(bool priv) {
     _stack_ptr = _stack_base +
                 (_stack_size - sizeof(Stack_Frame));
 
-    Stack_Frame *frame = (Stack_Frame *)_stack_ptr;
+    auto *frame = (Stack_Frame *)_stack_ptr;
     frame->psr  = 0x01000000;   // Set the Thumb-Bit
     frame->pc   = (void (*)(void))(&task::_run);
     frame->r0   = this;         // Set the 'this'-pointer
@@ -86,17 +86,8 @@ void task::_context_switch() {
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
-void task::_nonOS_sleep(uint32_t ms) {
-    // Configure SysTick as 1 ms timer
-    SysTick->LOAD = SystemCoreClock / 1000 - 1;
-    SysTick->VAL  = 0;
-    SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
-                    SysTick_CTRL_ENABLE_Msk;
-    for (uint32_t i=0; i < ms; ++i) {
-        while ( !(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) ) ;
-    }
-    // Disable SysTick
-    SysTick->CTRL = 0;
+uint64_t task::millis() {
+    return _up_ticks;
 }
 
 void task::start_scheduler() {
@@ -203,7 +194,7 @@ void SVC_Handler(void) {
 
 void SVC_Handler_C(uint32_t * args) {
     // Get the SVC argument
-    uint16_t * pc = (uint16_t *)args[6];
+    auto * pc = (uint16_t *)args[6];
     uint16_t   svc_arg = pc[-1] & 0xff;
 
     // uint32_t p0 = args[0];
@@ -216,6 +207,9 @@ void SVC_Handler_C(uint32_t * args) {
         case SYS_START_SCHEDULER:
         /////////////////////////
         {
+            // Disable the sysTick Timer
+            SysTick->CTRL = 0;
+
             // Start the Idle Task with the lowest priority (1).
             (new task_idle)->start(1);
 

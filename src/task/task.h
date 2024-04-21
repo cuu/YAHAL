@@ -131,11 +131,6 @@ public:
     // method to report the number of used bytes in the stack
     uint16_t getUsedStack();
 
-    // method to report current uptime in milliseconds
-    static inline uint64_t millis() {
-        return (_up_ticks * 1000) / TICK_FREQUENCY;
-    }
-
     // Special getter to get the ticks of this task since the last call to this method
     uint32_t getDeltaTicks();
 
@@ -145,7 +140,7 @@ private:
     state_t         _state;         // state of this task
     uint32_t        _ticks;         // consumed tick_count
     uint32_t        _last_ticks;    // _ticks at last call to getDeltaTicks()
-    uint64_t        _sleep_until;   // tick count until sleep ends
+    uint64_t        _sleep_until;   // system time in millis when sleep ends
     lock_base_interface * _lock;    // pointer to lock if thread is blocked
 
     // stack-pointer related attributes
@@ -175,9 +170,8 @@ private:
     // CPU-specific interface, which needs to be //
     // implemented by all different CPU cores.   //
     ///////////////////////////////////////////////
-    void        _setup_stack (bool priv);
-    static void _context_switch();
-    static void _nonOS_sleep(uint32_t ms);
+    void            _setup_stack (bool priv);
+    static void     _context_switch();
 
 public:
     static void start_scheduler();
@@ -185,6 +179,7 @@ public:
     static void cpu_sleep();
     static void enterCritical();
     static void leaveCritical();
+    static uint64_t millis();
 
     bool isPrivileged() const;
     bool isUsingFloat() const;
@@ -194,7 +189,7 @@ public:
     // task implementation (IRQ handlers). Therefore //
     // these methods need to be public and static.   //
     ///////////////////////////////////////////////////
-    static void      _scheduler(void);
+    static void      _scheduler();
     static void      _tick_handler ();
     static void      _switchToHead()          { _run_ptr = _list.getHead();   }
     static void      _switchToNext()          { _run_ptr = _run_next;         }
@@ -203,4 +198,4 @@ public:
     static void      _setStackPtr(uint8_t *s) { _run_ptr->_stack_ptr = s;     }
 };
 
-#endif // _TASK_H
+#endif // _TASK_H_

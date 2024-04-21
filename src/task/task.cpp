@@ -104,14 +104,13 @@ void task::sleep(uint32_t ms) {
     if (c) {
         // Multitasking running: Sleep using
         // TCB entry '_sleep_until'
-        c->_sleep_until  = _up_ticks;
-        c->_sleep_until += (ms * TICK_FREQUENCY) / 1000;
+        c->_sleep_until  = millis() + ms; //_up_ticks;
         c->_state = state_t::SLEEPING;
         yield();
     } else {
-        // Multitasking not running: Call the
-        // nonOS-version of sleep
-        _nonOS_sleep(ms);
+        // Active waiting based on millis()
+        uint64_t until = millis() + ms;
+        while(millis() < until) ;
     }
 }
 
@@ -167,7 +166,7 @@ void task::_scheduler(void) {
 
         // Handle sleeping Tasks
         if (state == state_t::SLEEPING) {
-            if (_up_ticks >= cur_ptr->_sleep_until) {
+            if (millis() >= cur_ptr->_sleep_until) {
                 state = state_t::READY;
             }
         }
@@ -198,11 +197,15 @@ void task::_scheduler(void) {
 }
 
 void task::_tick_handler() {
-    // Increment the global tick counter ...
+    // Increment the global tick counter (might be used for the millis()
+    // method in case the MCU does not have an independent timer)
     ++(_up_ticks);
-    // ... and the ticks of the running task.
-    ++(_run_ptr->_ticks);
-    // Find new task to execute
-    _scheduler();
+    // Find new task to execute, in case
+    // multitasking is running
+    if (_run_ptr) {
+        // Increment ticks of the running task.
+        ++(_run_ptr->_ticks);
+        _scheduler();
+    }
 }
 
