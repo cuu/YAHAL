@@ -29,7 +29,7 @@
 //
 // When the task code ends, the task is automatically
 // removed from the list of active tasks and deleted.
-// The class 'task' also provides functions like sleep()
+// The class 'task' also provides functions like sleep_ms()
 // to delay the execution (parameter is the delay time
 // in milliseconds). See file task.h for more details.
 // This program also redirects stdout to the backchannel
@@ -44,7 +44,7 @@
 #include "task_monitor.h"
 
 // WS2812 GPIO mumber
-#define WS2812_PIN  29	// GPIO Pin controlling the WS2812 LEDs
+#define WS2812_PIN  29  // GPIO Pin controlling the WS2812 LEDs
 #define WS2812_COUNT 8  // Number of WS2812 LEDs
 
 // This class defines a new task class. The task
@@ -66,7 +66,7 @@ public:
     void run() override {
         // Endless loop toggling the LED
         while(1) {
-            sleep( _delay );
+            sleep_ms( _delay );
             _led.toggle();
         }
     }
@@ -107,7 +107,7 @@ int main(void)
         // Endless loop
         while(true) {
             leds[1].toggle();
-            task::sleep(500);
+            task::sleep_ms(500);
         }
     }, "t2 blinker");
 

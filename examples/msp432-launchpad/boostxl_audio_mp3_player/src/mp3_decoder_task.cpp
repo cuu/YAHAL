@@ -134,7 +134,7 @@ enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad
 
     // Wait until the PCM result can be written
     while (_this->_audio_output.fifo_available_put() < pcm->length) {
-        _this->sleep(5);
+        _this->sleep_ms(5);
     }
     // Copy PCM samples to PCM fifo. We only have a MONO
     // audio channel, so we calculate the mean value of

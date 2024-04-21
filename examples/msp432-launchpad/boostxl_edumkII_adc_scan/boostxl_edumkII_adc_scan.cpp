@@ -71,6 +71,6 @@ int main()
         printf("acc Z: %d\n", acc_Z.adcReadScan());
 
         // Small delay
-        task::sleep(100);
+        task::sleep_ms(100);
     }
 }

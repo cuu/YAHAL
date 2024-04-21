@@ -15,6 +15,8 @@
 #include "usb_structs.h"
 #include "usb_log.h"
 #include <cassert>
+#include <cstdlib>
+#include <cstring>
 
 using namespace USB;
 using enum USB::bInterfaceClass_t;
@@ -77,7 +79,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
 
     // Endpoint handlers
     ////////////////////
-    _ep_data_out->data_handler = [&](uint8_t *buf, uint16_t len) {
+    _ep_data_out->data_handler = [&](const uint8_t *buf, uint16_t len) {
         // Check if we need to stop incoming data.
         if (_received_data.available_put() < (2 * _ep_data_out->descriptor.wMaxPacketSize)) {
             _ep_data_out->send_NAK(true);
@@ -125,13 +127,15 @@ usb_cdc_acm_device::usb_cdc_acm_device(
                     }
                 };
                 // Receive line coding info
-                controller._ep0_out->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
+                controller._ep0_out->start_transfer((uint8_t *)&_line_coding,
+                                                    sizeof(_line_coding));
                 break;
             }
             case bRequest_t::REQ_CDC_GET_LINE_CODING: {
                 TUPP_LOG(LOG_INFO, "Handling REQ_CDC_GET_LINE_CODING");
                 assert(pkt->wLength == sizeof(_line_coding) );
-                controller._ep0_in->start_transfer((uint8_t *)&_line_coding, sizeof(_line_coding));
+                controller._ep0_in->start_transfer((uint8_t *)&_line_coding,
+                                                   sizeof(_line_coding));
                 break;
             }
             case bRequest_t::REQ_CDC_SET_CONTROL_LINE_STATE: {
@@ -212,4 +216,17 @@ bool usb_cdc_acm_device::notify_serial_state(const USB::CDC::bmUartState_t & sta
     // Send notification to host
     _ep_ctrl_in->start_transfer((uint8_t *)&serial_state, sizeof(serial_state));
     return true;
+}
+
+char * usb_cdc_acm_device::line_coding_2_str() {
+    const char *parity[5] = {"N", "O", "E", "M", "S"};
+    const char *stop[3] = {"1", "1.5", "2"};
+    char * cp = _line_coding_str;
+    itoa(line_coding.dwDTERate, cp, 10);
+    strcat(_line_coding_str, " baud ");
+    cp += strlen(_line_coding_str);
+    itoa(line_coding.bDataBits, cp, 10);
+    strcat(_line_coding_str, parity[(int) line_coding.bParityType]);
+    strcat(_line_coding_str, stop  [(int) line_coding.bCharFormat]);
+    return _line_coding_str;
 }

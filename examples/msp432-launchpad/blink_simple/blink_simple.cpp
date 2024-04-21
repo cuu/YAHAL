@@ -38,6 +38,6 @@ int main(void)
         // of sleep. This delay uses the SysTick timer,
         // and is independent from the CPU clock
         // frequency and compiler optimizations!
-        task::sleep(500);
+        task::sleep_ms(500);
     }
 }

@@ -44,7 +44,7 @@ public:
 
     void run() override {
         while(true) {
-            sleep(1);
+            sleep_ms(1);
             uint16_t val = HW::inst()->mic.adcReadScan();
             val >>= 6;
             _gui.DrawPixel(_x, _y[_x], C_BLACK);
@@ -91,7 +91,7 @@ public:
             if (y > 60) y = 60;
             // Erase old circle and draw new one
             if ((x == _x) && (y == _y)) {
-                sleep(10);
+                sleep_ms(10);
                 continue;
             } else {
                 _gui.PutString(71, 1, "Joystick", false);
@@ -130,28 +130,28 @@ public:
                 _accel_x = tmp;
                 s  = to_String(tmp-2048) + "  ";
                 _gui.PutString(70, 70, s.c_str());
-                sleep(20);
+                sleep_ms(20);
             }
             tmp = HW::inst()->accel_y.adcReadScan();
             if (tmp != _accel_y) {
                 _accel_y = tmp;
                 s  = to_String(tmp-2048) + "  ";
                 _gui.PutString(70, 80, s.c_str());
-                sleep(20);
+                sleep_ms(20);
             }
             tmp = HW::inst()->accel_z.adcReadScan();
             if (tmp != _accel_z) {
                 _accel_z = tmp;
                 s  = to_String(tmp-2048) + "  ";
                 _gui.PutString(70, 90, s.c_str());
-                sleep(20);
+                sleep_ms(20);
             }
             tmp = HW::inst()->sen_light.get_light();
             if (tmp != _light) {
                 _light = tmp;
                 s  = to_String(tmp) + " lux  ";
                 _gui.PutString(55, 105, s.c_str());
-                sleep(20);
+                sleep_ms(20);
             }
 
             uint8_t buf2[3];
@@ -164,9 +164,9 @@ public:
                 _temp = temp;
                 s = to_String(temp/32) + "." + to_String(temp%32*3) + " °C";
                 _gui.PutString(55,115, s.c_str());
-                sleep(20);
+                sleep_ms(20);
             }
-            sleep(100);
+            sleep_ms(100);
         }
     }
 

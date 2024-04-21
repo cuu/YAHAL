@@ -68,7 +68,7 @@ struct Stack_Frame {
     uint32_t    r3;     // .
     uint32_t    r12;    // register R12
     uint32_t    lr;     // register R14 (=LR)
-    void        (*pc)(void);  //    R15 (=PC)
+    void        (*pc)();// register R15 (=PC)
     uint32_t    psr;    // PSR
 };
 
@@ -78,7 +78,7 @@ void task::_setup_stack(bool priv) {
     _stack_ptr = _stack_base +
                 (_stack_size - sizeof(Stack_Frame));
 
-    Stack_Frame *frame = (Stack_Frame *)_stack_ptr;
+    auto *frame = (Stack_Frame *)_stack_ptr;
 
     frame->psr  = 0x01000000;   // Set the Thumb-Bit
     frame->pc   = (void (*)(void))(&task::_run);

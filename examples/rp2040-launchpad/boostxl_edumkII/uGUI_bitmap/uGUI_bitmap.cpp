@@ -75,6 +75,6 @@ int main(void) {
     // for HW-scrolling...
     while (1) {
         lcd.scroll(-1);
-        task::sleep(10);
+        task::sleep_ms(10);
     }
 }

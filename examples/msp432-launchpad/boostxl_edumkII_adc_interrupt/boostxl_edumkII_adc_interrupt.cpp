@@ -48,7 +48,7 @@ gpio_msp432_pin green_led(PORT_PIN(2, 1));
 gpio_msp432_pin blue_led (PORT_PIN(2, 2));
 
 void delay() {
-    task::sleep(10); //for(int i=0; i < 500000; ++i) ;
+    task::sleep_ms(10); //for(int i=0; i < 500000; ++i) ;
 }
 
 void handler_X(uint16_t, uint16_t value) {

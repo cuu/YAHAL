@@ -108,11 +108,11 @@ public:
                     // Stop playing the current title
                     sd_reader.force_eof();
                 }
-                sleep(200);
+                sleep_ms(200);
             }
             // Wait until button is released, so we only
             // skip _one_ song...
-            while(_next.gpioRead() == LOW) sleep(100);
+            while(_next.gpioRead() == LOW) sleep_ms(100);
 
             // Close the MP3 file and find next one
             _fs.close(&_file);

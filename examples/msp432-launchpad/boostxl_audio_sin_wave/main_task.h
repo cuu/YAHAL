@@ -59,7 +59,7 @@ public:
                 audio_output.fifo_put(table[i++]);
                 i %= 10;
             } else {
-                task::sleep(10);
+                task::sleep_ms(10);
             }
         }
     }

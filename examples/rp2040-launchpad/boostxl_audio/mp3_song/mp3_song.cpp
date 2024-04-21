@@ -57,7 +57,7 @@ int main(void)
         // will automatically repeat the song, so this loop will
         // never end!
         while(decoder.isAlive()) {
-            task::sleep(200);
+            task::sleep_ms(200);
         }
     }, "Main task", 5000);
     Main.start(50, true);

@@ -29,7 +29,7 @@
 //
 // When the task code ends, the task is automatically
 // removed from the list of active tasks and deleted.
-// The class 'task' also provides functions like sleep()
+// The class 'task' also provides functions like sleep_ms()
 // to delay the execution (parameter is the delay time
 // in milliseconds). See file task.h for more details.
 // This program also redirects stdout to the backchannel
@@ -71,7 +71,7 @@ public:
         // Endless loop
         while(1) {
             _led.gpioToggle();
-            sleep( _delay );
+            sleep_ms( _delay );
         }
     }
 
@@ -104,7 +104,7 @@ int main(void)
         // Endless loop
         while(true) {
             led.gpioToggle();
-            task::sleep(500);
+            task::sleep_ms(500);
         }
     }, "green blinker");
 

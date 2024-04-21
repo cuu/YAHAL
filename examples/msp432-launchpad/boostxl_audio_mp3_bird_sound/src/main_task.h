@@ -51,7 +51,7 @@ public:
 
         // Wait until file has been played
         while(true) {
-            sleep(200);
+            sleep_ms(200);
         }
     }
 };

@@ -97,7 +97,7 @@ class task_timer : public task, public timer_interface
             uint64_t now = task::millis();
             if (now < _next_ms) {
                 int64_t diff = _next_ms - now;
-                sleep(diff);
+                sleep_ms(diff);
             } else {
                 _callback();
                 _start_ms = _next_ms;

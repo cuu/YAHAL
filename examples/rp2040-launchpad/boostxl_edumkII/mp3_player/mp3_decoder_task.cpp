@@ -142,7 +142,7 @@ enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad
 
     // Wait until the PCM result can be written
     while (_this->_pcm_if.pcmFifoAvailablePut() < pcm->length) {
-        task::sleep(5);
+        task::sleep_ms(5);
     }
     // Copy PCM samples to PCM fifo
     mad_fixed_t const * left_ch  = pcm->samples[MAD_PCM_CHANNEL_STEREO_LEFT];
@@ -174,7 +174,7 @@ int16_t mp3_decoder_task::scale(mad_fixed_t sample)
     // values in the range betwenn -MAD_F_ONE and MAD_F_ONE.
     // Therefore rounding and clipping is normally not
     // necessary!
-#if 0
+//#if 0
     // round
     sample += (1L << (MAD_F_FRACBITS - 16));
     // clip
@@ -182,7 +182,7 @@ int16_t mp3_decoder_task::scale(mad_fixed_t sample)
         sample = MAD_F_ONE - 1;
     else if (sample < -MAD_F_ONE)
         sample = -MAD_F_ONE;
-#endif
+//#endif
     // Convert to a standard 16 bit PCM value
     // (signed) in the range of -32768...32767
     sample >>= (MAD_F_FRACBITS + 1 - 16);

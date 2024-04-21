@@ -68,16 +68,16 @@ int main(void)
     // Reset the ESP8266
     gpio_rp2040_pin esp_reset(6);
     esp_reset.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
-    task::sleep(200);
+    task::sleep_ms(200);
     esp_reset.gpioWrite( HIGH );
-    task::sleep(200);
+    task::sleep_ms(200);
 
     // Endless loop which sends lower-case messages
     // to the ESP8266. The answers from ESP8266 are
     // printed in the receive message handler above!
     while (true) {
         uart_esp.puts("hello world!\n");
-        task::sleep(1000);
+        task::sleep_ms(1000);
     }
     return 0;
 }

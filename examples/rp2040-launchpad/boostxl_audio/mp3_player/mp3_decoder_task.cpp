@@ -142,7 +142,7 @@ enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad
 
     // Wait until the PCM result can be written
     while (_this->_pcm_if.pcmFifoAvailablePut() < pcm->length) {
-        task::sleep(5);
+        task::sleep_ms(5);
     }
     // Copy PCM samples to PCM fifo
     mad_fixed_t const * left_ch  = pcm->samples[MAD_PCM_CHANNEL_STEREO_LEFT];

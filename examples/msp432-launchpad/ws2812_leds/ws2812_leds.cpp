@@ -142,6 +142,6 @@ int main() {
         // Send out data to LEDs
         leds.sendData();
         // Wait a while
-        task::sleep(200);
+        task::sleep_ms(200);
     }
 }

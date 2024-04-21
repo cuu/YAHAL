@@ -85,7 +85,7 @@ int main(void)
         // message from the ESP8266 serial port is printed
         // 1500ms later, so the messages are not garbled.
         printf("RP2040  received: %s\n", (char*)rxbuf);
-        task::sleep(2000);
+        task::sleep_ms(2000);
     }
     return 0;
 }

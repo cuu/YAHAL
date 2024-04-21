@@ -22,6 +22,7 @@ void setup() {
 }
 
 void loop() {
+    delay(1500);
 
     // Send/Receive buffers
     uint8_t txbuf[60];
@@ -41,7 +42,5 @@ void loop() {
     // Print out received data
     Serial.print  ("ESP8266 received: ");
     Serial.println((const char *)rxbuf);
-
-    delay(1500);
 }
 

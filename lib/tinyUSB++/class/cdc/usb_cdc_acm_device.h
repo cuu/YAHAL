@@ -65,8 +65,11 @@ public:
     std::function<void(bool dtr, bool rts)>             control_line_handler;
     std::function<void(uint16_t millis)>                break_handler;
 
-    // Read only version of line coding information
+    // Read-only version of line coding information
     const CDC::line_coding_t & line_coding;
+
+    // Convert line coding into a readable string
+    char * line_coding_2_str();
 
 private:
     // CDC ACM descriptor tree
@@ -86,8 +89,9 @@ private:
 
     // Line coding information
     CDC::line_coding_t          _line_coding;
+    char                        _line_coding_str[20];
 
-    // Fifos for received data and data to be transmitted.
+    // FIFOs for received data and data to be transmitted.
     fifo<uint8_t, TUPP_CDC_ACM_FIFO_SIZE> _received_data;
     fifo<uint8_t, TUPP_CDC_ACM_FIFO_SIZE> _data_to_transmit;
 

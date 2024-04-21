@@ -55,7 +55,7 @@ public:
                 }
             }
             write();
-            task::sleep(1);
+            task::sleep_ms(1);
         }
     }
 
@@ -126,19 +126,19 @@ int main(void)
             for (int j=0; j < 13; ++j) {
                 stepper.move(68);
                 stepper.off();
-                task::sleep(100);
+                task::sleep_ms(100);
             }
             for (int j=0; j < 2; ++j) {
             // Step 2 times 70 steps
                 stepper.move(70);
                 stepper.off();
-                task::sleep(100);
+                task::sleep_ms(100);
             }
         }
         // Wait 2 seconds and rotate back again
-        task::sleep(2000);
+        task::sleep_ms(2000);
         stepper.move(-4096);
-        task::sleep(500);
+        task::sleep_ms(500);
     }
     stepper.off();
     return 0;

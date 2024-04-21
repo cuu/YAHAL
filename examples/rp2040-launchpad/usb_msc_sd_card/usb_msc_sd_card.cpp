@@ -115,7 +115,7 @@ int main() {
     // Wait until USB enumeration has finished
     printf("Waiting for USB connection on USB TARGET..\n");
     while (!controller.active_configuration) {
-        task::sleep(100);
+        task::sleep_ms(100);
     }
 
     // The first task handles the MSC requests in an endless loop.
@@ -134,17 +134,17 @@ int main() {
             write_active= false;
             // Sleep, and during this sleep the variables above
             // might be set again...
-            task::sleep(200);
+            task::sleep_ms(200);
             // Check if the LEDs reflect the needed state.
             // Change the state if needed, and wait a little
             // bit so the WS2812 do not get confused...
             if (led_green.is_on() != read_active) {
                 led_green = read_active;
-                task::sleep(5);
+                task::sleep_ms(5);
             }
             if (led_red.is_on() != write_active) {
                 led_red = write_active;
-                task::sleep(5);
+                task::sleep_ms(5);
             }
         }
     }, "LED reset");

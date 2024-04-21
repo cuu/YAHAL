@@ -12,9 +12,9 @@
 // ---------------------------------------------
 
 #include "task.h"
-#include "task_idle.h"
 #include "yahal_assert.h"
 #include <cstring>
+#include <utility>
 
 // Definition of static members
 ///////////////////////////////
@@ -27,7 +27,7 @@ circular_list<task> task::_list;
 ////////////////
 task::task(std::function<void()> f,
            const char * n, uint16_t stack_size) : task(n, stack_size) {
-    _f = f;
+    _f = std::move(f);
 }
 
 task::~task() {
@@ -99,15 +99,16 @@ void task::stop() {
     }
 }
 
-void task::sleep(uint32_t ms) {
+void task::sleep_ms(uint32_t ms) {
     task * c = task::currentTask();
     if (c) {
-        // Multitasking running: Sleep using
-        // TCB entry '_sleep_until'
-        c->_sleep_until  = millis() + ms; //_up_ticks;
+        // Multitasking running:
+        // Use TCB entry '_sleep_until'
+        c->_sleep_until  = millis() + ms;
         c->_state = state_t::SLEEPING;
         yield();
     } else {
+        // Multitasking not running:
         // Active waiting based on millis()
         uint64_t until = millis() + ms;
         while(millis() < until) ;
@@ -148,19 +149,19 @@ uint32_t task::getDeltaTicks() {
 
 // private methods
 //////////////////
-void task::_run(void) {
+void task::_run() {
     run();
     stop();
 }
 
 // methods which will be called by IRQ handlers
 ///////////////////////////////////////////////
-void task::_scheduler(void) {
+void task::_scheduler() {
     task *   cur_ptr  = _run_ptr->_next;
     task *   next_ptr = nullptr;
     uint16_t max_prio = 0;
 
-    for(uint16_t i=0; i < _list.getSize(); ++i) {
+    for(int i=0; i < _list.getSize(); ++i) {
         state_t & state = cur_ptr->_state;
         uint16_t  prio  = cur_ptr->_priority;
 
@@ -172,7 +173,7 @@ void task::_scheduler(void) {
         }
         // Handle blocked Tasks
         if (state == state_t::BLOCKED) {
-            if (cur_ptr->_lock->is_locked() == false) {
+            if (!cur_ptr->_lock->is_locked()) {
                 state = state_t::READY;
             }
         }

@@ -148,8 +148,8 @@ ssd2119_drv::ssd2119_drv(spi_interface & spi, gpio_pin & rst_pin,
     _dc_pin. gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
 
     // Make a HW-reset
-    _rst_pin.gpioWrite(LOW);    task::sleep(100);
-    _rst_pin.gpioWrite(HIGH);   task::sleep(100);
+    _rst_pin.gpioWrite(LOW);    task::sleep_ms(100);
+    _rst_pin.gpioWrite(HIGH);   task::sleep_ms(100);
 
     // Activate CS
     spi.setCS(LOW);
@@ -170,7 +170,7 @@ ssd2119_drv::ssd2119_drv(spi_interface & spi, gpio_pin & rst_pin,
 
     // Wake up from sleep mode
     writeCmdData(SSD2119::SLEEP_MODE_1_REG,     0x0000);
-    task::sleep(200);
+    task::sleep_ms(200);
 
     writeCmdData(SSD2119::ENTRY_MODE_REG,       ENTRY_MODE_DEFAULT);
     writeCmdData(SSD2119::SLEEP_MODE_2_REG,     0x0999);

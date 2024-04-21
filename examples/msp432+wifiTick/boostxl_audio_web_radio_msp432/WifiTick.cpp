@@ -30,9 +30,9 @@ void WifiTick::reset(bool boot_from_uart)
     _gpio0. gpioWrite(!boot_from_uart);
     _gpio2. gpioWrite(HIGH);
     _gpio15.gpioWrite(LOW);
-    task::sleep(100);
+    task::sleep_ms(100);
     _reset.gpioWrite(HIGH);
-    task::sleep(100);
+    task::sleep_ms(100);
     // Restore the GPIOs to their original state,
     // if they have been used as OUTPUT
     if (gpio0 == boot_from_uart) {

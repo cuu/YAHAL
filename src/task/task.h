@@ -45,10 +45,10 @@ public:
 protected:
     // Protected CTOR which will be called by a derived class.
     // The run()-Method has to be implemented in the derived class!
-    task(const char * n, uint16_t stack_size=DEFAULT_STACK_SIZE);
+    explicit task(const char * n, uint16_t stack_size=DEFAULT_STACK_SIZE);
 
     // The method containing the task code
-    virtual void run(void) { _f(); }
+    virtual void run() { _f(); }
 
 public:
     // enum type for the different task states and
@@ -63,7 +63,7 @@ public:
         BLOCKED   = 3   // block() was called on task
     };
 
-    inline const char * state_to_str(state_t state) {
+    static inline const char * state_to_str(state_t state) {
         static const char * names[] =
         { "READY", "SLEEPING", "SUSPENDED", "BLOCKED" };
         return names[state];
@@ -90,7 +90,7 @@ public:
     // sleep for a certain amount of time. Time is specified
     // in milliseconds. yield() will be called so that execution
     // proceeds with the next ready task.
-    static void sleep(uint32_t ms);
+    static void sleep_ms(uint32_t ms);
 
     // Suspend a task execution. The task will only come
     // back to life if resume() is called from another
@@ -163,7 +163,7 @@ private:
     task *          _prev;          // pointer to previous task
 
     // Helper method for calling the virtual run() method
-    void _run(void);
+    void _run();
     std::function<void(void)> _f;   // Function to execute if provided in CTOR
 
     ///////////////////////////////////////////////

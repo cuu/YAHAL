@@ -25,19 +25,22 @@
 // Build-in red LED on rp2040-launchpad
 #define RED_LED 13
 
-int main(void)
+int main()
 {
     // Use GPIO 13 (buildin LED) as output
     gpio_rp2040_pin led( RED_LED );
     led.gpioMode( GPIO::OUTPUT );
 
     // This loop will never end ...
-    while(1) {
+    while(true) {
         // switch on the LED
         led = HIGH;
-        task::sleep(500);
+        // Delay with the sleep() method
+        task::sleep_ms(50);
         // switch off the LED
         led = LOW;
-        task::sleep(500);
+        // Delay by using the millis() method
+        uint64_t until = task::millis() + 50;
+        while (task::millis() < until) ;
     }
 }

@@ -132,7 +132,7 @@ int main() {
     printf("Waiting for USB connection on USB TARGET..\n");
 // No need to wait ...
 //    while (!controller.active_configuration) {
-//        task::sleep(100);
+//        task::sleep_ms(100);
 //    }
 
     CDC::bmUartState_t uart_state;
@@ -159,13 +159,8 @@ int main() {
     uint8_t buf[64];
     while (1) {
         if (line_code_updated) {
-//            const char *parity[5] = {"N", "O", "E", "M", "S"};
-//            const char *stop[3] = {"1", "1.5", "2"};
-//            printf("Line coding set to %d baud %d%s%s\n",
-//                   (int) acm_device.line_coding.dwDTERate,
-//                   (int) acm_device.line_coding.bDataBits,
-//                   parity[(int) acm_device.line_coding.bParityType],
-//                   stop[(int) acm_device.line_coding.bCharFormat]);
+            TUPP_LOG(LOG_INFO, "Line code changed to %s",
+                     acm_device.line_coding_2_str());
 
             uart_mode_t mode = 0;
             switch ((int) acm_device.line_coding.bDataBits) {
@@ -213,7 +208,7 @@ int main() {
             uart_esp.setBaudrate(74880);
             in_prgm_mode = false;
             while(!button_s1) ;
-            task::sleep(100);
+            task::sleep_ms(100);
             esp_reset = HIGH;
         }
 

@@ -93,14 +93,14 @@ st7735s_drv::st7735s_drv(spi_interface & spi, gpio_pin & rst_pin,
 
     // Make a HW-reset
     _rst_pin.gpioWrite(LOW);
-    task::sleep(10);
+    task::sleep_ms(10);
     _rst_pin.gpioWrite(HIGH);
-    task::sleep(300);
+    task::sleep_ms(300);
 
     //    if (_mutex) _mutex->lock();
 
     writeCommand(CMD_SLPOUT);	// Wake up ...
-    task::sleep(150);
+    task::sleep_ms(150);
 
     writeCommand(CMD_GAMSET);
     writeData(0x03);

@@ -66,7 +66,7 @@ public:
         hw.button_s1.gpioMode( GPIO::INPUT | GPIO::PULLUP);
         hw.button_s1.gpioAttachIrq(GPIO::RISING, [this]() {
             // Small delay for debounce
-            task::sleep(20);
+            task::sleep_ms(20);
             // Check the program button (S2)
             in_prgm_mode   = !hw.button_s2.gpioRead();
             baud_is_115200 = false;
@@ -110,9 +110,9 @@ public:
         });
 
         // Put ESP8266 to programming mode as default
-        hw.esp_reset.gpioWrite( LOW );  task::sleep(100);
-        hw.esp_gpio0.gpioWrite( LOW );  task::sleep(100);
-        hw.esp_reset.gpioWrite( HIGH ); task::sleep(100);
+        hw.esp_reset.gpioWrite( LOW );  task::sleep_ms(100);
+        hw.esp_gpio0.gpioWrite( LOW );  task::sleep_ms(100);
+        hw.esp_reset.gpioWrite( HIGH ); task::sleep_ms(100);
         
         // The never-ending main loop
         while(true) {

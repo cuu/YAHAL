@@ -112,7 +112,7 @@ int main() {
         printf("Control signals DTR=%d, RTS=%d\n", dtr, rts);
         esp_gpio0 = !dtr;
         esp_reset = !rts;
-        task::sleep(200);
+        task::sleep_ms(200);
     });
 
     acm_device.break_handler = ([](uint16_t millis) {
@@ -128,7 +128,7 @@ int main() {
     // Wait until USB enumeration has finished
     //////////////////////////////////////////
     while (!controller.active_configuration) {
-        task::sleep(100);
+        task::sleep_ms(100);
     }
 
     printf("Bevor sending event...\n");

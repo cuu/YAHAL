@@ -113,7 +113,7 @@ int main() {
     //////////////////////////////////////////
     printf("Waiting for USB connection on USB TARGET..\n");
     while (!controller.active_configuration) {
-        task::sleep(100);
+        task::sleep_ms(100);
     }
 
     printf("Entering endless loop...\n");

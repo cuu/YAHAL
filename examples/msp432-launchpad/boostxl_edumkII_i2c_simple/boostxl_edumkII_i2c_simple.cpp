@@ -54,6 +54,6 @@ int main()
         uint16_t raw = (rxbuf[0] << 8) + rxbuf[1];
         // and show it on the console
         printf("Raw light value: %x\n", raw);
-        task::sleep(500);
+        task::sleep_ms(500);
     }
 }

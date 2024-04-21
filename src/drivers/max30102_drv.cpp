@@ -258,7 +258,7 @@ void max30102_drv::reset() {
     uint8_t reset_bit = get_register_mask(MAX30102::MODE_CONFIG,
                                           MAX30102::RESET_MASK);
     while (reset_bit) {
-        task::sleep(10);
+        task::sleep_ms(10);
         reset_bit = get_register_mask(MAX30102::MODE_CONFIG,
                                       MAX30102::RESET_MASK);
     }
@@ -303,7 +303,7 @@ float max30102_drv::read_temperature() {
     // Wait until rdy-interrupt is raised
     uint8_t rdy_bit = read_register(MAX30102::INT_STAT_2);
     while (!rdy_bit) {
-        task::sleep(5);
+        task::sleep_ms(5);
         rdy_bit = read_register(MAX30102::INT_STAT_2);
     }
     uint8_t tempInt  = read_register(MAX30102::DIE_TEMP_INT);

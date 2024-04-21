@@ -56,13 +56,13 @@ public:
         _XP.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
         _YN.gpioMode(GPIO::INPUT);
         _YP.gpioMode(GPIO::INPUT | GPIO::PULLDOWN);
-        task::sleep(10);
+        task::sleep_ms(10);
         x = adc_rp2040::inst.adcReadRaw(0);
         _YN.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
         _YP.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
         _XN.gpioMode(GPIO::INPUT);
         _XP.gpioMode(GPIO::INPUT | GPIO::PULLDOWN);
-        task::sleep(10);
+        task::sleep_ms(10);
         y = adc_rp2040::inst.adcReadRaw(2);
     }
 
@@ -82,7 +82,7 @@ public:
         //
         _lcd.fillArea(0, 0, 19, 19, C_RED);
         while(!pressed()) ;
-        task::sleep(10);
+        task::sleep_ms(10);
         getXY_raw(x, y);
         while(pressed());
         _xs = x;
@@ -92,7 +92,7 @@ public:
         _lcd.fillArea(_lcd.getSizeX()-20, 0,
                       _lcd.getSizeX()- 1, 19, C_RED);
         while(!pressed()) ;
-        task::sleep(10);
+        task::sleep_ms(10);
         getXY_raw(x, y);
         while( pressed()) ;
         _xe = x;
@@ -102,7 +102,7 @@ public:
         _lcd.fillArea( 0, _lcd.getSizeY()-20,
                       19, _lcd.getSizeY()- 1, C_RED);
         while(!pressed()) ;
-        task::sleep(10);
+        task::sleep_ms(10);
         getXY_raw(x, y);
         while( pressed()) ;
         _xs = (_xs + x) / 2;
@@ -112,7 +112,7 @@ public:
         _lcd.fillArea(_lcd.getSizeX()-20, _lcd.getSizeY()-20,
                       _lcd.getSizeX()- 1, _lcd.getSizeY()- 1, C_RED);
         while(!pressed()) ;
-        task::sleep(10);
+        task::sleep_ms(10);
         getXY_raw(x, y);
         while( pressed()) ;
         _xe = (_xe + x) / 2;
@@ -217,7 +217,7 @@ int main(void)
 //    while (1) {
 //        touch.getXY_raw(x,y);
 //        printf("%d %d %d\n", x, y, touch.pressed());
-//        //task::sleep(100);
+//        //task::sleep_ms(100);
 //    }
 
     gui.SetForecolor(C_GREEN);
