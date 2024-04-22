@@ -36,11 +36,11 @@ int main()
         // switch on the LED
         led = HIGH;
         // Delay with the sleep() method
-        task::sleep_ms(50);
+        task::sleep_ms(500);
         // switch off the LED
         led = LOW;
         // Delay by using the millis() method
-        uint64_t until = task::millis() + 50;
+        uint64_t until = task::millis() + 500;
         while (task::millis() < until) ;
     }
 }
