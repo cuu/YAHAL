@@ -12,12 +12,12 @@
 // ---------------------------------------------
 //
 // A simple blink example using the red LED on
-// GPIO 13. The delays are implemented with
-// task:sleep(uint32_t ms), which pauses the
+// GPIO 13. The first delay is implemented with
+// task:sleep_ms(uint32_t ms), which pauses the
 // execution by the given number of milliseconds.
-// In a non-multitasking environment (as in this
-// example), the sysTick-Timer is used internally
-// for sleep(), resulting in a precise delay. 
+// The second delay uses the method task::millis(),
+// which returns the number of milliseconds since
+// the start of the system.
 
 #include "gpio_rp2040.h"
 #include "task.h"
