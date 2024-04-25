@@ -32,7 +32,7 @@ public:
 
     void setPcmRate(uint32_t Hz = 44100) override;
 
-    inline void timer_reset() { _pcm_timer.resetCounter(); }
+    inline void timer_reset() { _pcm_timer.reset(); }
 
 private:
     timer_rp2040    _pcm_timer;

@@ -30,8 +30,7 @@ class timerA_msp432 : public timer_interface {
 	void	 stop();
 	bool	 isRunning();
 
-	uint32_t getCounter();
-	void	 resetCounter();
+	void	 reset();
 
 	// IRQ handlers are our best friends
     friend void TA0_0_IRQHandler (void);

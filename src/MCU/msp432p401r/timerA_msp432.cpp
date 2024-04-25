@@ -93,11 +93,7 @@ bool timerA_msp432::isRunning() {
 	return _timer->CTL & TIMER_A_CTL_MC_MASK;
 }
 
-uint32_t timerA_msp432::getCounter() {
-	return _timer->R * _divider;
-}
-
-void timerA_msp432::resetCounter() {
+void timerA_msp432::reset() {
 	_timer->CTL |= TIMER_A_CTL_CLR;
 }
 

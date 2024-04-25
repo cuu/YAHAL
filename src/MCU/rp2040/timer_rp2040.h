@@ -34,8 +34,7 @@ public:
     void stop() override;
     bool isRunning() override;
 
-    uint32_t getCounter() override;
-    void resetCounter() override;
+    void reset() override;
 
     // IRQ handlers are our best friends
     friend void TIMER_IRQ_0_Handler(void);
@@ -56,7 +55,6 @@ private:
     TIMER::timer_mode _mode;
     uint32_t    _period;
     uint32_t    _tick_factor;
-    uint32_t    _stop_value;
 };
 
 #endif // _TIMER_RP2040_H_

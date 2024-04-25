@@ -29,8 +29,6 @@ timer_rp2040::timer_rp2040(int8_t index) {
     _period     = 0;
     // Calculate factor
     _tick_factor= CLK_TICK / 1000000;
-    // Stop value
-    _stop_value = 0;
     // Register timer instance pointer
     _timerinst[index] = this;
     // Enable timer interrupt
@@ -63,13 +61,11 @@ void timer_rp2040::setCallback(function<void()> f) {
 }
 
 void timer_rp2040::start() {
-    *_ALARM = _TIMER_::TIMER.TIMERAWL + _period - _stop_value;
+    *_ALARM = _TIMER_::TIMER.TIMERAWL + _period;
 }
 
 void timer_rp2040::stop() {
     if (isRunning()) {
-        // Get the current counter value
-        _stop_value = _period - *_ALARM + _TIMER_::TIMER.TIMERAWL;
         // Clear 'armed'-bit
         _TIMER_::TIMER.ARMED = _mask;
     }
@@ -79,17 +75,7 @@ bool timer_rp2040::isRunning() {
     return _TIMER_::TIMER.ARMED & _mask;
 }
 
-uint32_t timer_rp2040::getCounter() {
-    uint32_t val = _stop_value;
-    if (isRunning()) {
-        val += _period - *_ALARM + _TIMER_::TIMER.TIMERAWL;
-    }
-    return val / _tick_factor;
-}
-
-void timer_rp2040::resetCounter() {
-    // Reset the stop value
-    _stop_value = 0;
+void timer_rp2040::reset() {
     // If timer is running, immediately
     // trigger a re-start.
     if (isRunning()) start();
@@ -98,8 +84,6 @@ void timer_rp2040::resetCounter() {
 void timer_rp2040::irqHandler() {
     // Clear interrupt
     _TIMER_::TIMER.INTR = _mask;
-    // Reset stop value
-    _stop_value = 0;
     // Re-trigger timer if periodic
     if (_mode == TIMER::PERIODIC) {
         *_ALARM += _period;

@@ -47,11 +47,9 @@ public:
     virtual void     stop()  = 0;
     virtual bool     isRunning() = 0;
 
-    // getter for the internal counter (counting up).
-    // By resetting the counter the defined time period
-    // starts from the beginning
-    virtual uint32_t getCounter()   = 0;
-    virtual void     resetCounter() = 0;
+    // reset the timer (if it has not yet triggered)
+    // and start again with the full specified period
+    virtual void     reset() = 0;
 
 protected:
     virtual ~timer_interface() = default;

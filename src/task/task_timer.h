@@ -64,7 +64,7 @@ class task_timer : public task, public timer_interface
     }
 
     void start() override {
-        resetCounter();
+        reset();
         task::start(_priority, _privileged);
         _running = true;
     }
@@ -78,15 +78,7 @@ class task_timer : public task, public timer_interface
         return _running;
     }
 
-    uint32_t getCounter() override {
-        if (_running) {
-            return task::millis() - _start_ms;
-        } else {
-            return 0;
-        }
-    }
-
-    void resetCounter() override {
+    void reset() override {
         uint64_t now = task::millis();
         _start_ms = now;
         _next_ms  = now + _delta_ms;

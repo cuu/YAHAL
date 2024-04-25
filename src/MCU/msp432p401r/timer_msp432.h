@@ -28,8 +28,7 @@ class timer_msp432 : public timer_interface {
 	void	 stop();
 	bool	 isRunning();
 
-	uint32_t getCounter();
-	void	 resetCounter();
+	void	 reset();
 
     // Additional methods (not in timer_interface)
 	void     setNanoPeriod(uint32_t ns, TIMER::timer_mode mode = TIMER::ONE_SHOT);

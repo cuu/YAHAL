@@ -72,11 +72,7 @@ bool timer_msp432::isRunning() {
 	return _timer->CONTROL & TIMER32_CONTROL_ENABLE;
 }
 
-uint32_t timer_msp432::getCounter() {
-	return (_period_load - _timer->VALUE) / _factor;
-}
-
-void timer_msp432::resetCounter() {
+void timer_msp432::reset() {
 	_timer->LOAD = _period_load;
 }
 
