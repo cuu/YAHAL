@@ -142,6 +142,18 @@ endif()
 if (NOT DEFINED YAHAL_ENABLE_ASSERTS)
     set(YAHAL_ENABLE_ASSERTS 1)
 endif()
+if (NOT DEFINED YAHAL_WRAP_FLOAT)
+    set(YAHAL_WRAP_FLOAT 1)
+endif()
+if (NOT DEFINED YAHAL_WRAP_DOUBLE)
+    set(YAHAL_WRAP_DOUBLE 1)
+endif()
+if (NOT DEFINED YAHAL_WRAP_BITOPS)
+    set(YAHAL_WRAP_BITOPS 1)
+endif()
+if (NOT DEFINED YAHAL_WRAP_DIVMUL)
+    set(YAHAL_WRAP_DIVMUL 1)
+endif()
 
 #
 # Evaluate YAHAL flags
@@ -157,27 +169,25 @@ endif()
 
 add_compile_options(${YAHAL_DEBUG_FLAGS} ${YAHAL_OPT_FLAGS})
 
-if (YAHAL_WRAP_FLOAT EQUAL 1)
-    set(CMAKE_EXE_LINKER_FLAGS 
-    "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_float\"")
-#    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_float)
+if (${YAHAL_MCU} STREQUAL rp2040)
+    if (YAHAL_WRAP_FLOAT EQUAL 1)
+        set(CMAKE_EXE_LINKER_FLAGS
+            "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_float\"")
+        #    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_float)
+    endif()
+    if (YAHAL_WRAP_DOUBLE EQUAL 1)
+        set(CMAKE_EXE_LINKER_FLAGS
+            "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_double\"")
+        #    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_double)
+    endif()
+    if (YAHAL_WRAP_BITOPS EQUAL 1)
+        set(CMAKE_EXE_LINKER_FLAGS
+            "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_bitops\"")
+        #    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_bitops)
+    endif()
+    if (YAHAL_WRAP_DIVMUL EQUAL 1)
+        set(CMAKE_EXE_LINKER_FLAGS
+            "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_div_mul\"")
+        #    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_div_mul)
+    endif()
 endif()
-
-if (YAHAL_WRAP_DOUBLE EQUAL 1)
-    set(CMAKE_EXE_LINKER_FLAGS 
-    "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_double\"")
-#    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_double)
-endif()
-
-if (YAHAL_WRAP_BITOPS EQUAL 1)
-    set(CMAKE_EXE_LINKER_FLAGS 
-    "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_bitops\"")
-#    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_bitops)
-endif()
-
-if (YAHAL_WRAP_DIVMUL EQUAL 1)
-    set(CMAKE_EXE_LINKER_FLAGS 
-    "${CMAKE_EXE_LINKER_FLAGS} -Wl,@\"${YAHAL_DIR}/cmake/toolchains/wrap_div_mul\"")
-#    add_link_options(-Wl,@${YAHAL_DIR}/cmake/toolchains/wrap_div_mul)
-endif()
-

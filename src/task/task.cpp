@@ -101,16 +101,14 @@ void task::stop() {
 
 void task::sleep_ms(uint32_t ms) {
     task * c = task::currentTask();
+    uint64_t until = millis() + ms;
     if (c) {
-        // Multitasking running:
-        // Use TCB entry '_sleep_until'
-        c->_sleep_until  = millis() + ms;
+        // Multitasking running: Use TCB entry '_sleep_until'
+        c->_sleep_until = until;
         c->_state = state_t::SLEEPING;
         yield();
     } else {
-        // Multitasking not running:
-        // Active waiting based on millis()
-        uint64_t until = millis() + ms;
+        // Multitasking not running: Active waiting
         while(millis() < until) ;
     }
 }

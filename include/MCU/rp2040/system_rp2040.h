@@ -16,6 +16,7 @@ extern uint32_t CLK_TICK;
 extern uint32_t CLK_USB;
 extern uint32_t CLK_ADC;
 extern uint32_t CLK_RTC;
+extern uint32_t _ticks_per_millis;
 
 // Set up the microcontroller system.
 // Initialize the System and finally

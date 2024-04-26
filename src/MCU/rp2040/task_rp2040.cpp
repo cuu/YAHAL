@@ -90,21 +90,10 @@ void task::_context_switch() {
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
-uint64_t _get_timer_u64() {
-    uint32_t hi = _TIMER_::TIMER.TIMERAWH;
-    uint32_t lo = 0;
-    do {
-        lo = _TIMER_::TIMER.TIMERAWL;
-        uint32_t next_hi = _TIMER_::TIMER.TIMERAWH;
-        if (hi == next_hi) break;
-        hi = next_hi;
-    } while(true);
-    return ((uint64_t)hi << 32) | lo;
-}
-
 uint64_t task::millis() {
-    uint32_t factor = CLK_TICK / 1000;
-    return _get_timer_u64() / factor;
+    uint32_t lo = _TIMER_::TIMER.TIMELR;
+    uint32_t hi = _TIMER_::TIMER.TIMEHR;
+    return (((uint64_t)hi << 32l) | lo) / _ticks_per_millis;
 }
 
 void task::start_scheduler() {
