@@ -7,6 +7,7 @@
 
 #include "timer_rp2040.h"
 #include "system_rp2040.h"
+#include "task.h"
 #include <cassert>
 
 timer_rp2040 *   timer_rp2040::_timerinst[4];
@@ -86,7 +87,14 @@ void timer_rp2040::irqHandler() {
     _TIMER_::TIMER.INTR = _mask;
     // Re-trigger timer if periodic
     if (_mode == TIMER::PERIODIC) {
+        // When a timer has a very short period (some us),
+        // the read-modify-write process of the ALARM value
+        // could be interrupted so that the new value has
+        // already passed by the timer when ALARM is written.
+        // So make a critical section here...
+        task::enterCritical();
         *_ALARM += _period;
+        task::leaveCritical();
     }
     // Call the user-provided handler
     _callback[_index]();

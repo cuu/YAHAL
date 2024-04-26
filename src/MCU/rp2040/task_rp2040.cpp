@@ -109,16 +109,13 @@ void task::cpu_sleep() {
 }
 
 void task::enterCritical() {
-    NVIC_DisableIRQ(PendSV_IRQn);
-//    __disable_irq();
-    __DSB();
-    __ISB();
+//    NVIC_DisableIRQ(PendSV_IRQn);
+    __disable_irq();
 }
 
 void task::leaveCritical() {
-    NVIC_EnableIRQ(PendSV_IRQn);
-//    __enable_irq();
-    __ISB();
+//    NVIC_EnableIRQ(PendSV_IRQn);
+    __enable_irq();
 }
 
 bool task::isPrivileged() const {
