@@ -13,7 +13,7 @@ target_sources(${YAHAL_TARGET} PRIVATE
     timerA_msp432.cpp
     timer_msp432.cpp
     uart_msp432.cpp
-    system_msp432_gcc.cpp
+    system_msp432p401r.cpp
 )
 
 target_include_directories(${YAHAL_TARGET} PUBLIC
