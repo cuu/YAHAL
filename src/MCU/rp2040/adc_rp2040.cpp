@@ -45,6 +45,9 @@ adc_mode_t adc_rp2040::getMode(uint8_t channel) {
 
 uint16_t adc_rp2040::adcReadRaw(uint8_t channel) {
     assert(channel < 8);
+    // Enter a critical section for setting GPIO18 and
+    // reading the ADC value.
+    task::enterCritical();
     // Set GPIO18 according to the ADC channel
     IO_BANK0_SET.GPIO18_CTRL.OEOVER <<= GPIO_CTRL_OEOVER__ENABLE;
     if (channel & 1) {
@@ -52,13 +55,13 @@ uint16_t adc_rp2040::adcReadRaw(uint8_t channel) {
     } else {
         IO_BANK0.GPIO18_CTRL.OUTOVER = GPIO_CTRL_OUTOVER__LOW;
     }
-    // Wait a little to stabilize the ADC input
-    task::sleep_ms(2);
     // Read the 12 bit ADC result
     _ADC_::ADC.CS.AINSEL = (channel / 2);
     _ADC_::ADC.CS.START_ONCE = 1;
     while(!_ADC_::ADC.CS.READY) ;
     uint16_t result = _ADC_::ADC.RESULT;
+    // Leave the critical section
+    task::leaveCritical();
     // Release GPIO18
     IO_BANK0_CLR.GPIO18_CTRL.OEOVER  <<= GPIO_CTRL_OEOVER__ENABLE;
     IO_BANK0_CLR.GPIO18_CTRL.OUTOVER <<= GPIO_CTRL_OUTOVER__HIGH;

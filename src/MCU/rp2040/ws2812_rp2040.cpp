@@ -102,22 +102,23 @@ uint32_t ws2812_rp2040::xRGB_to_GRBx(uint32_t rgb) {
 
 void ws2812_rp2040::update(uint16_t index) {
     if (!_init) init();
-    // Override GPIO18 to output a high level
-    IO_BANK0_SET.GPIO18_CTRL.OEOVER  <<= GPIO_CTRL_OEOVER__ENABLE;
-    IO_BANK0_SET.GPIO18_CTRL.OUTOVER <<= GPIO_CTRL_OUTOVER__HIGH;
     // The PIO buffers the data in the FIFO (8 entries).
     // Sending the whole FIFO takes 80us. The reset time
     // for a WS2812 is at least 280us, so we wait approx.
     // 400us before sending a new packet.
     task::sleep_ms(1);
-    // Update the LEDs. A mutex will not help here because
-    // the critical section could still be interrupted. But
-    // WS2812 timing is critical...
-    __disable_irq();
+    // Make sure that setting the GPIO18 and writing
+    // the WS2812 data is atomic
+    task::enterCritical();
+    // Override GPIO18 to output a high level
+    IO_BANK0_SET.GPIO18_CTRL.OEOVER  <<= GPIO_CTRL_OEOVER__ENABLE;
+    IO_BANK0_SET.GPIO18_CTRL.OUTOVER <<= GPIO_CTRL_OUTOVER__HIGH;
+    // Write WS2812 data
     for(uint16_t i=0; i <= index; ++i) {
         _sm->writeTxFifo(_leds[i]._color);
     }
-    __enable_irq();
+    // Leave the critical section
+    task::leaveCritical();
     // Sleep again to ensure a reset on the WS2812 LEDs
     task::sleep_ms(1);
     // Restore GPIO18 signal
