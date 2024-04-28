@@ -1,14 +1,22 @@
-/*
- * gpio_msp432.cpp
- *
- *  Created on: 29.02.2016
- *      Author: Andreas Terstegge
- */
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
 #include "RP2040.h"
 #include "adc_rp2040.h"
-#include "gpio_rp2040.h"
+#include "task.h"
 #include <cassert>
+
+using namespace _IO_BANK0_;
 
 adc_rp2040 adc_rp2040::inst;
 
@@ -16,16 +24,11 @@ adc_rp2040::adc_rp2040() {
     // Enable the ADC
     _ADC_::ADC.CS.EN = 1;
     while (!_ADC_::ADC.CS.READY) ;
-    // Prepare GPIO18
-    gpio_rp2040::inst.gpioMode(18, GPIO::OUTPUT | GPIO::INIT_HIGH);
     // Prepare ADC inputs
     for (int i=26; i <= 29; ++i) {
-        // Disable pull-resistors and any output
+        // Disable pull-resistors
         _PADS_BANK0_::PADS_BANK0.GPIO[i].PUE = 0;
         _PADS_BANK0_::PADS_BANK0.GPIO[i].PDE = 0;
-        _PADS_BANK0_::PADS_BANK0.GPIO[i].OD  = 1;
-        // Set FUNCSEL to none -> no function
-        gpio_rp2040::inst.setSEL(i, _IO_BANK0_::GPIO_CTRL_FUNCSEL__null);
     }
 }
 
@@ -42,12 +45,23 @@ adc_mode_t adc_rp2040::getMode(uint8_t channel) {
 
 uint16_t adc_rp2040::adcReadRaw(uint8_t channel) {
     assert(channel < 8);
-    gpio_rp2040::inst.gpioWrite(18, (channel & 1));
-    _ADC_::ADC.CS.AINSEL     = (channel / 2);
+    // Set GPIO18 according to the ADC channel
+    IO_BANK0_SET.GPIO18_CTRL.OEOVER <<= GPIO_CTRL_OEOVER__ENABLE;
+    if (channel & 1) {
+        IO_BANK0.GPIO18_CTRL.OUTOVER = GPIO_CTRL_OUTOVER__HIGH;
+    } else {
+        IO_BANK0.GPIO18_CTRL.OUTOVER = GPIO_CTRL_OUTOVER__LOW;
+    }
+    // Wait a little to stabilize the ADC input
+    task::sleep_ms(2);
+    // Read the 12 bit ADC result
+    _ADC_::ADC.CS.AINSEL = (channel / 2);
     _ADC_::ADC.CS.START_ONCE = 1;
     while(!_ADC_::ADC.CS.READY) ;
     uint16_t result = _ADC_::ADC.RESULT;
-    gpio_rp2040::inst.gpioWrite(18, HIGH);
+    // Release GPIO18
+    IO_BANK0_CLR.GPIO18_CTRL.OEOVER  <<= GPIO_CTRL_OEOVER__ENABLE;
+    IO_BANK0_CLR.GPIO18_CTRL.OUTOVER <<= GPIO_CTRL_OUTOVER__HIGH;
     // Our ADC has no real 8 or 10 bit modes, so we simulate
     // the behaviour by shifting the result...
     switch(_modes[channel]) {

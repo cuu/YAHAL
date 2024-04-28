@@ -1,18 +1,26 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
 #include "ws2812_rp2040.h"
 #include "pio/ws2812.pio.h"
 #include "RP2040.h"
 #include "task.h"
 #include <cassert>
 
-using namespace _TIMER_;
+using namespace _IO_BANK0_;
 
 // LED implementation
 /////////////////////
-ws2812_rp2040::LED::LED() {
-    _color = 0;
-    // Default for on is a dark red
-    set_on_color(0x080000);
-}
 
 void ws2812_rp2040::LED::on() {
     _color = _on_color;
@@ -46,7 +54,7 @@ void ws2812_rp2040::LED::set_on_color(uint32_t rgb) {
 ///////////////////////////////
 ws2812_rp2040::ws2812_rp2040(gpio_pin_t pin,
                              uint16_t   size)
-: _init(false), _gpio(pin), _size(size), _last(0) {
+: _gpio(pin), _size(size) {
     // Allocate LED array and set base class pointers
     _leds = new LED[_size];
     for(uint16_t i=0; i < _size; ++i) {
@@ -56,22 +64,20 @@ ws2812_rp2040::ws2812_rp2040(gpio_pin_t pin,
 }
 
 ws2812_rp2040::~ws2812_rp2040() {
-    if (_leds) delete [] _leds;
+    delete [] _leds;
     _leds = nullptr;
-    _gpio.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__sio);
+    _gpio.setSEL(GPIO_CTRL_FUNCSEL__null);
 }
 
 void ws2812_rp2040::init() {
-    // configure GPIO pin
-    _gpio.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
+    // configure GPIO pin to use PIO0 output
+    _gpio.setSEL(GPIO_CTRL_FUNCSEL__pio0);
     // Set up the PIO state machine
     _sm = pio_rp2040::pio0.loadProgram(ws2812_program);
     configure_SM(_sm, _gpio.getGpio() );
     _sm->enable();
     // set flag
     _init = true;
-    // initialize LEDs
-    update(_size-1);
 }
 
 void ws2812_rp2040::set_colors(uint32_t * values, uint16_t size) {
@@ -96,11 +102,14 @@ uint32_t ws2812_rp2040::xRGB_to_GRBx(uint32_t rgb) {
 
 void ws2812_rp2040::update(uint16_t index) {
     if (!_init) init();
+    // Override GPIO18 to output a high level
+    IO_BANK0_SET.GPIO18_CTRL.OEOVER  <<= GPIO_CTRL_OEOVER__ENABLE;
+    IO_BANK0_SET.GPIO18_CTRL.OUTOVER <<= GPIO_CTRL_OUTOVER__HIGH;
     // The PIO buffers the data in the FIFO (8 entries).
     // Sending the whole FIFO takes 80us. The reset time
     // for a WS2812 is at least 280us, so we wait approx.
     // 400us before sending a new packet.
-    while ((time_us() - _last) < 48*1000) { }
+    task::sleep_ms(1);
     // Update the LEDs. A mutex will not help here because
     // the critical section could still be interrupted. But
     // WS2812 timing is critical...
@@ -109,18 +118,9 @@ void ws2812_rp2040::update(uint16_t index) {
         _sm->writeTxFifo(_leds[i]._color);
     }
     __enable_irq();
-    // Store timer value
-    _last = time_us();
-}
-
-uint64_t ws2812_rp2040::time_us() {
-    uint32_t hi = TIMER.TIMERAWH;
-    uint32_t lo;
-    while (true) {
-        lo = TIMER.TIMERAWL;
-        uint32_t next_hi = TIMER.TIMERAWH;
-        if (hi == next_hi) break;
-        hi = next_hi;
-    }
-    return (uint64_t(hi) << 32) | lo;
+    // Sleep again to ensure a reset on the WS2812 LEDs
+    task::sleep_ms(1);
+    // Restore GPIO18 signal
+    IO_BANK0_CLR.GPIO18_CTRL.OEOVER  <<= GPIO_CTRL_OEOVER__ENABLE;
+    IO_BANK0_CLR.GPIO18_CTRL.OUTOVER <<= GPIO_CTRL_OUTOVER__HIGH;
 }
