@@ -230,15 +230,18 @@ void SVC_Handler_C(uint32_t * args) {
             // The first Task to run is the first created task
             task::_switchToHead();
 
-            // Set scheduler priority to the lowest possible value
-            // (RP2040 has 2 priority bits -> values 0...3)
-            NVIC_SetPriority(PendSV_IRQn, 0x03);
-
             // set SysTick to TICK_FREQUENCY and priority to
             // second-highest level (highest is used for
             // application IRQs like timers and GPIO)
             SysTick_Config(CLK_SYS / TICK_FREQUENCY);
-            NVIC_SetPriority(SysTick_IRQn, 0x01);
+            NVIC_SetPriority(SysTick_IRQn, 0x02);
+
+            // Set scheduler priority to the lowest possible value
+            // (RP2040 has 2 priority bits -> values 0...3)
+            NVIC_SetPriority(PendSV_IRQn, 0x03);
+
+            // Set SVCall priority to same level as SysTick
+            NVIC_SetPriority(SVCall_IRQn, 0x02);
 
             // Return to thread mode and use PSP
             _exec_ret = EXC_RETURN_THREAD_PSP;
