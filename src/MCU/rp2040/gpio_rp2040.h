@@ -12,10 +12,11 @@
 
 namespace GPIO {
 // additional gpio modes
-const gpio_mode_t  DRIVE_2mA   = 0x0000;
-const gpio_mode_t  DRIVE_4mA   = 0x0400;
-const gpio_mode_t  DRIVE_8mA   = 0x0800;
-const gpio_mode_t  DRIVE_12mA  = 0x0c00;
+const gpio_mode_t  DRIVE_2mA     = 0x0000;
+const gpio_mode_t  DRIVE_4mA     = 0x0400;
+const gpio_mode_t  DRIVE_8mA     = 0x0800;
+const gpio_mode_t  DRIVE_12mA    = 0x0c00;
+const gpio_mode_t  INPUT_INVERT  = 0x1000;
 }
 
 extern "C" {

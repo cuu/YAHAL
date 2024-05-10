@@ -154,6 +154,11 @@ void gpio_rp2040::setMode (uint16_t gpio, uint16_t mode) {
     if (mode & GPIO::INPUT) {
         // Default is okay
     }
+    if (mode & GPIO::INPUT_INVERT) {
+        // Default is NEARLY okay :)
+        GPIO_CTRL_t *io_ctrl = &IO_BANK0.GPIO0_CTRL + (gpio << 1);
+        io_ctrl->INOVER = GPIO_CTRL_INOVER__INVERT;
+    }
     if (mode & GPIO::OUTPUT) {
         SIO.GPIO_OE_SET = mask;
     }
