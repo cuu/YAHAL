@@ -13,7 +13,7 @@
 //
 // This program is a small example for gpio usage.
 // It uses the two buttons S1 and S2 on the launchpad
-// to switch on a red and blue LED on the launchpad.
+// to switch on a red LED on the launchpad.
 
 #include "gpio_rp2040.h"
 
