@@ -130,8 +130,8 @@ void OS_add_task( void(*func)(void), int stack_size) {
 // first systick interrupt occurs, the first
 // task is started by popping all registers
 // from the stack. The exit routine is loaded
-// into LR, and the PC value is loaded into R4
-// and (at the end) an indirect  branch to R4
+// into LR, and the PC value is loaded into R0
+// and (at the end) an indirect  branch to R0
 // is performed so the first task is started!
 void OS_start_scheduler(int Hz) {
     // Start with first task

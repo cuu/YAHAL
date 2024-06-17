@@ -76,6 +76,9 @@ int main(void)
     posix_io::inst.register_stdout( uart );
     posix_io::inst.register_stderr( uart );
 
+    // Set the color of the blue LED
+    led_blue.set_on_color(0x000050);
+
     // Add two tasks to our mini-OS
     OS_add_task(task1);
     OS_add_task(task2);
