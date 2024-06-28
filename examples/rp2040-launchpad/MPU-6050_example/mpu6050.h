@@ -207,7 +207,7 @@ uint8_t MPU6050_whoAmI(i2c_interface & i2c);
  * Getting a value of temperature registers MPU6050
  * @return  temperature register value
  */
-int32_t MPU6050_getTemp(i2c_interface & i2c);
+int16_t MPU6050_getTemp(i2c_interface & i2c);
 
 /**
  * Getting a value of accelerometer registers MPU6050

@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <cassert>
 #include "mpu6050.h"
 
 /**
@@ -14,7 +15,7 @@
 void _MPU6050_moveToReg(i2c_interface & i2c, uint8_t reg) {
     uint8_t buf[1];
     buf[0] = reg;
-    i2c.i2cWrite(0x68, buf, 1);
+    i2c.i2cWrite(MPU6050_I2C_ADDR, buf, 1);
 }
 
 /**
@@ -29,6 +30,7 @@ int32_t _MPU6050_getRegValue(i2c_interface & i2c, uint8_t reg, uint8_t len) {
 
     int16_t l = i2c.i2cRead(MPU6050_I2C_ADDR, buf, len);
     int32_t value = 0;
+    assert(l==len);
     for (uint8_t i = 0; i < l; i++) {
         value <<= 8;
         value += buf[i];
@@ -60,7 +62,7 @@ int32_t* _MPU6050_getArrValues(i2c_interface & i2c, uint8_t reg, uint8_t len) {
 
     // Getting values of registers
     for (uint8_t i = 0; i < len; i++) {
-        arr[i] = _MPU6050_getRegValue(i2c, reg + i * 2, 2);
+        arr[i] = (int16_t)_MPU6050_getRegValue(i2c, reg + i * 2, 2);
     }
     return arr;
 }
@@ -164,7 +166,7 @@ uint8_t MPU6050_whoAmI(i2c_interface & i2c) {
  * Getting a value of temperature registers MPU6050
  * @return  temperature register value
  */
-int32_t MPU6050_getTemp(i2c_interface & i2c) {
+int16_t MPU6050_getTemp(i2c_interface & i2c) {
     // Getting value of temperature register
     return _MPU6050_getRegValue(i2c, TEMP_OUT_H, 2);
 }
@@ -193,7 +195,7 @@ int32_t* MPU6050_getGyro(i2c_interface & i2c) {
  */
 float MPU6050_countTemp(i2c_interface & i2c) {
     // Getting the values of temp_high and temp_l registers
-    int32_t temp_reg = MPU6050_getTemp(i2c);
+    int16_t temp_reg = MPU6050_getTemp(i2c);
 
     // Computing the temperature in degrees Celsius
     return temp_reg / 340 + 36.53;

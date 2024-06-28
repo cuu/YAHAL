@@ -43,6 +43,10 @@ int main()
     for ever {
         float temp = MPU6050_countTemp(i2c);
         printf("Temp: %d\n", (int)temp );
+        int32_t * accel = MPU6050_getAccel(i2c);
+        printf("X: %d\n", accel[0] );
+        printf("Y: %d\n", accel[1] );
+        printf("Z: %d\n", accel[2] );
         task::sleep_ms(1000);
     }
 
