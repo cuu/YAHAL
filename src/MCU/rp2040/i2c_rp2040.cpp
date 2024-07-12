@@ -72,9 +72,10 @@ void i2c_rp2040::initialize() {
     _i2c->IC_TX_TL = 0;
     _i2c->IC_RX_TL = 0;
 
-    // Finally set speed and enable unit
-//    setSpeed(400000);
     _initialized = true;
+
+    // Finally set speed and enable unit
+    setSpeed(400000);
 }
 
 int16_t i2c_rp2040::i2cRead (uint16_t addr, uint8_t *rxbuf,
