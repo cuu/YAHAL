@@ -45,7 +45,7 @@ public:
 
     void ProcessRegister(XMLElement *register_);
 
-    void ProcessField(XMLElement *field);
+    void ProcessField(XMLElement *field, const char * access);
 
     static void ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &bitWidth);
 

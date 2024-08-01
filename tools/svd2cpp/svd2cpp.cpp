@@ -243,7 +243,7 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
 
     // Generate the final register struct instance
     _ofs << indent << "static "  << periType << " & "
-         << name << "     = (*(" << periType << " *)0x" << hex
+         << name << " = (*(" << periType << " *)0x" << hex
          << baseAddr_int << ");" << endl;
 
     // Generate additional register struct instances,
@@ -275,6 +275,7 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
     const char *addrOffset = getChildElement(register_, "addressOffset");
     const char *desc       = getChildElement(register_, "description");
     const char *resetVal   = getChildElement(register_, "resetValue");
+    const char *access     = getChildElement(register_, "access");
 
     if (r_name == nullptr) {
         cerr << "Can not find name for register. Exit." << endl;
@@ -399,7 +400,7 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
         XMLElement *fields = register_->FirstChildElement("fields");
         for (XMLElement *field = fields->FirstChildElement("field");
              field; field = field->NextSiblingElement()) {
-            ProcessField(field);
+            ProcessField(field, access);
         }
         decIndent();
         _ofs << indent << "END_TYPE()" << endl << endl;
@@ -433,7 +434,7 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
     }
 }
 
-void svd2cpp::ProcessField(XMLElement *field) {
+void svd2cpp::ProcessField(XMLElement *field, const char * reg_access) {
     // Get all field parameters
     const char *name   = getChildElement(field, "name");
     const char *desc   = getChildElement(field, "description");
@@ -444,8 +445,10 @@ void svd2cpp::ProcessField(XMLElement *field) {
         exit(1);
     }
     if (access == nullptr) {
-        cerr << "Can not find access level for field. Exit." << endl;
-        exit(1);
+        if (reg_access == nullptr) {
+            cerr << "Can not find access level for field. Exit." << endl;
+            exit(1);
+        } else access = reg_access;
     }
 
     // Process the bit range
@@ -454,7 +457,7 @@ void svd2cpp::ProcessField(XMLElement *field) {
 
     // Process access mode
     string accessMode = "??";
-    if (!strcmp(access, "read-write")) {
+    if (!strcmp(access, "read-write") || !strcmp(access, "read-writeonce")) {
         accessMode = "RW";
     } else if (!strcmp(access, "read-only")) {
         accessMode = "RO";
