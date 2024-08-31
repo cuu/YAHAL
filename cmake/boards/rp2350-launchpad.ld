@@ -1,5 +1,5 @@
 /**************************************/
-/* rp2040-launchpad GCC linker script */
+/* rp2350 launchpad GCC linker script */
 /**************************************/
 
 MEMORY
