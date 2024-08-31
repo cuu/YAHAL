@@ -85,6 +85,7 @@ public:
     ofstream    _ofs;               // The output file
     string      _curReg;            // Current Register being processed
     uint32_t    _curRegSizeBytes{}; // Size in bytes of current register
+    uint32_t    _globalSize{};      // Size in top-level tags. Inherited by peripherals
 
     // List of register information
     registerInfo _registerInfo;

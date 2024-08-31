@@ -49,7 +49,7 @@ public:
     // Element access
     const char & operator [] (uint16_t) const;
     char &       operator [] (uint16_t);
-    const char * c_str() { return _ptr; }
+    const char * c_str() const { return _ptr; };
 
     // Comparison operators
     bool operator == (const String & r) const;

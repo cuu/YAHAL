@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     if (optind == (argc-1)) {
         infile = argv[optind];
     } else {
-        cerr << "No or too many filenames given!" << endl;
+        cerr << "Wrong number of arguments!" << endl;
         usage();
     }
 

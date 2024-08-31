@@ -55,6 +55,11 @@ void svd2cpp::processSvdFile(const string & infile,
     _ofs << "#include \"bitfield_defs.h\"" << endl;
     _ofs << endl;
 
+    // Try to read the global size value
+    const char *size = getChildElement(elem, "size");
+    if (size) {
+        _globalSize = parseNumber(size);
+    }
     // Loop over all first-level elements
     elem = elem->FirstChildElement();
     while (elem != nullptr) {
@@ -112,6 +117,12 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
     uint32_t baseAddr_int = parseNumber(baseAddr);
     if (size) {
         _curRegSizeBytes = parseNumber(size) / 8;
+    } else {
+        _curRegSizeBytes = _globalSize / 8;
+    }
+    if (_curRegSizeBytes == 0) {
+        cerr << "Can not determine register size for peripheral " << name << ". Exit" << endl;
+        exit(1);
     }
 
     // Check if we are a derived peripheral
