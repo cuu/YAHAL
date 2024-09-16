@@ -8,7 +8,7 @@ set(YAHAL_CPU "cortex-m33fd")
 add_compile_options(-mcpu=cortex-m33 -march=armv8-m.main+fp+dsp -mthumb)
 add_link_options(-mcpu=cortex-m33 -march=armv8-m.main+fp+dsp -mthumb)
 
-# Math flags 
+# FPU flags
 add_compile_definitions(ARM_MATH_CM33)
 add_compile_options(-mfloat-abi=softfp)
 add_link_options(-mfloat-abi=softfp)
