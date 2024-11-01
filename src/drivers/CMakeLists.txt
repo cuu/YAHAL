@@ -15,6 +15,7 @@ target_sources(${YAHAL_TARGET} PRIVATE
     sharp96_drv.cpp
     soft_i2c_slave_states.cpp
     max30102_drv.cpp
+    ili9488.cpp
 )
 
 target_include_directories(${YAHAL_TARGET} PUBLIC
