@@ -27,8 +27,10 @@ ili9488_drv::ili9488_drv(spi_interface & spi, gpio_pin & rst_pin,
     writeData(0x96);
     writeCommand(TFT_MADCTL);
     writeData(0x48);
-    writeCommand(0x3A);
-    writeData(0x06);
+    writeCommand(0x3A);//pixel format rgb565
+    writeData(0x65);
+    writeCommand(0xB1);
+    writeData(0xA0);
     writeCommand(0xB4);
     writeData(0x00);
     writeCommand(0xB7);
@@ -91,9 +93,9 @@ ili9488_drv::ili9488_drv(spi_interface & spi, gpio_pin & rst_pin,
     writeCommand(0x35);
     writeData(0x00);
     writeCommand(TFT_SLPOUT);
-    task::sleep_ms(1);
+    task::sleep_ms(120);
     writeCommand(TFT_DISPON);
-    task::sleep_ms(1);
+    task::sleep_ms(120);
     writeCommand(TFT_INVON);
     writeCommand(TFT_CASET);
     writeData(0x00);
