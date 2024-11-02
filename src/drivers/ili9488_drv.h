@@ -14,7 +14,7 @@
 #define TFT_RASET 0x2B
 #define TFT_RAMWR 0x2C
 
-const int BUF_LEN = 650;
+const int BUF_LEN = 640;
 
 class ili9488_drv:public lcd_interface{
 public:
@@ -35,8 +35,8 @@ public:
         uint16_t    sizeY;
         uint16_t    sizeRamX;
         uint16_t    sizeRamY;
-        uint16_t     offsetX;
-        uint16_t     offsetY;
+        uint16_t    offsetX;
+        uint16_t    offsetY;
         uint8_t     flags;
     };
     // Display configurations

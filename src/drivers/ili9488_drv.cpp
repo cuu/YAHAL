@@ -286,8 +286,7 @@ void ili9488_drv::clearScreen(color_t c)
 ///////////////////////////////////////////////////////// private method //////////////////////////////////
 void ili9488_drv::change(uint16_t & x, uint16_t & y)
 {
-    y += _lcd.sizeY + _lcd.offsetY - _first_row - 1;
-
+    y+=_first_row;
     if (y >= _lcd.sizeY)
         y -= _lcd.sizeY;
     if (x >= _lcd.sizeY)
@@ -298,23 +297,23 @@ void ili9488_drv::change(uint16_t & x, uint16_t & y)
 void ili9488_drv::setFrame(uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye)
 {
 
-    xs += (_lcd.sizeRamX - _lcd.sizeX - _lcd.offsetX);
-    ys += (_lcd.sizeRamY - _lcd.sizeY - _lcd.offsetY);
-    xe += (_lcd.sizeRamX - _lcd.sizeX - _lcd.offsetX);
-    ye += (_lcd.sizeRamY - _lcd.sizeY - _lcd.offsetY);
+    xs += _lcd.offsetX;
+    ys += _lcd.offsetY;
+    xe += _lcd.offsetX;
+    ye += _lcd.offsetY;
 
     writeCommand(TFT_CASET);
-    _tx_buffer[0] = 0;
-    _tx_buffer[1] = xs;
-    _tx_buffer[2] = 0;
-    _tx_buffer[3] = xe;
+    _tx_buffer[0] = xs>>8;
+    _tx_buffer[1] = xs&0xff;
+    _tx_buffer[2] = xe>>8;
+    _tx_buffer[3] = xe&0xff;
     writeDataBuffer(4);
 
     writeCommand(TFT_RASET);
-    _tx_buffer[0] = 0;
-    _tx_buffer[1] = ys;
-    _tx_buffer[2] = 0;
-    _tx_buffer[3] = ye;
+    _tx_buffer[0] = ys>>8;
+    _tx_buffer[1] = ys&0xff;
+    _tx_buffer[2] = ye>>8;
+    _tx_buffer[3] = ye&0xff;
     writeDataBuffer(4);
 }
 
