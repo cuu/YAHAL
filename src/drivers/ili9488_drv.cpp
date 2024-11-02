@@ -1,4 +1,4 @@
-#include <ili9488.h>
+#include <ili9488_drv.h>
 #include "pixel_stream_const.h"
 #include "task.h"
 
@@ -11,7 +11,7 @@ ili9488_drv::ili9488_drv(spi_interface & spi, gpio_pin & rst_pin,
                          mutex_interface * mutex)
         : _spi(spi), _rst_pin(rst_pin), _dc_pin(dc_pin), _lcd(lcd), _mutex(mutex) {
 
-
+    _spi.setSpeed(24000000);
     // Initialize Reset & D/C pins
     _rst_pin.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
     _dc_pin. gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);

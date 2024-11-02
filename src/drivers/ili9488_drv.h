@@ -1,5 +1,5 @@
-#ifndef _ILI9488_H
-#define _ILI9488_H
+#ifndef _ILI9488_DRV_H
+#define _ILI9488_DRV_H
 
 #include "spi_interface.h"
 #include "gpio_interface.h"
