@@ -2989,7 +2989,7 @@ DIR* dp, /* Pointer to the directory object */
     const TCHAR *p;
 
     /* Create LFN into LFN working buffer */
-    p = *path; lfn = dp->obj.fs->lfnbuf; di = 0;
+    p = *path; lfn = dp->obj.fs->_lfnbuf; di = 0;
     for (;;)
     {
         uc = tchar2uni(&p); /* Get a character */

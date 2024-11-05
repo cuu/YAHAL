@@ -66,8 +66,13 @@
 #define AM_DIR  0x10    /* Directory */
 #define AM_ARC  0x20    /* Archive */
 
+typedef unsigned int	UINT;	/* int must be 16-bit or 32-bit */
+typedef unsigned char	BYTE;	/* char must be 8-bit */
+typedef uint16_t		WORD;	/* 16-bit unsigned integer */
+typedef uint32_t		DWORD;	/* 32-bit unsigned integer */
+typedef uint64_t		QWORD;	/* 64-bit unsigned integer */
+typedef WORD			WCHAR;	/* UTF-16 character type */
 
-typedef uint16_t WCHAR;
 
 /* Type of path name strings on FatFs API */
 
