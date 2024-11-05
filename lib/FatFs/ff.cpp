@@ -3318,6 +3318,9 @@ uint8_t FatFs::check_fs( /* 0:FAT, 1:exFAT, 2:Valid BS but not FAT, 3:Not a BS, 
 uint32_t sect /* Sector# (lba) to load and check if it is an FAT-VBR or not */
 )
 {
+    WORD w;
+    BYTE b;
+
     _wflag = 0;
     _winsect = 0xFFFFFFFF; /* Invaidate window */
     if (move_window(sect) != FR_OK)
@@ -3334,8 +3337,20 @@ uint32_t sect /* Sector# (lba) to load and check if it is an FAT-VBR or not */
     { /* Valid JumpBoot code? */
         if (!mem_cmp(_win + BS_FilSysType, "FAT", 3))
             return 0; /* Is it an FAT VBR? */
-        if (!mem_cmp(_win + BS_FilSysType32, "FAT32", 5))
+        if (!mem_cmp(_win + BS_FilSysType32, "FAT32   ", 8))
             return 0; /* Is it an FAT32 VBR? */
+
+        w = ld_word(_win+BPB_BytsPerSec);
+        b = _win[BPB_SecPerClus];
+        if ((w & (w - 1)) == 0 && w >= FF_MIN_SS && w <= FF_MAX_SS	/* Properness of sector size (512-4096 and 2^n) */
+            && b != 0 && (b & (b - 1)) == 0				/* Properness of cluster size (2^n) */
+            && ld_word(_win + BPB_RsvdSecCnt) != 0	/* Properness of reserved sectors (MNBZ) */
+            && (UINT)_win[BPB_NumFATs] - 1 <= 1		/* Properness of FATs (1 or 2) */
+            && ld_word(_win + BPB_RootEntCnt) != 0	/* Properness of root dir entries (MNBZ) */
+            && (ld_word(_win + BPB_TotSec16) >= 128 || ld_dword(_win + BPB_TotSec32) >= 0x10000)	/* Properness of volume sectors (>=128) */
+            && ld_word(_win + BPB_FATSz16) != 0) {	/* Properness of FAT size (MNBZ) */
+            return 0;	/* It can be presumed an FAT VBR */
+        }
     }
     return 2; /* Valid BS but not FAT */
 }
