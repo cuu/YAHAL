@@ -79,7 +79,7 @@ int sd_spi_drv::sd_init()
     _spi.setCS(HIGH);
 
     // Start with a slow SPI clock
-    _spi.setSpeed(400000);
+    //_spi.setSpeed(400000);
 
     // 74+ clocks with CS high
     for (int i=0; i < 10; i++)
