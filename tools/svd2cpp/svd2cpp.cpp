@@ -120,16 +120,18 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
     } else {
         _curRegSizeBytes = _globalSize / 8;
     }
-    if (_curRegSizeBytes == 0) {
-        cerr << "Can not determine register size for peripheral " << name << ". Exit" << endl;
-        exit(1);
-    }
 
     // Check if we are a derived peripheral
     string derivedFrom;
     const XMLAttribute *derived = peripheral->FindAttribute("derivedFrom");
     if (derived) {
         derivedFrom += derived->Value();
+    }
+
+    // Check if we have a valid (default) register size
+    if ((_curRegSizeBytes == 0) && !derived) {
+        cerr << "Can not determine register size for peripheral " << name << ". Exit" << endl;
+        exit(1);
     }
 
     // Check if we have some interrupt information
@@ -647,7 +649,11 @@ string svd2cpp::Trim(string str) {
 }
 
 void svd2cpp::pad_str(string & val, int size) {
-    while (val.size() < size) val += ' ';
+    if (val.size() >= size) {
+        val += ' ';
+    } else {
+        while (val.size() < size) val += ' ';
+    }
 }
 
 string svd2cpp::named_register(string val, const string & index) {
