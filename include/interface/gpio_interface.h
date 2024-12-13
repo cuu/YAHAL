@@ -81,80 +81,43 @@ const gpio_irq_t  LEVEL_LOW           = 0x0008;
 
 class gpio_interface {
 public:
+    // The CTOR of a concrete GPIO class has to set a
+    // specific GPIO pin with a gpio_pin_t argument.
+
+    // The following methods can be used to change/get the
+    // GPIO pin in an existing GPIO object.
+    virtual void setGpio(gpio_pin_t gpio) = 0;
+    virtual gpio_pin_t getGpio() = 0;
+
     // Basic GPIO handling
-    virtual void gpioMode  (gpio_pin_t gpio, gpio_mode_t mode) = 0;
-    virtual bool gpioRead  (gpio_pin_t gpio) = 0;
-    virtual void gpioWrite (gpio_pin_t gpio, bool value) = 0;
-    virtual void gpioToggle(gpio_pin_t gpio) = 0;
+    virtual void gpioMode  (gpio_mode_t mode) = 0;
+    virtual bool gpioRead  () = 0;
+    virtual void gpioWrite (bool value) = 0;
+    virtual void gpioToggle() = 0;
 
     // Attach a interrupt handler to the GPIO pin 'gpio'.
-    // The irq_mode specifies the the signal edges to listen to.
+    // The irq_mode specifies the signal edges to listen to.
     // The handler will be called when the event occurs.
-    virtual void gpioAttachIrq (gpio_pin_t        gpio,
-                                gpio_irq_t        irq_mode,
+    virtual void gpioAttachIrq (gpio_irq_t        irq_mode,
                                 function<void()>  handler) = 0;
     // Remove the interrupt handler from the GPIO pin
-    virtual void gpioDetachIrq (gpio_pin_t gpio) = 0;
+    virtual void gpioDetachIrq () = 0;
     // Enable the interrupt on the GPIO pin
-    virtual void gpioEnableIrq (gpio_pin_t gpio) = 0;
+    virtual void gpioEnableIrq () = 0;
     // Disable the interrupt on the GPIO pin
-    virtual void gpioDisableIrq(gpio_pin_t gpio) = 0;
+    virtual void gpioDisableIrq() = 0;
 
-protected:
-    virtual ~gpio_interface() = default;
-};
-
-// This small wrapper class provides GPIO
-// functionality for a single GPIO pin.
-
-class gpio_pin {
-public:
-    gpio_pin(gpio_interface & interf)
-    : _interf(interf), _gpio(0) { }
-
-    gpio_pin(gpio_interface & interf, gpio_pin_t gpio)
-    : _interf(interf), _gpio(gpio) { }
-
-    inline void setGpio(gpio_pin_t gpio) {
-        _gpio = gpio;
-    }
-    inline gpio_pin_t getGpio() {
-        return _gpio;
-    }
-    inline void gpioMode(gpio_mode_t mode) {
-        _interf.gpioMode(_gpio, mode);
-    }
-    inline bool gpioRead() {
-        return _interf.gpioRead (_gpio);
-    }
-    inline void gpioWrite(bool val) {
-        _interf.gpioWrite(_gpio, val);
-    }
-    inline void gpioToggle() {
-        _interf.gpioToggle(_gpio);
-    }
-    inline void gpioAttachIrq (gpio_irq_t       irq_mode,
-                               function<void()> handler) {
-        _interf.gpioAttachIrq(_gpio, irq_mode, handler);
-    }
-    inline void gpioDetachIrq() {
-        _interf.gpioDetachIrq(_gpio);
-    }
-    inline void gpioEnableIrq() {
-        _interf.gpioEnableIrq(_gpio);
-    }
-    inline void gpioDisableIrq() {
-        _interf.gpioDisableIrq(_gpio);
-    }
+    // Boolean operators for easy usage of GPIOs
     inline void operator = (bool b) {
         gpioWrite(b);
     }
     inline operator bool () {
         return gpioRead();
     }
+
 protected:
-    gpio_interface & _interf;
-    gpio_pin_t       _gpio;
+    virtual ~gpio_interface() = default;
 };
 
 #endif // _GPIO_INTERFACE_H_
+

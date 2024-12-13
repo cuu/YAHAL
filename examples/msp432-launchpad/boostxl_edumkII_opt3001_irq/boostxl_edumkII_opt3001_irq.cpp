@@ -29,8 +29,8 @@
 
 int main(void)
 {
-    i2c_msp432      opt3001( EUSCI_B1 );
-    gpio_msp432_pin opt_irq( PORT_PIN(4,6) );
+    i2c_msp432  opt3001( EUSCI_B1 );
+    gpio_msp432 opt_irq( PORT_PIN(4,6) );
 
     uint8_t rxbuf[2];
     uint8_t txbuf[3];

@@ -138,12 +138,12 @@ public:
     }
 
 private:
-    gpio_msp432_pin _cs;    // CS Line of audio SPI
+    gpio_msp432     _cs;    // CS Line of audio SPI
     spi_msp432      _spi;   // SPI interface used for the SD card reader
     sd_spi_drv      _sd;    // SD card low level driver
 
-    gpio_msp432_pin _next;  // Next button
-    gpio_msp432_pin _part;  // Partition button
+    gpio_msp432     _next;  // Next button
+    gpio_msp432     _part;  // Partition button
 
     FatFs           _fs;
     FatFs::DIR      _dir;

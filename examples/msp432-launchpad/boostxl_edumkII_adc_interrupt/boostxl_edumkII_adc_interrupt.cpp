@@ -43,9 +43,9 @@ adc14_msp432_channel joy_Y( 9);
 uint16_t offset_X, offset_Y;
 
 // GPIO Pins with LEDs
-gpio_msp432_pin red_led  (PORT_PIN(2, 0));
-gpio_msp432_pin green_led(PORT_PIN(2, 1));
-gpio_msp432_pin blue_led (PORT_PIN(2, 2));
+gpio_msp432 red_led  (PORT_PIN(2, 0));
+gpio_msp432 green_led(PORT_PIN(2, 1));
+gpio_msp432 blue_led (PORT_PIN(2, 2));
 
 void delay() {
     task::sleep_ms(10); //for(int i=0; i < 500000; ++i) ;

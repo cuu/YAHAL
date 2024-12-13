@@ -30,8 +30,10 @@ void uart_msp432::init() {
     else if (_EUSCI==EUSCI_A2) { _port = 3; _rx_pin = 2; _tx_pin = 3; }
     else if (_EUSCI==EUSCI_A3) { _port = 9; _rx_pin = 6; _tx_pin = 7; }
     else yahal_assert(false);
-    gpio_msp432::inst.setSEL(PORT_PIN(_port,_rx_pin), 1);
-    gpio_msp432::inst.setSEL(PORT_PIN(_port,_tx_pin), 1);
+    gpio_msp432 rx_pin(PORT_PIN(_port,_rx_pin));
+    gpio_msp432 tx_pin(PORT_PIN(_port,_tx_pin));
+    rx_pin.setSEL(1);
+    tx_pin.setSEL(1);
 
     // put EUSCI module in reset state
     //////////////////////////////////
@@ -76,8 +78,10 @@ uart_msp432::~uart_msp432() {
     _EUSCI->CTLW0 = EUSCI_A_CTLW0_SWRST;
     // De-configure the digital RX/TX lines
     ///////////////////////////////////////
-    gpio_msp432::inst.setSEL(PORT_PIN(_port,_rx_pin), 0);
-    gpio_msp432::inst.setSEL(PORT_PIN(_port,_tx_pin), 0);
+    gpio_msp432 rx_pin(PORT_PIN(_port,_rx_pin));
+    gpio_msp432 tx_pin(PORT_PIN(_port,_tx_pin));
+    rx_pin.setSEL(0);
+    tx_pin.setSEL(0);
 }
 
 bool uart_msp432::available() {
@@ -101,8 +105,8 @@ void uart_msp432::putc(char c) {
     _EUSCI->TXBUF = (uint16_t)c;
 }
 
-int uart_msp432::puts(const char *s) {
-    unsigned int i, len;
+size_t uart_msp432::puts(const char *s) {
+    size_t i, len;
     len = strlen(s);
     for (i=0; i < len; i++) putc(s[i]);
     return len;

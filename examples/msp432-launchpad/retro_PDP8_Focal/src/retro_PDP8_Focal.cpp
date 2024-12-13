@@ -44,9 +44,12 @@ int main() {
     // The PDP-8 CPU writes the AC register to P2 so
     // that we can 'see' the PDP-8 CPU working. So
     // initialize the RGB-LEDs as outputs.
-    gpio_msp432::inst.gpioMode(PORT_PIN(2,0), GPIO::OUTPUT);
-    gpio_msp432::inst.gpioMode(PORT_PIN(2,1), GPIO::OUTPUT);
-    gpio_msp432::inst.gpioMode(PORT_PIN(2,2), GPIO::OUTPUT);
+    gpio_msp432 gpio20(PORT_PIN(2,0));
+    gpio_msp432 gpio21(PORT_PIN(2,1));
+    gpio_msp432 gpio22(PORT_PIN(2,2));
+    gpio20.gpioMode(GPIO::OUTPUT);
+    gpio21.gpioMode(GPIO::OUTPUT);
+    gpio22.gpioMode(GPIO::OUTPUT);
 
     // Add some PDP devices (Teletype input/output)
     Devices devices;

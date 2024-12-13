@@ -28,8 +28,8 @@ public:
     // User interface
     /////////////////
     sharp96_drv(spi_interface   & spi,
-                gpio_pin        & disp_on_pin,
-                gpio_pin        & pwr_pin,
+                gpio_interface & disp_on_pin,
+                gpio_interface & pwr_pin,
                 timer_interface & timer);
 
     virtual ~sharp96_drv() { }
@@ -54,8 +54,8 @@ private:
     uint8_t reverseByte(uint8_t data);
 
     spi_interface   & _spi;
-    gpio_pin        & _disp_on_pin;
-    gpio_pin        & _pwr_pin;
+    gpio_interface  & _disp_on_pin;
+    gpio_interface  & _pwr_pin;
     timer_interface & _timer;
     bool              _dirty;
     bool              _setVCOM;

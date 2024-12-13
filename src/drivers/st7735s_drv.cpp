@@ -81,8 +81,8 @@ st7735s_drv::config st7735s_drv::Crystalfontz_128x128(
 #define CMD_GAMCTRN1    0xE1    // Gamma ('-' polarity) Correction Characteristics Setting
 #define CMD_GCV         0xFC    // Gate Pump Clock Frequency Variable
 
-st7735s_drv::st7735s_drv(spi_interface & spi, gpio_pin & rst_pin,
-                         gpio_pin & dc_pin, config & lcd,
+st7735s_drv::st7735s_drv(spi_interface & spi, gpio_interface & rst_pin,
+                         gpio_interface & dc_pin, config & lcd,
                          mutex_interface * mutex)
     : _spi(spi), _rst_pin(rst_pin), _dc_pin(dc_pin), _lcd(lcd), _mutex(mutex)
 {

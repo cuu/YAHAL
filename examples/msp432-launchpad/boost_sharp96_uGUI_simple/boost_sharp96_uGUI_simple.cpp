@@ -35,13 +35,13 @@
 int main(void)
 {
     // Setup SPI interface
-    gpio_msp432_pin lcd_cs (PORT_PIN(4, 3));
+    gpio_msp432 lcd_cs (PORT_PIN(4, 3));
     spi_msp432  spi(EUSCI_B0_SPI, lcd_cs);
     spi.setSpeed(1000000);
 
     // Setup LCD driver
-    gpio_msp432_pin lcd_disp(PORT_PIN(4, 1));
-    gpio_msp432_pin lcd_pwr (PORT_PIN(6, 0));
+    gpio_msp432 lcd_disp(PORT_PIN(4, 1));
+    gpio_msp432 lcd_pwr (PORT_PIN(6, 0));
     timer_msp432 timer;
     sharp96_drv lcd(spi, lcd_disp, lcd_pwr, timer);
 

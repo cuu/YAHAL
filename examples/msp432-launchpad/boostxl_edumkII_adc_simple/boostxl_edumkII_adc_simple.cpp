@@ -32,9 +32,9 @@ int main()
     posix_io::inst.register_stdout(uart);
 
     // GPIO Pins with LEDs
-    gpio_msp432_pin red_led  (PORT_PIN(2, 0));
-    gpio_msp432_pin green_led(PORT_PIN(2, 1));
-    red_led.  gpioMode(GPIO::OUTPUT);
+    gpio_msp432 red_led  (PORT_PIN(2, 0));
+    gpio_msp432 green_led(PORT_PIN(2, 1));
+    red_led.gpioMode(GPIO::OUTPUT);
     green_led.gpioMode(GPIO::OUTPUT);
 
     // ADC channel 15 is joystick X-movement.

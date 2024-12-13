@@ -9,6 +9,7 @@
 #define _GPIO_MSP432_H_
 
 #include "gpio_interface.h"
+#include <cassert>
 
 extern "C" {
 void PORT1_IRQHandler(void);
@@ -21,27 +22,39 @@ void PORT6_IRQHandler(void);
 
 class gpio_msp432 : public gpio_interface {
 public:
-    virtual ~gpio_msp432() { }
-    static gpio_msp432 inst;
+    explicit gpio_msp432(gpio_pin_t gpio = 0xffff) {
+        _port = PORT(gpio);
+        _pin  = PIN (gpio);
+    }
+    ~gpio_msp432() override = default;
+
+    inline void setGpio(gpio_pin_t gpio) override {
+        _port = PORT(gpio);
+        _pin  = PIN (gpio);
+        assert((_port > 0) && (_port < 11) && (_pin < 8));
+    }
+    inline gpio_pin_t getGpio() override {
+        return (_port << 8) | _pin;
+    }
 
     // Generic GPIO methods
     ///////////////////////
-    void gpioMode  (gpio_pin_t gpio, gpio_mode_t mode);
-    bool gpioRead  (gpio_pin_t gpio);
-    void gpioWrite (gpio_pin_t gpio, bool value);
-    void gpioToggle(gpio_pin_t gpio);
+    void gpioMode  (gpio_mode_t mode) override;
+    bool gpioRead  () override;
+    void gpioWrite (bool value) override;
+    void gpioToggle() override;
 
     // Interrupt handling
-    void gpioAttachIrq (gpio_pin_t gpio, gpio_mode_t mode,
-                        function<void()> handler);
-    void gpioDetachIrq (gpio_pin_t gpio);
-    void gpioEnableIrq (gpio_pin_t gpio);
-    void gpioDisableIrq(gpio_pin_t gpio);
+    void gpioAttachIrq (gpio_mode_t mode,
+                        function<void()> handler) override;
+    void gpioDetachIrq () override;
+    void gpioEnableIrq () override;
+    void gpioDisableIrq() override;
 
     // MSP432 specific methods
     //////////////////////////
-    void setSEL (gpio_pin_t gpio, uint8_t  sel);
-    void setMode(gpio_pin_t gpio, gpio_mode_t mode);
+    void setSEL (uint8_t  sel) const;
+    void setMode(gpio_mode_t mode);
 
     // IRQ handlers are our best friends
     ////////////////////////////////////
@@ -52,39 +65,20 @@ public:
     friend void PORT5_IRQHandler(void);
     friend void PORT6_IRQHandler(void);
 
+    using gpio_interface::operator =;
+    using gpio_interface::operator bool;
+
 private:
-    gpio_msp432() { }
+    uint8_t _port;
+    uint8_t _pin;
+    bool    _open_source {false};
+    bool    _open_drain {false};
+    bool    _pull_up {false};
+    bool    _pull_down {false};
 
-    void handleIrq(uint8_t port, uint8_t pin);
-    function<void()> _intHandler[6][8];
-    void * _arg[6][8];
-    bool   _both[6][8];
-
-    uint8_t _open_source[10];
-    uint8_t _open_drain [10];
-    uint8_t _pull_up    [10];
-    uint8_t _pull_down  [10];
-};
-
-
-// This small wrapper class provides GPIO
-// functionality for a single GPIO pin.
-
-class gpio_msp432_pin : public gpio_pin {
-public:
-    gpio_msp432_pin()
-    : gpio_pin(gpio_msp432::inst) { }
-    gpio_msp432_pin(gpio_pin_t gpio)
-    : gpio_pin(gpio_msp432::inst, gpio) { }
-
-    inline void setSEL (uint8_t sel) {
-        gpio_msp432::inst.setSEL(_gpio, sel);
-    }
-    inline void setMode(gpio_mode_t mode) {
-        gpio_msp432::inst.setMode(_gpio, mode);
-    }
-    using gpio_pin::operator =;
-    using gpio_pin::operator bool;
+    static void handleIrq(uint8_t port, uint8_t pin);
+    static function<void()> _intHandler[6][8];
+    static bool _both[6][8];
 };
 
 #endif // _GPIO_MSP432_H_

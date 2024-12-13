@@ -40,7 +40,7 @@ private:
 
     audio_output &    _audio_output;
     mad_decoder       _decoder;
-    gpio_msp432_pin   _led;
+    gpio_msp432       _led;
     uint8_t           _mp3_buf[MP3_BUF_SIZE];
 };
 

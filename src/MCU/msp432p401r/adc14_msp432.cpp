@@ -57,7 +57,8 @@ void adc14_msp432::adcMode(uint8_t channel, uint16_t mode) {
     uint8_t port = port_pin >>  3;
     uint8_t pin  = port_pin & 0x7;
     // Select ADC mode
-    gpio_msp432::inst.setSEL(PORT_PIN(port, pin), 3);
+    gpio_msp432 gpio(PORT_PIN(port, pin));
+    gpio.setSEL(3);
 }
 
 adc_mode_t adc14_msp432::getMode(uint8_t channel) {

@@ -38,7 +38,7 @@ void delay(int ms) {
 
 // simple first task: Blink red LED
 void task1(void) {
-    gpio_msp432_pin red_led(PORT_PIN(1,0));
+    gpio_msp432 red_led(PORT_PIN(1,0));
     red_led.gpioMode(GPIO::OUTPUT);
     while(true) {
         delay(500);
@@ -48,7 +48,7 @@ void task1(void) {
 
 // simple second task: Blink blue LED
 void task2(void) {
-    gpio_msp432_pin blue_led(PORT_PIN(2,2));
+    gpio_msp432 blue_led(PORT_PIN(2,2));
     blue_led.gpioMode(GPIO::OUTPUT);
     while(true) {
         delay(300);

@@ -21,7 +21,7 @@
 int main(void)
 {
     // Use P1.0 as output
-    gpio_msp432_pin led( PORT_PIN(1,0) );
+    gpio_msp432 led( PORT_PIN(1,0) );
     led.gpioMode( GPIO::OUTPUT );
 
     // This loop will never end ...

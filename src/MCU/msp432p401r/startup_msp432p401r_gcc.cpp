@@ -6,6 +6,10 @@
 extern "C" {
 #endif
 
+// Forward declaration of SysTick Handler
+// (implemented in task_msp432.cpp)
+void SysTick_Handler(void);
+
 /*********************/
 /* Macro Definitions */
 /*********************/
@@ -39,7 +43,6 @@ WEAK_ALIAS_FUNC(UsageFault_Handler,  Default_Handler)
 WEAK_ALIAS_FUNC(SVC_Handler,         Default_Handler)
 WEAK_ALIAS_FUNC(DebugMon_Handler,    Default_Handler)
 WEAK_ALIAS_FUNC(PendSV_Handler,      Default_Handler)
-WEAK_ALIAS_FUNC(SysTick_Handler,     Default_Handler)
 
 // Device specific interrupt handler
 WEAK_ALIAS_FUNC( PSS_IRQHandler,     Default_Handler)
@@ -105,6 +108,7 @@ void (*const isr_vector[])(void) __attribute__ ((section (".intvecs"), used)) = 
     0,                      /* Reserved                  */
     PendSV_Handler,         /* The PendSV handler        */
     SysTick_Handler,        /* The SysTick handler       */
+
     PSS_IRQHandler,         /* PSS Interrupt             */
     CS_IRQHandler,          /* CS Interrupt              */
     PCM_IRQHandler,         /* PCM Interrupt             */
@@ -169,8 +173,7 @@ void Reset_Handler(void) {
 // This is the code that gets called when the processor receives an unexpected
 // interrupt.  This simply enters an infinite loop, preserving the system state
 // for examination by a debugger.
-void Default_Handler(void)
-{
+void Default_Handler(void) {
     // Enter an infinite loop.
     while (1) { }
 }

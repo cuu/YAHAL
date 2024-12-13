@@ -183,14 +183,14 @@ int main(void)
     printf("SubsystemMasterClock: %ld Hz\n", SubsystemMasterClock);
 
     // Setup two LEDs on the launchpad for blinking
-    gpio_msp432_pin led1( PORT_PIN(1,0) ); // Left red LED
-    gpio_msp432_pin led2( PORT_PIN(2,0) ); // red RGB LED
+    gpio_msp432 led1( PORT_PIN(1,0) ); // Left red LED
+    gpio_msp432 led2( PORT_PIN(2,0) ); // red RGB LED
     led1.gpioMode( GPIO::OUTPUT );
     led2.gpioMode( GPIO::OUTPUT );
 
     // Setup the first timer with a timeout
     // of 500ms. As an example, a pointer to the
-    // gpio_pin is passed as the callback argument.
+    // gpio is passed as the callback argument.
     // When a timer is e.g. used within a class, the
     // this-pointer could be passed to the callback
     // method, so it can call methods of the class.

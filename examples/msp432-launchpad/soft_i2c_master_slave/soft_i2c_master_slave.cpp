@@ -52,12 +52,12 @@ int main(void)
     uart.puts("Press Button S1 during startup to select HW I2C master!\r\n");
 
     // set up GPIOs for button and I2C master/slave
-    gpio_msp432_pin button1( PORT_PIN(1,1));
+    gpio_msp432 button1( PORT_PIN(1,1));
     button1.gpioMode(GPIO::INPUT | GPIO::PULLUP);
-    gpio_msp432_pin m_sda( PORT_PIN(6,4) );
-    gpio_msp432_pin m_scl( PORT_PIN(6,5) );
-    gpio_msp432_pin s_sda( PORT_PIN(5,5) );
-    gpio_msp432_pin s_scl( PORT_PIN(5,4) );
+    gpio_msp432 m_sda( PORT_PIN(6,4) );
+    gpio_msp432 m_scl( PORT_PIN(6,5) );
+    gpio_msp432 s_sda( PORT_PIN(5,5) );
+    gpio_msp432 s_scl( PORT_PIN(5,4) );
 
     // create I2C master instance
     /////////////////////////////

@@ -14,7 +14,7 @@
 
 #include "soft_i2c_master.h"
 
-soft_i2c_master::soft_i2c_master(gpio_pin & sda, gpio_pin & scl,
+soft_i2c_master::soft_i2c_master(gpio_interface & sda, gpio_interface & scl,
                                  void (*delay)(uint32_t us), bool pullup)
     : _init(false),
       _sda(sda),

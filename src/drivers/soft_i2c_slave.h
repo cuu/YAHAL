@@ -67,7 +67,7 @@ public:
     // The transmit() handler asks for new user data to be sent. The
     // index is the save as for read operations (0 for the first byte
     // after the I2C address).
-    soft_i2c_slave(gpio_pin & sda, gpio_pin & scl, bool pullup = false);
+    soft_i2c_slave(gpio_interface & sda, gpio_interface & scl, bool pullup = false);
 
     void set_callbacks(std::function<bool(uint16_t index, uint8_t data)> receive,
                        std::function<uint8_t(uint16_t index)> transmit,
@@ -90,10 +90,10 @@ public:
 
 private:
     // HW attributes
-    gpio_pin & _sda;
-    gpio_pin & _scl;
-    bool       _init;
-    bool       _pullup;
+    gpio_interface &    _sda;
+    gpio_interface &    _scl;
+    bool                _init;
+    bool                _pullup;
 
     // callback methods
     std::function<bool   (uint16_t index, uint8_t data)>  _receive;

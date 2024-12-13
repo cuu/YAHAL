@@ -30,7 +30,7 @@ extern uint32_t SubsystemMasterClock __attribute__((weak,alias("SPI_CLK")));
 
 function<void(uint8_t)> spi_msp432::_intHandler[8];
 
-spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
+spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_interface & cs,
                        const bool spi_master, uint16_t mode) :
         _initialized(false), _master(spi_master), _generate_CS(true),
         _EUSCI_CTLW0(mod->CTLW0), _EUSCI_BRW  (mod->BRW),
@@ -69,7 +69,7 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_pin & cs,
     else yahal_assert(false);
 }
 
-spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_pin & cs,
+spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_interface & cs,
                        const bool spi_master, uint16_t mode) :
         _initialized(false), _master(spi_master), _generate_CS(true),
         _EUSCI_CTLW0(mod->CTLW0), _EUSCI_BRW  (mod->BRW),

@@ -53,8 +53,8 @@ void delay(int us) {
 int main(void)
 {
     // Setup two LEDs on the launchpad for blinking
-    gpio_msp432_pin led1( PORT_PIN(1,0) ); // Left red LED
-    gpio_msp432_pin led2( PORT_PIN(2,0) ); // red RGB LED
+    gpio_msp432 led1( PORT_PIN(1,0) ); // Left red LED
+    gpio_msp432 led2( PORT_PIN(2,0) ); // red RGB LED
     led1.gpioMode( GPIO::OUTPUT );
     led2.gpioMode( GPIO::OUTPUT );
 

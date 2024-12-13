@@ -41,16 +41,15 @@ class mcp23s17_drv : public gpio_interface {
     mcp23s17_drv(spi_interface & hw, uint8_t spi_addr);
 
     // Basic GPIO handling
-    void gpioMode (uint16_t gpio, uint16_t mode);
-    bool gpioRead (uint16_t gpio);
-    void gpioWrite(uint16_t gpio, bool value);
+    void gpioMode (uint16_t mode);
+    bool gpioRead ();
+    void gpioWrite(bool value);
 
     // Interrupt handling
-    void attachInterrupt (uint16_t gpio,
-    					  void (*)(uint16_t gpio), uint16_t mode);
-    void detachInterrupt (uint16_t gpio);
-    void enableInterrupt (uint16_t gpio);
-    void disableInterrupt(uint16_t gpio);
+    void attachInterrupt (void (*)(uint16_t gpio), uint16_t mode);
+    void detachInterrupt ();
+    void enableInterrupt ();
+    void disableInterrupt();
     void handleInterrupt();
 
     // Methods to read/write the entire port
@@ -61,6 +60,8 @@ class mcp23s17_drv : public gpio_interface {
     virtual ~mcp23s17_drv() { }
 
   private:
+    uint8_t _port;
+    uint8_t _pin;
 
     // SPI data
     spi_interface & _spi;

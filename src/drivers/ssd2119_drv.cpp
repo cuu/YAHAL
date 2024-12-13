@@ -133,8 +133,8 @@ namespace SSD2119 {
 #define ENTRY_MODE_DEFAULT 0x6830
 #define MAKE_ENTRY_MODE(x) ((ENTRY_MODE_DEFAULT & 0xFF00) | (x))
 
-ssd2119_drv::ssd2119_drv(spi_interface & spi, gpio_pin & rst_pin,
-                         gpio_pin & dc_pin, config & lcd,
+ssd2119_drv::ssd2119_drv(spi_interface & spi, gpio_interface & rst_pin,
+                         gpio_interface & dc_pin, config & lcd,
                          mutex_interface * mutex)
     : _spi(spi), _rst_pin(rst_pin), _dc_pin(dc_pin), _lcd(lcd), _mutex(mutex)
 {

@@ -24,7 +24,7 @@ class soft_i2c_master: public i2c_interface
 {
 public:
 
-    soft_i2c_master(gpio_pin & sda, gpio_pin & scl, void (*delay)(uint32_t us),
+    soft_i2c_master(gpio_interface & sda, gpio_interface & scl, void (*delay)(uint32_t us),
                     bool pullup = false);
     virtual ~soft_i2c_master();
 
@@ -54,11 +54,11 @@ private:
 
     bool _init;
 
-    gpio_pin & _sda;
-    gpio_pin & _scl;
-    void     (*_delay)(uint32_t us);
-    bool       _pullup;
-    uint32_t   _us;
+    gpio_interface &    _sda;
+    gpio_interface &    _scl;
+    void (*_delay)(uint32_t us);
+    bool                _pullup;
+    uint32_t            _us;
 };
 
 #endif // _SOFT_I2C_MASTER_H_

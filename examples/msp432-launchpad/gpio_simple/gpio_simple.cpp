@@ -25,12 +25,12 @@
 int main()
 {
     // GPIO pins with LEDs
-    gpio_msp432_pin red_led (LED_RED);
-    gpio_msp432_pin blue_led(LED_BLUE);
+    gpio_msp432 red_led (LED_RED);
+    gpio_msp432 blue_led(LED_BLUE);
 
     // GPIO pins with buttons
-    gpio_msp432_pin s1(SWITCH1); // left button
-    gpio_msp432_pin s2(SWITCH2); // right button
+    gpio_msp432 s1(SWITCH1); // left button
+    gpio_msp432 s2(SWITCH2); // right button
 
     // Setup GPIO modes. The PULLUP mode is necessary
     // because there are no external pullup resistors

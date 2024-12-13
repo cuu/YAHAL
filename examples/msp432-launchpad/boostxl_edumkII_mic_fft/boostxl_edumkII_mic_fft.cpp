@@ -69,7 +69,7 @@ bool fill_data_adc0 = true;
 int main(void)
 {
     // Setup LCD backlight
-    gpio_msp432_pin bl( PORT_PIN(2,6) );
+    gpio_msp432 bl( PORT_PIN(2,6) );
     bl.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
 
     // Setup ADC channel for mic
@@ -95,15 +95,15 @@ int main(void)
     });
 
     // Setup SPI interface
-    gpio_msp432_pin lcd_cs (PORT_PIN(5, 0));
+    gpio_msp432 lcd_cs (PORT_PIN(5, 0));
     spi_msp432  spi(EUSCI_B0_SPI, lcd_cs);
     spi.setSpeed(24000000);
     spi.generateCS(false);
     spi.setCS(LOW);
 
     // Setup LCD driver
-    gpio_msp432_pin lcd_rst(PORT_PIN(5, 7));
-    gpio_msp432_pin lcd_dc (PORT_PIN(3, 7));
+    gpio_msp432 lcd_rst(PORT_PIN(5, 7));
+    gpio_msp432 lcd_dc (PORT_PIN(3, 7));
     st7735s_drv lcd(spi, lcd_rst, lcd_dc, st7735s_drv::Crystalfontz_128x128);
 
     // Setup uGUI

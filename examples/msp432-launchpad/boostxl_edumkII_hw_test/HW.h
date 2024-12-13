@@ -103,28 +103,28 @@ public:
     }
 
     // All HW on the msp432 launchpad
-    gpio_msp432_pin red;
-    gpio_msp432_pin rgb_red;
-    gpio_msp432_pin rgb_green;
-    gpio_msp432_pin rgb_blue;
-    gpio_msp432_pin sw1;
-    gpio_msp432_pin sw2;
+    gpio_msp432 red;
+    gpio_msp432 rgb_red;
+    gpio_msp432 rgb_green;
+    gpio_msp432 rgb_blue;
+    gpio_msp432 sw1;
+    gpio_msp432 sw2;
 
     // All HW on the educational boosterpack MKII
-    gpio_msp432_pin edu_red;
-    gpio_msp432_pin edu_green;
-    gpio_msp432_pin edu_blue;
-    gpio_msp432_pin edu_sw1;
-    gpio_msp432_pin edu_sw2;
-    gpio_msp432_pin edu_joy_sw;
-    gpio_msp432_pin edu_speaker;
+    gpio_msp432 edu_red;
+    gpio_msp432 edu_green;
+    gpio_msp432 edu_blue;
+    gpio_msp432 edu_sw1;
+    gpio_msp432 edu_sw2;
+    gpio_msp432 edu_joy_sw;
+    gpio_msp432 edu_speaker;
 
-    gpio_msp432_pin servo;
+    gpio_msp432 servo;
 
-    gpio_msp432_pin lcd_cs;
-    spi_msp432      lcd_spi;
-    gpio_msp432_pin lcd_rst;
-    gpio_msp432_pin lcd_dc;
+    gpio_msp432 lcd_cs;
+    spi_msp432  lcd_spi;
+    gpio_msp432 lcd_rst;
+    gpio_msp432 lcd_dc;
     mutex<lock_base_msp432> lcd_mutex;
     st7735s_drv     lcd;
 

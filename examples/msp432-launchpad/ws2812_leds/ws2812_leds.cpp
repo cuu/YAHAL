@@ -98,7 +98,7 @@ private:
 int main() {
     // Define a CS pin for SPI
     // (this is only a dummy and not needed)
-    gpio_msp432_pin cs(PORT_PIN(2,0));
+    gpio_msp432 cs(PORT_PIN(2,0));
 
     // Define the SPI interface
     // Here are the GPIO pins for the MOSI signal:

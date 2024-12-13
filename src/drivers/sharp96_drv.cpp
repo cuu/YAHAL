@@ -9,8 +9,8 @@
 #include "pixel_stream_const.h"
 
 sharp96_drv::sharp96_drv(spi_interface   & spi,
-                         gpio_pin        & disp,
-                         gpio_pin        & pwr,
+                         gpio_interface  & disp,
+                         gpio_interface  & pwr,
                          timer_interface & timer)
     : _spi(spi), _disp_on_pin(disp), _pwr_pin(pwr),
       _timer(timer), _dirty(true), _setVCOM(false) {

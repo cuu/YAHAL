@@ -36,7 +36,7 @@ int main(void)
 {
     // Set up the red LED as an indicator
     /////////////////////////////////////
-    gpio_msp432_pin led(PORT_PIN(1, 0));
+    gpio_msp432 led(PORT_PIN(1, 0));
     led.gpioMode(GPIO::OUTPUT);
 
     // Set up UART and enable stdin/stdout
@@ -49,10 +49,10 @@ int main(void)
 
     // Set up the driver stack for the SD card
     //////////////////////////////////////////
-    gpio_msp432_pin cs ( CS_PIN );     // CS Line of SPI interface
-    spi_msp432      spi( SPI_IF, cs ); // SPI interface connected to SD card
-    sd_spi_drv      sd ( spi );        // SD card low level driver
-    FatFs           fs ( sd );         // FatFs driver
+    gpio_msp432 cs ( CS_PIN );     // CS Line of SPI interface
+    spi_msp432  spi( SPI_IF, cs ); // SPI interface connected to SD card
+    sd_spi_drv  sd ( spi );        // SD card low level driver
+    FatFs       fs ( sd );         // FatFs driver
     // Register FatFs driver for Posix-style I/O
     // (fopen, fclose, fprintf, ...)
     posix_io::inst.register_fileio( fs );

@@ -28,12 +28,12 @@
 int main()
 {
     // GPIO pins with LEDs
-    gpio_msp432_pin red_led1 (LED_RED1);
-    gpio_msp432_pin red_led2 (LED_RED2);
+    gpio_msp432 red_led1 (LED_RED1);
+    gpio_msp432 red_led2 (LED_RED2);
 
     // GPIO pins with buttons
-    gpio_msp432_pin button_S1(BUTTON1); // left button
-    gpio_msp432_pin button_S2(BUTTON2); // right button
+    gpio_msp432 button_S1(BUTTON1); // left button
+    gpio_msp432 button_S2(BUTTON2); // right button
 
     // Setup GPIO modes
     red_led1. gpioMode(GPIO::OUTPUT);

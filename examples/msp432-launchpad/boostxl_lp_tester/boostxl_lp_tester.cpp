@@ -89,11 +89,11 @@ int main(void)
     // The gpio instances
     /////////////////////
     cy8c95xxa_drv   gpio_cy(i2c, 0x20);
-    gpio_msp432 &   gpio_msp = gpio_msp432::inst;
+    gpio_msp432     gpio_msp;
 
-    gpio_msp432_pin led_red  ( PORT_PIN(2,0) );
-    gpio_msp432_pin led_green( PORT_PIN(2,1) );
-    gpio_msp432_pin led_blue ( PORT_PIN(2,2) );
+    gpio_msp432 led_red  ( PORT_PIN(2,0) );
+    gpio_msp432 led_green( PORT_PIN(2,1) );
+    gpio_msp432 led_blue ( PORT_PIN(2,2) );
 
     led_red.  gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
     led_green.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
@@ -120,9 +120,10 @@ int main(void)
         /////////////////////////
         printf("Testing %d.%d as output ... ", PORT(msp_pin), PIN(msp_pin));
         gpio_cy. gpioMode( cy_pin, GPIO::INPUT );
-        gpio_msp.gpioMode(msp_pin, GPIO::OUTPUT);
+        gpio_msp.setGpio(msp_pin);
+        gpio_msp.gpioMode(GPIO::OUTPUT);
 
-        gpio_msp.gpioWrite(msp_pin, true);
+        gpio_msp.gpioWrite(true);
         led_blue.gpioWrite(true);
         res = gpio_cy.gpioRead(cy_pin);
         if (res != true) {
@@ -130,7 +131,7 @@ int main(void)
             printf(" FAIL(H)");
         }
 
-        gpio_msp.gpioWrite(msp_pin, false);
+        gpio_msp.gpioWrite(false);
         led_blue.gpioWrite(false);
         res = gpio_cy.gpioRead(cy_pin);
         if (res != false) {
@@ -142,12 +143,12 @@ int main(void)
         // Test MSP pin as input
         /////////////////////////
         printf("Testing %d.%d as input ... ", PORT(msp_pin), PIN(msp_pin));
-        gpio_msp.gpioMode(msp_pin, GPIO::INPUT);
-        gpio_cy. gpioMode( cy_pin, GPIO::OUTPUT);
+        gpio_msp.gpioMode(GPIO::INPUT);
+        gpio_cy. gpioMode(cy_pin, GPIO::OUTPUT);
 
         gpio_cy. gpioWrite(cy_pin, true);
         led_blue.gpioWrite(true);
-        res = gpio_msp.gpioRead(msp_pin);
+        res = gpio_msp.gpioRead();
         if (res != true) {
             errors++;
             printf(" FAIL(H)");
@@ -155,7 +156,7 @@ int main(void)
 
         gpio_cy. gpioWrite(cy_pin, false);
         led_blue.gpioWrite(false);
-        res = gpio_msp.gpioRead(msp_pin);
+        res = gpio_msp.gpioRead();
         if (res != false) {
             errors++;
             printf(" FAIL(L)");

@@ -54,12 +54,12 @@ class spi_msp432 : public spi_interface {
 
 public:
 
-    spi_msp432(EUSCI_A_SPI_Type *spi_a, gpio_pin & cs_pin,
+    spi_msp432(EUSCI_A_SPI_Type *spi_a, gpio_interface & cs_pin,
                const bool spi_master = SPI::MASTER,
                uint16_t mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::MSB_FIRST |
                                SPI::_8_BIT | SPI::CLK_SMCLK);
 
-    spi_msp432(EUSCI_B_SPI_Type *spi_b, gpio_pin & cs_pin,
+    spi_msp432(EUSCI_B_SPI_Type *spi_b, gpio_interface & cs_pin,
                const bool spi_master = SPI::MASTER,
                uint16_t mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::MSB_FIRST |
                                SPI::_8_BIT | SPI::CLK_SMCLK);
@@ -104,12 +104,12 @@ private:
     volatile uint16_t & _EUSCI_IFG;
     volatile uint16_t & _EUSCI_IV;
 
-    gpio_msp432_pin _clk;
-    gpio_msp432_pin _miso;
-    gpio_msp432_pin _mosi;
+    gpio_msp432 _clk;
+    gpio_msp432 _miso;
+    gpio_msp432 _mosi;
 
     uint16_t   _mode;
-    gpio_pin & _cs; // pointer to currently selected CS pin
+    gpio_interface & _cs; // pointer to currently selected CS pin
     IRQn_Type  _irq;
 
     static function<void(uint8_t)> _intHandler[8];

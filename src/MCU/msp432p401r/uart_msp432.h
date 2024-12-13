@@ -25,7 +25,7 @@ public:
     bool available() override;
     char getc() override;
     void putc(char c) override;
-    int  puts(const char *s);
+    size_t puts(const char *s);
 
     void uartMode(uart_mode_t mode) override;
 

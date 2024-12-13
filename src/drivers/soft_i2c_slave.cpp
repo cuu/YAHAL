@@ -14,7 +14,7 @@
 
 #include "soft_i2c_slave.h"
 
-soft_i2c_slave::soft_i2c_slave(gpio_pin & sda, gpio_pin & scl,
+soft_i2c_slave::soft_i2c_slave(gpio_interface & sda, gpio_interface & scl,
                                bool pullup)
     : _sda(sda), _scl(scl),  _init(false), _pullup(pullup),
       _i2c_address(0),

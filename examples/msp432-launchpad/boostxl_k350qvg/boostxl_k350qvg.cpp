@@ -141,15 +141,15 @@ public:
 
 private:
     // The LCD we sit on
-    lcd_interface   &       _lcd;
+    lcd_interface  & _lcd;
     // touch enable gpios
-    gpio_msp432_pin         _XP, _XN;
-    gpio_msp432_pin         _YP, _YN;
+    gpio_msp432 _XP, _XN;
+    gpio_msp432 _YP, _YN;
     // ADC channels
-    adc14_msp432_channel    _touchX;
-    adc14_msp432_channel    _touchY;
+    adc14_msp432_channel _touchX;
+    adc14_msp432_channel _touchY;
 
-    uint16_t                _xs, _xe, _ys, _ye;
+    uint16_t _xs, _xe, _ys, _ye;
     bool _pressed;
 };
 
@@ -158,19 +158,19 @@ private:
 int main(void)
 {
     // Switch on background LCD
-    gpio_msp432_pin lcd_led(PORT_PIN(2, 7));
+    gpio_msp432 lcd_led(PORT_PIN(2, 7));
     lcd_led.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
 
     // Setup SPI interface. Use EUSCI_B0 in SPI mode 3.
-    gpio_msp432_pin lcd_cs (PORT_PIN(5, 0));
+    gpio_msp432 lcd_cs (PORT_PIN(5, 0));
     uint16_t spi_mode = SPI::CPOL_1    | SPI::CPHA_1 |
                         SPI::MSB_FIRST | SPI::_8_BIT | SPI::CLK_SMCLK;
     spi_msp432  spi(EUSCI_B0_SPI, lcd_cs, SPI::MASTER, spi_mode );
     spi.setSpeed(24000000);
 
     // Setup LCD driver
-    gpio_msp432_pin lcd_rst(PORT_PIN(3, 5));
-    gpio_msp432_pin lcd_dc (PORT_PIN(4, 6));
+    gpio_msp432 lcd_rst(PORT_PIN(3, 5));
+    gpio_msp432 lcd_dc (PORT_PIN(4, 6));
     ssd2119_drv lcd(spi, lcd_rst, lcd_dc, ssd2119_drv::Kentec_K350QVG);
 
     // Touch interface

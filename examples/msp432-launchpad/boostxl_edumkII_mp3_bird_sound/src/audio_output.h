@@ -54,7 +54,7 @@ public:
 
 private:
     // Edu MK II Buzzer
-    gpio_msp432_pin _buzz;
+    gpio_msp432 _buzz;
 
     // PCM FIFO buffer
     FIFO  <uint16_t> _pcm_fifo;

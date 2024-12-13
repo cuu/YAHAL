@@ -76,8 +76,8 @@ public:
     }
 
 private:
-    gpio_msp432_pin _led;
-    int             _delay;
+    gpio_msp432	_led;
+    int         _delay;
 };
 
 
@@ -97,7 +97,7 @@ int main(void)
     // (in this case a lambda expression) to task.
     // The GPIO is defined outside of task to
     // demonstrate the capture of external variables.
-    gpio_msp432_pin led( PORT_PIN(2,1) );
+    gpio_msp432 led( PORT_PIN(2,1) );
     led.gpioMode( GPIO::OUTPUT );
 
     task t2([&]() {

@@ -50,7 +50,7 @@ enum gpio_en  {
 
 }
 
-class cy8c95xxa_drv : public gpio_interface {
+class cy8c95xxa_drv {
 
 public:
     // User interface
@@ -58,18 +58,18 @@ public:
     cy8c95xxa_drv(i2c_interface & hw, uint8_t addr);
 
     /* Basic GPIO handling */
-    void gpioMode  (uint16_t gpio, uint16_t mode) override;
-    bool gpioRead  (uint16_t gpio) override;
-    void gpioWrite (uint16_t gpio, bool value) override;
-    void gpioToggle(uint16_t gpio) override;
+    void gpioMode  (uint16_t gpio, uint16_t mode);
+    bool gpioRead  (uint16_t gpio);
+    void gpioWrite (uint16_t gpio, bool value);
+    void gpioToggle(uint16_t gpio);
 
     /* Interrupt handling */
     void gpioAttachIrq (uint16_t gpio,
                         uint16_t mode,
-                        function<void()> handler) override;
-    void gpioDetachIrq (uint16_t gpio) override;
-    void gpioEnableIrq (uint16_t gpio) override;
-    void gpioDisableIrq(uint16_t gpio) override;
+                        function<void()> handler);
+    void gpioDetachIrq (uint16_t gpio);
+    void gpioEnableIrq (uint16_t gpio);
+    void gpioDisableIrq(uint16_t gpio);
     void handleInterrupt();
 
     // PWM stuff

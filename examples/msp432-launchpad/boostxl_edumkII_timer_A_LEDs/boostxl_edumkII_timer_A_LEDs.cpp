@@ -30,8 +30,8 @@ int main(void)
     // translates to mode 1 in the setSEL() method.
     // Additionally we have to enable the output driver by setting
     // the gpio mode to OUTPUT.
-    gpio_msp432_pin green( PORT_PIN(2,4) );
-    gpio_msp432_pin blue ( PORT_PIN(5,6) );
+    gpio_msp432 green( PORT_PIN(2,4) );
+    gpio_msp432 blue ( PORT_PIN(5,6) );
     green.gpioMode(GPIO::OUTPUT);
     blue. gpioMode(GPIO::OUTPUT);
     green.setSEL(1);

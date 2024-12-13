@@ -17,19 +17,19 @@ function<void()> timer_msp432::_intHandler2 = 0;
 // We use the TIMER32 instances here (they might not
 // be used for other purposes anyway...)
 
-timer_msp432::timer_msp432(Timer32_Type * timer)
-   : _timer(timer) {
+timer_msp432::timer_msp432(Timer32_Type *timer)
+        : _timer(timer) {
     // initialize the ctrl register
     _timer->CONTROL = TIMER32_CONTROL_MODE | // periodic mode
                       TIMER32_CONTROL_IE |   // enable irq
                       TIMER32_CONTROL_SIZE;  // use 32 bit counter
     // calculate factor (counts for 1us)
-    _factor      = ((float)SystemCoreClock / 1000000.0) + 0.5;
-    _period_us   = 0;
-    _period_ns   = 0;
+    _factor = ((float) SystemCoreClock / 1000000.0) + 0.5;
+    _period_us = 0;
+    _period_ns = 0;
     _period_load = 0;
     // enable IRQ in NVIC
-    NVIC_EnableIRQ( (timer==TIMER32_1) ? T32_INT1_IRQn : T32_INT2_IRQn );
+    NVIC_EnableIRQ((timer == TIMER32_1) ? T32_INT1_IRQn : T32_INT2_IRQn);
 }
 
 timer_msp432::~timer_msp432() {
@@ -42,14 +42,14 @@ void timer_msp432::setPeriod(uint32_t us, TIMER::timer_mode mode) {
     _timer->LOAD = _period_load = us * _factor;
     // set oneshot
     if (mode == TIMER::ONE_SHOT) {
-        _timer->CONTROL |=  TIMER32_CONTROL_ONESHOT;
+        _timer->CONTROL |= TIMER32_CONTROL_ONESHOT;
     } else {
         _timer->CONTROL &= ~TIMER32_CONTROL_ONESHOT;
     }
 }
 
 uint32_t timer_msp432::getPeriod() {
-	return _period_us;
+    return _period_us;
 }
 
 void timer_msp432::setCallback(function<void()> f) {
@@ -69,11 +69,11 @@ void timer_msp432::stop() {
 }
 
 bool timer_msp432::isRunning() {
-	return _timer->CONTROL & TIMER32_CONTROL_ENABLE;
+    return _timer->CONTROL & TIMER32_CONTROL_ENABLE;
 }
 
 void timer_msp432::reset() {
-	_timer->LOAD = _period_load;
+    _timer->LOAD = _period_load;
 }
 
 void timer_msp432::setNanoPeriod(uint32_t ns, TIMER::timer_mode mode) {
@@ -82,7 +82,7 @@ void timer_msp432::setNanoPeriod(uint32_t ns, TIMER::timer_mode mode) {
     _timer->LOAD = _period_load = (ns * _factor) / 1000;
     // set onshot
     if (mode == TIMER::ONE_SHOT) {
-        _timer->CONTROL |=  TIMER32_CONTROL_ONESHOT;
+        _timer->CONTROL |= TIMER32_CONTROL_ONESHOT;
     } else {
         _timer->CONTROL &= ~TIMER32_CONTROL_ONESHOT;
     }
