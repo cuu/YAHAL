@@ -46,7 +46,7 @@ int main(void)
     posix_io::inst.register_stdin ( uart );
     posix_io::inst.register_stdout( uart );
 
-    gpio_rp2040_pin esp_reset(6);
+    gpio_rp2040 esp_reset(6);
     esp_reset.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
 
     // Initialize the UART which is connected to the ESP8266
@@ -59,8 +59,8 @@ int main(void)
 
     // Initialize the SPI interface which is connected to the
     // ESP8266 and use the client mode on RP2040 side
-    gpio_rp2040_pin cs (3);
-    spi_rp2040 spi( 1, 8, 11, 10, cs);
+    gpio_rp2040 cs (3);
+    spi_rp2040  spi( 1, 8, 11, 10, cs);
     spi.setSpeed(250000);
     spi.generateCS(false);
 
