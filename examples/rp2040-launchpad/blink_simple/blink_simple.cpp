@@ -28,7 +28,7 @@
 int main()
 {
     // Use GPIO 13 (buildin LED) as output
-    gpio_rp2040_pin led( RED_LED );
+    gpio_rp2040 led( RED_LED );
     led.gpioMode( GPIO::OUTPUT );
 
     // This loop will never end ...

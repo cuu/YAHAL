@@ -24,7 +24,7 @@
 class i2c_device
 {
 public:
-    i2c_device(gpio_pin & sda, gpio_pin & scl, uint8_t i2c_addr, bool pullup=false);
+    i2c_device(gpio_interface & sda, gpio_interface & scl, uint8_t i2c_addr, bool pullup=false);
     virtual ~i2c_device();
 
 private:

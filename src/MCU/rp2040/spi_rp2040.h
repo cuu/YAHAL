@@ -62,11 +62,11 @@ public:
                gpio_pin_t  miso_pin,
                gpio_pin_t  mosi_pin,
                gpio_pin_t  sclk_pin,
-               gpio_pin &  cs_pin,
-               const bool  spi_master = SPI::MASTER,
+               gpio_interface &  cs_pin,
+               bool  spi_master = SPI::MASTER,
                uint16_t    mode = SPI::CPOL_0 | SPI::CPHA_0 | SPI::_8_BIT);
 
-    ~spi_rp2040();
+    ~spi_rp2040() override;
 
     int16_t spiTxRx(const uint8_t *txbuf, uint8_t *rxbuf, uint16_t len) override;
     int16_t spiTx  (const uint8_t *txbuf, uint16_t len) override ;
@@ -85,10 +85,10 @@ public:
 
 private:
     int         _index;
-    gpio_rp2040_pin  _miso;
-    gpio_rp2040_pin  _mosi;
-    gpio_rp2040_pin  _sclk;
-    gpio_pin &  _cs;
+    gpio_rp2040 _miso;
+    gpio_rp2040 _mosi;
+    gpio_rp2040 _sclk;
+    gpio_interface &  _cs;
     bool        _master;
     uint16_t    _mode;
 

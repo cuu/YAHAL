@@ -105,7 +105,8 @@ int main(void)
     // The gpio instances
     /////////////////////
     cy8c95xxa_drv   gpio_cy(i2c, 0x20);
-    gpio_rp2040 &   gpio_rp = gpio_rp2040::inst;
+    gpio_rp2040     gpio_mux(18);
+    gpio_rp2040     gpio_rp;
 
     // Set up CY LEDs
     /////////////////
@@ -114,7 +115,7 @@ int main(void)
     gpio_cy.gpioMode( LED_BLUE,  GPIO::OUTPUT | GPIO::INIT_LOW);
 
     // Set up RP2040 multiplexer ctrl pin
-    gpio_rp.gpioMode( 18, GPIO::OUTPUT);
+    gpio_mux.gpioMode(GPIO::OUTPUT);
 
     printf("**** RP2040 Launchpad Tester ****\n");
     printf("=================================\n\n");
@@ -139,15 +140,16 @@ int main(void)
         // Set multiplexer pin
         uint8_t rp_pin = PIN(rp_mux_pin);
         uint8_t rp_mux = PORT(rp_mux_pin);
-        gpio_rp.gpioWrite(18, rp_mux);
+        gpio_mux.gpioWrite(rp_mux);
 
         // Test LP pin as output
         ////////////////////////
         printf("Testing GPIO %2d (mux %d) as output ... ", rp_pin, rp_mux);
         gpio_cy.gpioMode(cy_pin, GPIO::INPUT );
-        gpio_rp.gpioMode(rp_pin, GPIO::OUTPUT);
+        gpio_rp.setGpio(rp_pin);
+        gpio_rp.gpioMode(GPIO::OUTPUT);
 
-        gpio_rp.gpioWrite(rp_pin,   true);
+        gpio_rp.gpioWrite(true);
         gpio_cy.gpioWrite(LED_RED, true);
         res = gpio_cy.gpioRead(cy_pin);
         if (res != true) {
@@ -155,7 +157,7 @@ int main(void)
             printf(" FAIL(H)");
         }
 
-        gpio_rp.gpioWrite(rp_pin,   false);
+        gpio_rp.gpioWrite(false);
         gpio_cy.gpioWrite(LED_RED, false);
         res = gpio_cy.gpioRead(cy_pin);
         if (res != false) {
@@ -167,12 +169,12 @@ int main(void)
         // Test LP pin as input
         ///////////////////////
         printf("Testing GPIO %2d (mux %d) as input ... ", rp_pin, rp_mux);
-        gpio_rp.gpioMode(rp_pin, GPIO::INPUT);
+        gpio_rp.gpioMode(GPIO::INPUT);
         gpio_cy.gpioMode(cy_pin, GPIO::OUTPUT);
 
         gpio_cy.gpioWrite(cy_pin,   true);
         gpio_cy.gpioWrite(LED_GREEN, true);
-        res = gpio_rp.gpioRead(rp_pin);
+        res = gpio_rp.gpioRead();
         if (res != true) {
             errors++;
             printf(" FAIL(H)");
@@ -180,7 +182,7 @@ int main(void)
 
         gpio_cy.gpioWrite(cy_pin,   false);
         gpio_cy.gpioWrite(LED_GREEN, false);
-        res = gpio_rp.gpioRead(rp_pin);
+        res = gpio_rp.gpioRead();
         if (res != false) {
             errors++;
             printf(" FAIL(L)");

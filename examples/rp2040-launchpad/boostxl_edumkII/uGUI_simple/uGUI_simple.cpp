@@ -34,13 +34,13 @@
 int main(void)
 {
     // Setup SPI interface
-    gpio_rp2040_pin lcd_cs (5);
+    gpio_rp2040 lcd_cs (5);
     spi_rp2040  spi(0, 4, 7, 22, lcd_cs);
     spi.setSpeed(30000000);
 
     // Setup LCD driver
-    gpio_rp2040_pin lcd_rst(9);
-    gpio_rp2040_pin lcd_dc (2);
+    gpio_rp2040 lcd_rst(9);
+    gpio_rp2040 lcd_dc (2);
     st7735s_drv lcd(spi, lcd_rst, lcd_dc, st7735s_drv::Crystalfontz_128x128);
 
     // Setup uGUI

@@ -23,9 +23,9 @@ dac8311_rp2040_drv::dac8311_rp2040_drv( gpio_pin_t mosi_pin,
     :  pcm_audio_interface(PCM_FIFO_SIZE), _enable(enable)
 {
     // Set up GPIOs
-    gpio_rp2040_pin mosi( mosi_pin );
-    gpio_rp2040_pin sclk( sclk_pin );
-    gpio_rp2040_pin sync( sync_pin );
+    gpio_rp2040 mosi( mosi_pin );
+    gpio_rp2040 sclk( sclk_pin );
+    gpio_rp2040 sync( sync_pin );
     mosi.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
     sclk.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
     sync.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);

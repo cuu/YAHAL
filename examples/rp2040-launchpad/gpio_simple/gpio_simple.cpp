@@ -24,11 +24,11 @@
 int main()
 {
     // GPIO pins with LEDs
-    gpio_rp2040_pin red_led (LED_RED);
+    gpio_rp2040 red_led (LED_RED);
 
     // GPIO pins with buttons
-    gpio_rp2040_pin s1(SWITCH1); // left button
-    gpio_rp2040_pin s2(SWITCH2); // left button
+    gpio_rp2040 s1(SWITCH1); // left button
+    gpio_rp2040 s2(SWITCH2); // left button
 
     // Setup GPIO modes. The PULLUP mode is necessary
     // because there are NO external pullup resistors

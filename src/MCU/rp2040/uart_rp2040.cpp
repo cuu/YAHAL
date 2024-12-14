@@ -40,8 +40,10 @@ void uart_rp2040::init() {
     if (_index)  RESETS_CLR.RESET.uart1 = 1;
     else         RESETS_CLR.RESET.uart0 = 1;
     // Configure GPIO pins
-    gpio_rp2040::inst.setSEL( _tx_pin, GPIO_CTRL_FUNCSEL__uart);
-    gpio_rp2040::inst.setSEL( _rx_pin, GPIO_CTRL_FUNCSEL__uart);
+    gpio_rp2040 tx_gpio(_tx_pin);
+    gpio_rp2040 rx_gpio(_rx_pin);
+    tx_gpio.setSEL(GPIO_CTRL_FUNCSEL__uart);
+    rx_gpio.setSEL(GPIO_CTRL_FUNCSEL__uart);
     // Configure UART protocol (default 8N1)
     uartMode(_mode);
     // Set baud rate
@@ -61,8 +63,10 @@ uart_rp2040::~uart_rp2040() {
     if (_index)  RESETS_SET.RESET.uart1 = 1;
     else         RESETS_SET.RESET.uart0 = 1;
     // De-configure the digital RX/TX lines
-    gpio_rp2040::inst.setSEL(_rx_pin, GPIO_CTRL_FUNCSEL__null);
-    gpio_rp2040::inst.setSEL(_tx_pin, GPIO_CTRL_FUNCSEL__null);
+    gpio_rp2040 rx_gpio(_rx_pin);
+    rx_gpio.setSEL(GPIO_CTRL_FUNCSEL__null);
+    gpio_rp2040 tx_gpio(_tx_pin);
+    tx_gpio.setSEL(GPIO_CTRL_FUNCSEL__null);
 }
 
 bool uart_rp2040::available() {

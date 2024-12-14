@@ -9,6 +9,7 @@
 #define _GPIO_RP2040_H_
 
 #include "gpio_interface.h"
+#include <cassert>
 
 namespace GPIO {
 // additional gpio modes
@@ -25,61 +26,53 @@ void IO_IRQ_BANK0_Handler(void);
 
 class gpio_rp2040 : public gpio_interface {
 public:
-    virtual ~gpio_rp2040() { }
-    static gpio_rp2040 inst;
+    // CTOR / DTOR
+    explicit gpio_rp2040(gpio_pin_t gpio = 0xffff);
+    ~gpio_rp2040() override = default;
+
+    inline void setGpio(gpio_pin_t gpio) override {
+        assert(gpio < 30);
+        _gpio = gpio;
+        _mask = 1 << gpio;
+    }
+    inline gpio_pin_t getGpio() override {
+        return _gpio;
+    }
 
     // Generic GPIO methods
     ///////////////////////
-    void gpioMode  (gpio_pin_t gpio, gpio_mode_t mode);
-    bool gpioRead  (gpio_pin_t gpio);
-    void gpioWrite (gpio_pin_t gpio, bool value);
-    void gpioToggle(gpio_pin_t gpio);
+    void gpioMode  (gpio_mode_t mode) override;
+    bool gpioRead  () override;
+    void gpioWrite (bool value) override;
+    void gpioToggle() override;
 
     // Interrupt handling
-    void gpioAttachIrq (gpio_pin_t gpio, gpio_mode_t mode,
-                        function<void()> handler);
-    void gpioDetachIrq (gpio_pin_t gpio);
-    void gpioEnableIrq (gpio_pin_t gpio);
-    void gpioDisableIrq(gpio_pin_t gpio);
+    void gpioAttachIrq (gpio_mode_t mode,
+                        function<void()> handler) override;
+    void gpioDetachIrq () override;
+    void gpioEnableIrq () override;
+    void gpioDisableIrq() override;
 
     // MSP432 specific methods
     //////////////////////////
-    void setSEL (gpio_pin_t gpio, uint8_t  sel);
-    void setMode(gpio_pin_t gpio, gpio_mode_t mode);
+    void setSEL (uint8_t  sel);
+    void setMode(gpio_mode_t mode);
+
+    using gpio_interface::operator =;
+    using gpio_interface::operator bool;
 
     // IRQ handlers are our best friends
     ////////////////////////////////////
     friend void IO_IRQ_BANK0_Handler(void);
 
 private:
-    gpio_rp2040() : _open_source(0), _open_drain(0) { }
+    gpio_pin_t  _gpio;
+    bool        _open_source;
+    bool        _open_drain;
+    uint32_t    _mask;
 
-    function<void()> _intHandler[30];
-    uint8_t          _irqConfig [30];
-
-    uint32_t _open_source;
-    uint32_t _open_drain;
-};
-
-
-// This small wrapper class provides GPIO
-// functionality for a single GPIO pin.
-
-class gpio_rp2040_pin : public gpio_pin {
-public:
-    gpio_rp2040_pin()
-    : gpio_pin(gpio_rp2040::inst) { }
-    gpio_rp2040_pin(gpio_pin_t gpio)
-    : gpio_pin(gpio_rp2040::inst, gpio) { }
-
-    inline void setSEL (uint8_t sel) {
-        gpio_rp2040::inst.setSEL(_gpio, sel);
-    }
-    inline void setMode(gpio_mode_t mode) {
-        gpio_rp2040::inst.setMode(_gpio, mode);
-    }
-    using gpio_pin::operator =;
-    using gpio_pin::operator bool;
+    static function<void()> _intHandler[30];
+    static uint8_t          _irqConfig [30];
 };
 
 #endif // _GPIO_RP2040_H_

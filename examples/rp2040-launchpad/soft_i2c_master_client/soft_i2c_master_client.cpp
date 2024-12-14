@@ -57,12 +57,12 @@ int main(void)
     uart.puts("Press Button S1 during startup to select HW I2C master!\r\n");
 
     // set up GPIOs for button and I2C master/slave
-    gpio_rp2040_pin button1( 16 );
+    gpio_rp2040 button1( 16 );
     button1.gpioMode(GPIO::INPUT | GPIO::PULLUP);
-    gpio_rp2040_pin m_sda( 24 );
-    gpio_rp2040_pin m_scl( 25 );
-    gpio_rp2040_pin s_sda(  3 );
-    gpio_rp2040_pin s_scl( 15 );
+    gpio_rp2040 m_sda( 24 );
+    gpio_rp2040 m_scl( 25 );
+    gpio_rp2040 s_sda(  3 );
+    gpio_rp2040 s_scl( 15 );
 
     // create I2C master instance
     /////////////////////////////

@@ -58,15 +58,15 @@ public:
     void set_colors(uint32_t * values, uint16_t size);
     
 private:
-    bool            _init {false};
-    gpio_rp2040_pin _gpio;
-    LED *           _leds;
-    uint16_t        _size;
-    SM *            _sm {nullptr};
+    bool        _init {false};
+    gpio_rp2040 _gpio;
+    LED *       _leds;
+    uint16_t    _size;
+    SM *        _sm {nullptr};
 
-    void            init();
-    uint32_t        xRGB_to_GRBx(uint32_t rgb);
-    void            update(uint16_t index);
+    void        init();
+    uint32_t    xRGB_to_GRBx(uint32_t rgb);
+    void        update(uint16_t index);
 };
 
 #endif // _WS2812_RP2040_H_

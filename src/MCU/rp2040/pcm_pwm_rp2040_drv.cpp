@@ -22,10 +22,10 @@ pcm_pwm_rp2040_drv::pcm_pwm_rp2040_drv( gpio_pin_t left, gpio_pin_t right )
     : pcm_audio_interface(PCM_FIFO_SIZE)
 {
     // Set up GPIO
-    gpio_rp2040_pin gpio_left( left );
+    gpio_rp2040 gpio_left( left );
     gpio_left.setSEL(GPIO_CTRL_FUNCSEL__pwm);
     gpio_left.setMode(GPIO::DRIVE_4mA);
-    gpio_rp2040_pin gpio_right( right );
+    gpio_rp2040 gpio_right( right );
     gpio_right.setSEL(GPIO_CTRL_FUNCSEL__pwm);
     gpio_right.setMode(GPIO::DRIVE_4mA);
     // Set up PWM

@@ -121,14 +121,14 @@ public:
 
 private:
     // The LCD we sit on
-    lcd_interface   &   _lcd;
+    lcd_interface & _lcd;
     // touch enable gpios
-    gpio_rp2040_pin     _XN;
-    gpio_rp2040_pin     _YN;
-    gpio_rp2040_pin     _XP;
-    gpio_rp2040_pin     _YP;
+    gpio_rp2040     _XN;
+    gpio_rp2040     _YN;
+    gpio_rp2040     _XP;
+    gpio_rp2040     _YP;
 
-    uint16_t            _xs, _xe, _ys, _ye;
+    uint16_t        _xs, _xe, _ys, _ye;
     bool _pressed;
 };
 
@@ -143,18 +143,18 @@ int main(void)
     posix_io::inst.register_stderr( uart );
 
     // Switch on background LCD
-    gpio_rp2040_pin lcd_led(14);
+    gpio_rp2040 lcd_led(14);
     lcd_led.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
 
     // Setup SPI interface in SPI mode 3.
-    gpio_rp2040_pin lcd_cs (5);
+    gpio_rp2040 lcd_cs (5);
     uint16_t spi_mode = SPI::CPOL_1 | SPI::CPHA_1 | SPI::_8_BIT;
     spi_rp2040  spi(0, 4, 7, 22, lcd_cs, SPI::MASTER, spi_mode );
     spi.setSpeed(24000000);
 
     // Setup LCD driver
-    gpio_rp2040_pin lcd_rst(17);
-    gpio_rp2040_pin lcd_dc (23);
+    gpio_rp2040 lcd_rst(17);
+    gpio_rp2040 lcd_dc (23);
     ssd2119_drv lcd(spi, lcd_rst, lcd_dc, ssd2119_drv::Kentec_K350QVG);
 
     // Clear screen
@@ -209,7 +209,8 @@ int main(void)
 
     // Touch interface
     Touch touch(lcd);
-    gpio_rp2040::inst.gpioMode(18, GPIO::OUTPUT | GPIO::INIT_LOW);
+    gpio_rp2040 foo(18);
+    foo.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
 
     touch.calibrate();
 

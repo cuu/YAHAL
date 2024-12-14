@@ -33,7 +33,7 @@ spi_rp2040::spi_rp2040( uint8_t     index ,
                         gpio_pin_t  miso_pin,
                         gpio_pin_t  mosi_pin,
                         gpio_pin_t  sclk_pin,
-                        gpio_pin &  cs_pin,
+                        gpio_interface &  cs_pin,
                         const bool  spi_master,
                         uint16_t    mode)
     : _index(index),  _miso(miso_pin),   _mosi(mosi_pin), _sclk(sclk_pin),

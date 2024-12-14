@@ -123,12 +123,12 @@ public:
     }
 
 private:
-    gpio_rp2040_pin _cs;    // CS Line of SD card SPI interface
+    gpio_rp2040     _cs;    // CS Line of SD card SPI interface
     spi_rp2040      _spi;   // SPI interface used for the SD card reader
     sd_spi_drv      _sd;    // SD card low level driver
 
-    gpio_rp2040_pin _next;  // Next button
-    gpio_rp2040_pin _part;  // Partition button
+    gpio_rp2040     _next;  // Next button
+    gpio_rp2040     _part;  // Partition button
 
     FatFs           _fs;
     FatFs::DIR      _dir;

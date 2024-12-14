@@ -36,8 +36,8 @@ int main()
     leds[7].set_on_color(0x000600);	// right LED is green
 
     // GPIO pins with buttons
-    gpio_rp2040_pin button_S1(BUTTON1); // left button
-    gpio_rp2040_pin button_S2(BUTTON2); // right button
+    gpio_rp2040 button_S1(BUTTON1); // left button
+    gpio_rp2040 button_S2(BUTTON2); // right button
 
     // Setup GPIO modes
     button_S1.gpioMode(GPIO::INPUT | GPIO::PULLUP);

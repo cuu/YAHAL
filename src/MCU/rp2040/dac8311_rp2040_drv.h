@@ -37,8 +37,8 @@ public:
     void setPcmRate(uint32_t Hz = 44100) override;
 
 private:
-    gpio_rp2040_pin _enable;    // Audio enable Pin
-    SM *            _pcm_sm;    // The PIO State Machine
+    gpio_rp2040 _enable;    // Audio enable Pin
+    SM *        _pcm_sm;    // The PIO State Machine
 };
 
 #endif // _DAC8311_RP2040_DRV_H_

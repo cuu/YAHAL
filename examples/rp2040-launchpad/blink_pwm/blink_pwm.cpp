@@ -9,7 +9,7 @@ using namespace _PWM_;
 int main(void)
 {
     // Use GPIO 13 (buildin LED) as output and select PWM mode
-    gpio_rp2040_pin led( RED_LED );
+    gpio_rp2040 led( RED_LED );
     led.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pwm);
 
     // Calculate the divider. Because the PWM module uses a

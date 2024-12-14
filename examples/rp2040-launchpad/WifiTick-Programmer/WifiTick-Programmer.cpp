@@ -38,12 +38,12 @@ int main() {
     // ESP8266 UART
     uart_rp2040 uart_esp( 1, 20, 21, 115200 );
 
-    gpio_rp2040_pin button_s1( 16 );
-    gpio_rp2040_pin button_s2( 17 );
-    gpio_rp2040_pin esp_gpio0( 24 );
-    gpio_rp2040_pin esp_gpio2( 25 );
-    gpio_rp2040_pin esp_reset(  6 );
-    gpio_rp2040_pin led(13);
+    gpio_rp2040 button_s1( 16 );
+    gpio_rp2040 button_s2( 17 );
+    gpio_rp2040 esp_gpio0( 24 );
+    gpio_rp2040 esp_gpio2( 25 );
+    gpio_rp2040 esp_reset(  6 );
+    gpio_rp2040 led(13);
 
     button_s1.gpioMode( GPIO::INPUT | GPIO::PULLUP);
     button_s2.gpioMode( GPIO::INPUT | GPIO::PULLUP);
@@ -123,7 +123,7 @@ int main() {
     // pin to LOW, but the EDU-MKII pulls it to HIGH (because it
     // is the READY-line of the temperature sensor). So force
     // this pin to low so the ESP8266 is booting correctly.
-    gpio_rp2040_pin gpio3 (3);
+    gpio_rp2040 gpio3(3);
     gpio3.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
 
     //////////////////////////////////////////

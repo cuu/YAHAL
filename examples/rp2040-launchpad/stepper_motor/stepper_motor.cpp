@@ -26,7 +26,8 @@ public:
     // 4 gpio pins, which are connected to IN1-IN4. You can
     // use any gpio pins you like...
 
-    Stepper_28BYJ(gpio_pin & m1, gpio_pin & m2, gpio_pin & m3, gpio_pin & m4)
+    Stepper_28BYJ(gpio_interface & m1, gpio_interface & m2,
+                  gpio_interface & m3, gpio_interface & m4)
     : _index(0), _m1(m1),_m2(m2),_m3(m3),_m4(m4) {
         // Set output mode
         _m1.gpioMode(GPIO::OUTPUT);
@@ -94,19 +95,19 @@ private:
           0b1001 };
 
     int8_t     _index;
-    gpio_pin & _m1;
-    gpio_pin & _m2;
-    gpio_pin & _m3;
-    gpio_pin & _m4;
+    gpio_interface & _m1;
+    gpio_interface & _m2;
+    gpio_interface & _m3;
+    gpio_interface & _m4;
 };
 
 
 int main(void)
 {
-    gpio_rp2040_pin m1(  4 );
-    gpio_rp2040_pin m2(  5 );
-    gpio_rp2040_pin m3( 15 );
-    gpio_rp2040_pin m4(  3 );
+    gpio_rp2040 m1(  4 );
+    gpio_rp2040 m2(  5 );
+    gpio_rp2040 m3( 15 );
+    gpio_rp2040 m4(  3 );
     Stepper_28BYJ stepper(m1, m2, m3, m4);
 
     // Set up UART and enable stdin/stdout

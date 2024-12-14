@@ -115,15 +115,15 @@ public:
 //    gpio_rp2040_pin edu_blue;
 //    gpio_rp2040_pin edu_sw1;
 //    gpio_rp2040_pin edu_sw2;
-    gpio_rp2040_pin edu_joy_sw;
+    gpio_rp2040 edu_joy_sw;
 //    gpio_rp2040_pin edu_speaker;
 //
 //    gpio_rp2040_pin servo;
 //
-    gpio_rp2040_pin lcd_cs;
-    spi_rp2040      lcd_spi;
-    gpio_rp2040_pin lcd_rst;
-    gpio_rp2040_pin lcd_dc;
+    gpio_rp2040 lcd_cs;
+    spi_rp2040  lcd_spi;
+    gpio_rp2040 lcd_rst;
+    gpio_rp2040 lcd_dc;
     mutex<lock_base_rp2040> lcd_mutex;
     st7735s_drv     lcd;
 //

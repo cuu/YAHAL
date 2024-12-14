@@ -48,8 +48,8 @@ private:
     void        initialize();
 
     int         _index;
-    gpio_rp2040_pin  _sda;
-    gpio_rp2040_pin  _scl;
+    gpio_rp2040 _sda;
+    gpio_rp2040 _scl;
 
 //    bool        _master;
     uint16_t    _mode;

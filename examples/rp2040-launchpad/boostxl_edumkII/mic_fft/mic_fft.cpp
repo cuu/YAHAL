@@ -68,7 +68,7 @@ bool fill_data_adc0 = true;
 int main(void)
 {
     // Setup LCD backlight
-    gpio_rp2040_pin bl( 13 );
+    gpio_rp2040 bl( 13 );
     bl.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
 
     // Setup ADC channel for mic
@@ -94,15 +94,15 @@ int main(void)
     });
 
     // Setup SPI interface
-    gpio_rp2040_pin lcd_cs (5);
-    spi_rp2040      spi(0, 4, 7, 22, lcd_cs);
+    gpio_rp2040 lcd_cs (5);
+    spi_rp2040  spi(0, 4, 7, 22, lcd_cs);
     spi.setSpeed(24000000);
     spi.generateCS(false);
     spi.setCS(LOW);
 
     // Setup LCD driver
-    gpio_rp2040_pin lcd_rst(9);
-    gpio_rp2040_pin lcd_dc (2);
+    gpio_rp2040 lcd_rst(9);
+    gpio_rp2040 lcd_dc (2);
     st7735s_drv lcd(spi, lcd_rst, lcd_dc, st7735s_drv::Crystalfontz_128x128);
 
     // Setup uGUI

@@ -38,7 +38,7 @@ int main(void)
 {
     // Set up the red LED as an indicator
     /////////////////////////////////////
-    gpio_rp2040_pin led(29);
+    gpio_rp2040 led(29);
     led.gpioMode(GPIO::OUTPUT);
 
     // Set up UART and enable stdin/stdout
@@ -51,10 +51,10 @@ int main(void)
 
     // Set up the driver stack for the SD card
     //////////////////////////////////////////
-    gpio_rp2040_pin cs ( CS_PIN );     // CS Line of SPI interface
-    spi_rp2040      spi( SPI1, MISO_PIN, MOSI_PIN, SCLK_PIN, cs );
-    sd_spi_drv      sd ( spi );        // SD card low level driver
-    FatFs           fs ( sd );         // FatFs driver
+    gpio_rp2040 cs ( CS_PIN );     // CS Line of SPI interface
+    spi_rp2040  spi( SPI1, MISO_PIN, MOSI_PIN, SCLK_PIN, cs );
+    sd_spi_drv  sd ( spi );        // SD card low level driver
+    FatFs       fs ( sd );         // FatFs driver
     // Register FatFs driver for Posix-style I/O
     // (fopen, fclose, fprintf, ...)
     posix_io::inst.register_fileio( fs );
