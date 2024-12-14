@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(YAHAL_DIR ~/YAHAL)
-
 set(CMAKE_BUILD_TYPE DEBUG)
 #set(CMAKE_BUILD_TYPE RELEASE)
 
