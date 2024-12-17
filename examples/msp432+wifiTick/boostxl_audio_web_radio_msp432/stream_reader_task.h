@@ -47,12 +47,12 @@ private:
     WifiTick _wifi_tick;
 
     // I2C objects
-    gpio_msp432_pin _sda;
-    gpio_msp432_pin _scl;
+    gpio_msp432     _sda;
+    gpio_msp432     _scl;
     soft_i2c_master _i2c;
 
     // SPI objects
-    gpio_msp432_pin _esp_spi_cs;
+    gpio_msp432     _esp_spi_cs;
     spi_msp432      _esp_spi;
 
     uint8_t *       _req_buff;
@@ -67,7 +67,7 @@ private:
     mutex<lock_base_msp432>               _caller_mutex;
     condition_variable<lock_base_msp432>  _caller_cv;
 
-    audio_output &       _audio_output;
+    audio_output &  _audio_output;
 
     uint8_t _metaData[320];
 

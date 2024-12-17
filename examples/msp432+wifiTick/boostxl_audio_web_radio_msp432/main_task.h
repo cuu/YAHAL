@@ -50,7 +50,7 @@ public:
         stream_reader.start();
 
         // Wait for reset of ESP8266
-        sleep(2000);
+        sleep_ms(2000);
 
         stream_reader.connectToWlan("TG WLAN", "Wanja&Mikesch2007");
 
@@ -79,7 +79,7 @@ public:
         decoder.start();
 
         while(1) {
-            sleep(1000);
+            sleep_ms(1000);
         }
     }
 

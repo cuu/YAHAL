@@ -28,12 +28,12 @@ public:
     void reset(bool boot_from_uart = false);
 
 private:
-    gpio_msp432_pin _gpio0;
-    gpio_msp432_pin _gpio2;
-    gpio_msp432_pin _gpio15;
-    gpio_msp432_pin _reset;
-    gpio_msp432_pin _powerUp;
-    gpio_msp432_pin _led;
+    gpio_msp432 _gpio0;
+    gpio_msp432 _gpio2;
+    gpio_msp432 _gpio15;
+    gpio_msp432 _reset;
+    gpio_msp432 _powerUp;
+    gpio_msp432 _led;
 };
 
 #endif // _WIFI_TICK_H_

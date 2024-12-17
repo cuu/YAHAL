@@ -54,9 +54,9 @@ public:
 
 private:
     // BoostXL-Audio Objects
-    gpio_msp432_pin _audio_en;
-    gpio_msp432_pin _audio_cs;
-    spi_msp432      _audio_spi;
+    gpio_msp432 _audio_en;
+    gpio_msp432 _audio_cs;
+    spi_msp432  _audio_spi;
 
     // The PCM output timer
     timer_msp432 _pcm_timer;

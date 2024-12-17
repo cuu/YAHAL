@@ -58,7 +58,7 @@ int main(void)
     });
 
     // Reset the ESP8266
-    gpio_msp432_pin esp_reset( PORT_PIN(10, 5) );
+    gpio_msp432 esp_reset( PORT_PIN(10, 5) );
     esp_reset.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
     task::sleep_ms(200);
     esp_reset.gpioWrite( HIGH );

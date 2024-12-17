@@ -46,7 +46,7 @@ int main(void)
     posix_io::inst.register_stdin ( uart );
     posix_io::inst.register_stdout( uart );
 
-    gpio_msp432_pin esp_reset( PORT_PIN(10, 5) );
+    gpio_msp432 esp_reset( PORT_PIN(10, 5) );
     esp_reset.gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
 
     // Initialize the UART which is connected to the ESP8266
@@ -59,7 +59,7 @@ int main(void)
 
     // Initialize the SPI interface which is connected to the
     // ESP8266 and use the client mode on MSP432 side
-    gpio_msp432_pin lcd_cs (PORT_PIN(10, 0));
+    gpio_msp432 lcd_cs (PORT_PIN(10, 0));
     spi_msp432 spi(EUSCI_B3_SPI, lcd_cs, SPI::CLIENT);
     spi.setSpeed(250000);
 

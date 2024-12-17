@@ -24,10 +24,12 @@
 #define I2C_ADDR 0x55
 
 void __attribute__((optimize("O0"))) delay(uint32_t us) {
+    (void)us;
     for(int i=0; i < 300; ++i) ;
 }
 
 void __attribute__((optimize("O0"))) delay1(uint32_t us) {
+    (void)us;
     for(int i=0; i < 100; ++i) ;
 }
 
@@ -73,7 +75,7 @@ void stream_reader_task::connectToWlan(const char *ssid, const char *passwd) {
 
     // Wait until ESP8266 is connected to WLAN
     do {
-        sleep(500);
+        sleep_ms(500);
         res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
         if (res != 1) continue;
     } while (buff[1]);
@@ -110,7 +112,7 @@ void stream_reader_task::connectToSrv(const char *host, int port, const char *pa
 
     // Wait until ESP8266 is connected to server
     do {
-        sleep(100);
+        sleep_ms(100);
         res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
         if (res != 1) continue;
     } while (buff[1]);
@@ -130,7 +132,7 @@ void stream_reader_task::stopSrv() {
 
     // Wait until ESP8266 is connected to server
     do {
-        sleep(500);
+        sleep_ms(500);
         res = _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 1);
         if (res != 1) continue;
     } while (buff[1]);
@@ -189,7 +191,7 @@ void stream_reader_task::run() {
 
         // Wait until data is prepared
         do {
-            sleep(20);
+            sleep_ms(20);
             _i2c.i2cRead(I2C_ADDR, (uint8_t *)buff+1, 2);
         } while (buff[1] || buff[2]);
 
