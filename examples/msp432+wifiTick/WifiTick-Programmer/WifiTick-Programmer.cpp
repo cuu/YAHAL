@@ -30,14 +30,14 @@ struct HW {
 
     // HW components
     ////////////////
-    gpio_msp432_pin button_s1;
-    gpio_msp432_pin button_s2;
-    gpio_msp432_pin esp_gpio0;
-    gpio_msp432_pin esp_gpio2;
-    gpio_msp432_pin red_led;
-    gpio_msp432_pin esp_reset;
-    uart_msp432     uart_bc;  // back-channel UART
-    uart_msp432     uart_esp; // ESP8266 UART
+    gpio_msp432 button_s1;
+    gpio_msp432 button_s2;
+    gpio_msp432 esp_gpio0;
+    gpio_msp432 esp_gpio2;
+    gpio_msp432 red_led;
+    gpio_msp432 esp_reset;
+    uart_msp432 uart_bc;  // back-channel UART
+    uart_msp432 uart_esp; // ESP8266 UART
 
     HW() :
         // HW configuration
