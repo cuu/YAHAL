@@ -94,6 +94,7 @@ typedef enum {
 // =======================  MCU Peripheral Section ==========================
 // ==========================================================================
 
-#include "RP2350_regs.h"    // RP2040 peripherals and registers
+#undef DEBUG
+#include "RP2350_regs.h"    // RP2350 peripherals and registers
 
 #endif // _CMSIS_RP2350_H

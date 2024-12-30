@@ -140,6 +140,9 @@ namespace _RESETS_  {
     };
 
     static RESETS_t & RESETS = (*(RESETS_t *)0x40020000);
+    static RESETS_t & RESETS_XOR = (*(RESETS_t *)0x40021000);
+    static RESETS_t & RESETS_SET = (*(RESETS_t *)0x40022000);
+    static RESETS_t & RESETS_CLR = (*(RESETS_t *)0x40023000);
 
 } // _RESETS_
 
@@ -273,6 +276,9 @@ namespace _PSM_  {
     };
 
     static PSM_t & PSM = (*(PSM_t *)0x40018000);
+    static PSM_t & PSM_XOR = (*(PSM_t *)0x40019000);
+    static PSM_t & PSM_SET = (*(PSM_t *)0x4001a000);
+    static PSM_t & PSM_CLR = (*(PSM_t *)0x4001b000);
 
 } // _PSM_
 
@@ -963,6 +969,9 @@ namespace _CLOCKS_  {
     };
 
     static CLOCKS_t & CLOCKS = (*(CLOCKS_t *)0x40010000);
+    static CLOCKS_t & CLOCKS_XOR = (*(CLOCKS_t *)0x40011000);
+    static CLOCKS_t & CLOCKS_SET = (*(CLOCKS_t *)0x40012000);
+    static CLOCKS_t & CLOCKS_CLR = (*(CLOCKS_t *)0x40013000);
 
 } // _CLOCKS_
 
@@ -1110,6 +1119,9 @@ namespace _TICKS_  {
     };
 
     static TICKS_t & TICKS = (*(TICKS_t *)0x40108000);
+    static TICKS_t & TICKS_XOR = (*(TICKS_t *)0x40109000);
+    static TICKS_t & TICKS_SET = (*(TICKS_t *)0x4010a000);
+    static TICKS_t & TICKS_CLR = (*(TICKS_t *)0x4010b000);
 
 } // _TICKS_
 
@@ -1209,6 +1221,9 @@ namespace _PADS_BANK0_  {
     };
 
     static PADS_BANK0_t & PADS_BANK0 = (*(PADS_BANK0_t *)0x40038000);
+    static PADS_BANK0_t & PADS_BANK0_XOR = (*(PADS_BANK0_t *)0x40039000);
+    static PADS_BANK0_t & PADS_BANK0_SET = (*(PADS_BANK0_t *)0x4003a000);
+    static PADS_BANK0_t & PADS_BANK0_CLR = (*(PADS_BANK0_t *)0x4003b000);
 
 } // _PADS_BANK0_
 
@@ -1308,6 +1323,9 @@ namespace _PADS_QSPI_  {
     };
 
     static PADS_QSPI_t & PADS_QSPI = (*(PADS_QSPI_t *)0x40040000);
+    static PADS_QSPI_t & PADS_QSPI_XOR = (*(PADS_QSPI_t *)0x40041000);
+    static PADS_QSPI_t & PADS_QSPI_SET = (*(PADS_QSPI_t *)0x40042000);
+    static PADS_QSPI_t & PADS_QSPI_CLR = (*(PADS_QSPI_t *)0x40043000);
 
 } // _PADS_QSPI_
 
@@ -2093,6 +2111,9 @@ namespace _IO_QSPI_  {
     };
 
     static IO_QSPI_t & IO_QSPI = (*(IO_QSPI_t *)0x40030000);
+    static IO_QSPI_t & IO_QSPI_XOR = (*(IO_QSPI_t *)0x40031000);
+    static IO_QSPI_t & IO_QSPI_SET = (*(IO_QSPI_t *)0x40032000);
+    static IO_QSPI_t & IO_QSPI_CLR = (*(IO_QSPI_t *)0x40033000);
 
 } // _IO_QSPI_
 
@@ -4895,6 +4916,9 @@ namespace _IO_BANK0_  {
     };
 
     static IO_BANK0_t & IO_BANK0 = (*(IO_BANK0_t *)0x40028000);
+    static IO_BANK0_t & IO_BANK0_XOR = (*(IO_BANK0_t *)0x40029000);
+    static IO_BANK0_t & IO_BANK0_SET = (*(IO_BANK0_t *)0x4002a000);
+    static IO_BANK0_t & IO_BANK0_CLR = (*(IO_BANK0_t *)0x4002b000);
 
 } // _IO_BANK0_
 
@@ -4938,6 +4962,9 @@ namespace _SYSINFO_  {
     };
 
     static SYSINFO_t & SYSINFO = (*(SYSINFO_t *)0x40000000);
+    static SYSINFO_t & SYSINFO_XOR = (*(SYSINFO_t *)0x40001000);
+    static SYSINFO_t & SYSINFO_SET = (*(SYSINFO_t *)0x40002000);
+    static SYSINFO_t & SYSINFO_CLR = (*(SYSINFO_t *)0x40003000);
 
 } // _SYSINFO_
 
@@ -4983,6 +5010,9 @@ namespace _SHA256_  {
     };
 
     static SHA256_t & SHA256 = (*(SHA256_t *)0x400f8000);
+    static SHA256_t & SHA256_XOR = (*(SHA256_t *)0x400f9000);
+    static SHA256_t & SHA256_SET = (*(SHA256_t *)0x400fa000);
+    static SHA256_t & SHA256_CLR = (*(SHA256_t *)0x400fb000);
 
 } // _SHA256_
 
@@ -5011,6 +5041,9 @@ namespace _HSTX_FIFO_  {
     };
 
     static HSTX_FIFO_t & HSTX_FIFO = (*(HSTX_FIFO_t *)0x50600000);
+    static HSTX_FIFO_t & HSTX_FIFO_XOR = (*(HSTX_FIFO_t *)0x50601000);
+    static HSTX_FIFO_t & HSTX_FIFO_SET = (*(HSTX_FIFO_t *)0x50602000);
+    static HSTX_FIFO_t & HSTX_FIFO_CLR = (*(HSTX_FIFO_t *)0x50603000);
 
 } // _HSTX_FIFO_
 
@@ -5088,6 +5121,9 @@ namespace _HSTX_CTRL_  {
     };
 
     static HSTX_CTRL_t & HSTX_CTRL = (*(HSTX_CTRL_t *)0x400c0000);
+    static HSTX_CTRL_t & HSTX_CTRL_XOR = (*(HSTX_CTRL_t *)0x400c1000);
+    static HSTX_CTRL_t & HSTX_CTRL_SET = (*(HSTX_CTRL_t *)0x400c2000);
+    static HSTX_CTRL_t & HSTX_CTRL_CLR = (*(HSTX_CTRL_t *)0x400c3000);
 
 } // _HSTX_CTRL_
 
@@ -8638,6 +8674,9 @@ namespace _QMI_  {
     };
 
     static QMI_t & QMI = (*(QMI_t *)0x400d0000);
+    static QMI_t & QMI_XOR = (*(QMI_t *)0x400d1000);
+    static QMI_t & QMI_SET = (*(QMI_t *)0x400d2000);
+    static QMI_t & QMI_CLR = (*(QMI_t *)0x400d3000);
 
 } // _QMI_
 
@@ -8726,6 +8765,9 @@ namespace _XIP_CTRL_  {
     };
 
     static XIP_CTRL_t & XIP_CTRL = (*(XIP_CTRL_t *)0x400c8000);
+    static XIP_CTRL_t & XIP_CTRL_XOR = (*(XIP_CTRL_t *)0x400c9000);
+    static XIP_CTRL_t & XIP_CTRL_SET = (*(XIP_CTRL_t *)0x400ca000);
+    static XIP_CTRL_t & XIP_CTRL_CLR = (*(XIP_CTRL_t *)0x400cb000);
 
 } // _XIP_CTRL_
 
@@ -8774,6 +8816,9 @@ namespace _XIP_AUX_  {
     };
 
     static XIP_AUX_t & XIP_AUX = (*(XIP_AUX_t *)0x50500000);
+    static XIP_AUX_t & XIP_AUX_XOR = (*(XIP_AUX_t *)0x50501000);
+    static XIP_AUX_t & XIP_AUX_SET = (*(XIP_AUX_t *)0x50502000);
+    static XIP_AUX_t & XIP_AUX_CLR = (*(XIP_AUX_t *)0x50503000);
 
 } // _XIP_AUX_
 
@@ -8854,6 +8899,9 @@ namespace _SYSCFG_  {
     };
 
     static SYSCFG_t & SYSCFG = (*(SYSCFG_t *)0x40008000);
+    static SYSCFG_t & SYSCFG_XOR = (*(SYSCFG_t *)0x40009000);
+    static SYSCFG_t & SYSCFG_SET = (*(SYSCFG_t *)0x4000a000);
+    static SYSCFG_t & SYSCFG_CLR = (*(SYSCFG_t *)0x4000b000);
 
 } // _SYSCFG_
 
@@ -8927,6 +8975,9 @@ namespace _XOSC_  {
     };
 
     static XOSC_t & XOSC = (*(XOSC_t *)0x40048000);
+    static XOSC_t & XOSC_XOR = (*(XOSC_t *)0x40049000);
+    static XOSC_t & XOSC_SET = (*(XOSC_t *)0x4004a000);
+    static XOSC_t & XOSC_CLR = (*(XOSC_t *)0x4004b000);
 
 } // _XOSC_
 
@@ -9010,12 +9061,18 @@ namespace _PLL_SYS_  {
     };
 
     static PLL_SYS_t & PLL_SYS = (*(PLL_SYS_t *)0x40050000);
+    static PLL_SYS_t & PLL_SYS_XOR = (*(PLL_SYS_t *)0x40051000);
+    static PLL_SYS_t & PLL_SYS_SET = (*(PLL_SYS_t *)0x40052000);
+    static PLL_SYS_t & PLL_SYS_CLR = (*(PLL_SYS_t *)0x40053000);
 
 } // _PLL_SYS_
 
 namespace _PLL_USB_  {
 
     static _PLL_SYS_::PLL_SYS_t & PLL_USB = (*(_PLL_SYS_::PLL_SYS_t *)0x40058000);
+    static _PLL_SYS_::PLL_SYS_t & PLL_USB_XOR = (*(_PLL_SYS_::PLL_SYS_t *)0x40059000);
+    static _PLL_SYS_::PLL_SYS_t & PLL_USB_SET = (*(_PLL_SYS_::PLL_SYS_t *)0x4005a000);
+    static _PLL_SYS_::PLL_SYS_t & PLL_USB_CLR = (*(_PLL_SYS_::PLL_SYS_t *)0x4005b000);
 
 } // _PLL_USB_
 
@@ -10257,6 +10314,9 @@ namespace _ACCESSCTRL_  {
     };
 
     static ACCESSCTRL_t & ACCESSCTRL = (*(ACCESSCTRL_t *)0x40060000);
+    static ACCESSCTRL_t & ACCESSCTRL_XOR = (*(ACCESSCTRL_t *)0x40061000);
+    static ACCESSCTRL_t & ACCESSCTRL_SET = (*(ACCESSCTRL_t *)0x40062000);
+    static ACCESSCTRL_t & ACCESSCTRL_CLR = (*(ACCESSCTRL_t *)0x40063000);
 
 } // _ACCESSCTRL_
 
@@ -10599,12 +10659,18 @@ namespace _UART0_  {
     };
 
     static UART0_t & UART0 = (*(UART0_t *)0x40070000);
+    static UART0_t & UART0_XOR = (*(UART0_t *)0x40071000);
+    static UART0_t & UART0_SET = (*(UART0_t *)0x40072000);
+    static UART0_t & UART0_CLR = (*(UART0_t *)0x40073000);
 
 } // _UART0_
 
 namespace _UART1_  {
 
     static _UART0_::UART0_t & UART1 = (*(_UART0_::UART0_t *)0x40078000);
+    static _UART0_::UART0_t & UART1_XOR = (*(_UART0_::UART0_t *)0x40079000);
+    static _UART0_::UART0_t & UART1_SET = (*(_UART0_::UART0_t *)0x4007a000);
+    static _UART0_::UART0_t & UART1_CLR = (*(_UART0_::UART0_t *)0x4007b000);
 
 } // _UART1_
 
@@ -10739,6 +10805,9 @@ namespace _ROSC_  {
     };
 
     static ROSC_t & ROSC = (*(ROSC_t *)0x400e8000);
+    static ROSC_t & ROSC_XOR = (*(ROSC_t *)0x400e9000);
+    static ROSC_t & ROSC_SET = (*(ROSC_t *)0x400ea000);
+    static ROSC_t & ROSC_CLR = (*(ROSC_t *)0x400eb000);
 
 } // _ROSC_
 
@@ -11331,6 +11400,9 @@ namespace _POWMAN_  {
     };
 
     static POWMAN_t & POWMAN = (*(POWMAN_t *)0x40100000);
+    static POWMAN_t & POWMAN_XOR = (*(POWMAN_t *)0x40101000);
+    static POWMAN_t & POWMAN_SET = (*(POWMAN_t *)0x40102000);
+    static POWMAN_t & POWMAN_CLR = (*(POWMAN_t *)0x40103000);
 
 } // _POWMAN_
 
@@ -11378,6 +11450,9 @@ namespace _WATCHDOG_  {
     };
 
     static WATCHDOG_t & WATCHDOG = (*(WATCHDOG_t *)0x400d8000);
+    static WATCHDOG_t & WATCHDOG_XOR = (*(WATCHDOG_t *)0x400d9000);
+    static WATCHDOG_t & WATCHDOG_SET = (*(WATCHDOG_t *)0x400da000);
+    static WATCHDOG_t & WATCHDOG_CLR = (*(WATCHDOG_t *)0x400db000);
 
 } // _WATCHDOG_
 
@@ -12236,6 +12311,9 @@ namespace _DMA_  {
     };
 
     static DMA_t & DMA = (*(DMA_t *)0x50000000);
+    static DMA_t & DMA_XOR = (*(DMA_t *)0x50001000);
+    static DMA_t & DMA_SET = (*(DMA_t *)0x50002000);
+    static DMA_t & DMA_CLR = (*(DMA_t *)0x50003000);
 
 } // _DMA_
 
@@ -12374,12 +12452,18 @@ namespace _TIMER0_  {
     };
 
     static TIMER0_t & TIMER0 = (*(TIMER0_t *)0x400b0000);
+    static TIMER0_t & TIMER0_XOR = (*(TIMER0_t *)0x400b1000);
+    static TIMER0_t & TIMER0_SET = (*(TIMER0_t *)0x400b2000);
+    static TIMER0_t & TIMER0_CLR = (*(TIMER0_t *)0x400b3000);
 
 } // _TIMER0_
 
 namespace _TIMER1_  {
 
     static _TIMER0_::TIMER0_t & TIMER1 = (*(_TIMER0_::TIMER0_t *)0x400b8000);
+    static _TIMER0_::TIMER0_t & TIMER1_XOR = (*(_TIMER0_::TIMER0_t *)0x400b9000);
+    static _TIMER0_::TIMER0_t & TIMER1_SET = (*(_TIMER0_::TIMER0_t *)0x400ba000);
+    static _TIMER0_::TIMER0_t & TIMER1_CLR = (*(_TIMER0_::TIMER0_t *)0x400bb000);
 
 } // _TIMER1_
 
@@ -12647,6 +12731,9 @@ namespace _PWM_  {
     };
 
     static PWM_t & PWM = (*(PWM_t *)0x400a8000);
+    static PWM_t & PWM_XOR = (*(PWM_t *)0x400a9000);
+    static PWM_t & PWM_SET = (*(PWM_t *)0x400aa000);
+    static PWM_t & PWM_CLR = (*(PWM_t *)0x400ab000);
 
 } // _PWM_
 
@@ -12763,6 +12850,9 @@ namespace _ADC_  {
     };
 
     static ADC_t & ADC = (*(ADC_t *)0x400a0000);
+    static ADC_t & ADC_XOR = (*(ADC_t *)0x400a1000);
+    static ADC_t & ADC_SET = (*(ADC_t *)0x400a2000);
+    static ADC_t & ADC_CLR = (*(ADC_t *)0x400a3000);
 
 } // _ADC_
 
@@ -13653,12 +13743,18 @@ namespace _I2C0_  {
     };
 
     static I2C0_t & I2C0 = (*(I2C0_t *)0x40090000);
+    static I2C0_t & I2C0_XOR = (*(I2C0_t *)0x40091000);
+    static I2C0_t & I2C0_SET = (*(I2C0_t *)0x40092000);
+    static I2C0_t & I2C0_CLR = (*(I2C0_t *)0x40093000);
 
 } // _I2C0_
 
 namespace _I2C1_  {
 
     static _I2C0_::I2C0_t & I2C1 = (*(_I2C0_::I2C0_t *)0x40098000);
+    static _I2C0_::I2C0_t & I2C1_XOR = (*(_I2C0_::I2C0_t *)0x40099000);
+    static _I2C0_::I2C0_t & I2C1_SET = (*(_I2C0_::I2C0_t *)0x4009a000);
+    static _I2C0_::I2C0_t & I2C1_CLR = (*(_I2C0_::I2C0_t *)0x4009b000);
 
 } // _I2C1_
 
@@ -13860,12 +13956,18 @@ namespace _SPI0_  {
     };
 
     static SPI0_t & SPI0 = (*(SPI0_t *)0x40080000);
+    static SPI0_t & SPI0_XOR = (*(SPI0_t *)0x40081000);
+    static SPI0_t & SPI0_SET = (*(SPI0_t *)0x40082000);
+    static SPI0_t & SPI0_CLR = (*(SPI0_t *)0x40083000);
 
 } // _SPI0_
 
 namespace _SPI1_  {
 
     static _SPI0_::SPI0_t & SPI1 = (*(_SPI0_::SPI0_t *)0x40088000);
+    static _SPI0_::SPI0_t & SPI1_XOR = (*(_SPI0_::SPI0_t *)0x40089000);
+    static _SPI0_::SPI0_t & SPI1_SET = (*(_SPI0_::SPI0_t *)0x4008a000);
+    static _SPI0_::SPI0_t & SPI1_CLR = (*(_SPI0_::SPI0_t *)0x4008b000);
 
 } // _SPI1_
 
@@ -14991,18 +15093,27 @@ namespace _PIO0_  {
     };
 
     static PIO0_t & PIO0 = (*(PIO0_t *)0x50200000);
+    static PIO0_t & PIO0_XOR = (*(PIO0_t *)0x50201000);
+    static PIO0_t & PIO0_SET = (*(PIO0_t *)0x50202000);
+    static PIO0_t & PIO0_CLR = (*(PIO0_t *)0x50203000);
 
 } // _PIO0_
 
 namespace _PIO1_  {
 
     static _PIO0_::PIO0_t & PIO1 = (*(_PIO0_::PIO0_t *)0x50300000);
+    static _PIO0_::PIO0_t & PIO1_XOR = (*(_PIO0_::PIO0_t *)0x50301000);
+    static _PIO0_::PIO0_t & PIO1_SET = (*(_PIO0_::PIO0_t *)0x50302000);
+    static _PIO0_::PIO0_t & PIO1_CLR = (*(_PIO0_::PIO0_t *)0x50303000);
 
 } // _PIO1_
 
 namespace _PIO2_  {
 
     static _PIO0_::PIO0_t & PIO2 = (*(_PIO0_::PIO0_t *)0x50400000);
+    static _PIO0_::PIO0_t & PIO2_XOR = (*(_PIO0_::PIO0_t *)0x50401000);
+    static _PIO0_::PIO0_t & PIO2_SET = (*(_PIO0_::PIO0_t *)0x50402000);
+    static _PIO0_::PIO0_t & PIO2_CLR = (*(_PIO0_::PIO0_t *)0x50403000);
 
 } // _PIO2_
 
@@ -15382,6 +15493,9 @@ namespace _BUSCTRL_  {
     };
 
     static BUSCTRL_t & BUSCTRL = (*(BUSCTRL_t *)0x40068000);
+    static BUSCTRL_t & BUSCTRL_XOR = (*(BUSCTRL_t *)0x40069000);
+    static BUSCTRL_t & BUSCTRL_SET = (*(BUSCTRL_t *)0x4006a000);
+    static BUSCTRL_t & BUSCTRL_CLR = (*(BUSCTRL_t *)0x4006b000);
 
 } // _BUSCTRL_
 
@@ -16231,6 +16345,9 @@ namespace _BOOTRAM_  {
     };
 
     static BOOTRAM_t & BOOTRAM = (*(BOOTRAM_t *)0x400e0000);
+    static BOOTRAM_t & BOOTRAM_XOR = (*(BOOTRAM_t *)0x400e1000);
+    static BOOTRAM_t & BOOTRAM_SET = (*(BOOTRAM_t *)0x400e2000);
+    static BOOTRAM_t & BOOTRAM_CLR = (*(BOOTRAM_t *)0x400e3000);
 
 } // _BOOTRAM_
 
@@ -16259,6 +16376,9 @@ namespace _CORESIGHT_TRACE_  {
     };
 
     static CORESIGHT_TRACE_t & CORESIGHT_TRACE = (*(CORESIGHT_TRACE_t *)0x50700000);
+    static CORESIGHT_TRACE_t & CORESIGHT_TRACE_XOR = (*(CORESIGHT_TRACE_t *)0x50701000);
+    static CORESIGHT_TRACE_t & CORESIGHT_TRACE_SET = (*(CORESIGHT_TRACE_t *)0x50702000);
+    static CORESIGHT_TRACE_t & CORESIGHT_TRACE_CLR = (*(CORESIGHT_TRACE_t *)0x50703000);
 
 } // _CORESIGHT_TRACE_
 
@@ -17107,6 +17227,9 @@ namespace _USB_  {
     };
 
     static USB_t & USB = (*(USB_t *)0x50110000);
+    static USB_t & USB_XOR = (*(USB_t *)0x50111000);
+    static USB_t & USB_SET = (*(USB_t *)0x50112000);
+    static USB_t & USB_CLR = (*(USB_t *)0x50113000);
 
 } // _USB_
 
@@ -17375,6 +17498,9 @@ namespace _TRNG_  {
     };
 
     static TRNG_t & TRNG = (*(TRNG_t *)0x400f0000);
+    static TRNG_t & TRNG_XOR = (*(TRNG_t *)0x400f1000);
+    static TRNG_t & TRNG_SET = (*(TRNG_t *)0x400f2000);
+    static TRNG_t & TRNG_CLR = (*(TRNG_t *)0x400f3000);
 
 } // _TRNG_
 
@@ -17461,6 +17587,9 @@ namespace _GLITCH_DETECTOR_  {
     };
 
     static GLITCH_DETECTOR_t & GLITCH_DETECTOR = (*(GLITCH_DETECTOR_t *)0x40158000);
+    static GLITCH_DETECTOR_t & GLITCH_DETECTOR_XOR = (*(GLITCH_DETECTOR_t *)0x40159000);
+    static GLITCH_DETECTOR_t & GLITCH_DETECTOR_SET = (*(GLITCH_DETECTOR_t *)0x4015a000);
+    static GLITCH_DETECTOR_t & GLITCH_DETECTOR_CLR = (*(GLITCH_DETECTOR_t *)0x4015b000);
 
 } // _GLITCH_DETECTOR_
 
@@ -18867,6 +18996,9 @@ namespace _OTP_  {
     };
 
     static OTP_t & OTP = (*(OTP_t *)0x40120000);
+    static OTP_t & OTP_XOR = (*(OTP_t *)0x40121000);
+    static OTP_t & OTP_SET = (*(OTP_t *)0x40122000);
+    static OTP_t & OTP_CLR = (*(OTP_t *)0x40123000);
 
 } // _OTP_
 
@@ -19360,6 +19492,9 @@ namespace _OTP_DATA_  {
     };
 
     static OTP_DATA_t & OTP_DATA = (*(OTP_DATA_t *)0x40130000);
+    static OTP_DATA_t & OTP_DATA_XOR = (*(OTP_DATA_t *)0x40131000);
+    static OTP_DATA_t & OTP_DATA_SET = (*(OTP_DATA_t *)0x40132000);
+    static OTP_DATA_t & OTP_DATA_CLR = (*(OTP_DATA_t *)0x40133000);
 
 } // _OTP_DATA_
 
@@ -20439,6 +20574,9 @@ namespace _OTP_DATA_RAW_  {
     };
 
     static OTP_DATA_RAW_t & OTP_DATA_RAW = (*(OTP_DATA_RAW_t *)0x40134000);
+    static OTP_DATA_RAW_t & OTP_DATA_RAW_XOR = (*(OTP_DATA_RAW_t *)0x40135000);
+    static OTP_DATA_RAW_t & OTP_DATA_RAW_SET = (*(OTP_DATA_RAW_t *)0x40136000);
+    static OTP_DATA_RAW_t & OTP_DATA_RAW_CLR = (*(OTP_DATA_RAW_t *)0x40137000);
 
 } // _OTP_DATA_RAW_
 
@@ -20461,6 +20599,9 @@ namespace _TBMAN_  {
     };
 
     static TBMAN_t & TBMAN = (*(TBMAN_t *)0x40160000);
+    static TBMAN_t & TBMAN_XOR = (*(TBMAN_t *)0x40161000);
+    static TBMAN_t & TBMAN_SET = (*(TBMAN_t *)0x40162000);
+    static TBMAN_t & TBMAN_CLR = (*(TBMAN_t *)0x40163000);
 
 } // _TBMAN_
 
@@ -20610,6 +20751,9 @@ namespace _USB_DPRAM_  {
     };
 
     static USB_DPRAM_t & USB_DPRAM = (*(USB_DPRAM_t *)0x50100000);
+    static USB_DPRAM_t & USB_DPRAM_XOR = (*(USB_DPRAM_t *)0x50101000);
+    static USB_DPRAM_t & USB_DPRAM_SET = (*(USB_DPRAM_t *)0x50102000);
+    static USB_DPRAM_t & USB_DPRAM_CLR = (*(USB_DPRAM_t *)0x50103000);
 
 } // _USB_DPRAM_
 
