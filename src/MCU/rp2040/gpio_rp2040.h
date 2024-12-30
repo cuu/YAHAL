@@ -30,19 +30,20 @@ public:
     explicit gpio_rp2040(gpio_pin_t gpio = 0xffff);
     ~gpio_rp2040() override = default;
 
-    inline void setGpio(gpio_pin_t gpio) override {
-        assert(gpio < 30);
-        _gpio = gpio;
-        _mask = 1 << gpio;
-    }
-    inline gpio_pin_t getGpio() override {
-        return _gpio;
-    }
+    // No copy, assignment is value passing
+    gpio_rp2040 (const gpio_rp2040&) = delete;
+    gpio_rp2040& operator= (const gpio_rp2040 & lhs) {
+        this->gpioWrite(lhs.operator bool());
+        return *this;
+    };
+
+    void setGpio(gpio_pin_t gpio) override;
+    gpio_pin_t getGpio() const override;
 
     // Generic GPIO methods
     ///////////////////////
     void gpioMode  (gpio_mode_t mode) override;
-    bool gpioRead  () override;
+    bool gpioRead  () const override;
     void gpioWrite (bool value) override;
     void gpioToggle() override;
 
@@ -53,7 +54,7 @@ public:
     void gpioEnableIrq () override;
     void gpioDisableIrq() override;
 
-    // MSP432 specific methods
+    // RP2040 specific methods
     //////////////////////////
     void setSEL (uint8_t  sel);
     void setMode(gpio_mode_t mode);
@@ -67,8 +68,8 @@ public:
 
 private:
     gpio_pin_t  _gpio;
-    bool        _open_source;
-    bool        _open_drain;
+    bool        _open_source {false};
+    bool        _open_drain  {false};
     uint32_t    _mask;
 
     static function<void()> _intHandler[30];

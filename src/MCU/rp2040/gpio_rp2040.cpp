@@ -18,8 +18,18 @@ function<void()> gpio_rp2040::_intHandler[30] {nullptr};
 uint8_t          gpio_rp2040::_irqConfig [30] {0};
 
 gpio_rp2040::gpio_rp2040(gpio_pin_t gpio)
-    : _gpio(gpio), _open_source(false), _open_drain(false) {
+    : _gpio(gpio) {
     _mask = 1 << gpio;
+}
+
+void gpio_rp2040::setGpio(gpio_pin_t gpio) {
+    assert(gpio < 30);
+    _gpio = gpio;
+    _mask = 1 << (gpio % 32);
+}
+
+gpio_pin_t gpio_rp2040::getGpio() const {
+    return _gpio;
 }
 
 void
@@ -30,7 +40,7 @@ gpio_rp2040::gpioMode (uint16_t mode) {
 }
 
 bool
-gpio_rp2040::gpioRead () {
+gpio_rp2040::gpioRead () const {
     assert(_gpio < 30);
     return SIO.GPIO_IN & _mask;
 }

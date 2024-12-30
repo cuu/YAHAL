@@ -44,7 +44,7 @@ void gpio_msp432::gpioMode(uint16_t mode) {
     setMode(mode);
 }
 
-bool gpio_msp432::gpioRead() {
+bool gpio_msp432::gpioRead() const {
     assert((_port > 0) && (_port < 11) && (_pin < 8));
     return DIO_BIT(_port, _pin, PORT_IN_OFS);
 }

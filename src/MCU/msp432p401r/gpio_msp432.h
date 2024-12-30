@@ -28,19 +28,26 @@ public:
     }
     ~gpio_msp432() override = default;
 
+    // No copy, assignment is value passing
+    gpio_msp432 (const gpio_msp432&) = delete;
+    gpio_msp432& operator= (const gpio_msp432 & lhs) {
+        this->gpioWrite(lhs.operator bool());
+        return *this;
+    };
+
     inline void setGpio(gpio_pin_t gpio) override {
         _port = PORT(gpio);
         _pin  = PIN (gpio);
         assert((_port > 0) && (_port < 11) && (_pin < 8));
     }
-    inline gpio_pin_t getGpio() override {
+    inline gpio_pin_t getGpio() const override {
         return (_port << 8) | _pin;
     }
 
     // Generic GPIO methods
     ///////////////////////
     void gpioMode  (gpio_mode_t mode) override;
-    bool gpioRead  () override;
+    bool gpioRead  () const override;
     void gpioWrite (bool value) override;
     void gpioToggle() override;
 

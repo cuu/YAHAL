@@ -87,11 +87,11 @@ public:
     // The following methods can be used to change/get the
     // GPIO pin in an existing GPIO object.
     virtual void setGpio(gpio_pin_t gpio) = 0;
-    virtual gpio_pin_t getGpio() = 0;
+    virtual gpio_pin_t getGpio() const = 0;
 
     // Basic GPIO handling
     virtual void gpioMode  (gpio_mode_t mode) = 0;
-    virtual bool gpioRead  () = 0;
+    virtual bool gpioRead  () const = 0;
     virtual void gpioWrite (bool value) = 0;
     virtual void gpioToggle() = 0;
 
@@ -111,7 +111,7 @@ public:
     inline void operator = (bool b) {
         gpioWrite(b);
     }
-    inline operator bool () {
+    inline operator bool () const {
         return gpioRead();
     }
 
