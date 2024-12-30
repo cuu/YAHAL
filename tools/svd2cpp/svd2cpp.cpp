@@ -261,7 +261,8 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
 
     // Generate additional register struct instances,
     // depending on the MCU type
-    if (_mcu == "RP2040" && ((baseAddr_int >> 28) <= 5)) {
+    bool is_rpi_mcu = (_mcu == "RP2040" || _mcu == "RP2350");
+    if (is_rpi_mcu && ((baseAddr_int >> 28) <= 5)) {
         _ofs << indent << "static " << periType << " & "
              << name << "_XOR = (*(" << periType << " *)0x" << hex
              << baseAddr_int + 0x1000 << ");" << endl;
