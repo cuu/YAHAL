@@ -1,9 +1,18 @@
-/*
- *
- *  Created on: 01.11.2022
- *      Author: aterstegge
- */
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Timer implementation for RP2350.
+//
 #ifndef _TIMER_RP2350_H_
 #define _TIMER_RP2350_H_
 
@@ -15,10 +24,6 @@ void TIMER0_IRQ_0_Handler(void);
 void TIMER0_IRQ_1_Handler(void);
 void TIMER0_IRQ_2_Handler(void);
 void TIMER0_IRQ_3_Handler(void);
-//void TIMER1_IRQ_0_Handler(void);
-//void TIMER1_IRQ_1_Handler(void);
-//void TIMER1_IRQ_2_Handler(void);
-//void TIMER1_IRQ_3_Handler(void);
 }
 
 class timer_rp2350: public timer_interface {
@@ -26,10 +31,10 @@ public:
     // The index is in the range of 0...3 (4 timers).
     // When no index is given (-1), the next free timer will be used!
     explicit timer_rp2350(int8_t index = -1);
-    virtual ~timer_rp2350();
+    ~timer_rp2350() override;
 
-    void setPeriod   (uint32_t us, TIMER::timer_mode mode = TIMER::ONE_SHOT) override;
-    void setPeriod_ns(uint32_t ns, TIMER::timer_mode mode = TIMER::ONE_SHOT);
+    void setPeriod   (uint32_t us, TIMER::timer_mode mode) override;
+    void setPeriod_ns(uint32_t ns, TIMER::timer_mode mode);
     uint32_t getPeriod() override;
 
     void setCallback(function<void()> f) override;
