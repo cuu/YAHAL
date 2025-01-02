@@ -1,3 +1,18 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// System startup code RP2350.
+//
 #include "system_rp2350.h"
 
 #include "RP2350.h"
@@ -9,23 +24,20 @@ using namespace _SIO_;
 using namespace _WATCHDOG_;
 using namespace _XOSC_;
 using namespace _TICKS_;
+using namespace _TIMER0_;
+using namespace _TIMER1_;
 
 // XOSC configuration (depends on HW)
 /////////////////////////////////////
-#ifndef XOSC_FREQ
 #define XOSC_FREQ 12000000
-#endif
-#ifndef XOSC_STARTUP_MS
 #define XOSC_STARTUP_MS 64
-#endif
 #define XOSC_STARTUP    ((XOSC_FREQ * XOSC_STARTUP_MS / 1000) / 256)
 
-// Clock configurations
-///////////////////////
+// CLK_SYS configuration
+////////////////////////
 #ifndef SYS_CLK_FREQ
 #define SYS_CLK_FREQ 200
 #endif
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,6 +50,8 @@ uint32_t CLK_PERI = 0;
 uint32_t CLK_HSTX = 0;
 uint32_t CLK_USB  = 0;
 uint32_t CLK_ADC  = 0;
+uint32_t systick_ref_ticks_per_ms = 0;
+uint32_t timer_ticks_per_us = 0;
 
 /*---------------------------------------------------------------------------
   System initialization function
@@ -45,8 +59,10 @@ uint32_t CLK_ADC  = 0;
 void SystemInit (void)
 {
     // Reset peripherals
-    RESETS_SET.RESET.UART0 <<= 1;
-    RESETS_SET.RESET.UART1 <<= 1;
+    RESETS_SET.RESET.UART0  <<= 1;
+    RESETS_SET.RESET.UART1  <<= 1;
+    RESETS_SET.RESET.TIMER0 <<= 1;
+    RESETS_SET.RESET.TIMER1 <<= 1;
 
     // Check if core 1 is executing
     // this code and let it sleep here
@@ -67,10 +83,9 @@ void SystemInit (void)
     while (CLOCKS.CLK_SYS_SELECTED != (1 << CLK_SYS_CTRL_SRC__clk_ref)) {}
 
     // Set up PLL_SYS
-    // The reference frequency is XOSC / REFDIV = 6 MHz
-    // The output frequency (200*6 MHz=1200 MHz) is divided by 3*2=6,
-    // which results in a final frequency of 200 MHz, which is the same
-    // as the feedback divider FBDIV.
+    // REFDIV * POSTDIV1 * POSTDIV2 = 12.
+    // XOSC_FREQ is 12 MHz, so the feedback divider value
+    // SYS_CLK_FREQ is the PLL output frequency in MHz!
     RESETS_SET.RESET.PLL_SYS        <<= 1;
     RESETS_CLR.RESET.PLL_SYS        <<= 1;
     while (RESETS.RESET_DONE.PLL_SYS == 0) {}
@@ -84,9 +99,7 @@ void SystemInit (void)
     PLL_SYS_CLR.PWR.POSTDIVPD       <<= 1;
 
     // Set up PLL_USB
-    // The reference frequency is 12 MHz
-    // The output frequency (100*12 MHz=1200 MHz) is divided by 5*5=25,
-    // which results in a final frequency of 48 MHz.
+    // 12 MHz * 100 / 25 = 48 MHz.
     RESETS_SET.RESET.PLL_USB        <<= 1;
     RESETS_CLR.RESET.PLL_USB        <<= 1;
     while (RESETS.RESET_DONE.PLL_USB == 0) {}
@@ -99,40 +112,53 @@ void SystemInit (void)
     PLL_USB.PRIM.POSTDIV2             = 5;
     PLL_USB_CLR.PWR.POSTDIVPD       <<= 1;
 
-    // Configure CLK_REF
+    // Configure CLK_REF (=48 MHz)
     CLOCKS.CLK_REF_CTRL.AUXSRC        = CLK_REF_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_REF_CTRL.SRC           = CLK_REF_CTRL_SRC__clksrc_clk_ref_aux;
     CLOCKS.CLK_REF_DIV.INT            = 1;
 
-    // Configure CLK_SYS
+    // Configure CLK_SYS (=PLL_SYS)
     CLOCKS.CLK_SYS_CTRL.AUXSRC        = CLK_SYS_CTRL_AUXSRC__clksrc_pll_sys;
     CLOCKS.CLK_SYS_CTRL.SRC           = CLK_SYS_CTRL_SRC__clksrc_clk_sys_aux;
     CLOCKS.CLK_SYS_DIV.INT            = 1;
     CLOCKS.CLK_SYS_DIV.FRAC           = 0;
 
-    // Configure CLK_PERI
+    // Configure CLK_PERI (=48 MHz)
     CLOCKS_CLR.CLK_PERI_CTRL.ENABLE <<= 1;
     CLOCKS.CLK_PERI_CTRL.AUXSRC       = CLK_PERI_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_PERI_DIV.INT           = 1;
     CLOCKS_SET.CLK_PERI_CTRL.ENABLE <<= 1;
 
-    // Configure CLK_HSTX
+    // Configure CLK_HSTX (=48 MHz)
     CLOCKS_CLR.CLK_HSTX_CTRL.ENABLE <<= 1;
     CLOCKS.CLK_HSTX_CTRL.AUXSRC       = CLK_HSTX_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_HSTX_DIV.INT           = 1;
     CLOCKS_SET.CLK_HSTX_CTRL.ENABLE <<= 1;
 
-    // Configure CLK_USB
+    // Configure CLK_USB (=48 MHz)
     CLOCKS_CLR.CLK_USB_CTRL.ENABLE  <<= 1;
     CLOCKS.CLK_USB_CTRL.AUXSRC        = CLK_USB_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_USB_DIV.INT            = 1;
     CLOCKS_SET.CLK_USB_CTRL.ENABLE  <<= 1;
 
-    // Configure CLK_ADC
+    // Configure CLK_ADC (=48 MHz)
     CLOCKS_CLR.CLK_ADC_CTRL.ENABLE  <<= 1;
     CLOCKS.CLK_ADC_CTRL.AUXSRC        = CLK_ADC_CTRL_AUXSRC__clksrc_pll_usb;
     CLOCKS.CLK_ADC_DIV.INT            = 1;
     CLOCKS_SET.CLK_ADC_CTRL.ENABLE  <<= 1;
+
+    // Configure SysTick clock at CLK_REF (48 MHz)
+    TICKS.PROC0_CYCLES                = 1;
+    TICKS.PROC1_CYCLES                = 1;
+    TICKS_SET.PROC0_CTRL.ENABLE     <<= 1;
+    TICKS_SET.PROC1_CTRL.ENABLE     <<= 1;
+
+    // Take both timers out of reset ...
+    RESETS_CLR.RESET.TIMER0 <<= 1;
+    RESETS_CLR.RESET.TIMER1 <<= 1;
+    // ... and use CLK_SYS (200 MHz)
+    TIMER0.SOURCE = SOURCE_CLK_SYS__CLK_SYS;
+    TIMER1.SOURCE = SOURCE_CLK_SYS__CLK_SYS;
 
     ClockUpdate();
 }
@@ -161,11 +187,8 @@ void __attribute__((constructor)) ClockUpdate (void) {
     CLK_USB  = pll_usb / CLOCKS.CLK_USB_DIV.INT;
     CLK_ADC  = pll_usb / CLOCKS.CLK_ADC_DIV.INT;
 
-    // Configure Tick Generators for 1 MHz
-    TICKS.PROC0_CYCLES                = CLK_REF / 1000000;
-    TICKS_SET.PROC0_CTRL.ENABLE     <<= 1;
-    TICKS.TIMER0_CYCLES               = CLK_REF / 1000000;
-    TICKS_SET.TIMER0_CTRL.ENABLE    <<= 1;
+    systick_ref_ticks_per_ms = CLK_REF / 1000;
+    timer_ticks_per_us       = CLK_SYS / 1000000;
 }
 
 #ifdef __cplusplus

@@ -19,16 +19,22 @@
 #include "timer_interface.h"
 #include "RP2350.h"
 
+using namespace _TIMER0_;
+
 extern "C" {
 void TIMER0_IRQ_0_Handler(void);
 void TIMER0_IRQ_1_Handler(void);
 void TIMER0_IRQ_2_Handler(void);
 void TIMER0_IRQ_3_Handler(void);
+void TIMER1_IRQ_0_Handler(void);
+void TIMER1_IRQ_1_Handler(void);
+void TIMER1_IRQ_2_Handler(void);
+void TIMER1_IRQ_3_Handler(void);
 }
 
 class timer_rp2350: public timer_interface {
 public:
-    // The index is in the range of 0...3 (4 timers).
+    // The index is in the range of 0...7 (8 timers).
     // When no index is given (-1), the next free timer will be used!
     explicit timer_rp2350(int8_t index = -1);
     ~timer_rp2350() override;
@@ -50,20 +56,24 @@ public:
     friend void TIMER0_IRQ_1_Handler(void);
     friend void TIMER0_IRQ_2_Handler(void);
     friend void TIMER0_IRQ_3_Handler(void);
+    friend void TIMER1_IRQ_0_Handler(void);
+    friend void TIMER1_IRQ_1_Handler(void);
+    friend void TIMER1_IRQ_2_Handler(void);
+    friend void TIMER1_IRQ_3_Handler(void);
 
 private:
 
     void irqHandler();
 
-    static timer_rp2350 *   _timerinst[4];
-    static function<void()> _callback[4];
+    static timer_rp2350 *   _timerinst[8];
+    static function<void()> _callback[8];
 
+    TIMER0_t *  _timer {nullptr};
+    uint32_t *  _alarm {nullptr};
     uint8_t     _index {0};
     uint32_t    _mask  {0};
-    uint32_t *  _alarm {nullptr};
     TIMER::timer_mode _mode;
     uint32_t    _period {0};
-    uint32_t    _tick_factor {0};
 };
 
 #endif // _TIMER_RP2350_H_
