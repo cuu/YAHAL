@@ -21427,27 +21427,27 @@ SPDX-License-Identifier: BSD-3-Clause
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
-                        <name>PRI_7_3</name>
+                        <name>PRI_7_4</name>
                         <description>Priority of system handler 7, SecureFault</description>
-                        <bitRange>[31:29]</bitRange>
+                        <bitRange>[31:28]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
-                        <name>PRI_6_3</name>
-                        <description>Priority of system handler 6, SecureFault</description>
-                        <bitRange>[23:21]</bitRange>
+                        <name>PRI_6_4</name>
+                        <description>Priority of system handler 6, UsageFault</description>
+                        <bitRange>[23:20]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
-                        <name>PRI_5_3</name>
-                        <description>Priority of system handler 5, SecureFault</description>
-                        <bitRange>[15:13]</bitRange>
+                        <name>PRI_5_4</name>
+                        <description>Priority of system handler 5, BusFault</description>
+                        <bitRange>[15:12]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
-                        <name>PRI_4_3</name>
-                        <description>Priority of system handler 4, SecureFault</description>
-                        <bitRange>[7:5]</bitRange>
+                        <name>PRI_4_4</name>
+                        <description>Priority of system handler 4, MemoryManagement</description>
+                        <bitRange>[7:4]</bitRange>
                         <access>read-write</access>
                     </field>
                 </fields>
@@ -21459,9 +21459,9 @@ SPDX-License-Identifier: BSD-3-Clause
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
-                        <name>PRI_11_3</name>
-                        <description>Priority of system handler 11, SecureFault</description>
-                        <bitRange>[31:29]</bitRange>
+                        <name>PRI_11_4</name>
+                        <description>Priority of system handler 11, SVCall</description>
+                        <bitRange>[31:28]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
@@ -21491,15 +21491,15 @@ SPDX-License-Identifier: BSD-3-Clause
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
-                        <name>PRI_15_3</name>
-                        <description>Priority of system handler 15, SecureFault</description>
-                        <bitRange>[31:29]</bitRange>
+                        <name>PRI_15_4</name>
+                        <description>Priority of system handler 15, SysTick</description>
+                        <bitRange>[31:28]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
-                        <name>PRI_14_3</name>
-                        <description>Priority of system handler 14, SecureFault</description>
-                        <bitRange>[23:21]</bitRange>
+                        <name>PRI_14_4</name>
+                        <description>Priority of system handler 14, PendSV</description>
+                        <bitRange>[23:20]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
@@ -21509,9 +21509,9 @@ SPDX-License-Identifier: BSD-3-Clause
                         <access>read-only</access>
                     </field>
                     <field>
-                        <name>PRI_12_3</name>
-                        <description>Priority of system handler 12, SecureFault</description>
-                        <bitRange>[7:5]</bitRange>
+                        <name>PRI_12_4</name>
+                        <description>Priority of system handler 12, DebugMonitor</description>
+                        <bitRange>[7:4]</bitRange>
                         <access>read-write</access>
                     </field>
                 </fields>

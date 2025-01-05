@@ -6049,20 +6049,20 @@ namespace _PPB_  {
     // Reset value: 0x00000000
     BEGIN_TYPE(SHPR1_t, uint32_t)
         // Priority of system handler 7, SecureFault
-        ADD_BITFIELD_RW(PRI_7_3, 29, 3)
-        // Priority of system handler 6, SecureFault
-        ADD_BITFIELD_RW(PRI_6_3, 21, 3)
-        // Priority of system handler 5, SecureFault
-        ADD_BITFIELD_RW(PRI_5_3, 13, 3)
-        // Priority of system handler 4, SecureFault
-        ADD_BITFIELD_RW(PRI_4_3, 5, 3)
+        ADD_BITFIELD_RW(PRI_7_4, 28, 4)
+        // Priority of system handler 6, UsageFault
+        ADD_BITFIELD_RW(PRI_6_4, 20, 4)
+        // Priority of system handler 5, BusFault
+        ADD_BITFIELD_RW(PRI_5_4, 12, 4)
+        // Priority of system handler 4, MemoryManagement
+        ADD_BITFIELD_RW(PRI_4_4, 4, 4)
     END_TYPE()
 
     // Sets or returns priority for system handlers 8 - 11
     // Reset value: 0x00000000
     BEGIN_TYPE(SHPR2_t, uint32_t)
-        // Priority of system handler 11, SecureFault
-        ADD_BITFIELD_RW(PRI_11_3, 29, 3)
+        // Priority of system handler 11, SVCall
+        ADD_BITFIELD_RW(PRI_11_4, 28, 4)
         // Reserved, RES0
         ADD_BITFIELD_RO(PRI_10, 16, 8)
         // Reserved, RES0
@@ -6074,14 +6074,14 @@ namespace _PPB_  {
     // Sets or returns priority for system handlers 12 - 15
     // Reset value: 0x00000000
     BEGIN_TYPE(SHPR3_t, uint32_t)
-        // Priority of system handler 15, SecureFault
-        ADD_BITFIELD_RW(PRI_15_3, 29, 3)
-        // Priority of system handler 14, SecureFault
-        ADD_BITFIELD_RW(PRI_14_3, 21, 3)
+        // Priority of system handler 15, SysTick
+        ADD_BITFIELD_RW(PRI_15_4, 28, 4)
+        // Priority of system handler 14, PendSV
+        ADD_BITFIELD_RW(PRI_14_4, 20, 4)
         // Reserved, RES0
         ADD_BITFIELD_RO(PRI_13, 8, 8)
-        // Priority of system handler 12, SecureFault
-        ADD_BITFIELD_RW(PRI_12_3, 5, 3)
+        // Priority of system handler 12, DebugMonitor
+        ADD_BITFIELD_RW(PRI_12_4, 4, 4)
     END_TYPE()
 
     // Provides access to the active and pending status of system exceptions
