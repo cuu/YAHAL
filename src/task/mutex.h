@@ -20,7 +20,6 @@
 
 #include "mutex_interface.h"
 #include "lock_base_interface.h"
-#include "yahal_assert.h"
 #include "task.h"
 
 template<typename T>

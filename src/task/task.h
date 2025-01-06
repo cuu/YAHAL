@@ -94,7 +94,7 @@ public:
 
     // Suspend a task execution. The task will only come
     // back to life if resume() is called from another
-    // task or a interrupt handler. If suspend() is called
+    // task or an interrupt handler. If suspend() is called
     // on the currently running task, a yield() might be
     // necessary to stop the current task and proceed with
     // the next ready task.
@@ -135,7 +135,7 @@ public:
     uint32_t getDeltaTicks();
 
 private:
-    char            _name[16];      // name of the task
+    char            _name[16] {0};  // name of the task
     uint8_t         _priority;      // Task priority
     state_t         _state;         // state of this task
     uint32_t        _ticks;         // consumed tick_count
@@ -184,11 +184,11 @@ public:
     bool isPrivileged() const;
     bool isUsingFloat() const;
 
-    ///////////////////////////////////////////////////
-    // Methods which will be called by a concrete    //
-    // task implementation (IRQ handlers). Therefore //
-    // these methods need to be public and static.   //
-    ///////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
+    // Methods which will be called by a concrete     //
+    // task implementation (IRQ handlers). Therefore, //
+    // these methods need to be public and static.    //
+    ////////////////////////////////////////////////////
     static void      _scheduler();
     static void      _tick_handler ();
     static void      _switchToHead()          { _run_ptr = _list.getHead();   }

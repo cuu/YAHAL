@@ -20,12 +20,12 @@
 
 #include "timer_interface.h"
 #include "task.h"
-#include <yahal_assert.h>
+#include <cassert>
 
 class task_timer : public task, public timer_interface
 {
   public:
-    task_timer(const char * name,
+    explicit task_timer(const char * name,
                uint16_t stack_size = DEFAULT_STACK_SIZE,
                uint16_t priority   = DEFAULT_PRIORITY,
                bool privileged     = false) : task(name, stack_size) {
@@ -42,14 +42,14 @@ class task_timer : public task, public timer_interface
         _callback = nullptr;
     }
 
-    virtual ~task_timer() = default;
+    ~task_timer() override = default;
 
     // No copy, no assignment
     task_timer             (const task_timer &) = delete;
     task_timer & operator= (const task_timer &) = delete;
 
     void setPeriod(uint32_t us, TIMER::timer_mode mode) override {
-        yahal_assert((us % 1000) == 0);
+        assert((us % 1000) == 0);
         _delta_ms = us/1000;
         _mode     = mode;
     }
@@ -84,11 +84,11 @@ class task_timer : public task, public timer_interface
         _next_ms  = now + _delta_ms;
     }
 
-    void run(void) override {
+    void run() override {
         while(true) {
             uint64_t now = task::millis();
             if (now < _next_ms) {
-                int64_t diff = _next_ms - now;
+                uint64_t diff = _next_ms - now;
                 sleep_ms(diff);
             } else {
                 _callback();
@@ -117,4 +117,4 @@ class task_timer : public task, public timer_interface
     function<void()> _callback;
 };
 
-#endif /* _TASK_TIMER_H_ */
+#endif // _TASK_TIMER_H_

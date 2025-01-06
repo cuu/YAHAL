@@ -23,7 +23,6 @@
 
 #include "circular_list.h"
 #include "mutex.h"
-#include "yahal_assert.h"
 
 template<typename T>
 class condition_variable {

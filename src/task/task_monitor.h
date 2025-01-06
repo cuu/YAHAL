@@ -56,8 +56,8 @@ public:
                     millis%1000);
             printf(VT100_COLOR, BLACK);
 
-            uint32_t ram_start  = (uint32_t)(&__data_start__);
-            uint32_t heap_start = (uint32_t)(&__heap_start__);
+            auto ram_start  = (uint32_t)(&__data_start__);
+            auto heap_start = (uint32_t)(&__heap_start__);
             uint32_t heap_used  = mallinfo().uordblks;
             printf("       RAM usage: data %ld, heap %ld, total: %ld bytes\n",
                    heap_start - ram_start,  heap_used,
@@ -83,7 +83,7 @@ public:
         });
     }
 
-    virtual ~task_monitor() = default;
+    ~task_monitor() override = default;
 
     // No copy, no assignment
     task_monitor             (const task_monitor &) = delete;

@@ -22,13 +22,13 @@ class task_idle : public task
 {
   public:
     task_idle() : task("IDLE", 200) { }
-    virtual ~task_idle() = default;
+    ~task_idle() override = default;
 
     // No copy, no assignment
     task_idle             (const task_idle &) = delete;
     task_idle & operator= (const task_idle &) = delete;
 
-    inline void run(void) override {
+    [[noreturn]] inline void run() override {
         // Do nothing but sleep ...
         ///////////////////////////
         while(true) cpu_sleep();
