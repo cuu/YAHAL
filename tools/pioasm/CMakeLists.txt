@@ -1,35 +1,37 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.13...3.27)
 project(pioasm CXX)
+
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
-# find_package(BISON 3.4.2)
-# find_package(FLEX 2.5.13) # no idea about the version
-
-add_custom_target(create_gen_dir
-    ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_SOURCE_DIR}/gen
-)
+if (PIOASM_GENERATE_PARSER)
+    find_package(BISON 3.4.2)
+    find_package(FLEX 2.5.13) # no idea about the version
 
 # FLEX_TARGET(pioasm_lexer lexer.ll ${CMAKE_CURRENT_SOURCE_DIR}/gen/lexer.cpp)
-# BISON_TARGET(pioasm_parser parser.yy ${CMAKE_CURRENT_SOURCE_DIR}/gen/parser.cpp)
+# BISON_TARGET(pioasm_parser parser.yy ${CMAKE_CURRENT_SOURCE_DIR}/gen/parser.cpp COMPILE_FLAGS "-Wcounterexamples")
 # ADD_FLEX_BISON_DEPENDENCY(pioasm_lexer pioasm_parser)
+endif()
 
 add_executable(pioasm
-    main.cpp
-    pio_assembler.cpp
-    pio_disassembler.cpp
-    gen/lexer.cpp
-    gen/parser.cpp
+        main.cpp
+        pio_assembler.cpp
+        pio_disassembler.cpp
+        gen/lexer.cpp
+        gen/parser.cpp
 )
-
-add_dependencies(pioasm create_gen_dir)
 
 target_sources(pioasm PRIVATE c_sdk_output.cpp)
 target_sources(pioasm PRIVATE python_output.cpp)
 target_sources(pioasm PRIVATE hex_output.cpp)
+target_sources(pioasm PRIVATE json_output.cpp)
 target_sources(pioasm PRIVATE ada_output.cpp)
-target_sources(pioasm PRIVATE yahal_output.cpp)
+target_sources(pioasm PRIVATE go_output.cpp)
 target_sources(pioasm PRIVATE ${PIOASM_EXTRA_SOURCE_FILES})
+target_sources(pioasm PRIVATE pio_types.h)
 
 if ((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND
     (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "7") AND
@@ -46,7 +48,6 @@ if (MSVC OR
     target_compile_definitions(pioasm PRIVATE YY_NO_UNISTD_H)
 endif()
 if (MSVC)
-    target_compile_definitions(pioasm PRIVATE YY_NO_UNISTD_H)
     target_compile_options(pioasm PRIVATE "/std:c++latest")
 endif()
 
