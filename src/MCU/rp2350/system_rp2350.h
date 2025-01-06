@@ -29,7 +29,7 @@ extern uint32_t CLK_PERI;
 extern uint32_t CLK_HSTX;
 extern uint32_t CLK_USB;
 extern uint32_t CLK_ADC;
-extern uint32_t systick_ref_ticks_per_ms;
+extern uint32_t systick_ref_freq;
 extern uint32_t timer_ticks_per_us;
 
 

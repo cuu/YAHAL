@@ -5954,15 +5954,15 @@ namespace _PPB_  {
     // Reset value: 0x00000000
     BEGIN_TYPE(ICSR_t, uint32_t)
         // Indicates whether the NMI exception is pending
-        ADD_BITFIELD_RO(PENDNMISET, 31, 1)
+        ADD_BITFIELD_RW(PENDNMISET, 31, 1)
         // Allows the NMI exception pend state to be cleared
         ADD_BITFIELD_RW(PENDNMICLR, 30, 1)
         // Indicates whether the PendSV `FTSSS exception is pending
-        ADD_BITFIELD_RO(PENDSVSET, 28, 1)
+        ADD_BITFIELD_RW(PENDSVSET, 28, 1)
         // Allows the PendSV exception pend state to be cleared `FTSSS
         ADD_BITFIELD_RW(PENDSVCLR, 27, 1)
         // Indicates whether the SysTick `FTSSS exception is pending
-        ADD_BITFIELD_RO(PENDSTSET, 26, 1)
+        ADD_BITFIELD_RW(PENDSTSET, 26, 1)
         // Allows the SysTick exception pend state to be cleared `FTSSS
         ADD_BITFIELD_RW(PENDSTCLR, 25, 1)
         // Controls whether in a single SysTick implementation, the SysTick is Secure or Non-secure

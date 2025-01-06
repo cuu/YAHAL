@@ -29,7 +29,7 @@ WEAK_FUNC(Default_Handler)
 WEAK_FUNC(Reset_Handler)
 WEAK_INT_FUNC(return_0)
 
-// Cortex-M0+ Processor Exceptions
+// Cortex-M33 Processor Exceptions
 WEAK_ALIAS_FUNC(NMI_Handler,                Default_Handler)
 WEAK_ALIAS_FUNC(HardFault_Handler,          Default_Handler)
 WEAK_ALIAS_FUNC(MemoryManagement_Handler,   Default_Handler)
@@ -99,12 +99,12 @@ void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) 
     BusFault_Handler,               // -11 The Bus Fault handler
     UsageFault_Handler,             // -10 The Usage Fault handler
     SecureFault_Handler,            //  -9 The Secure Fault handler
-    0,                              //  -8 Reserved
-    0,                              //  -7 Reserved
-    0,                              //  -6 Reserved
+    nullptr,                        //  -8 Reserved
+    nullptr,                        //  -7 Reserved
+    nullptr,                        //  -6 Reserved
     SVC_Handler,                    //  -5 SVCall handler
     DebugMonitor_Handler,           //  -4 The Debug Monitor handler
-    0,                              //  -3 Reserved
+    nullptr,                        //  -3 Reserved
     PendSV_Handler,                 //  -2 The PendSV handler
     SysTick_Handler,                //  -1 The SysTick handler
 

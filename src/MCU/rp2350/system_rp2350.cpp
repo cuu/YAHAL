@@ -19,6 +19,7 @@
 using namespace _CLOCKS_;
 using namespace _PLL_SYS_;
 using namespace _PLL_USB_;
+using namespace _PPB_;
 using namespace _RESETS_;
 using namespace _SIO_;
 using namespace _WATCHDOG_;
@@ -50,7 +51,7 @@ uint32_t CLK_PERI = 0;
 uint32_t CLK_HSTX = 0;
 uint32_t CLK_USB  = 0;
 uint32_t CLK_ADC  = 0;
-uint32_t systick_ref_ticks_per_ms = 0;
+uint32_t systick_ref_freq = 0;
 uint32_t timer_ticks_per_us = 0;
 
 /*---------------------------------------------------------------------------
@@ -58,6 +59,10 @@ uint32_t timer_ticks_per_us = 0;
  *---------------------------------------------------------------------------*/
 void SystemInit (void)
 {
+    // Enable full access to FPU
+    PPB.CPACR.CP10 = 3;
+    PPB.CPACR.CP11 = 3;
+
     // Reset peripherals
     RESETS_SET.RESET.UART0  <<= 1;
     RESETS_SET.RESET.UART1  <<= 1;
@@ -187,8 +192,8 @@ void __attribute__((constructor)) ClockUpdate (void) {
     CLK_USB  = pll_usb / CLOCKS.CLK_USB_DIV.INT;
     CLK_ADC  = pll_usb / CLOCKS.CLK_ADC_DIV.INT;
 
-    systick_ref_ticks_per_ms = CLK_REF / 1000;
-    timer_ticks_per_us       = CLK_SYS / 1000000;
+    systick_ref_freq    = CLK_REF;
+    timer_ticks_per_us  = CLK_SYS / 1000000;
 }
 
 #ifdef __cplusplus

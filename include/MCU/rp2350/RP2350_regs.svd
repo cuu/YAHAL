@@ -21159,7 +21159,7 @@ SPDX-License-Identifier: BSD-3-Clause
                         <name>PENDNMISET</name>
                         <description>Indicates whether the NMI exception is pending</description>
                         <bitRange>[31:31]</bitRange>
-                        <access>read-only</access>
+                        <access>read-write</access>
                     </field>
                     <field>
                         <name>PENDNMICLR</name>
@@ -21171,7 +21171,7 @@ SPDX-License-Identifier: BSD-3-Clause
                         <name>PENDSVSET</name>
                         <description>Indicates whether the PendSV `FTSSS exception is pending</description>
                         <bitRange>[28:28]</bitRange>
-                        <access>read-only</access>
+                        <access>read-write</access>
                     </field>
                     <field>
                         <name>PENDSVCLR</name>
@@ -21183,7 +21183,7 @@ SPDX-License-Identifier: BSD-3-Clause
                         <name>PENDSTSET</name>
                         <description>Indicates whether the SysTick `FTSSS exception is pending</description>
                         <bitRange>[26:26]</bitRange>
-                        <access>read-only</access>
+                        <access>read-write</access>
                     </field>
                     <field>
                         <name>PENDSTCLR</name>
