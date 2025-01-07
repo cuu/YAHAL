@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.16)
 target_sources(${YAHAL_TARGET} PRIVATE
         gpio_rp2350.cpp
         lock_base_rp2350.cpp
+        pcm_pwm_rp2350_drv.cpp
+        spi_rp2350.cpp
         task_rp2350.cpp
         timer_rp2350.cpp
         uart_rp2350.cpp

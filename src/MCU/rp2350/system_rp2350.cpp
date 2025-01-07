@@ -68,6 +68,9 @@ void SystemInit (void)
     RESETS_SET.RESET.UART1  <<= 1;
     RESETS_SET.RESET.TIMER0 <<= 1;
     RESETS_SET.RESET.TIMER1 <<= 1;
+    RESETS_SET.RESET.SPI0   <<= 1;
+    RESETS_SET.RESET.SPI1   <<= 1;
+    RESETS_SET.RESET.PWM    <<= 1;
 
     // Check if core 1 is executing
     // this code and let it sleep here
