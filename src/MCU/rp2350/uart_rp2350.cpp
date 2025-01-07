@@ -14,7 +14,6 @@
 // UART driver for RP2350.
 //
 #include "uart_rp2350.h"
-#include "gpio_rp2350.h"
 #include "system_rp2350.h"
 #include <cassert>
 
@@ -31,8 +30,8 @@ int8_t uart_rp2350::_uart_tx_pins[2][6] =
 uart_rp2350::uart_rp2350(uint8_t index,
                          gpio_pin_t  tx_pin, gpio_pin_t  rx_pin,
                          uint32_t    baud,   uart_mode_t mode)
-: _init(false),    _index(index), _tx_pin(tx_pin),
-  _rx_pin(rx_pin), _baud(baud),   _mode(mode) {
+: _init(false),_index(index), _tx(tx_pin),
+  _rx(rx_pin), _baud(baud),   _mode(mode) {
 
     assert(index < 2);
     _uart     = (index==0) ? &UART0     : &UART1;
@@ -60,17 +59,15 @@ void uart_rp2350::init() {
     if (_index)  RESETS_CLR.RESET.UART1 = 1;
     else         RESETS_CLR.RESET.UART0 = 1;
     // Configure GPIO pins
-    gpio_rp2350 tx( _tx_pin );
-    if ((_tx_pin % 4) == 0) {
-        tx.setSEL(GPIO_CTRL_FUNCSEL__uart);
+    if ((_tx.getGpio() % 4) == 0) {
+        _tx.setSEL(GPIO_CTRL_FUNCSEL__uart);
     } else {
-        tx.setSEL(GPIO_CTRL_FUNCSEL__uart_aux);
+        _tx.setSEL(GPIO_CTRL_FUNCSEL__uart_aux);
     }
-    gpio_rp2350 rx( _rx_pin );
-    if (((_rx_pin-1) % 4) == 0) {
-        rx.setSEL(GPIO_CTRL_FUNCSEL__uart);
+    if (((_rx.getGpio()-1) % 4) == 0) {
+        _rx.setSEL(GPIO_CTRL_FUNCSEL__uart);
     } else {
-        rx.setSEL(GPIO_CTRL_FUNCSEL__uart_aux);
+        _rx.setSEL(GPIO_CTRL_FUNCSEL__uart_aux);
     }
     // Configure UART protocol (default 8N1)
     uartMode(_mode);
@@ -91,10 +88,8 @@ uart_rp2350::~uart_rp2350() {
     if (_index)  RESETS_SET.RESET.UART1 = 1;
     else         RESETS_SET.RESET.UART0 = 1;
     // De-configure the digital RX/TX lines
-    gpio_rp2350 tx( _tx_pin );
-    tx.setSEL( GPIO_CTRL_FUNCSEL__null );
-    gpio_rp2350 rx( _rx_pin );
-    rx.setSEL( GPIO_CTRL_FUNCSEL__null );
+    _tx.setSEL( GPIO_CTRL_FUNCSEL__null );
+    _rx.setSEL( GPIO_CTRL_FUNCSEL__null );
 }
 
 bool uart_rp2350::available() {

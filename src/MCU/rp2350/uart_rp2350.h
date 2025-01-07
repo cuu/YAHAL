@@ -17,8 +17,8 @@
 #define _UART_RP2350_H_
 
 #include <cstdint>
-#include "gpio_interface.h"
 #include "uart_interface.h"
+#include "gpio_rp2350.h"
 #include "RP2350.h"
 
 using namespace _UART0_;
@@ -31,14 +31,15 @@ void UART1_IRQ_Handler(void);
 
 class uart_rp2350 : public uart_interface {
 public:
-    uart_rp2350(uint8_t     index  = 1, // default: back channel UART
+    explicit uart_rp2350(
+                uint8_t     index  = 1, // default: back channel UART
                 gpio_pin_t  tx_pin = 26,
                 gpio_pin_t  rx_pin = 27,
                 uint32_t    baud = 115200,
                 uart_mode_t mode = UART::BITS_8   |
                                    UART::NO_PARITY |
                                    UART::STOPBITS_1);
-    virtual ~uart_rp2350();
+    ~uart_rp2350() override;
 
     // Basic read/write operations on a UART
     bool available() override;
@@ -72,8 +73,8 @@ private:
     UART0_t *       _uart_set;
     UART0_t *       _uart_clr;
     int             _index;
-    uint8_t         _tx_pin;
-    uint8_t         _rx_pin;
+    gpio_rp2350     _tx;
+    gpio_rp2350     _rx;
     uint32_t        _baud;
     uart_mode_t     _mode;
 };
