@@ -22,19 +22,18 @@
 
 using namespace _PWM_;
 
-class pcm_pwm_rp2040_drv : public pcm_audio_interface {
+class pcm_pwm_rp2350_drv : public pcm_audio_interface {
 public:
-    pcm_pwm_rp2040_drv(gpio_pin_t left, gpio_pin_t right);
-
-    virtual ~pcm_pwm_rp2040_drv() = default;
+    pcm_pwm_rp2350_drv(gpio_pin_t left, gpio_pin_t right);
+    virtual ~pcm_pwm_rp2350_drv();
 
     void enable_output(bool v);
-
     void setPcmRate(uint32_t Hz) override;
-
     inline void timer_reset() { _pcm_timer.reset(); }
 
 private:
+    gpio_rp2350     _gpio_left;
+    gpio_rp2350     _gpio_right;
     timer_rp2350    _pcm_timer;
     bool            _left_is_pwm_b;
     bool            _right_is_pwm_b;

@@ -18,24 +18,34 @@ using namespace _IO_BANK0_;
 using namespace _PWM_;
 using namespace _RESETS_;
 
-pcm_pwm_rp2040_drv::pcm_pwm_rp2040_drv( gpio_pin_t left, gpio_pin_t right )
-    : pcm_audio_interface(PCM_FIFO_SIZE)
+pcm_pwm_rp2350_drv::pcm_pwm_rp2350_drv( gpio_pin_t left, gpio_pin_t right )
+    : pcm_audio_interface(PCM_FIFO_SIZE), _gpio_left(left), _gpio_right(right)
 {
     // Get PWM out of reset state
     RESETS_CLR.RESET.PWM <<= 1;
     // Set up GPIO
-    gpio_rp2350 gpio_left( left );
-    gpio_left.setSEL(GPIO_CTRL_FUNCSEL__pwm);
-    gpio_left.setMode(GPIO::DRIVE_4mA);
-    gpio_rp2350 gpio_right( right );
-    gpio_right.setSEL(GPIO_CTRL_FUNCSEL__pwm);
-    gpio_right.setMode(GPIO::DRIVE_4mA);
+    _gpio_left.gpioMode(GPIO::DRIVE_4mA);
+    _gpio_left.setSEL(GPIO_CTRL_FUNCSEL__pwm);
+    _gpio_right.gpioMode(GPIO::DRIVE_4mA);
+    _gpio_right.setSEL(GPIO_CTRL_FUNCSEL__pwm);
     // Set up PWM
-    uint8_t index_left  = ((left  / 2) % 8) * 5;
-    uint8_t index_right = ((right / 2) % 8) * 5;
+    // The lover GPIO pins map to PWM0-7
+    // The higher GPIO pins map to PWM8-11
+    uint8_t index_left{0}, index_right{0};
+    if (left < 32) {
+        index_left = ((left / 2) % 8) * 5;
+    } else {
+        index_left = (((left / 2) % 4) + 8) * 5;
+    }
+    if (right < 32) {
+        index_right = ((right / 2) % 8) * 5;
+    } else {
+        index_right = (((right / 2) % 4) + 8) * 5;
+    }
     _left_is_pwm_b  = left  & 0x1;
     _right_is_pwm_b = right & 0x1;
 
+    // Set the PWM CSR and CC pointers
     _left_pwm_csr  = &PWM.CH0_CSR + index_left;
     _right_pwm_csr = &PWM.CH0_CSR + index_right;
     _left_pwm_cc   = &PWM.CH0_CC  + index_left;
@@ -56,10 +66,13 @@ pcm_pwm_rp2040_drv::pcm_pwm_rp2040_drv( gpio_pin_t left, gpio_pin_t right )
         if (pcmFifoGet(pcm_value)) {
             uint32_t left  = pcm_value.left;
             uint32_t right = pcm_value.right;
+            // Convert the int16_t PCM values to uint16_t
             left  += 32768;
             right += 32768;
+            // Scale down the 16-bit PCM values to 11 bit
             left  >>= 5;
             right >>= 5;
+            // Set the PCM values as PWM counter compare (CC) values
             if (_left_is_pwm_b) {
                 _left_pwm_cc->B = left;
             } else {
@@ -76,11 +89,17 @@ pcm_pwm_rp2040_drv::pcm_pwm_rp2040_drv( gpio_pin_t left, gpio_pin_t right )
     enable_output(true);
 }
 
-void pcm_pwm_rp2040_drv::enable_output(bool v) {
+pcm_pwm_rp2350_drv::~pcm_pwm_rp2350_drv() {
+    // De-configure GPIO pins
+    _gpio_left.setSEL(GPIO_CTRL_FUNCSEL__null);
+    _gpio_right.setSEL(GPIO_CTRL_FUNCSEL__null);
+}
+
+void pcm_pwm_rp2350_drv::enable_output(bool v) {
     _left_pwm_csr->EN = v;
     _right_pwm_csr->EN = v;
 }
 
-void pcm_pwm_rp2040_drv::setPcmRate(uint32_t Hz) {
+void pcm_pwm_rp2350_drv::setPcmRate(uint32_t Hz) {
     _pcm_timer.setPeriod_ns(1000000000 / Hz, TIMER::PERIODIC);
 }
