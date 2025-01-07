@@ -11,7 +11,6 @@
 //
 // ---------------------------------------------
 //
-
 #include "SPISlave.h"
 #include "ESP8266WiFi.h"
 #include "WEB_Radio.h"
@@ -29,7 +28,7 @@ WEB_Radio::WEB_Radio() :
 {
 }
 
-void WEB_Radio::setSpiBuffer() {
+void WEB_Radio::_setSpiBuffer() {
     if (_sendSize) {
         int size = (_sendSize >= 32) ? 32 : _sendSize;
         _sendSize -= size;
@@ -44,7 +43,7 @@ void WEB_Radio::setup(void)
     Serial.begin ( 115200 );
     // Setup SPI Slave and callback methods
     SPISlave.onData([this](uint8_t * data, size_t len) { });
-    SPISlave.onDataSent([this] () { setSpiBuffer(); });
+    SPISlave.onDataSent([this] () { _setSpiBuffer(); });
     SPISlave.begin();
 }
 
@@ -152,7 +151,7 @@ void WEB_Radio::loop(void)
 //                spiBuffer[i+sendSize] = metaData[i];
 //            }
             _spiBufferPtr = _spiBuffer;
-            setSpiBuffer();
+            _setSpiBuffer();
             // Update FIFO size in I2C device
             _i2c.fifoSize(_fifo.available_get());
             // Reset the value to 0 so master can see we are ready

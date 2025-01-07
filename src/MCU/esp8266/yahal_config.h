@@ -20,7 +20,7 @@
 #define STACK_MAGIC 0xA5
 // Define to check stack overflow
 #define CHECK_STACK_OVERFLOW
-// Define to use simple round robin without priorities
+// Define to use simple round-robin without priorities
 #undef SIMPLE_ROUND_ROBIN
 
 #endif // _CONFIG_ESP8266_H_

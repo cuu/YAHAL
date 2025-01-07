@@ -1,13 +1,21 @@
-/*
- * timer_esp8266.cpp
- *
- *  Created on: 09.07.2016
- *      Author: aterstegge
- */
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Timer implementation for ESP8266.
+//
 #include "timer_esp8266.h"
 #include "ESP8266.h"
-#include "assert.h"
+#include <cassert>
 
 extern "C" {
 #include "ets_sys.h"

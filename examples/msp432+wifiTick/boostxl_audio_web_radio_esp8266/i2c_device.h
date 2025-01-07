@@ -51,8 +51,8 @@ private:
             };
 public:
 
-    i2c_device( gpio_pin & sda,     // SDA gpio line
-                gpio_pin & scl,     // SCL gpio line
+    i2c_device( gpio_interface & sda,   // SDA gpio line
+                gpio_interface & scl,   // SCL gpio line
                 uint8_t i2c_addr,   // the I2C address
                 bool pullup=false );// true to enable pullups on client side
     virtual ~i2c_device();

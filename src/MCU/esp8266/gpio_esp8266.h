@@ -1,3 +1,18 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// GPIO implementation for ESP8266.
+//
 #ifndef _GPIO_ESP8266_H_
 #define _GPIO_ESP8266_H_
 
@@ -6,57 +21,54 @@
 class gpio_esp8266: public gpio_interface
 {
 public:
-    static gpio_esp8266 inst;
-    virtual ~gpio_esp8266();
+    explicit gpio_esp8266(gpio_pin_t gpio = 0xffff);
+    ~gpio_esp8266() override = default;
 
-    // Basic GPIO handling
-    void gpioMode(uint16_t gpio, uint16_t mode);
-    bool gpioRead(uint16_t gpio);
-    void gpioWrite(uint16_t gpio, bool value);
-    void gpioToggle(uint16_t gpio);
+    // No copy, assignment is value passing
+    gpio_esp8266 (const gpio_esp8266&) = delete;
+    gpio_esp8266& operator= (const gpio_esp8266 & lhs) {
+        this->gpioWrite(lhs.operator bool());
+        return *this;
+    };
+
+    // Get and Set the GPIO number during runtime
+    void setGpio(gpio_pin_t gpio) override;
+    gpio_pin_t getGpio() const override;
+
+    // Generic GPIO methods
+    void gpioMode  (gpio_mode_t mode) override;
+    bool gpioRead  () const override;
+    void gpioWrite (bool value) override;
+    void gpioToggle() override;
 
     // Interrupt handling
-    void gpioAttachIrq(uint16_t gpio, uint16_t irq_mode,
-                       function<void()> handler);
-    void gpioDetachIrq(uint16_t gpio);
-    void gpioEnableIrq(uint16_t gpio);
-    void gpioDisableIrq(uint16_t gpio);
-    void handleInterrupt();
+    // Interrupt handling
+    void gpioAttachIrq (gpio_mode_t mode,
+                        function<void()> handler) override;
+    void gpioDetachIrq () override;
+    void gpioEnableIrq () override;
+    void gpioDisableIrq() override;
 
     // Special functions of ESP8266
-    void brightnessControl(uint16_t gpio, bool);
+    void brightnessControl(bool);
     void setBrightness(uint8_t);
 
+    using gpio_interface::operator =;
+    using gpio_interface::operator bool;
+
+    // IRQ handlers are our best friends
+    friend void gpio_irq_handler(gpio_esp8266 *);
+
 private:
-    gpio_esp8266();
+    gpio_pin_t  _gpio;
+    uint32_t    _mask;
 
-    function<void()> intHandler[16];
-    uint16_t         intMode[16];
-
+    function<void()>     intHandler[16];
+    uint16_t             intMode[16];
     const static uint8_t GPIO_TO_IOMUX[];
+    void handleInterrupt();
 };
 
 void gpio_irq_handler(gpio_esp8266 *);
-
-// This small wrapper class provides GPIO
-// functionality for a single GPIO pin.
-
-class gpio_esp8266_pin: public gpio_pin
-{
-public:
-    gpio_esp8266_pin() : gpio_pin(gpio_esp8266::inst) {
-    }
-
-    gpio_esp8266_pin(uint16_t gpio) : gpio_pin(gpio_esp8266::inst) {
-        setGpio(gpio);
-    }
-
-    inline void brightnessControl(bool on) {
-        gpio_esp8266::inst.brightnessControl(_gpio, on);
-    }
-    inline void setBrightness(uint8_t value) {
-        gpio_esp8266::inst.setBrightness(value);
-    }
-};
 
 #endif // _GPIO_ESP8266_H_

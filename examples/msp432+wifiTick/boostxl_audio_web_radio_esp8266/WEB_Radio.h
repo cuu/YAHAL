@@ -11,9 +11,11 @@
 //
 // ---------------------------------------------
 //
-
 #ifndef _WEB_RADIO_H_
 #define _WEB_RADIO_H_
+
+// Arduino includes
+#include <WiFiClient.h>
 
 // I2C deivce
 #include "i2c_device.h"
@@ -21,9 +23,6 @@
 // YAHAL includes
 #include "gpio_esp8266.h"
 #include "FIFO.h"
-
-// Arduino includes
-#include <WiFiClient.h>
 
 #define I2C_SLAVE_ADDR 0x55
 #define TMP_BUFF_SIZE 1024
@@ -53,15 +52,15 @@ private:
     /////////////////////
     uint8_t   _spiBuffer[4096];
     uint8_t * _spiBufferPtr;
-    void      setSpiBuffer();
+    void      _setSpiBuffer();
 
     ///////////////
     // I2C stuff //
     ///////////////
-    gpio_esp8266_pin _sda;
-    gpio_esp8266_pin _scl;
-    i2c_device       _i2c;
-    uint16_t         _sendSize;  // number of byte to send
+    gpio_esp8266 _sda;
+    gpio_esp8266 _scl;
+    i2c_device   _i2c;
+    uint16_t     _sendSize;  // number of byte to send
 
     void connect_to_WLAN();
     void connect_to_server();
