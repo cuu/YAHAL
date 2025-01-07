@@ -25,7 +25,7 @@ class lock_base_rp2350 : public lock_base_interface
 {
   public:
     lock_base_rp2350();
-    virtual ~lock_base_rp2350();
+    ~lock_base_rp2350() override;
 
     // No copy, no assignment
     lock_base_rp2350             (const lock_base_rp2350 &) = delete;
