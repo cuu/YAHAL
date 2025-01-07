@@ -35,7 +35,7 @@ void IO_IRQ_BANK0_Handler(void);
 
 class gpio_rp2350 : public gpio_interface {
 public:
-    explicit  gpio_rp2350(gpio_pin_t gpio = 0xffff);
+    explicit gpio_rp2350(gpio_pin_t gpio = 0xffff);
     ~gpio_rp2350() override = default;
 
     // No copy, assignment is value passing
@@ -63,7 +63,6 @@ public:
     void gpioDisableIrq() override;
 
     // RP2350 specific methods
-    //////////////////////////
     void setSEL (uint8_t  sel) const;
     void setMode(gpio_mode_t mode);
 
@@ -71,7 +70,6 @@ public:
     using gpio_interface::operator bool;
 
     // IRQ handlers are our best friends
-    ////////////////////////////////////
     friend void IO_IRQ_BANK0_Handler(void);
 
 private:

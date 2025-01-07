@@ -177,23 +177,23 @@ void PendSV_Handler(void) __attribute__((naked));
 void PendSV_Handler(void) {
 
     asm volatile(
-    "       mrs         r0, psp             @ \n"
-    "       tst         lr, #0x10           @ \n"
+    "       mrs         r0, psp             @ get the current SP \n"
+    "       tst         lr, #0x10           @ EXC_RETURN_INT_ONLY_STACK_FRAME \n"
     "       it          eq                  @ \n"
-    "       vstmdbeq    r0!, {s16-s31}      @ \n"
+    "       vstmdbeq    r0!, {s16-s31}      @ push additional FP registers \n"
     "       mov         r2, lr              @ \n"
     "       mrs         r3, control         @ \n"
-    "       stmdb       r0!, {r2-r11}       @ \n"
+    "       stmdb       r0!, {r2-r11}       @ save lr, control, r4-r11 \n"
     "       bl          switch_context      @ \n"
-    "       ldmia       r0!, {r2-r11}       @ \n"
+    "       ldmia       r0!, {r2-r11}       @ get lr, control, r4-r11 \n"
     "       mov         lr, r2              @ \n"
     "       msr         control, r3         @ \n"
-    "       isb                             @ \n"
-    "       tst         lr, #0x10           @ \n"
+    "       isb                             @ arch recommendation \n"
+    "       tst         lr, #0x10           @ EXC_RETURN_INT_ONLY_STACK_FRAME \n"
     "       it          eq                  @ \n"
-    "       vldmiaeq    r0!, {s16-s31}      @ \n"
+    "       vldmiaeq    r0!, {s16-s31}      @ pop additional FP registers \n"
     "       msr         psp, r0             @ \n"
-    "       bx          lr                  @ \n");
+    "       bx          lr                  @ jump to new task \n");
 }
 
 void SVC_Handler(void) __attribute__((naked));
@@ -205,7 +205,7 @@ void SVC_Handler(void) {
     "       mrsne       r0, psp             @ of SCV_Handler_C, \n"
     "       tst         lr, 0x20            @ EXC_RETURN_NORMAL_CALLEE_STACKING \n"
     "       it          eq                  @ \n"
-    "       addeq       r0, #40             @ \n"
+    "       addeq       r0, #40             @ skip additional context if existing \n"
     "       mov         r1, lr              @ R1 (LR) is second parameter \n"
     "       bl          SVC_Handler_C       @ Call C part of SVC handler \n"
     "       bx          r0                  @ Use return value as EXC_RETURN \n"

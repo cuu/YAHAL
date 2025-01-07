@@ -109,7 +109,7 @@ function(yahal_add_extra_outputs TARGET)
     yahal_add_dis_output(${TARGET})
 
     # Add uf2 output for rp2040
-    if (${YAHAL_MCU} STREQUAL rp2040)
+    if (${YAHAL_MCU} STREQUAL rp2040 OR ${YAHAL_MCU} STREQUAL rp2350)
         yahal_add_uf2_output(${TARGET})
     endif()
 
