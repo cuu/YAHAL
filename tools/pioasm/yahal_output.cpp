@@ -70,7 +70,12 @@ struct yahal_output : public output_format {
 
         fprintf(out, "#pragma once\n");
         fprintf(out, "\n");
-        fprintf(out, "#include \"pio_rp2040.h\"\n");
+        fprintf(out, "#ifdef RP2040\n"
+                     "#include \"pio_rp2040.h\"\n"
+                     "#endif\n"
+                     "#ifdef RP2350\n"
+                     "#include \"pio_rp2350.h\"\n"
+                     "#endif\n" );
         fprintf(out, "\n");
 
         output_symbols(out, "", source.global_symbols);

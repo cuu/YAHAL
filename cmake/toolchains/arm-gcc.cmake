@@ -32,7 +32,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE  STATIC_LIBRARY)
 set(ARM_GCC_COMMON_FLAGS  "-ffunction-sections -fdata-sections \
                            -fno-unwind-tables  -fno-asynchronous-unwind-tables \
                            -fno-strict-aliasing -Wall -Wextra")
-set(ARM_GCC_DEBUG_FLAGS   "-O0 -DDEBUG -g -gdwarf-3 -gstrict-dwarf")
+set(ARM_GCC_DEBUG_FLAGS   "-Og -DDEBUG -g -gdwarf-3 -gstrict-dwarf")
 set(ARM_GCC_RELEASE_FLAGS "-O3 -DNDEBUG")
 set(ARM_GCC_LINK_FLAGS    "-Wl,--no-warn-rwx-segment -Wl,--gc-sections,-Map,mapfile,-print-memory-usage --specs=nosys.specs")
 
