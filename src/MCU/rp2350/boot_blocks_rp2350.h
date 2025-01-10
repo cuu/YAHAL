@@ -17,6 +17,10 @@
 #include <cstdint>
 #include <array>
 
+// These definitions might interfere with the following enums...
+#undef RP2040
+#undef RP2350
+
 namespace BLOCKS {
 
     template<std::size_t Size>

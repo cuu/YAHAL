@@ -8,3 +8,6 @@ set(YAHAL_MCU "rp2350")
 
 # RP2350 has a cortex M33 with FPU and DSP
 include(CPU/cortex-m33fd)
+
+# Marker to detect MCU during compile time
+add_compile_definitions(RP2350)

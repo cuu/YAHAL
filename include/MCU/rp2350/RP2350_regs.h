@@ -14036,47 +14036,10 @@ namespace _PIO0_  {
 
     // Direct write access to the TX FIFO for this state machine. Each write pushes one word to the FIFO. Attempting to write to a full FIFO has no effect on the FIFO state or contents, and sets the sticky FDEBUG_TXOVER error flag for this FIFO.
     // Reset value: 0x00000000
-    BEGIN_TYPE(TXF0_t, uint32_t)
-        ADD_BITFIELD_WO(TXF0, 0, 32)
-    END_TYPE()
-
-    // Direct write access to the TX FIFO for this state machine. Each write pushes one word to the FIFO. Attempting to write to a full FIFO has no effect on the FIFO state or contents, and sets the sticky FDEBUG_TXOVER error flag for this FIFO.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(TXF1_t, uint32_t)
-        ADD_BITFIELD_WO(TXF1, 0, 32)
-    END_TYPE()
-
-    // Direct write access to the TX FIFO for this state machine. Each write pushes one word to the FIFO. Attempting to write to a full FIFO has no effect on the FIFO state or contents, and sets the sticky FDEBUG_TXOVER error flag for this FIFO.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(TXF2_t, uint32_t)
-        ADD_BITFIELD_WO(TXF2, 0, 32)
-    END_TYPE()
-
-    // Direct write access to the TX FIFO for this state machine. Each write pushes one word to the FIFO. Attempting to write to a full FIFO has no effect on the FIFO state or contents, and sets the sticky FDEBUG_TXOVER error flag for this FIFO.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(TXF3_t, uint32_t)
-        ADD_BITFIELD_WO(TXF3, 0, 32)
-    END_TYPE()
+    typedef uint32_t TXF_t;
 
     // Direct read access to the RX FIFO for this state machine. Each read pops one word from the FIFO. Attempting to read from an empty FIFO has no effect on the FIFO state, and sets the sticky FDEBUG_RXUNDER error flag for this FIFO. The data returned to the system on a read from an empty FIFO is undefined.
-    BEGIN_TYPE(RXF0_t, uint32_t)
-        ADD_BITFIELD_RO(RXF0, 0, 32)
-    END_TYPE()
-
-    // Direct read access to the RX FIFO for this state machine. Each read pops one word from the FIFO. Attempting to read from an empty FIFO has no effect on the FIFO state, and sets the sticky FDEBUG_RXUNDER error flag for this FIFO. The data returned to the system on a read from an empty FIFO is undefined.
-    BEGIN_TYPE(RXF1_t, uint32_t)
-        ADD_BITFIELD_RO(RXF1, 0, 32)
-    END_TYPE()
-
-    // Direct read access to the RX FIFO for this state machine. Each read pops one word from the FIFO. Attempting to read from an empty FIFO has no effect on the FIFO state, and sets the sticky FDEBUG_RXUNDER error flag for this FIFO. The data returned to the system on a read from an empty FIFO is undefined.
-    BEGIN_TYPE(RXF2_t, uint32_t)
-        ADD_BITFIELD_RO(RXF2, 0, 32)
-    END_TYPE()
-
-    // Direct read access to the RX FIFO for this state machine. Each read pops one word from the FIFO. Attempting to read from an empty FIFO has no effect on the FIFO state, and sets the sticky FDEBUG_RXUNDER error flag for this FIFO. The data returned to the system on a read from an empty FIFO is undefined.
-    BEGIN_TYPE(RXF3_t, uint32_t)
-        ADD_BITFIELD_RO(RXF3, 0, 32)
-    END_TYPE()
+    typedef uint32_t RXF_t;
 
     // State machine IRQ flags register. Write 1 to clear. There are eight state machine IRQ flags, which can be set, cleared, and waited on by the state machines. There's no fixed association between flags and state machines -- any state machine can use any flag. Any of the eight flags can be used for timing synchronisation between state machines, using IRQ and WAIT instructions. Any combination of the eight flags can also routed out to either of the two system-level interrupt requests, alongside FIFO status interrupts -- see e.g. IRQ0_INTE.
     // Reset value: 0x00000000
@@ -14128,199 +14091,13 @@ namespace _PIO0_  {
 
     // Write-only access to instruction memory location 0
     // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM0_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM0, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 1
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM1_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM1, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 2
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM2_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM2, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 3
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM3_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM3, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 4
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM4_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM4, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 5
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM5_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM5, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 6
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM6_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM6, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 7
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM7_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM7, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 8
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM8_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM8, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 9
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM9_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM9, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 10
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM10_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM10, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 11
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM11_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM11, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 12
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM12_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM12, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 13
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM13_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM13, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 14
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM14_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM14, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 15
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM15_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM15, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 16
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM16_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM16, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 17
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM17_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM17, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 18
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM18_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM18, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 19
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM19_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM19, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 20
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM20_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM20, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 21
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM21_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM21, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 22
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM22_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM22, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 23
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM23_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM23, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 24
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM24_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM24, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 25
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM25_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM25, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 26
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM26_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM26, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 27
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM27_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM27, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 28
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM28_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM28, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 29
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM29_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM29, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 30
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM30_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM30, 0, 16)
-    END_TYPE()
-
-    // Write-only access to instruction memory location 31
-    // Reset value: 0x00000000
-    BEGIN_TYPE(INSTR_MEM31_t, uint32_t)
-        ADD_BITFIELD_WO(INSTR_MEM31, 0, 16)
+    BEGIN_TYPE(INSTR_MEM_t, uint32_t)
+        ADD_BITFIELD_WO(INSTR, 0, 16)
     END_TYPE()
 
     // Clock divisor register for state machine 0  Frequency = clock freq / (CLKDIV_INT + CLKDIV_FRAC / 256)
     // Reset value: 0x00010000
-    BEGIN_TYPE(SM0_CLKDIV_t, uint32_t)
+    BEGIN_TYPE(SM_CLKDIV_t, uint32_t)
         // Effective frequency is sysclk/(int + frac/256).  Value of 0 is interpreted as 65536. If INT is 0, FRAC must also be 0.
         ADD_BITFIELD_RW(INT, 16, 16)
         // Fractional part of clock divisor
@@ -14329,7 +14106,7 @@ namespace _PIO0_  {
 
     // Execution/behavioural settings for state machine 0
     // Reset value: 0x0001f000
-    BEGIN_TYPE(SM0_EXECCTRL_t, uint32_t)
+    BEGIN_TYPE(SM_EXECCTRL_t, uint32_t)
         // If 1, an instruction written to SMx_INSTR is stalled, and latched by the state machine. Will clear to 0 once this instruction completes.
         ADD_BITFIELD_RO(EXEC_STALLED, 31, 1)
         // If 1, the MSB of the Delay/Side-set instruction field is used as side-set enable, rather than a side-set data bit. This allows instructions to perform side-set optionally, rather than on every instruction, but the maximum possible side-set width is reduced from 5 to 4. Note that the value of PINCTRL_SIDESET_COUNT is inclusive of this enable bit.
@@ -14355,21 +14132,21 @@ namespace _PIO0_  {
     END_TYPE()
 
     // All-ones if TX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM0_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
+    static const uint32_t SM_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
     // All-ones if RX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM0_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
+    static const uint32_t SM_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
     // All-ones if the indexed IRQ flag is raised, otherwise all-zeroes
-    static const uint32_t SM0_EXECCTRL_STATUS_SEL__IRQ = 2;
+    static const uint32_t SM_EXECCTRL_STATUS_SEL__IRQ = 2;
     // Index 0-7 of an IRQ flag in this PIO block
-    static const uint32_t SM0_EXECCTRL_STATUS_N__IRQ = 0;
+    static const uint32_t SM_EXECCTRL_STATUS_N__IRQ = 0;
     // Index 0-7 of an IRQ flag in the next lower-numbered PIO block
-    static const uint32_t SM0_EXECCTRL_STATUS_N__IRQ_PREVPIO = 8;
+    static const uint32_t SM_EXECCTRL_STATUS_N__IRQ_PREVPIO = 8;
     // Index 0-7 of an IRQ flag in the next higher-numbered PIO block
-    static const uint32_t SM0_EXECCTRL_STATUS_N__IRQ_NEXTPIO = 16;
+    static const uint32_t SM_EXECCTRL_STATUS_N__IRQ_NEXTPIO = 16;
 
     // Control behaviour of the input/output shift registers for state machine 0
     // Reset value: 0x000c0000
-    BEGIN_TYPE(SM0_SHIFTCTRL_t, uint32_t)
+    BEGIN_TYPE(SM_SHIFTCTRL_t, uint32_t)
         // When 1, RX FIFO steals the TX FIFO's storage, and becomes twice as deep.  TX FIFO is disabled as a result (always reads as both full and empty).  FIFOs are flushed when this bit is changed.
         ADD_BITFIELD_RW(FJOIN_RX, 31, 1)
         // When 1, TX FIFO steals the RX FIFO's storage, and becomes twice as deep.  RX FIFO is disabled as a result (always reads as both full and empty).  FIFOs are flushed when this bit is changed.
@@ -14396,336 +14173,18 @@ namespace _PIO0_  {
 
     // Current instruction address of state machine 0
     // Reset value: 0x00000000
-    BEGIN_TYPE(SM0_ADDR_t, uint32_t)
-        ADD_BITFIELD_RO(SM0_ADDR, 0, 5)
+    BEGIN_TYPE(SM_ADDR_t, uint32_t)
+        ADD_BITFIELD_RO(ADDR, 0, 5)
     END_TYPE()
 
     // Read to see the instruction currently addressed by state machine 0's program counter  Write to execute an instruction immediately (including jumps) and then resume execution.
-    BEGIN_TYPE(SM0_INSTR_t, uint32_t)
-        ADD_BITFIELD_RW(SM0_INSTR, 0, 16)
+    BEGIN_TYPE(SM_INSTR_t, uint32_t)
+        ADD_BITFIELD_RW(INSTR, 0, 16)
     END_TYPE()
 
     // State machine pin control
     // Reset value: 0x14000000
-    BEGIN_TYPE(SM0_PINCTRL_t, uint32_t)
-        // The number of MSBs of the Delay/Side-set instruction field which are used for side-set. Inclusive of the enable bit, if present. Minimum of 0 (all delay bits, no side-set) and maximum of 5 (all side-set, no delay).
-        ADD_BITFIELD_RW(SIDESET_COUNT, 29, 3)
-        // The number of pins asserted by a SET. In the range 0 to 5 inclusive.
-        ADD_BITFIELD_RW(SET_COUNT, 26, 3)
-        // The number of pins asserted by an OUT PINS, OUT PINDIRS or MOV PINS instruction. In the range 0 to 32 inclusive.
-        ADD_BITFIELD_RW(OUT_COUNT, 20, 6)
-        // The pin which is mapped to the least-significant bit of a state machine's IN data bus. Higher-numbered pins are mapped to consecutively more-significant data bits, with a modulo of 32 applied to pin number.
-        ADD_BITFIELD_RW(IN_BASE, 15, 5)
-        // The lowest-numbered pin that will be affected by a side-set operation. The MSBs of an instruction's side-set/delay field (up to 5, determined by SIDESET_COUNT) are used for side-set data, with the remaining LSBs used for delay. The least-significant bit of the side-set portion is the bit written to this pin, with more-significant bits written to higher-numbered pins.
-        ADD_BITFIELD_RW(SIDESET_BASE, 10, 5)
-        // The lowest-numbered pin that will be affected by a SET PINS or SET PINDIRS instruction. The data written to this pin is the least-significant bit of the SET data.
-        ADD_BITFIELD_RW(SET_BASE, 5, 5)
-        // The lowest-numbered pin that will be affected by an OUT PINS, OUT PINDIRS or MOV PINS instruction. The data written to this pin will always be the least-significant bit of the OUT or MOV data.
-        ADD_BITFIELD_RW(OUT_BASE, 0, 5)
-    END_TYPE()
-
-    // Clock divisor register for state machine 1  Frequency = clock freq / (CLKDIV_INT + CLKDIV_FRAC / 256)
-    // Reset value: 0x00010000
-    BEGIN_TYPE(SM1_CLKDIV_t, uint32_t)
-        // Effective frequency is sysclk/(int + frac/256).  Value of 0 is interpreted as 65536. If INT is 0, FRAC must also be 0.
-        ADD_BITFIELD_RW(INT, 16, 16)
-        // Fractional part of clock divisor
-        ADD_BITFIELD_RW(FRAC, 8, 8)
-    END_TYPE()
-
-    // Execution/behavioural settings for state machine 1
-    // Reset value: 0x0001f000
-    BEGIN_TYPE(SM1_EXECCTRL_t, uint32_t)
-        // If 1, an instruction written to SMx_INSTR is stalled, and latched by the state machine. Will clear to 0 once this instruction completes.
-        ADD_BITFIELD_RO(EXEC_STALLED, 31, 1)
-        // If 1, the MSB of the Delay/Side-set instruction field is used as side-set enable, rather than a side-set data bit. This allows instructions to perform side-set optionally, rather than on every instruction, but the maximum possible side-set width is reduced from 5 to 4. Note that the value of PINCTRL_SIDESET_COUNT is inclusive of this enable bit.
-        ADD_BITFIELD_RW(SIDE_EN, 30, 1)
-        // If 1, side-set data is asserted to pin directions, instead of pin values
-        ADD_BITFIELD_RW(SIDE_PINDIR, 29, 1)
-        // The GPIO number to use as condition for JMP PIN. Unaffected by input mapping.
-        ADD_BITFIELD_RW(JMP_PIN, 24, 5)
-        // Which data bit to use for inline OUT enable
-        ADD_BITFIELD_RW(OUT_EN_SEL, 19, 5)
-        // If 1, use a bit of OUT data as an auxiliary write enable  When used in conjunction with OUT_STICKY, writes with an enable of 0 will  deassert the latest pin write. This can create useful masking/override behaviour  due to the priority ordering of state machine pin writes (SM0 < SM1 < ...)
-        ADD_BITFIELD_RW(INLINE_OUT_EN, 18, 1)
-        // Continuously assert the most recent OUT/SET to the pins
-        ADD_BITFIELD_RW(OUT_STICKY, 17, 1)
-        // After reaching this address, execution is wrapped to wrap_bottom.  If the instruction is a jump, and the jump condition is true, the jump takes priority.
-        ADD_BITFIELD_RW(WRAP_TOP, 12, 5)
-        // After reaching wrap_top, execution is wrapped to this address.
-        ADD_BITFIELD_RW(WRAP_BOTTOM, 7, 5)
-        // Comparison used for the MOV x, STATUS instruction.
-        ADD_BITFIELD_RW(STATUS_SEL, 5, 2)
-        // Comparison level or IRQ index for the MOV x, STATUS instruction. If STATUS_SEL is TXLEVEL or RXLEVEL, then values of STATUS_N greater than the current FIFO depth are reserved, and have undefined behaviour.
-        ADD_BITFIELD_RW(STATUS_N, 0, 5)
-    END_TYPE()
-
-    // All-ones if TX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM1_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
-    // All-ones if RX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM1_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
-    // All-ones if the indexed IRQ flag is raised, otherwise all-zeroes
-    static const uint32_t SM1_EXECCTRL_STATUS_SEL__IRQ = 2;
-    // Index 0-7 of an IRQ flag in this PIO block
-    static const uint32_t SM1_EXECCTRL_STATUS_N__IRQ = 0;
-    // Index 0-7 of an IRQ flag in the next lower-numbered PIO block
-    static const uint32_t SM1_EXECCTRL_STATUS_N__IRQ_PREVPIO = 8;
-    // Index 0-7 of an IRQ flag in the next higher-numbered PIO block
-    static const uint32_t SM1_EXECCTRL_STATUS_N__IRQ_NEXTPIO = 16;
-
-    // Control behaviour of the input/output shift registers for state machine 1
-    // Reset value: 0x000c0000
-    BEGIN_TYPE(SM1_SHIFTCTRL_t, uint32_t)
-        // When 1, RX FIFO steals the TX FIFO's storage, and becomes twice as deep.  TX FIFO is disabled as a result (always reads as both full and empty).  FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_RX, 31, 1)
-        // When 1, TX FIFO steals the RX FIFO's storage, and becomes twice as deep.  RX FIFO is disabled as a result (always reads as both full and empty).  FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_TX, 30, 1)
-        // Number of bits shifted out of OSR before autopull, or conditional pull (PULL IFEMPTY), will take place.  Write 0 for value of 32.
-        ADD_BITFIELD_RW(PULL_THRESH, 25, 5)
-        // Number of bits shifted into ISR before autopush, or conditional push (PUSH IFFULL), will take place.  Write 0 for value of 32.
-        ADD_BITFIELD_RW(PUSH_THRESH, 20, 5)
-        // 1 = shift out of output shift register to right. 0 = to left.
-        ADD_BITFIELD_RW(OUT_SHIFTDIR, 19, 1)
-        // 1 = shift input shift register to right (data enters from left). 0 = to left.
-        ADD_BITFIELD_RW(IN_SHIFTDIR, 18, 1)
-        // Pull automatically when the output shift register is emptied, i.e. on or following an OUT instruction which causes the output shift counter to reach or exceed PULL_THRESH.
-        ADD_BITFIELD_RW(AUTOPULL, 17, 1)
-        // Push automatically when the input shift register is filled, i.e. on an IN instruction which causes the input shift counter to reach or exceed PUSH_THRESH.
-        ADD_BITFIELD_RW(AUTOPUSH, 16, 1)
-        // If 1, disable this state machine's RX FIFO, make its storage available for random write access by the state machine (using the `put` instruction) and, unless FJOIN_RX_GET is also set, random read access by the processor (through the RXFx_PUTGETy registers). If FJOIN_RX_PUT and FJOIN_RX_GET are both set, then the RX FIFO's registers can be randomly read/written by the state machine, but are completely inaccessible to the processor. Setting this bit will clear the FJOIN_TX and FJOIN_RX bits.
-        ADD_BITFIELD_RW(FJOIN_RX_PUT, 15, 1)
-        // If 1, disable this state machine's RX FIFO, make its storage available for random read access by the state machine (using the `get` instruction) and, unless FJOIN_RX_PUT is also set, random write access by the processor (through the RXFx_PUTGETy registers). If FJOIN_RX_PUT and FJOIN_RX_GET are both set, then the RX FIFO's registers can be randomly read/written by the state machine, but are completely inaccessible to the processor. Setting this bit will clear the FJOIN_TX and FJOIN_RX bits.
-        ADD_BITFIELD_RW(FJOIN_RX_GET, 14, 1)
-        // Set the number of pins which are not masked to 0 when read by an IN PINS, WAIT PIN or MOV x, PINS instruction. For example, an IN_COUNT of 5 means that the 5 LSBs of the IN pin group are visible (bits 4:0), but the remaining 27 MSBs are masked to 0. A count of 32 is encoded with a field value of 0, so the default behaviour is to not perform any masking. Note this masking is applied in addition to the masking usually performed by the IN instruction. This is mainly useful for the MOV x, PINS instruction, which otherwise has no way of masking pins.
-        ADD_BITFIELD_RW(IN_COUNT, 0, 5)
-    END_TYPE()
-
-    // Current instruction address of state machine 1
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM1_ADDR_t, uint32_t)
-        ADD_BITFIELD_RO(SM1_ADDR, 0, 5)
-    END_TYPE()
-
-    // Read to see the instruction currently addressed by state machine 1's program counter  Write to execute an instruction immediately (including jumps) and then resume execution.
-    BEGIN_TYPE(SM1_INSTR_t, uint32_t)
-        ADD_BITFIELD_RW(SM1_INSTR, 0, 16)
-    END_TYPE()
-
-    // State machine pin control
-    // Reset value: 0x14000000
-    BEGIN_TYPE(SM1_PINCTRL_t, uint32_t)
-        // The number of MSBs of the Delay/Side-set instruction field which are used for side-set. Inclusive of the enable bit, if present. Minimum of 0 (all delay bits, no side-set) and maximum of 5 (all side-set, no delay).
-        ADD_BITFIELD_RW(SIDESET_COUNT, 29, 3)
-        // The number of pins asserted by a SET. In the range 0 to 5 inclusive.
-        ADD_BITFIELD_RW(SET_COUNT, 26, 3)
-        // The number of pins asserted by an OUT PINS, OUT PINDIRS or MOV PINS instruction. In the range 0 to 32 inclusive.
-        ADD_BITFIELD_RW(OUT_COUNT, 20, 6)
-        // The pin which is mapped to the least-significant bit of a state machine's IN data bus. Higher-numbered pins are mapped to consecutively more-significant data bits, with a modulo of 32 applied to pin number.
-        ADD_BITFIELD_RW(IN_BASE, 15, 5)
-        // The lowest-numbered pin that will be affected by a side-set operation. The MSBs of an instruction's side-set/delay field (up to 5, determined by SIDESET_COUNT) are used for side-set data, with the remaining LSBs used for delay. The least-significant bit of the side-set portion is the bit written to this pin, with more-significant bits written to higher-numbered pins.
-        ADD_BITFIELD_RW(SIDESET_BASE, 10, 5)
-        // The lowest-numbered pin that will be affected by a SET PINS or SET PINDIRS instruction. The data written to this pin is the least-significant bit of the SET data.
-        ADD_BITFIELD_RW(SET_BASE, 5, 5)
-        // The lowest-numbered pin that will be affected by an OUT PINS, OUT PINDIRS or MOV PINS instruction. The data written to this pin will always be the least-significant bit of the OUT or MOV data.
-        ADD_BITFIELD_RW(OUT_BASE, 0, 5)
-    END_TYPE()
-
-    // Clock divisor register for state machine 2  Frequency = clock freq / (CLKDIV_INT + CLKDIV_FRAC / 256)
-    // Reset value: 0x00010000
-    BEGIN_TYPE(SM2_CLKDIV_t, uint32_t)
-        // Effective frequency is sysclk/(int + frac/256).  Value of 0 is interpreted as 65536. If INT is 0, FRAC must also be 0.
-        ADD_BITFIELD_RW(INT, 16, 16)
-        // Fractional part of clock divisor
-        ADD_BITFIELD_RW(FRAC, 8, 8)
-    END_TYPE()
-
-    // Execution/behavioural settings for state machine 2
-    // Reset value: 0x0001f000
-    BEGIN_TYPE(SM2_EXECCTRL_t, uint32_t)
-        // If 1, an instruction written to SMx_INSTR is stalled, and latched by the state machine. Will clear to 0 once this instruction completes.
-        ADD_BITFIELD_RO(EXEC_STALLED, 31, 1)
-        // If 1, the MSB of the Delay/Side-set instruction field is used as side-set enable, rather than a side-set data bit. This allows instructions to perform side-set optionally, rather than on every instruction, but the maximum possible side-set width is reduced from 5 to 4. Note that the value of PINCTRL_SIDESET_COUNT is inclusive of this enable bit.
-        ADD_BITFIELD_RW(SIDE_EN, 30, 1)
-        // If 1, side-set data is asserted to pin directions, instead of pin values
-        ADD_BITFIELD_RW(SIDE_PINDIR, 29, 1)
-        // The GPIO number to use as condition for JMP PIN. Unaffected by input mapping.
-        ADD_BITFIELD_RW(JMP_PIN, 24, 5)
-        // Which data bit to use for inline OUT enable
-        ADD_BITFIELD_RW(OUT_EN_SEL, 19, 5)
-        // If 1, use a bit of OUT data as an auxiliary write enable  When used in conjunction with OUT_STICKY, writes with an enable of 0 will  deassert the latest pin write. This can create useful masking/override behaviour  due to the priority ordering of state machine pin writes (SM0 < SM1 < ...)
-        ADD_BITFIELD_RW(INLINE_OUT_EN, 18, 1)
-        // Continuously assert the most recent OUT/SET to the pins
-        ADD_BITFIELD_RW(OUT_STICKY, 17, 1)
-        // After reaching this address, execution is wrapped to wrap_bottom.  If the instruction is a jump, and the jump condition is true, the jump takes priority.
-        ADD_BITFIELD_RW(WRAP_TOP, 12, 5)
-        // After reaching wrap_top, execution is wrapped to this address.
-        ADD_BITFIELD_RW(WRAP_BOTTOM, 7, 5)
-        // Comparison used for the MOV x, STATUS instruction.
-        ADD_BITFIELD_RW(STATUS_SEL, 5, 2)
-        // Comparison level or IRQ index for the MOV x, STATUS instruction. If STATUS_SEL is TXLEVEL or RXLEVEL, then values of STATUS_N greater than the current FIFO depth are reserved, and have undefined behaviour.
-        ADD_BITFIELD_RW(STATUS_N, 0, 5)
-    END_TYPE()
-
-    // All-ones if TX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM2_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
-    // All-ones if RX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM2_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
-    // All-ones if the indexed IRQ flag is raised, otherwise all-zeroes
-    static const uint32_t SM2_EXECCTRL_STATUS_SEL__IRQ = 2;
-    // Index 0-7 of an IRQ flag in this PIO block
-    static const uint32_t SM2_EXECCTRL_STATUS_N__IRQ = 0;
-    // Index 0-7 of an IRQ flag in the next lower-numbered PIO block
-    static const uint32_t SM2_EXECCTRL_STATUS_N__IRQ_PREVPIO = 8;
-    // Index 0-7 of an IRQ flag in the next higher-numbered PIO block
-    static const uint32_t SM2_EXECCTRL_STATUS_N__IRQ_NEXTPIO = 16;
-
-    // Control behaviour of the input/output shift registers for state machine 2
-    // Reset value: 0x000c0000
-    BEGIN_TYPE(SM2_SHIFTCTRL_t, uint32_t)
-        // When 1, RX FIFO steals the TX FIFO's storage, and becomes twice as deep.  TX FIFO is disabled as a result (always reads as both full and empty).  FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_RX, 31, 1)
-        // When 1, TX FIFO steals the RX FIFO's storage, and becomes twice as deep.  RX FIFO is disabled as a result (always reads as both full and empty).  FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_TX, 30, 1)
-        // Number of bits shifted out of OSR before autopull, or conditional pull (PULL IFEMPTY), will take place.  Write 0 for value of 32.
-        ADD_BITFIELD_RW(PULL_THRESH, 25, 5)
-        // Number of bits shifted into ISR before autopush, or conditional push (PUSH IFFULL), will take place.  Write 0 for value of 32.
-        ADD_BITFIELD_RW(PUSH_THRESH, 20, 5)
-        // 1 = shift out of output shift register to right. 0 = to left.
-        ADD_BITFIELD_RW(OUT_SHIFTDIR, 19, 1)
-        // 1 = shift input shift register to right (data enters from left). 0 = to left.
-        ADD_BITFIELD_RW(IN_SHIFTDIR, 18, 1)
-        // Pull automatically when the output shift register is emptied, i.e. on or following an OUT instruction which causes the output shift counter to reach or exceed PULL_THRESH.
-        ADD_BITFIELD_RW(AUTOPULL, 17, 1)
-        // Push automatically when the input shift register is filled, i.e. on an IN instruction which causes the input shift counter to reach or exceed PUSH_THRESH.
-        ADD_BITFIELD_RW(AUTOPUSH, 16, 1)
-        // If 1, disable this state machine's RX FIFO, make its storage available for random write access by the state machine (using the `put` instruction) and, unless FJOIN_RX_GET is also set, random read access by the processor (through the RXFx_PUTGETy registers). If FJOIN_RX_PUT and FJOIN_RX_GET are both set, then the RX FIFO's registers can be randomly read/written by the state machine, but are completely inaccessible to the processor. Setting this bit will clear the FJOIN_TX and FJOIN_RX bits.
-        ADD_BITFIELD_RW(FJOIN_RX_PUT, 15, 1)
-        // If 1, disable this state machine's RX FIFO, make its storage available for random read access by the state machine (using the `get` instruction) and, unless FJOIN_RX_PUT is also set, random write access by the processor (through the RXFx_PUTGETy registers). If FJOIN_RX_PUT and FJOIN_RX_GET are both set, then the RX FIFO's registers can be randomly read/written by the state machine, but are completely inaccessible to the processor. Setting this bit will clear the FJOIN_TX and FJOIN_RX bits.
-        ADD_BITFIELD_RW(FJOIN_RX_GET, 14, 1)
-        // Set the number of pins which are not masked to 0 when read by an IN PINS, WAIT PIN or MOV x, PINS instruction. For example, an IN_COUNT of 5 means that the 5 LSBs of the IN pin group are visible (bits 4:0), but the remaining 27 MSBs are masked to 0. A count of 32 is encoded with a field value of 0, so the default behaviour is to not perform any masking. Note this masking is applied in addition to the masking usually performed by the IN instruction. This is mainly useful for the MOV x, PINS instruction, which otherwise has no way of masking pins.
-        ADD_BITFIELD_RW(IN_COUNT, 0, 5)
-    END_TYPE()
-
-    // Current instruction address of state machine 2
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM2_ADDR_t, uint32_t)
-        ADD_BITFIELD_RO(SM2_ADDR, 0, 5)
-    END_TYPE()
-
-    // Read to see the instruction currently addressed by state machine 2's program counter  Write to execute an instruction immediately (including jumps) and then resume execution.
-    BEGIN_TYPE(SM2_INSTR_t, uint32_t)
-        ADD_BITFIELD_RW(SM2_INSTR, 0, 16)
-    END_TYPE()
-
-    // State machine pin control
-    // Reset value: 0x14000000
-    BEGIN_TYPE(SM2_PINCTRL_t, uint32_t)
-        // The number of MSBs of the Delay/Side-set instruction field which are used for side-set. Inclusive of the enable bit, if present. Minimum of 0 (all delay bits, no side-set) and maximum of 5 (all side-set, no delay).
-        ADD_BITFIELD_RW(SIDESET_COUNT, 29, 3)
-        // The number of pins asserted by a SET. In the range 0 to 5 inclusive.
-        ADD_BITFIELD_RW(SET_COUNT, 26, 3)
-        // The number of pins asserted by an OUT PINS, OUT PINDIRS or MOV PINS instruction. In the range 0 to 32 inclusive.
-        ADD_BITFIELD_RW(OUT_COUNT, 20, 6)
-        // The pin which is mapped to the least-significant bit of a state machine's IN data bus. Higher-numbered pins are mapped to consecutively more-significant data bits, with a modulo of 32 applied to pin number.
-        ADD_BITFIELD_RW(IN_BASE, 15, 5)
-        // The lowest-numbered pin that will be affected by a side-set operation. The MSBs of an instruction's side-set/delay field (up to 5, determined by SIDESET_COUNT) are used for side-set data, with the remaining LSBs used for delay. The least-significant bit of the side-set portion is the bit written to this pin, with more-significant bits written to higher-numbered pins.
-        ADD_BITFIELD_RW(SIDESET_BASE, 10, 5)
-        // The lowest-numbered pin that will be affected by a SET PINS or SET PINDIRS instruction. The data written to this pin is the least-significant bit of the SET data.
-        ADD_BITFIELD_RW(SET_BASE, 5, 5)
-        // The lowest-numbered pin that will be affected by an OUT PINS, OUT PINDIRS or MOV PINS instruction. The data written to this pin will always be the least-significant bit of the OUT or MOV data.
-        ADD_BITFIELD_RW(OUT_BASE, 0, 5)
-    END_TYPE()
-
-    // Clock divisor register for state machine 3  Frequency = clock freq / (CLKDIV_INT + CLKDIV_FRAC / 256)
-    // Reset value: 0x00010000
-    BEGIN_TYPE(SM3_CLKDIV_t, uint32_t)
-        // Effective frequency is sysclk/(int + frac/256).  Value of 0 is interpreted as 65536. If INT is 0, FRAC must also be 0.
-        ADD_BITFIELD_RW(INT, 16, 16)
-        // Fractional part of clock divisor
-        ADD_BITFIELD_RW(FRAC, 8, 8)
-    END_TYPE()
-
-    // Execution/behavioural settings for state machine 3
-    // Reset value: 0x0001f000
-    BEGIN_TYPE(SM3_EXECCTRL_t, uint32_t)
-        // If 1, an instruction written to SMx_INSTR is stalled, and latched by the state machine. Will clear to 0 once this instruction completes.
-        ADD_BITFIELD_RO(EXEC_STALLED, 31, 1)
-        // If 1, the MSB of the Delay/Side-set instruction field is used as side-set enable, rather than a side-set data bit. This allows instructions to perform side-set optionally, rather than on every instruction, but the maximum possible side-set width is reduced from 5 to 4. Note that the value of PINCTRL_SIDESET_COUNT is inclusive of this enable bit.
-        ADD_BITFIELD_RW(SIDE_EN, 30, 1)
-        // If 1, side-set data is asserted to pin directions, instead of pin values
-        ADD_BITFIELD_RW(SIDE_PINDIR, 29, 1)
-        // The GPIO number to use as condition for JMP PIN. Unaffected by input mapping.
-        ADD_BITFIELD_RW(JMP_PIN, 24, 5)
-        // Which data bit to use for inline OUT enable
-        ADD_BITFIELD_RW(OUT_EN_SEL, 19, 5)
-        // If 1, use a bit of OUT data as an auxiliary write enable  When used in conjunction with OUT_STICKY, writes with an enable of 0 will  deassert the latest pin write. This can create useful masking/override behaviour  due to the priority ordering of state machine pin writes (SM0 < SM1 < ...)
-        ADD_BITFIELD_RW(INLINE_OUT_EN, 18, 1)
-        // Continuously assert the most recent OUT/SET to the pins
-        ADD_BITFIELD_RW(OUT_STICKY, 17, 1)
-        // After reaching this address, execution is wrapped to wrap_bottom.  If the instruction is a jump, and the jump condition is true, the jump takes priority.
-        ADD_BITFIELD_RW(WRAP_TOP, 12, 5)
-        // After reaching wrap_top, execution is wrapped to this address.
-        ADD_BITFIELD_RW(WRAP_BOTTOM, 7, 5)
-        // Comparison used for the MOV x, STATUS instruction.
-        ADD_BITFIELD_RW(STATUS_SEL, 5, 2)
-        // Comparison level or IRQ index for the MOV x, STATUS instruction. If STATUS_SEL is TXLEVEL or RXLEVEL, then values of STATUS_N greater than the current FIFO depth are reserved, and have undefined behaviour.
-        ADD_BITFIELD_RW(STATUS_N, 0, 5)
-    END_TYPE()
-
-    // All-ones if TX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM3_EXECCTRL_STATUS_SEL__TXLEVEL = 0;
-    // All-ones if RX FIFO level < N, otherwise all-zeroes
-    static const uint32_t SM3_EXECCTRL_STATUS_SEL__RXLEVEL = 1;
-    // All-ones if the indexed IRQ flag is raised, otherwise all-zeroes
-    static const uint32_t SM3_EXECCTRL_STATUS_SEL__IRQ = 2;
-    // Index 0-7 of an IRQ flag in this PIO block
-    static const uint32_t SM3_EXECCTRL_STATUS_N__IRQ = 0;
-    // Index 0-7 of an IRQ flag in the next lower-numbered PIO block
-    static const uint32_t SM3_EXECCTRL_STATUS_N__IRQ_PREVPIO = 8;
-    // Index 0-7 of an IRQ flag in the next higher-numbered PIO block
-    static const uint32_t SM3_EXECCTRL_STATUS_N__IRQ_NEXTPIO = 16;
-
-    // Control behaviour of the input/output shift registers for state machine 3
-    // Reset value: 0x000c0000
-    BEGIN_TYPE(SM3_SHIFTCTRL_t, uint32_t)
-        // When 1, RX FIFO steals the TX FIFO's storage, and becomes twice as deep.  TX FIFO is disabled as a result (always reads as both full and empty).  FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_RX, 31, 1)
-        // When 1, TX FIFO steals the RX FIFO's storage, and becomes twice as deep.  RX FIFO is disabled as a result (always reads as both full and empty).  FIFOs are flushed when this bit is changed.
-        ADD_BITFIELD_RW(FJOIN_TX, 30, 1)
-        // Number of bits shifted out of OSR before autopull, or conditional pull (PULL IFEMPTY), will take place.  Write 0 for value of 32.
-        ADD_BITFIELD_RW(PULL_THRESH, 25, 5)
-        // Number of bits shifted into ISR before autopush, or conditional push (PUSH IFFULL), will take place.  Write 0 for value of 32.
-        ADD_BITFIELD_RW(PUSH_THRESH, 20, 5)
-        // 1 = shift out of output shift register to right. 0 = to left.
-        ADD_BITFIELD_RW(OUT_SHIFTDIR, 19, 1)
-        // 1 = shift input shift register to right (data enters from left). 0 = to left.
-        ADD_BITFIELD_RW(IN_SHIFTDIR, 18, 1)
-        // Pull automatically when the output shift register is emptied, i.e. on or following an OUT instruction which causes the output shift counter to reach or exceed PULL_THRESH.
-        ADD_BITFIELD_RW(AUTOPULL, 17, 1)
-        // Push automatically when the input shift register is filled, i.e. on an IN instruction which causes the input shift counter to reach or exceed PUSH_THRESH.
-        ADD_BITFIELD_RW(AUTOPUSH, 16, 1)
-        // If 1, disable this state machine's RX FIFO, make its storage available for random write access by the state machine (using the `put` instruction) and, unless FJOIN_RX_GET is also set, random read access by the processor (through the RXFx_PUTGETy registers). If FJOIN_RX_PUT and FJOIN_RX_GET are both set, then the RX FIFO's registers can be randomly read/written by the state machine, but are completely inaccessible to the processor. Setting this bit will clear the FJOIN_TX and FJOIN_RX bits.
-        ADD_BITFIELD_RW(FJOIN_RX_PUT, 15, 1)
-        // If 1, disable this state machine's RX FIFO, make its storage available for random read access by the state machine (using the `get` instruction) and, unless FJOIN_RX_PUT is also set, random write access by the processor (through the RXFx_PUTGETy registers). If FJOIN_RX_PUT and FJOIN_RX_GET are both set, then the RX FIFO's registers can be randomly read/written by the state machine, but are completely inaccessible to the processor. Setting this bit will clear the FJOIN_TX and FJOIN_RX bits.
-        ADD_BITFIELD_RW(FJOIN_RX_GET, 14, 1)
-        // Set the number of pins which are not masked to 0 when read by an IN PINS, WAIT PIN or MOV x, PINS instruction. For example, an IN_COUNT of 5 means that the 5 LSBs of the IN pin group are visible (bits 4:0), but the remaining 27 MSBs are masked to 0. A count of 32 is encoded with a field value of 0, so the default behaviour is to not perform any masking. Note this masking is applied in addition to the masking usually performed by the IN instruction. This is mainly useful for the MOV x, PINS instruction, which otherwise has no way of masking pins.
-        ADD_BITFIELD_RW(IN_COUNT, 0, 5)
-    END_TYPE()
-
-    // Current instruction address of state machine 3
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SM3_ADDR_t, uint32_t)
-        ADD_BITFIELD_RO(SM3_ADDR, 0, 5)
-    END_TYPE()
-
-    // Read to see the instruction currently addressed by state machine 3's program counter  Write to execute an instruction immediately (including jumps) and then resume execution.
-    BEGIN_TYPE(SM3_INSTR_t, uint32_t)
-        ADD_BITFIELD_RW(SM3_INSTR, 0, 16)
-    END_TYPE()
-
-    // State machine pin control
-    // Reset value: 0x14000000
-    BEGIN_TYPE(SM3_PINCTRL_t, uint32_t)
+    BEGIN_TYPE(SM_PINCTRL_t, uint32_t)
         // The number of MSBs of the Delay/Side-set instruction field which are used for side-set. Inclusive of the enable bit, if present. Minimum of 0 (all delay bits, no side-set) and maximum of 5 (all side-set, no delay).
         ADD_BITFIELD_RW(SIDESET_COUNT, 29, 3)
         // The number of pins asserted by a SET. In the range 0 to 5 inclusive.
@@ -14744,99 +14203,19 @@ namespace _PIO0_  {
 
     // Direct read/write access to entry 0 of SM0's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
     // Reset value: 0x00000000
-    BEGIN_TYPE(RXF0_PUTGET0_t, uint32_t)
-        ADD_BITFIELD_RW(RXF0_PUTGET0, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 1 of SM0's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF0_PUTGET1_t, uint32_t)
-        ADD_BITFIELD_RW(RXF0_PUTGET1, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 2 of SM0's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF0_PUTGET2_t, uint32_t)
-        ADD_BITFIELD_RW(RXF0_PUTGET2, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 3 of SM0's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF0_PUTGET3_t, uint32_t)
-        ADD_BITFIELD_RW(RXF0_PUTGET3, 0, 32)
-    END_TYPE()
+    typedef uint32_t RXF0_PUTGET_t;
 
     // Direct read/write access to entry 0 of SM1's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
     // Reset value: 0x00000000
-    BEGIN_TYPE(RXF1_PUTGET0_t, uint32_t)
-        ADD_BITFIELD_RW(RXF1_PUTGET0, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 1 of SM1's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF1_PUTGET1_t, uint32_t)
-        ADD_BITFIELD_RW(RXF1_PUTGET1, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 2 of SM1's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF1_PUTGET2_t, uint32_t)
-        ADD_BITFIELD_RW(RXF1_PUTGET2, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 3 of SM1's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF1_PUTGET3_t, uint32_t)
-        ADD_BITFIELD_RW(RXF1_PUTGET3, 0, 32)
-    END_TYPE()
+    typedef uint32_t RXF1_PUTGET_t;
 
     // Direct read/write access to entry 0 of SM2's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
     // Reset value: 0x00000000
-    BEGIN_TYPE(RXF2_PUTGET0_t, uint32_t)
-        ADD_BITFIELD_RW(RXF2_PUTGET0, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 1 of SM2's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF2_PUTGET1_t, uint32_t)
-        ADD_BITFIELD_RW(RXF2_PUTGET1, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 2 of SM2's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF2_PUTGET2_t, uint32_t)
-        ADD_BITFIELD_RW(RXF2_PUTGET2, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 3 of SM2's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF2_PUTGET3_t, uint32_t)
-        ADD_BITFIELD_RW(RXF2_PUTGET3, 0, 32)
-    END_TYPE()
+    typedef uint32_t RXF2_PUTGET_t;
 
     // Direct read/write access to entry 0 of SM3's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
     // Reset value: 0x00000000
-    BEGIN_TYPE(RXF3_PUTGET0_t, uint32_t)
-        ADD_BITFIELD_RW(RXF3_PUTGET0, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 1 of SM3's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF3_PUTGET1_t, uint32_t)
-        ADD_BITFIELD_RW(RXF3_PUTGET1, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 2 of SM3's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF3_PUTGET2_t, uint32_t)
-        ADD_BITFIELD_RW(RXF3_PUTGET2, 0, 32)
-    END_TYPE()
-
-    // Direct read/write access to entry 3 of SM3's RX FIFO, if SHIFTCTRL_FJOIN_RX_PUT xor SHIFTCTRL_FJOIN_RX_GET is set.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(RXF3_PUTGET3_t, uint32_t)
-        ADD_BITFIELD_RW(RXF3_PUTGET3, 0, 32)
-    END_TYPE()
+    typedef uint32_t RXF3_PUTGET_t;
 
     // Relocate GPIO 0 (from PIO's point of view) in the system GPIO numbering, to access more than 32 GPIOs from PIO. Only the values 0 and 16 are supported (only bit 4 is writable).
     // Reset value: 0x00000000
@@ -14996,92 +14375,43 @@ namespace _PIO0_  {
         FSTAT_t                       FSTAT;
         FDEBUG_t                      FDEBUG;
         FLEVEL_t                      FLEVEL;
-        TXF0_t                        TXF0;
-        TXF1_t                        TXF1;
-        TXF2_t                        TXF2;
-        TXF3_t                        TXF3;
-        RXF0_t                        RXF0;
-        RXF1_t                        RXF1;
-        RXF2_t                        RXF2;
-        RXF3_t                        RXF3;
+        TXF_t                         TXF[4];
+        RXF_t                         RXF[4];
         IRQ_t                         IRQ;
         IRQ_FORCE_t                   IRQ_FORCE;
         INPUT_SYNC_BYPASS_t           INPUT_SYNC_BYPASS;
         DBG_PADOUT_t                  DBG_PADOUT;
         DBG_PADOE_t                   DBG_PADOE;
         DBG_CFGINFO_t                 DBG_CFGINFO;
-        INSTR_MEM0_t                  INSTR_MEM0;
-        INSTR_MEM1_t                  INSTR_MEM1;
-        INSTR_MEM2_t                  INSTR_MEM2;
-        INSTR_MEM3_t                  INSTR_MEM3;
-        INSTR_MEM4_t                  INSTR_MEM4;
-        INSTR_MEM5_t                  INSTR_MEM5;
-        INSTR_MEM6_t                  INSTR_MEM6;
-        INSTR_MEM7_t                  INSTR_MEM7;
-        INSTR_MEM8_t                  INSTR_MEM8;
-        INSTR_MEM9_t                  INSTR_MEM9;
-        INSTR_MEM10_t                 INSTR_MEM10;
-        INSTR_MEM11_t                 INSTR_MEM11;
-        INSTR_MEM12_t                 INSTR_MEM12;
-        INSTR_MEM13_t                 INSTR_MEM13;
-        INSTR_MEM14_t                 INSTR_MEM14;
-        INSTR_MEM15_t                 INSTR_MEM15;
-        INSTR_MEM16_t                 INSTR_MEM16;
-        INSTR_MEM17_t                 INSTR_MEM17;
-        INSTR_MEM18_t                 INSTR_MEM18;
-        INSTR_MEM19_t                 INSTR_MEM19;
-        INSTR_MEM20_t                 INSTR_MEM20;
-        INSTR_MEM21_t                 INSTR_MEM21;
-        INSTR_MEM22_t                 INSTR_MEM22;
-        INSTR_MEM23_t                 INSTR_MEM23;
-        INSTR_MEM24_t                 INSTR_MEM24;
-        INSTR_MEM25_t                 INSTR_MEM25;
-        INSTR_MEM26_t                 INSTR_MEM26;
-        INSTR_MEM27_t                 INSTR_MEM27;
-        INSTR_MEM28_t                 INSTR_MEM28;
-        INSTR_MEM29_t                 INSTR_MEM29;
-        INSTR_MEM30_t                 INSTR_MEM30;
-        INSTR_MEM31_t                 INSTR_MEM31;
-        SM0_CLKDIV_t                  SM0_CLKDIV;
-        SM0_EXECCTRL_t                SM0_EXECCTRL;
-        SM0_SHIFTCTRL_t               SM0_SHIFTCTRL;
-        SM0_ADDR_t                    SM0_ADDR;
-        SM0_INSTR_t                   SM0_INSTR;
-        SM0_PINCTRL_t                 SM0_PINCTRL;
-        SM1_CLKDIV_t                  SM1_CLKDIV;
-        SM1_EXECCTRL_t                SM1_EXECCTRL;
-        SM1_SHIFTCTRL_t               SM1_SHIFTCTRL;
-        SM1_ADDR_t                    SM1_ADDR;
-        SM1_INSTR_t                   SM1_INSTR;
-        SM1_PINCTRL_t                 SM1_PINCTRL;
-        SM2_CLKDIV_t                  SM2_CLKDIV;
-        SM2_EXECCTRL_t                SM2_EXECCTRL;
-        SM2_SHIFTCTRL_t               SM2_SHIFTCTRL;
-        SM2_ADDR_t                    SM2_ADDR;
-        SM2_INSTR_t                   SM2_INSTR;
-        SM2_PINCTRL_t                 SM2_PINCTRL;
-        SM3_CLKDIV_t                  SM3_CLKDIV;
-        SM3_EXECCTRL_t                SM3_EXECCTRL;
-        SM3_SHIFTCTRL_t               SM3_SHIFTCTRL;
-        SM3_ADDR_t                    SM3_ADDR;
-        SM3_INSTR_t                   SM3_INSTR;
-        SM3_PINCTRL_t                 SM3_PINCTRL;
-        RXF0_PUTGET0_t                RXF0_PUTGET0;
-        RXF0_PUTGET1_t                RXF0_PUTGET1;
-        RXF0_PUTGET2_t                RXF0_PUTGET2;
-        RXF0_PUTGET3_t                RXF0_PUTGET3;
-        RXF1_PUTGET0_t                RXF1_PUTGET0;
-        RXF1_PUTGET1_t                RXF1_PUTGET1;
-        RXF1_PUTGET2_t                RXF1_PUTGET2;
-        RXF1_PUTGET3_t                RXF1_PUTGET3;
-        RXF2_PUTGET0_t                RXF2_PUTGET0;
-        RXF2_PUTGET1_t                RXF2_PUTGET1;
-        RXF2_PUTGET2_t                RXF2_PUTGET2;
-        RXF2_PUTGET3_t                RXF2_PUTGET3;
-        RXF3_PUTGET0_t                RXF3_PUTGET0;
-        RXF3_PUTGET1_t                RXF3_PUTGET1;
-        RXF3_PUTGET2_t                RXF3_PUTGET2;
-        RXF3_PUTGET3_t                RXF3_PUTGET3;
+        INSTR_MEM_t                   INSTR_MEM[32];
+        SM_CLKDIV_t                   SM0_CLKDIV;
+        SM_EXECCTRL_t                 SM0_EXECCTRL;
+        SM_SHIFTCTRL_t                SM0_SHIFTCTRL;
+        SM_ADDR_t                     SM0_ADDR;
+        SM_INSTR_t                    SM0_INSTR;
+        SM_PINCTRL_t                  SM0_PINCTRL;
+        SM_CLKDIV_t                   SM1_CLKDIV;
+        SM_EXECCTRL_t                 SM1_EXECCTRL;
+        SM_SHIFTCTRL_t                SM1_SHIFTCTRL;
+        SM_ADDR_t                     SM1_ADDR;
+        SM_INSTR_t                    SM1_INSTR;
+        SM_PINCTRL_t                  SM1_PINCTRL;
+        SM_CLKDIV_t                   SM2_CLKDIV;
+        SM_EXECCTRL_t                 SM2_EXECCTRL;
+        SM_SHIFTCTRL_t                SM2_SHIFTCTRL;
+        SM_ADDR_t                     SM2_ADDR;
+        SM_INSTR_t                    SM2_INSTR;
+        SM_PINCTRL_t                  SM2_PINCTRL;
+        SM_CLKDIV_t                   SM3_CLKDIV;
+        SM_EXECCTRL_t                 SM3_EXECCTRL;
+        SM_SHIFTCTRL_t                SM3_SHIFTCTRL;
+        SM_ADDR_t                     SM3_ADDR;
+        SM_INSTR_t                    SM3_INSTR;
+        SM_PINCTRL_t                  SM3_PINCTRL;
+        RXF0_PUTGET_t                 RXF0_PUTGET[4];
+        RXF1_PUTGET_t                 RXF1_PUTGET[4];
+        RXF2_PUTGET_t                 RXF2_PUTGET[4];
+        RXF3_PUTGET_t                 RXF3_PUTGET[4];
         GPIOBASE_t                    GPIOBASE;
         INTR_t                        INTR;
         IRQ0_INTE_t                   IRQ0_INTE;

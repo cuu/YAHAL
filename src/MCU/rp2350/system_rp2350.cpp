@@ -72,6 +72,10 @@ void SystemInit (void)
     RESETS_SET.RESET.SPI1   <<= 1;
     RESETS_SET.RESET.PWM    <<= 1;
 
+    RESETS_CLR.RESET.PIO0   <<= 1;
+    RESETS_CLR.RESET.PIO1   <<= 1;
+    RESETS_CLR.RESET.PIO2   <<= 1;
+
     // Check if core 1 is executing
     // this code and let it sleep here
     if (SIO.CPUID != 0) {

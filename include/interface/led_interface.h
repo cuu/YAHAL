@@ -47,7 +47,7 @@ public:
     using led_interface::operator= ;
 
 protected:
-    virtual ~led_dim_interface() = default;
+    ~led_dim_interface() override = default;
 };
 
 // RGB LED
@@ -71,7 +71,7 @@ public:
     }
 
 protected:
-    virtual ~led_rgb_interface() = default;
+    ~led_rgb_interface() override = default;
 };
 
 #endif // _LED_INTERFACE_H_
