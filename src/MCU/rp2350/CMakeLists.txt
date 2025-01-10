@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 target_sources(${YAHAL_TARGET} PRIVATE
+        dac8311_rp2350_drv.cpp
         gpio_rp2350.cpp
         lock_base_rp2350.cpp
         pcm_pwm_rp2350_drv.cpp

@@ -106,15 +106,16 @@ void ws2812_rp2350::update(uint16_t index) {
     // Sending the whole FIFO takes 80us. The reset time
     // for a WS2812 is at least 280us, so we wait approx.
     // 400us before sending a new packet.
-    task::sleep_ms(1);
+
     // Make sure that writing the WS2812 data is atomic
     task::enterCritical();
+    // Wait for 1ms without multitasking (sleep_ms not working)
+    uint64_t now = task::millis();
+    while (task::millis() < now+1) ;
     // Write WS2812 data
     for(uint16_t i=0; i <= index; ++i) {
         _sm->writeTxFifo(_leds[i]._color);
     }
     // Leave the critical section
     task::leaveCritical();
-    // Sleep again to ensure a reset on the WS2812 LEDs
-    task::sleep_ms(1);
 }
