@@ -1,7 +1,21 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Startup code for RP2350.
+//
 #include "system_rp2350.h"
-
-#include "RP2350.h"
 #include "boot_blocks_rp2350.h"
+#include "RP2350.h"
 using namespace _PPB_;
 
 #ifdef __cplusplus
