@@ -63,7 +63,8 @@ void SystemInit (void)
     PPB.CPACR.CP10 = 3;
     PPB.CPACR.CP11 = 3;
 
-    // Reset peripherals
+    // Reset peripherals. They will be activated
+    // (put out of reset) by the specific drivers.
     RESETS_SET.RESET.UART0  <<= 1;
     RESETS_SET.RESET.UART1  <<= 1;
     RESETS_SET.RESET.TIMER0 <<= 1;
@@ -71,10 +72,9 @@ void SystemInit (void)
     RESETS_SET.RESET.SPI0   <<= 1;
     RESETS_SET.RESET.SPI1   <<= 1;
     RESETS_SET.RESET.PWM    <<= 1;
-
-    RESETS_CLR.RESET.PIO0   <<= 1;
-    RESETS_CLR.RESET.PIO1   <<= 1;
-    RESETS_CLR.RESET.PIO2   <<= 1;
+    RESETS_SET.RESET.PIO0   <<= 1;
+    RESETS_SET.RESET.PIO1   <<= 1;
+    RESETS_SET.RESET.PIO2   <<= 1;
 
     // Check if core 1 is executing
     // this code and let it sleep here

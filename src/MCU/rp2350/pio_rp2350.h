@@ -301,15 +301,15 @@ struct SM {
         return pio.CTRL.SM_ENABLE & (1 << sm_index);
     }
 
-    void attachIrq(function<void()> handler);
+    void attachIrq(const function<void()>& handler);
     void enableIrq();
     void disableIrq();
 
-    void attachTXNFULLIrq(function<void()> handler);
+    void attachTXNFULLIrq(const function<void()>& handler);
     void enableTXNFULLIrq();
     void disableTXNFULLIrq();
 
-    void attachRXNEMPTYIrq(function<void()> handler);
+    void attachRXNEMPTYIrq(const function<void()>& handler);
     void enableRXNEMPTYIrq();
     void disableRXNEMPTYIrq();
 };
@@ -346,8 +346,8 @@ private:
     PIO0_t &    _pio_clr;
     uint8_t     _pio_index;
     uint8_t     _next_free_addr;
-    SM_regs *   _sm_regbanks;
-    bool        _in_use[4];
+    SM_regs *   _sm_regbanks {nullptr};
+    bool        _in_use[4] {false};
 
 };
 

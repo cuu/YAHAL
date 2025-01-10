@@ -20,6 +20,7 @@
 using namespace _PIO0_;
 using namespace _PIO1_;
 using namespace _PIO2_;
+using namespace _RESETS_;
 
 // The three PIO instances
 pio_rp2350 pio_rp2350::pio0(PIO0, 0);
@@ -75,7 +76,7 @@ void SM::setClock(uint32_t hz) {
     regs.SM_CLKDIV.FRAC = frac;
 }
 
-void SM::attachIrq(function<void()> handler) {
+void SM::attachIrq(const function<void()>& handler) {
     if (pio_index)
         pio_rp2350::_handler_pio1[sm_index + 8] = handler;
     else
@@ -90,7 +91,7 @@ void SM::disableIrq() {
     pio_clr.IRQ0_INTE = 1 << (sm_index + 8);
 }
 
-void SM::attachTXNFULLIrq(function<void()> handler) {
+void SM::attachTXNFULLIrq(const function<void()>& handler) {
     if (pio_index)
         pio_rp2350::_handler_pio1[sm_index + 4] = handler;
     else
@@ -105,7 +106,7 @@ void SM::disableTXNFULLIrq() {
     pio_clr.IRQ0_INTE = 1 << (sm_index + 4);
 }
 
-void SM::attachRXNEMPTYIrq(function<void()> handler) {
+void SM::attachRXNEMPTYIrq(const function<void()>& handler) {
     if (pio_index)
         pio_rp2350::_handler_pio1[sm_index + 0] = handler;
     else
@@ -128,18 +129,25 @@ pio_rp2350::pio_rp2350(PIO0_t & pio, uint8_t pio_index)
   _pio_index(pio_index),
   _next_free_addr(0) {
 
+    // Get PIO out of reset state
+    if (&pio == &PIO0) {
+        RESETS_CLR.RESET.PIO0 <<= 1;
+    } else if (&pio == &PIO1) {
+        RESETS_CLR.RESET.PIO1 <<= 1;
+    } else if (&pio == &PIO2) {
+        RESETS_CLR.RESET.PIO2 <<= 1;
+    } else {
+        assert(false);
+    }
+
     // Set base address of SM register banks
     _sm_regbanks = (SM_regs *)&pio.SM0_CLKDIV;
     // Disable and restart all state machines
     _pio.CTRL.SM_ENABLE  = 0x0;
     _pio.CTRL.SM_RESTART = 0xf;
     // Erase instruction memory
-    for(int i=0; i < 32; ++i) {
-        _pio.INSTR_MEM[i] = 0;
-    }
-    // Initially all state machines are not in use
-    for(int i=0; i < 4; ++i) {
-        _in_use[i] = false;
+    for(auto & mem : _pio.INSTR_MEM) {
+        mem = 0;
     }
     // Enable PIO interrupts in NVIC
     NVIC_EnableIRQ(PIO0_IRQ_0_IRQn);
@@ -196,7 +204,7 @@ SM* pio_rp2350::loadProgram(const pio_program & prgm) {
 extern "C" {
     void PIO0_IRQ_0_Handler(void) {
         uint32_t status = PIO0.IRQ0_INTS;
-        while (uint8_t pos = __builtin_ffs(status)) {
+        while (uint8_t pos = __builtin_ffs((int)status)) {
             status ^= 1 << --pos;
             if (pos > 7) {
                 PIO0.IRQ = 1 << (pos - 8);
@@ -208,7 +216,7 @@ extern "C" {
 
     void PIO1_IRQ_0_Handler(void) {
         uint32_t status = PIO1.IRQ0_INTS;
-        while (uint8_t pos = __builtin_ffs(status)) {
+        while (uint8_t pos = __builtin_ffs((int)status)) {
             status ^= 1 << --pos;
             if (pos > 7) {
                 PIO1.IRQ = 1 << (pos - 8);
@@ -220,7 +228,7 @@ extern "C" {
 
     void PIO2_IRQ_0_Handler(void) {
         uint32_t status = PIO2.IRQ0_INTS;
-        while (uint8_t pos = __builtin_ffs(status)) {
+        while (uint8_t pos = __builtin_ffs((int)status)) {
             status ^= 1 << --pos;
             if (pos > 7) {
                 PIO2.IRQ = 1 << (pos - 8);
