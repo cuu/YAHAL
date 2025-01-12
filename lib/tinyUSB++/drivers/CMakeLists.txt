@@ -1,10 +1,18 @@
 if (YAHAL_DIR)
-    add_subdirectory(rp2040-YAHAL)
-
-    target_include_directories(${PROJECT_NAME}
-        PUBLIC ${YAHAL_DIR}/include/MCU/rp2040
-        PUBLIC ${YAHAL_DIR}/include/CPU/CMSIS
-    )
+    if (${YAHAL_MCU} STREQUAL "rp2040")
+        add_subdirectory(rp2040-YAHAL)
+        target_include_directories(${PROJECT_NAME}
+            PUBLIC ${YAHAL_DIR}/include/MCU/rp2040
+            PUBLIC ${YAHAL_DIR}/include/CPU/CMSIS
+        )
+    endif ()
+    if (${YAHAL_MCU} STREQUAL "rp2350")
+        add_subdirectory(rp2350-YAHAL)
+        target_include_directories(${PROJECT_NAME}
+                PUBLIC ${YAHAL_DIR}/include/MCU/rp2350
+                PUBLIC ${YAHAL_DIR}/include/CPU/CMSIS
+        )
+    endif ()
 elseif (PICO_SDK_PATH)
     add_subdirectory(rp2040-sdk)
 
