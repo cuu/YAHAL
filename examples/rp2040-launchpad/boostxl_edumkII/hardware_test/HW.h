@@ -36,9 +36,9 @@ private:
 //      red        ( 13 ),
 //      sw1        ( 16 ),
 //      sw2        ( 17 ),
-//      edu_red    ( 13 ),
-//      edu_green  ( 10 ),
-//      edu_blue   (  8 ),
+      rgb_red    ( 13 ),
+      rgb_green  ( 10 ),
+      rgb_blue   (  8 ),
 //      edu_sw1    ( 16 ),
 //      edu_sw2    ( 17 ),
       edu_joy_sw ( 19 ),
@@ -59,14 +59,11 @@ private:
       accel_z    (  4 )
     {
 //        red.        gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
-//        rgb_red.    gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
-//        rgb_green.  gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
-//        rgb_blue.   gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
+        rgb_red.    gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW | GPIO::DRIVE_2mA);
+        rgb_green.  gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW | GPIO::DRIVE_2mA);
+        rgb_blue.   gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW | GPIO::DRIVE_2mA);
 //        sw1.        gpioMode(GPIO::INPUT  | GPIO::PULLUP);
 //        sw2.        gpioMode(GPIO::INPUT  | GPIO::PULLUP);
-//        edu_red.    gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
-//        edu_green.  gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
-//        edu_blue.   gpioMode(GPIO::OUTPUT | GPIO::INIT_LOW);
 //        edu_sw1.    gpioMode(GPIO::INPUT);
 //        edu_sw2.    gpioMode(GPIO::INPUT);
 //        edu_joy_sw. gpioMode(GPIO::INPUT);
@@ -74,7 +71,7 @@ private:
 //        servo.      gpioMode(GPIO::OUTPUT);
 ////        servo.      setSEL(1);
 //        // Set up SPI & I2C interface
-        lcd_spi.setSpeed(12000000);
+        lcd_spi.setSpeed(24000000);
         sen_i2c.setSpeed(100000);
         // Set up sensors
         sen_light.start_measure(OPT3001::CONF_100MS_CONT);
@@ -102,34 +99,38 @@ public:
     }
 
     // All HW on the rp2040 launchpad
-//    gpio_rp2040_pin red;
-//    gpio_rp2040_pin rgb_red;
-//    gpio_rp2040_pin rgb_green;
-//    gpio_rp2040_pin rgb_blue;
-//    gpio_rp2040_pin sw1;
-//    gpio_rp2040_pin sw2;
+//    gpio_rp2040 red;
+    gpio_rp2040 rgb_red;
+    gpio_rp2040 rgb_green;
+    gpio_rp2040 rgb_blue;
+//    gpio_rp2040 sw1;
+//    gpio_rp2040 sw2;
 //
 //    // All HW on the educational boosterpack MKII
-//    gpio_rp2040_pin edu_red;
-//    gpio_rp2040_pin edu_green;
-//    gpio_rp2040_pin edu_blue;
-//    gpio_rp2040_pin edu_sw1;
-//    gpio_rp2040_pin edu_sw2;
+//    gpio_rp2040 edu_red;
+//    gpio_rp2040 edu_green;
+//    gpio_rp2040 edu_blue;
+//    gpio_rp2040 edu_sw1;
+//    gpio_rp2040 edu_sw2;
     gpio_rp2040 edu_joy_sw;
-//    gpio_rp2040_pin edu_speaker;
+//    gpio_rp2040 edu_speaker;
 //
-//    gpio_rp2040_pin servo;
+//    gpio_rp2040 servo;
 //
+
+    // LCD objects
     gpio_rp2040 lcd_cs;
-    spi_rp2040  lcd_spi;
+    spi_rp2040      lcd_spi;
     gpio_rp2040 lcd_rst;
     gpio_rp2040 lcd_dc;
     mutex<lock_base_rp2040> lcd_mutex;
     st7735s_drv     lcd;
-//
+
+    // I2C objects
     i2c_rp2040      sen_i2c;
     opt3001_drv     sen_light;
-//
+
+    // ADC objects
     adc_rp2040_channel mic;
     adc_rp2040_channel joy_x;
     adc_rp2040_channel joy_y;

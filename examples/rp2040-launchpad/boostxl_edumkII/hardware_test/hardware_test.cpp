@@ -31,6 +31,39 @@
 #include "task.h"
 #include "task_monitor.h"
 
+//////////////////////////////
+// A Task to blink the RGB LED
+//////////////////////////////
+class led_blinker : public task {
+public:
+
+    led_blinker() : task("LED blinker") {
+    }
+
+    void run() override {
+        gpio_rp2040 & led_red   = HW::inst()->rgb_red;
+        gpio_rp2040 & led_green = HW::inst()->rgb_green;
+        gpio_rp2040 & led_blue  = HW::inst()->rgb_blue;
+
+        while(true) {
+            led_red = 1;
+            sleep_ms(200);
+            led_red = 0;
+            sleep_ms(1000);
+
+            led_green = 1;
+            sleep_ms(200);
+            led_green = 0;
+            sleep_ms(1000);
+
+            led_blue = 1;
+            sleep_ms(200);
+            led_blue = 0;
+            sleep_ms(1000);
+        }
+    }
+};
+
 ///////////////////////////////////////
 // A Task to draw the microphone signal
 ///////////////////////////////////////
@@ -63,7 +96,7 @@ private:
     uGUI &      _gui;
 };
 
-UG_COLOR task_mic::mic_color = C_CYAN;
+UG_COLOR task_mic::mic_color = C_RED;
 
 ///////////////////////////////////////
 // A Task to draw the Joystick position
@@ -257,13 +290,21 @@ int main(void)
     // microphone signal
     ///////////////////////////////////////////
     HW::inst()->edu_joy_sw.gpioAttachIrq(GPIO::FALLING, []() {
+        uint64_t until = task::millis()+200;
         static int i = 0;
         i++;
         i %= 3;
         switch(i) {
-            case 0: { task_mic::mic_color = C_RED;    break; }
-            case 1: { task_mic::mic_color = C_YELLOW; break; }
-            case 2: { task_mic::mic_color = C_CYAN;   break; }
+            case 0: {
+                task_mic::mic_color = C_RED;
+                HW::inst()->rgb_red = 1;
+                while (task::millis() < until ) ;
+                HW::inst()->rgb_red = 0;
+                break;
+            }
+            case 1: { task_mic::mic_color = C_GREEN; break; }
+            case 2: { task_mic::mic_color = C_BLUE;  break; }
+
         }
     });
 
@@ -280,6 +321,9 @@ int main(void)
 
     task_monitor monitor;
     monitor.start();
+
+//    led_blinker blinker;
+//    blinker.start();
 
     task_mic mic_task(gui);
     mic_task.start();

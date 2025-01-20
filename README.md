@@ -131,7 +131,7 @@ The following step installs YAHAL, the software framework for our microcontrolle
 If you have not already done so, clone YAHAL in your home directory (or another suitable location).
 In a terminal you can enter e.g:
 
-`git clone https://git.fh-aachen.de/Terstegge/YAHAL.git`
+`git clone --recursive https://git.fh-aachen.de/Terstegge/YAHAL.git`
 
 ### 10. Execute example program
 - Change the working directory:<br>

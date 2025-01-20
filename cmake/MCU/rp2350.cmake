@@ -11,3 +11,4 @@ include(CPU/cortex-m33fd)
 
 # Marker to detect MCU during compile time
 add_compile_definitions(RP2350)
+set(RP2350 1)
