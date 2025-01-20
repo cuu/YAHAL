@@ -1,0 +1,3 @@
+[submodule "lib/tinyUSBpp"]
+	path = lib/tinyUSB++
+	url = https://github.com/Terstegge/tinyUSBpp.git
