@@ -42,10 +42,10 @@ public:
     }
 
     // Read-only version of our descriptor
-    const USB::ms_compat_id_header_t & descriptor;
+    const TUPP::ms_compat_id_header_t & descriptor;
 
 private:
-    USB::ms_compat_id_header_t  _descriptor;
+    TUPP::ms_compat_id_header_t  _descriptor;
 
     // Our parent function subset
     usb_ms_func_subset & _func_subset;

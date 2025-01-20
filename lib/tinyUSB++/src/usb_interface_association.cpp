@@ -16,7 +16,7 @@
 #include "usb_configuration.h"
 #include "usb_strings.h"
 #include "usb_log.h"
-using namespace USB;
+using namespace TUPP;
 
 usb_interface_association::usb_interface_association(usb_configuration & p)
     : descriptor(_descriptor), _parent(p), _descriptor{}

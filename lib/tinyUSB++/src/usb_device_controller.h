@@ -54,17 +54,17 @@ public:
 
 private:
 
-    void handle_set_address      (USB::setup_packet_t * pkt);
-    void handle_get_descriptor   (USB::setup_packet_t * pkt);
-    void handle_set_descriptor   (USB::setup_packet_t * pkt);
-    void handle_get_configuration(USB::setup_packet_t * pkt);
-    void handle_set_configuration(USB::setup_packet_t * pkt);
-    void handle_get_interface    (USB::setup_packet_t * pkt);
-    void handle_synch_frame      (USB::setup_packet_t * pkt);
-    void handle_set_interface    (USB::setup_packet_t * pkt);
-    void handle_get_status       (USB::setup_packet_t * pkt);
-    void handle_clear_feature    (USB::setup_packet_t * pkt);
-    void handle_set_feature      (USB::setup_packet_t * pkt);
+    void handle_set_address      (TUPP::setup_packet_t * pkt);
+    void handle_get_descriptor   (TUPP::setup_packet_t * pkt);
+    void handle_set_descriptor   (TUPP::setup_packet_t * pkt);
+    void handle_get_configuration(TUPP::setup_packet_t * pkt);
+    void handle_set_configuration(TUPP::setup_packet_t * pkt);
+    void handle_get_interface    (TUPP::setup_packet_t * pkt);
+    void handle_synch_frame      (TUPP::setup_packet_t * pkt);
+    void handle_set_interface    (TUPP::setup_packet_t * pkt);
+    void handle_get_status       (TUPP::setup_packet_t * pkt);
+    void handle_clear_feature    (TUPP::setup_packet_t * pkt);
+    void handle_set_feature      (TUPP::setup_packet_t * pkt);
 
     usb_dcd_interface & _driver;
     usb_device &        _device;

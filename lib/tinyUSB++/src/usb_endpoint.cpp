@@ -17,16 +17,16 @@
 
 usb_endpoint::usb_endpoint(
         uint8_t addr,
-        USB::ep_attributes_t transfer_type,
+        TUPP::ep_attributes_t transfer_type,
         uint16_t packet_size,
         uint8_t interval,
         usb_interface *interface)
 : descriptor(_descriptor)
 {
     // Set descriptor length
-    _descriptor.bLength = sizeof(USB::endpoint_descriptor_t);
+    _descriptor.bLength = sizeof(TUPP::endpoint_descriptor_t);
     // Set descriptor type
-    _descriptor.bDescriptorType = USB::bDescriptorType_t::DESC_ENDPOINT;
+    _descriptor.bDescriptorType = TUPP::bDescriptorType_t::DESC_ENDPOINT;
     // Set up remaining descriptor items
     set_bEndpointAddress(addr);
     set_bmAttributes    (transfer_type);

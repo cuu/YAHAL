@@ -29,8 +29,8 @@ public:
     usb_ms_registry_property(const usb_ms_registry_property &) = delete;
     usb_ms_registry_property & operator= (const usb_ms_registry_property &) = delete;
 
-    inline USB::ms_reg_prop_header_t * descriptor() {
-        return (USB::ms_reg_prop_header_t *)_desc_buffer;
+    inline TUPP::ms_reg_prop_header_t * descriptor() {
+        return (TUPP::ms_reg_prop_header_t *)_desc_buffer;
     }
 
     void add_property_name (const char * name);

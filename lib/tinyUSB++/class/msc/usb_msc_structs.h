@@ -16,7 +16,7 @@
 
 #include "usb_structs.h"
 
-namespace USB::MSC {
+namespace TUPP::MSC {
 
     ///////////////////////////
     // Command Block Wrapper //

@@ -13,7 +13,7 @@
 //
 #include "usb_fd_union.h"
 #include "usb_interface.h"
-using namespace USB::CDC;
+using namespace TUPP::CDC;
 
 usb_fd_union::usb_fd_union(usb_interface & i)
         : usb_fd_base(i, (uint8_t *)&_descriptor, sizeof(_descriptor) )

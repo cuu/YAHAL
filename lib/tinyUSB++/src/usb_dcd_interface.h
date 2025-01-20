@@ -23,7 +23,7 @@ using std::function;
 class usb_endpoint;
 class usb_interface;
 
-using namespace USB;
+using namespace TUPP;
 
 class usb_dcd_interface {
 public:
@@ -39,7 +39,7 @@ public:
     virtual void reset_address() = 0;
 
     // Set handler for setup packets
-    function<void(USB::setup_packet_t * packet)> setup_handler;
+    function<void(TUPP::setup_packet_t * packet)> setup_handler;
 
     // Set handler for bus reset
     function<void()> bus_reset_handler;

@@ -18,7 +18,7 @@
 #include "usb_strings.h"
 #include <cassert>
 
-using namespace USB;
+using namespace TUPP;
 
 usb_configuration::usb_configuration(usb_device & device)
 : descriptor(_descriptor), interfaces(_interfaces),

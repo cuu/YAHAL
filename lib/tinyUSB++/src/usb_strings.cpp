@@ -16,7 +16,7 @@
 #include "usb_log.h"
 #include <cassert>
 #include <cstring>
-using namespace USB;
+using namespace TUPP;
 
 // The static singleton instance
 usb_strings usb_strings::inst;

@@ -21,8 +21,8 @@ usb_ms_compatible_ID::usb_ms_compatible_ID(usb_ms_func_subset & func_subset)
 : descriptor{_descriptor}, _func_subset{func_subset}
 {
     // Set header values
-    _descriptor.wLength             = sizeof(USB::ms_compat_id_header_t);
-    _descriptor.wDescriptorType     = USB::wDescriptorType_t::DESC_COMPAT_ID;
+    _descriptor.wLength             = sizeof(TUPP::ms_compat_id_header_t);
+    _descriptor.wDescriptorType     = TUPP::wDescriptorType_t::DESC_COMPAT_ID;
     _func_subset.add_compatible_ID(this);
 }
 

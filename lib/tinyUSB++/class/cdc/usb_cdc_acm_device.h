@@ -58,7 +58,7 @@ public:
     uint32_t write(const uint8_t *buf, uint32_t len);
 
     // Send a serial state notification to this device.
-    bool notify_serial_state(const USB::CDC::bmUartState_t & state);
+    bool notify_serial_state(const TUPP::CDC::bmUartState_t & state);
 
     // Callback handlers
     std::function<void(const CDC::line_coding_t & lc)>  line_coding_handler;

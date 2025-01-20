@@ -16,7 +16,7 @@
 
 #include "usb_structs.h"
 
-namespace USB::CDC {
+namespace TUPP::CDC {
     //////////////////////////////////
     // Functional Descriptor base type
     //////////////////////////////////

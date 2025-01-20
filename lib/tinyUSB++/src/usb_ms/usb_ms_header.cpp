@@ -19,9 +19,9 @@ usb_ms_header::usb_ms_header(usb_ms_dev_cap_platform & cap)
 : descriptor{_descriptor}, _config_subsets{}, _descriptor{}, _dev_cap_platform_ms{cap}
 {
     // Set header values
-    _descriptor.wLength         = sizeof(USB::ms_header_t);
-    _descriptor.wDescriptorType = USB::wDescriptorType_t::DESC_HEADER;
-    inc_total_length(sizeof(USB::ms_header_t));
+    _descriptor.wLength         = sizeof(TUPP::ms_header_t);
+    _descriptor.wDescriptorType = TUPP::wDescriptorType_t::DESC_HEADER;
+    inc_total_length(sizeof(TUPP::ms_header_t));
 }
 
 // Add a capability

@@ -18,12 +18,12 @@
 #include <cstdlib>
 #include <cstring>
 
-using namespace USB;
-using enum USB::bInterfaceClass_t;
-using enum USB::bInterfaceSubClass_t;
-using enum USB::bInterfaceProtocol_t;
-using enum USB::ep_attributes_t;
-using enum USB::direction_t;
+using namespace TUPP;
+using enum TUPP::bInterfaceClass_t;
+using enum TUPP::bInterfaceSubClass_t;
+using enum TUPP::bInterfaceProtocol_t;
+using enum TUPP::ep_attributes_t;
+using enum TUPP::direction_t;
 
 usb_cdc_acm_device::usb_cdc_acm_device(
         usb_device_controller & controller,
@@ -111,7 +111,7 @@ usb_cdc_acm_device::usb_cdc_acm_device(
 
     // Handler for CDC ACM specific requests
     ////////////////////////////////////////
-    _if_ctrl.setup_handler = [&](USB::setup_packet_t *pkt) {
+    _if_ctrl.setup_handler = [&](TUPP::setup_packet_t *pkt) {
         switch(pkt->bRequest) {
             case bRequest_t::REQ_CDC_SET_LINE_CODING: {
                 TUPP_LOG(LOG_INFO, "Handling REQ_CDC_SET_LINE_CODING");
@@ -204,7 +204,7 @@ uint32_t usb_cdc_acm_device::write(const uint8_t *buf, uint32_t len) {
     return written;
 }
 
-bool usb_cdc_acm_device::notify_serial_state(const USB::CDC::bmUartState_t & state) {
+bool usb_cdc_acm_device::notify_serial_state(const TUPP::CDC::bmUartState_t & state) {
     TUPP_LOG(LOG_DEBUG, "notify_serial_state()");
     if (_ep_ctrl_in->is_active()) {
         return false;

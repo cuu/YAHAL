@@ -43,13 +43,14 @@ public:
     void set_total_length();
 
     // Read-only version of our descriptor
-    const USB::bos_descriptor_t & descriptor;
+    const TUPP::bos_descriptor_t & descriptor;
 
-    friend class usb_device_controller;
+    // Prepare the complete BOS descriptor with all device capabilities.
+    uint16_t prepare_descriptor(uint8_t * buffer, uint16_t size) const;
 
 private:
     // The binary object store (BOS) descriptor
-    USB::bos_descriptor_t _descriptor;
+    TUPP::bos_descriptor_t _descriptor;
 
     // Array of pointers to our device capabilities
     std::array<usb_bos_dev_cap *, TUPP_MAX_BOS_CAPABILITIES> _capabilities;

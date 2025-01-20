@@ -28,7 +28,7 @@ public:
     usb_fd_call_mgmt (const usb_fd_call_mgmt &) = delete;
     usb_fd_call_mgmt & operator= (const usb_fd_call_mgmt &) = delete;
 
-    inline void set_bmCapabilities(USB::CDC::bmCmCapabilities_t val) {
+    inline void set_bmCapabilities(TUPP::CDC::bmCmCapabilities_t val) {
         TUPP_LOG(LOG_DEBUG, "set_bmCapabilities(0x%x)", val);
         _descriptor.bmCapabilities = val;
     }
@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    USB::CDC::func_desc_cm_t _descriptor {};
+    TUPP::CDC::func_desc_cm_t _descriptor {};
 };
 
 #endif  // TUPP_USB_FD_CALL_MGMT_H

@@ -19,7 +19,7 @@
 
 #include <cstdint>
 
-namespace USB {
+namespace TUPP {
 
     ///////////////
     // Setup packet
@@ -110,7 +110,7 @@ namespace USB {
         uint8_t             iSerialNumber;
         uint8_t             bNumConfigurations;
     };
-    static_assert(sizeof(USB::device_descriptor_t) == 18);
+    static_assert(sizeof(TUPP::device_descriptor_t) == 18);
 
     ///////////////////////////////
     // USB Configuration Descriptor

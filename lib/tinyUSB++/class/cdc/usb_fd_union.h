@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    USB::CDC::func_desc_union_t<1> _descriptor {};
+    TUPP::CDC::func_desc_union_t<1> _descriptor {};
 };
 
 #endif  // TUPP_USB_FD_UNION_H

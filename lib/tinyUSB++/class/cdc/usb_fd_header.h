@@ -34,7 +34,7 @@ public:
     }
 
 private:
-    USB::CDC::func_desc_header_t _descriptor {};
+    TUPP::CDC::func_desc_header_t _descriptor {};
 };
 
 #endif  // TUPP_USB_FD_HEADER_H
