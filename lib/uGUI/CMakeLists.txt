@@ -1,19 +1,18 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(uGUI_${PROJECT_NAME})
-
-add_compile_options(-Ofast)
-
+set(uGUI_TARGET uGUI_${PROJECT_NAME})
 file(GLOB_RECURSE UGUI_FONTS fonts/*.cpp)
 
-add_library(${PROJECT_NAME}
-    uGUI.cpp
-    ${UGUI_FONTS}
+add_library(${uGUI_TARGET}
+        uGUI.cpp
+        ${UGUI_FONTS}
 )
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-    PUBLIC fonts
-    PUBLIC ${YAHAL_DIR}/include/interface
-    PUBLIC ${YAHAL_DIR}/src/util
+target_compile_options(${uGUI_TARGET} PRIVATE -Ofast)
+
+target_include_directories(${uGUI_TARGET}
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+        PUBLIC fonts
+        PRIVATE ${YAHAL_DIR}/include/interface
+        PRIVATE ${YAHAL_DIR}/src/util
 )
