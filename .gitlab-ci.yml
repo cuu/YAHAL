@@ -11,10 +11,9 @@ variables:
   stage: examples
   before_script:
     - cd examples/$EXAMLE_FOLDER
-    - mkdir build && cd build
   script:
-    - cmake ..
-    - make -j 4
+    - cmake -S . -B build
+    - cmake --build build -j4
   tags:
     - shared
 
