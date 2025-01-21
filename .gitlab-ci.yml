@@ -4,6 +4,9 @@ stages:
   - examples
   - pages
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 .common:
   stage: examples
   before_script:
