@@ -46,8 +46,22 @@ rp2040_examples:
       - tools/**/*
       - examples/rp2040-launchpad/**/*
 
+rp2350_examples:
+  extends: .common
+  variables:
+    EXAMLE_FOLDER: "rp2350-launchpad"
+  only:
+    changes:
+      - .gitlab-ci.yml
+      - cmake/**/*
+      - include/**/*
+      - lib/**/*
+      - src/**/*
+      - tools/**/*
+      - examples/rp2350-launchpad/**/*
+
 pages:
-  image: alpine:3.19.1
+  image: alpine:3.21.2
   stage: pages
   needs: []
   script:
