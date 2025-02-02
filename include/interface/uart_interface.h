@@ -51,6 +51,11 @@ public:
     // set the baudrate in Hz
     virtual void setBaudrate(uint32_t) = 0;
 
+    // send a break condition for ms milliseconds.
+    // A value of 0xffff means indefinitely 'on',
+    // a value of 0 means immediate 'off'
+    virtual void sendBreak(uint16_t ms) = 0;
+    
     // Interrupt handling
     virtual void uartAttachIrq (function<void(char)> f) = 0;
     virtual void uartDetachIrq () = 0;

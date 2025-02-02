@@ -151,6 +151,10 @@ void uart_msp432::setBaudrate(uint32_t baud) {
     _EUSCI->BRW = (uint16_t)(SubsystemMasterClock / baud);
 }
 
+void uart_msp432::sendBreak(uint16_t ms) {
+    yahal_assert(false && "Not implemented");
+}
+
 void uart_msp432::uartAttachIrq(function<void(char)> f) {
     if (!_init) init();
     uint8_t index = (((uint32_t)_EUSCI) >> 10) & 0x3;

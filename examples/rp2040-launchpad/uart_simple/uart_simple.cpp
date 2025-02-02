@@ -43,17 +43,16 @@
 #include "posix_io.h"
 #include "yahal_String.h"
 
-int main(void)
-{
-	uart_rp2040 uart; // default is backchannel UART!
+int main(void) {
+    uart_rp2040 uart; // default is backchannel UART!
 
-    posix_io::inst.register_stdin ( uart );
-    posix_io::inst.register_stdout( uart );
-    posix_io::inst.register_stderr( uart );
+    posix_io::inst.register_stdin(uart);
+    posix_io::inst.register_stdout(uart);
+    posix_io::inst.register_stderr(uart);
 
     // Print out a simple ASCII table
     printf("ASCII Tabelle\n\n");
-    for (char c=33; c < 127; ++c) {
+    for (char c = 33; c < 127; ++c) {
         String dec = to_String(c);
         String hex = to_String(c, 16);
         printf("Char: %c, dec: %s, hex: %s\n", c, dec.c_str(), hex.c_str());
@@ -64,7 +63,7 @@ int main(void)
 
     printf(VT100_COLOR, GREEN);
     printf("\nPlease enter first and last name: ");
-    fflush( stdout );
+    fflush(stdout);
     scanf("%50s %50s", buf1, buf2);
 
     printf(VT100_COLOR, RED);

@@ -2,6 +2,7 @@
 #include "uart_rp2040.h"
 #include "gpio_rp2040.h"
 #include "system_rp2040.h"
+#include "task.h"
 #include <cassert>
 
 using namespace _UART0_;
@@ -49,8 +50,8 @@ void uart_rp2040::init() {
     // Set baud rate
     setBaudrate(_baud);
     // Enable UART & FIFOs
-    _uart_set->UARTCR.UARTEN = 1;
-    _uart_set->UARTLCR_H.FEN = 1;
+    _uart_set->UARTCR.UARTEN <<= 1;
+    _uart_set->UARTLCR_H.FEN <<= 1;
     _init = true;
 }
 
@@ -133,15 +134,27 @@ void uart_rp2040::setBaudrate(uint32_t baud) {
     _uart->UARTIBRD =  (baud_div >> 7);
     _uart->UARTFBRD = ((baud_div & 0x7f) + 1) / 2;
     // dummy write
-    _uart_set->UARTLCR_H = 0;
+    _uart_set->UARTLCR_H <<= 0;
+}
+
+void uart_rp2040::sendBreak(uint16_t ms) {
+    if (ms == 0) {
+        _uart_clr->UARTLCR_H.BRK <<= 1;
+    } else if (ms == 0xffff) {
+        _uart_set->UARTLCR_H.BRK <<= 1;
+    } else {
+        _uart_set->UARTLCR_H.BRK <<= 1;
+        task::sleep_ms(ms);
+        _uart_clr->UARTLCR_H.BRK <<= 1;
+    }
 }
 
 void uart_rp2040::uartAttachIrq(function<void(char)> f) {
     if (!_init) init();
     _intHandler[_index] = f;
     // Enable RX interrupt
-    _uart_set->UARTIMSC.RXIM = 1;
-    _uart_set->UARTIMSC.RTIM = 1;
+    _uart_set->UARTIMSC.RXIM <<= 1;
+    _uart_set->UARTIMSC.RTIM <<= 1;
     // Enable NVIC interrupt
     NVIC_EnableIRQ((IRQn_Type)(UART0_IRQ_IRQn + _index));
 }
@@ -151,23 +164,23 @@ void uart_rp2040::uartDetachIrq () {
     // Disable NVIC interrupt
     NVIC_DisableIRQ((IRQn_Type)(UART0_IRQ_IRQn + _index));
     // Disable RX interrupt
-    _uart_clr->UARTIMSC.RXIM = 1;
-    _uart_clr->UARTIMSC.RTIM = 1;
+    _uart_clr->UARTIMSC.RXIM <<= 1;
+    _uart_clr->UARTIMSC.RTIM <<= 1;
     // Clear pending interrupts
-    _uart_set->UARTICR.RXIC = 1;
-    _uart_set->UARTICR.RTIC = 1;
+    _uart_set->UARTICR.RXIC <<= 1;
+    _uart_set->UARTICR.RTIC <<= 1;
     // Clear handler
     _intHandler[_index] = nullptr;
 }
 
 void uart_rp2040::uartEnableIrq () {
-    _uart_set->UARTIMSC.RXIM = 1;
-    _uart_set->UARTIMSC.RTIM = 1;
+    _uart_set->UARTIMSC.RXIM <<= 1;
+    _uart_set->UARTIMSC.RTIM <<= 1;
 }
 
 void uart_rp2040::uartDisableIrq() {
-    _uart_clr->UARTIMSC.RXIM = 1;
-    _uart_clr->UARTIMSC.RTIM = 1;
+    _uart_clr->UARTIMSC.RXIM <<= 1;
+    _uart_clr->UARTIMSC.RTIM <<= 1;
 }
 
 // Interrupt handler for UART0/1
