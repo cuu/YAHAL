@@ -55,7 +55,11 @@ public:
     // A value of 0xffff means indefinitely 'on',
     // a value of 0 means immediate 'off'
     virtual void sendBreak(uint16_t ms) = 0;
-    
+
+    // set hw control lines
+    virtual void setDTR(bool dtr) = 0;
+    virtual void setRTS(bool rts) = 0;
+
     // Interrupt handling
     virtual void uartAttachIrq (function<void(char)> f) = 0;
     virtual void uartDetachIrq () = 0;

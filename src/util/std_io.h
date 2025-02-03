@@ -28,6 +28,8 @@ public:
     void uartMode(uart_mode_t) override {}
     void setBaudrate(uint32_t) override {}
     void sendBreak(uint16_t)   override {}
+    void setDTR(bool) override {};
+    void setRTS(bool) override {};
 
     // Interrupt handling
     void uartAttachIrq (function<void(char)>) override {};

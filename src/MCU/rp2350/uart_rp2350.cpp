@@ -172,6 +172,14 @@ void uart_rp2350::sendBreak(uint16_t ms) {
     }
 }
 
+void uart_rp2350::setDTR(bool dtr) {
+    _uart->UARTCR.DTR = dtr;
+}
+
+void uart_rp2350::setRTS(bool rts) {
+    _uart->UARTCR.RTS = rts;
+}
+
 void uart_rp2350::uartAttachIrq(function<void(char)> f) {
     if (!_init) init();
     _intHandler[_index] = f;
