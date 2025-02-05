@@ -18,7 +18,7 @@
 #ifndef _BLOCK_IO_INTERFACE_H_
 #define _BLOCK_IO_INTERFACE_H_
 
-#include <stdint.h>
+#include <cstdint>
 
 typedef uint8_t blockio_status_t;
 
