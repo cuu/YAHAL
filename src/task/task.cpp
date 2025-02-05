@@ -103,7 +103,8 @@ void task::sleep_ms(uint32_t ms) {
     task * c = task::currentTask();
     uint64_t until = millis() + ms;
     if (c) {
-        // Multitasking running: Use TCB entry '_sleep_until'
+        // Multitasking running: Use TCB entry and
+        // hand over control to another task
         c->_sleep_until = until;
         c->_state = state_t::SLEEPING;
         yield();

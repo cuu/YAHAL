@@ -3,6 +3,7 @@
 #include "gpio_msp432.h"
 #include "yahal_assert.h"
 #include "irq_dispatcher.h"
+#include "task.h"
 
 #include <string.h>
 #include "msp.h"
@@ -152,14 +153,22 @@ void uart_msp432::setBaudrate(uint32_t baud) {
 }
 
 void uart_msp432::sendBreak(uint16_t ms) {
+    if (ms == 0) {
+        _EUSCI->CTLW0 &= ~EUSCI_A_CTLW0_TXBRK;
+    } else if (ms == 0xffff) {
+        _EUSCI->CTLW0 |= EUSCI_A_CTLW0_TXBRK;
+    } else {
+        _EUSCI->CTLW0 |= EUSCI_A_CTLW0_TXBRK;
+        task::sleep_ms(ms);
+        _EUSCI->CTLW0 &= ~EUSCI_A_CTLW0_TXBRK;
+    }
+}
+
+void uart_msp432::setDTR(bool) {
     yahal_assert(false && "Not implemented");
 }
 
-void uart_msp432::setDTR(bool dtr) {
-    yahal_assert(false && "Not implemented");
-}
-
-void uart_msp432::setRTS(bool rts) {
+void uart_msp432::setRTS(bool) {
     yahal_assert(false && "Not implemented");
 }
 

@@ -106,10 +106,12 @@ void ws2812_rp2040::update(uint16_t index) {
     // Sending the whole FIFO takes 80us. The reset time
     // for a WS2812 is at least 280us, so we wait approx.
     // 400us before sending a new packet.
-    task::sleep_ms(1);
-    // Make sure that setting the GPIO18 and writing
-    // the WS2812 data is atomic
+
+    // Make sure that writing the WS2812 data is atomic
     task::enterCritical();
+    // Wait for 1ms without multitasking (sleep_ms not working)
+    uint64_t now = task::millis();
+    while (task::millis() < now+1) ;
     // Override GPIO18 to output a high level
     IO_BANK0_SET.GPIO18_CTRL.OEOVER  <<= GPIO_CTRL_OEOVER__ENABLE;
     IO_BANK0_SET.GPIO18_CTRL.OUTOVER <<= GPIO_CTRL_OUTOVER__HIGH;
@@ -119,8 +121,6 @@ void ws2812_rp2040::update(uint16_t index) {
     }
     // Leave the critical section
     task::leaveCritical();
-    // Sleep again to ensure a reset on the WS2812 LEDs
-    task::sleep_ms(1);
     // Restore GPIO18 signal
     IO_BANK0_CLR.GPIO18_CTRL.OEOVER  <<= GPIO_CTRL_OEOVER__ENABLE;
     IO_BANK0_CLR.GPIO18_CTRL.OUTOVER <<= GPIO_CTRL_OUTOVER__HIGH;

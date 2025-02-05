@@ -22,7 +22,6 @@ using namespace _PLL_USB_;
 using namespace _PPB_;
 using namespace _RESETS_;
 using namespace _SIO_;
-using namespace _WATCHDOG_;
 using namespace _XOSC_;
 using namespace _TICKS_;
 using namespace _TIMER0_;
@@ -63,18 +62,9 @@ void SystemInit (void)
     PPB.CPACR.CP10 = 3;
     PPB.CPACR.CP11 = 3;
 
-    // Reset peripherals. They will be activated
+    // Reset every peripheral. They will be activated
     // (put out of reset) by the specific drivers.
-    RESETS_SET.RESET.UART0  <<= 1;
-    RESETS_SET.RESET.UART1  <<= 1;
-    RESETS_SET.RESET.TIMER0 <<= 1;
-    RESETS_SET.RESET.TIMER1 <<= 1;
-    RESETS_SET.RESET.SPI0   <<= 1;
-    RESETS_SET.RESET.SPI1   <<= 1;
-    RESETS_SET.RESET.PWM    <<= 1;
-    RESETS_SET.RESET.PIO0   <<= 1;
-    RESETS_SET.RESET.PIO1   <<= 1;
-    RESETS_SET.RESET.PIO2   <<= 1;
+    RESETS.RESET = 0x478393f;
 
     // Check if core 1 is executing
     // this code and let it sleep here

@@ -72,24 +72,24 @@ namespace BLOCKS {
 
     enum class image_type : uint32_t {
         INVALID = 0 << 16,
-        EXE = 1 << 16,
-        DATA = 2 << 16
+        TYPE_EXE = 1 << 16,
+        TYPE_DATA = 2 << 16
     };
 
     enum class exe_security : uint32_t {
         UNSPECIFIED = 0u << 20,
-        NS = 1u << 20,
-        S = 2u << 20
+        SEC_NS = 1u << 20,
+        SEC_S = 2u << 20
     };
 
     enum class exe_cpu : uint32_t {
-        ARM = 0u << 24,
-        RISCV = 1u << 24
+        CPU_ARM = 0u << 24,
+        CPU_RISCV = 1u << 24
     };
 
     enum class exe_chip : uint32_t {
-        RP2040 = 0u << 28,
-        RP2350 = 1u << 28
+        CHIP_RP2040 = 0u << 28,
+        CHIP_RP2350 = 1u << 28
     };
 
     enum class exe_tbyb : uint32_t {

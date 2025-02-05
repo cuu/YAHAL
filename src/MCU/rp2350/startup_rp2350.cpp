@@ -176,10 +176,10 @@ namespace BLOCKS {
     constexpr blocks<0> start;
     constexpr auto header   = HEADER    (start);
     constexpr auto image    = IMAGE_DEF (header,
-                                         image_type::EXE,
-                                         exe_security::S,
-                                         exe_cpu::ARM,
-                                         exe_chip::RP2350);
+                                         image_type::TYPE_EXE,
+                                         exe_security::SEC_S,
+                                         exe_cpu::CPU_ARM,
+                                         exe_chip::CHIP_RP2350);
     constexpr auto version  = VERSION   (image, MAJOR_VER, MINOR_VER);
     constexpr auto last     = LAST_ITEM (version, version.size() - header.size());
     constexpr auto link     = LINK      (last, 0);
