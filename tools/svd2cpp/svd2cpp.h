@@ -45,7 +45,7 @@ public:
 
     void ProcessRegister(XMLElement *register_);
 
-    void ProcessField(XMLElement *field, const char * access);
+    void ProcessField(XMLElement *field);
 
     static void ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &bitWidth);
 
@@ -78,14 +78,41 @@ public:
 
     static string named_register(string val, const string & index);
 
-    /////////////
+    static inline std::string ValOrEmpty(const char * s) {
+        return s == nullptr ? "" : s;
+    }
+
     // Attributes
-    /////////////
-    string      _mcu;               // MCU name
-    ofstream    _ofs;               // The output file
-    string      _curReg;            // Current Register being processed
-    uint32_t    _curRegSizeBytes{}; // Size in bytes of current register
-    uint32_t    _globalSize{};      // Size in top-level tags. Inherited by peripherals
+    string _device_name;
+
+    const char * _device_size;
+    const char * _device_access;
+    const char * _device_protection;
+    const char * _device_resetValue;
+    const char * _device_resetMask;
+
+    string _peri_name;
+    const char * _peri_baseAddress;
+    const char * _peri_description;
+
+    const char * _peri_size;
+    const char * _peri_access;
+    const char * _peri_protection;
+    const char * _peri_resetValue;
+    const char * _peri_resetMask;
+
+    string _reg_name;
+    const char * _reg_addrOffset;
+    const char * _reg_description;
+
+    const char * _reg_size;
+    const char * _reg_access;
+    const char * _reg_protection;
+    const char * _reg_resetValue;
+    const char * _reg_resetMask;
+
+    // The output file
+    ofstream    _ofs;
 
     // List of register information
     registerInfo _registerInfo;

@@ -34,13 +34,22 @@ void svd2cpp::processSvdFile(const string & infile,
                              const string & outfile,
                              XMLElement *elem,
                              bool generateIrqNumbers) {
-    // Get the MCU name
-    if (!childExists(elem, "name")) {
-        cerr << "Can not find MCU name in file " << infile
+    // get some basic device properties
+    _device_name        = ValOrEmpty(getChildElement(elem, "name"));
+
+    // get default values for registerPropertiesGroup
+    _device_size        = getChildElement(elem, "size");
+    _device_access      = getChildElement(elem, "access");
+    _device_protection  = getChildElement(elem, "protection");
+    _device_resetValue  = getChildElement(elem, "resetValue");
+    _device_resetMask   = getChildElement(elem, "resetMask");
+
+    // Check MCU name
+    if (_device_name.empty()) {
+        cerr << "Can not find device (MCU) name in file " << infile
              << endl;
         exit(1);
     }
-    _mcu = getChildElement(elem, "name");
 
     // Open out file
     cout << "Writing file " << outfile << endl;
@@ -55,11 +64,6 @@ void svd2cpp::processSvdFile(const string & infile,
     _ofs << "#include \"bitfield_defs.h\"" << endl;
     _ofs << endl;
 
-    // Try to read the global size value
-    const char *size = getChildElement(elem, "size");
-    if (size) {
-        _globalSize = parseNumber(size);
-    }
     // Loop over all first-level elements
     elem = elem->FirstChildElement();
     while (elem != nullptr) {
@@ -98,40 +102,36 @@ void svd2cpp::processSvdFile(const string & infile,
 }
 
 void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
-    const char *name     = getChildElement(peripheral, "name");
-    const char *size     = getChildElement(peripheral, "size");
-    const char *baseAddr = getChildElement(peripheral, "baseAddress");
-    const char *desc     = getChildElement(peripheral, "description");
+    // get some basic device properties
+    _peri_name          = ValOrEmpty(getChildElement(peripheral, "name"));
+    _peri_baseAddress   = getChildElement(peripheral, "baseAddress");
+    _peri_description   = getChildElement(peripheral, "description");
+
+    // get default values for registerPropertiesGroup
+    _peri_size        = getChildElement(peripheral, "size");
+    _peri_access      = getChildElement(peripheral, "access");
+    _peri_protection  = getChildElement(peripheral, "protection");
+    _peri_resetValue  = getChildElement(peripheral, "resetValue");
+    _peri_resetMask   = getChildElement(peripheral, "resetMask");
 
     // Some sanity checks
-    if (name == nullptr) {
+    if (_peri_name.empty()) {
         cerr << "Can not find name for peripheral. Exit." << endl;
         exit(1);
     }
-    if (baseAddr == nullptr) {
+    if (_peri_baseAddress == nullptr) {
         cerr << "Can not find base address for peripheral. Exit." << endl;
         exit(1);
     }
 
     // Get base address and default register size in bytes
-    uint32_t baseAddr_int = parseNumber(baseAddr);
-    if (size) {
-        _curRegSizeBytes = parseNumber(size) / 8;
-    } else {
-        _curRegSizeBytes = _globalSize / 8;
-    }
+    uint32_t baseAddr_int = parseNumber(_peri_baseAddress);
 
     // Check if we are a derived peripheral
     string derivedFrom;
     const XMLAttribute *derived = peripheral->FindAttribute("derivedFrom");
     if (derived) {
         derivedFrom += derived->Value();
-    }
-
-    // Check if we have a valid (default) register size
-    if ((_curRegSizeBytes == 0) && !derived) {
-        cerr << "Can not determine register size for peripheral " << name << ". Exit" << endl;
-        exit(1);
     }
 
     // Check if we have some interrupt information
@@ -144,16 +144,21 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
     }
 
     // Print out description if available
-    outputAsComment(desc);
+    outputAsComment(_peri_description);
 
     // Start a new namespace for every peripheral
-    _ofs << indent << "namespace _" << name << "_  {" << endl << endl;
+    _ofs << indent << "namespace _" << _peri_name << "_  {" << endl << endl;
     incIndent();
 
     // Loop over all registers. This will output all register
     // field definitions and optionally related enum-values.
     XMLElement *registers = peripheral->FirstChildElement("registers");
     if (registers) {
+        XMLElement *cluster = registers->FirstChildElement("cluster");
+        if (cluster) {
+            cerr << "Clusters are not supported. Exit." << endl;
+            exit(1);
+        }
         for (XMLElement *reg = registers->FirstChildElement("register");
              reg; reg = reg->NextSiblingElement()) {
             ProcessRegister(reg);
@@ -167,7 +172,7 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
         periType = "_" + derivedFrom + "_::" + derivedFrom + "_t";
     } else {
         // Set the standard peripheral type
-        periType = named_register(name,"") + "_t";
+        periType = named_register(_peri_name,"") + "_t";
 
         // Start the register struct
         _ofs << indent << "struct " << periType << " {" << endl;
@@ -256,66 +261,75 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
 
     // Generate the final register struct instance
     _ofs << indent << "static "  << periType << " & "
-         << name << " = (*(" << periType << " *)0x" << hex
+         << _peri_name << " = (*(" << periType << " *)0x" << hex
          << baseAddr_int << ");" << endl;
 
     // Generate additional register struct instances,
     // depending on the MCU type
-    bool is_rpi_mcu = (_mcu == "RP2040" || _mcu == "RP2350");
+    bool is_rpi_mcu = (_device_name == "RP2040" || _device_name == "RP2350");
     if (is_rpi_mcu && ((baseAddr_int >> 28) <= 5)) {
         _ofs << indent << "static " << periType << " & "
-             << name << "_XOR = (*(" << periType << " *)0x" << hex
+             << _peri_name << "_XOR = (*(" << periType << " *)0x" << hex
              << baseAddr_int + 0x1000 << ");" << endl;
         _ofs << indent << "static " << periType << " & "
-             << name << "_SET = (*(" << periType << " *)0x" << hex
+             << _peri_name << "_SET = (*(" << periType << " *)0x" << hex
              << baseAddr_int + 0x2000 << ");" << endl;
         _ofs << indent << "static " << periType << " & "
-             << name << "_CLR = (*(" << periType << " *)0x" << hex
+             << _peri_name << "_CLR = (*(" << periType << " *)0x" << hex
              << baseAddr_int + 0x3000 << ");" << endl;
     }
 
     // Finalize the peripheral namespace
     _ofs << endl;
     decIndent();
-    _ofs << indent << "} // _" << name << "_" << endl;
+    _ofs << indent << "} // _" << _peri_name << "_" << endl;
     _ofs << endl;
 }
 
 
 void svd2cpp::ProcessRegister(XMLElement *register_) {
-    // Get register properties
-    const char *r_name     = getChildElement(register_, "name");
-    const char *size       = getChildElement(register_, "size");
-    const char *addrOffset = getChildElement(register_, "addressOffset");
-    const char *desc       = getChildElement(register_, "description");
-    const char *resetVal   = getChildElement(register_, "resetValue");
-    const char *access     = getChildElement(register_, "access");
+    // get some register properties
+    _reg_name        = ValOrEmpty(getChildElement(register_, "name"));
+    _reg_addrOffset  = getChildElement(register_, "addressOffset");
+    _reg_description = getChildElement(register_, "description");
 
-    if (r_name == nullptr) {
+    // get values for registerPropertiesGroup
+    _reg_size        = getChildElement(register_, "size");
+    _reg_access      = getChildElement(register_, "access");
+    _reg_protection  = getChildElement(register_, "protection");
+    _reg_resetValue  = getChildElement(register_, "resetValue");
+    _reg_resetMask   = getChildElement(register_, "resetMask");
+
+    if (_reg_name.empty()) {
         cerr << "Can not find name for register. Exit." << endl;
         exit(1);
     }
-    string name = r_name;
-    if (addrOffset == nullptr) {
-        cerr << "Can not find address Offset for register " << name
+
+    if (_reg_addrOffset == nullptr) {
+        cerr << "Can not find address Offset for register " << _reg_name
              << ". Exit." << endl;
         exit(1);
     }
-    uint32_t addrOff = parseNumber(addrOffset);
+    uint32_t addrOff = parseNumber(_reg_addrOffset);
 
     // Print out description if available
-    outputAsComment(desc);
-    if (resetVal) {
-        string tmp = "Reset value: " + string(resetVal);
+    outputAsComment(_reg_description);
+    if (_reg_resetValue) {
+        string tmp = "Reset value: " + string(_reg_resetValue);
         outputAsComment(tmp.c_str());
     }
 
     // Get the valid register size in bytes
     uint32_t regByteSize = 0;
-    if (size) {
-        regByteSize = parseNumber(size) / 8;
+    if (_reg_size) {
+        regByteSize = parseNumber(_reg_size) / 8;
+    } else if (_peri_size) {
+        regByteSize = parseNumber(_peri_size) / 8;
+    } else if (_device_size) {
+        regByteSize = parseNumber(_device_size) / 8;
     } else {
-        regByteSize = _curRegSizeBytes;
+        cerr << "Can not determine register size for " << _reg_name << ". Exit" << endl;
+        exit(1);
     }
 
     register_info_t ri;
@@ -326,7 +340,7 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
     const char *dimIncrement = getChildElement(register_, "dimIncrement");
     if (dim) {
         if (!dimIncrement) {
-            cerr << "dim given without dimIncrement for register " << name
+            cerr << "dim given without dimIncrement for register " << _reg_name
                  << ". Exit." << endl;
             exit(1);
         }
@@ -405,31 +419,31 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
         ri.dim = 1; // Default is one element
     }
 
-    _curReg = name;
+//    _curReg = name;
 
     if (childExists(register_, "fields")) {
-        _ofs << indent << "BEGIN_TYPE(" << named_register(name, "")
+        _ofs << indent << "BEGIN_TYPE(" << named_register(_reg_name, "")
              << "_t, uint" << dec << regByteSize*8 << "_t)" << endl;
         incIndent();
         XMLElement *fields = register_->FirstChildElement("fields");
         for (XMLElement *field = fields->FirstChildElement("field");
              field; field = field->NextSiblingElement()) {
-            ProcessField(field, access);
+            ProcessField(field);
         }
         decIndent();
         _ofs << indent << "END_TYPE()" << endl << endl;
-        ri.type = name + "_t";
+        ri.type = _reg_name + "_t";
     } else {
         //        ri.type = "uint" + to_string(regBitSize) + "_t";
-        ri.type = name + "_t";
+        ri.type = _reg_name + "_t";
         _ofs << indent;
         _ofs << "typedef " << "uint" << dec << regByteSize*8 << "_t "
-             << named_register(name, "") << "_t" << ";" << endl << endl;
+             << named_register(_reg_name, "") << "_t" << ";" << endl << endl;
         //        _ofs << "// Register: " << ri.type << " " << name;
         //        _ofs << endl << endl;
     }
 
-    ri.name   = name;
+    ri.name   = _reg_name;
     ri.offset = addrOff;
     ri.size   = regByteSize;
     _registerInfo.push_back(ri);
@@ -439,7 +453,7 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
         for (auto &ei : enum_info) {
             outputAsComment(ei.desc);
             _ofs << indent << "static const uint32_t "
-                 << named_register(_curReg, "")
+                 << named_register(_reg_name, "")
                  << "_" << ei.field << "__"  << ei.name
                  << " = " << parseNumber(ei.value) << ";" << endl;
         }
@@ -448,7 +462,7 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
     }
 }
 
-void svd2cpp::ProcessField(XMLElement *field, const char * reg_access) {
+void svd2cpp::ProcessField(XMLElement *field) {
     // Get all field parameters
     const char *name   = getChildElement(field, "name");
     const char *desc   = getChildElement(field, "description");
@@ -459,10 +473,16 @@ void svd2cpp::ProcessField(XMLElement *field, const char * reg_access) {
         exit(1);
     }
     if (access == nullptr) {
-        if (reg_access == nullptr) {
+        if (_reg_access) {
+            access = _reg_access;
+        } else if (_peri_access) {
+            access = _peri_access;
+        } else if (_device_access) {
+            access = _device_access;
+        } else {
             cerr << "Can not find access level for field. Exit." << endl;
             exit(1);
-        } else access = reg_access;
+        }
     }
 
     // Process the bit range
