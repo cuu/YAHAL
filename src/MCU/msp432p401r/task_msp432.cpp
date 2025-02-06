@@ -139,6 +139,7 @@ bool task::isUsingFloat() const {
 
 extern "C" {
 
+void SysTick_Handler(void) __attribute__((weak));
 void SysTick_Handler(void) {
     task::_tick_handler();
 }
