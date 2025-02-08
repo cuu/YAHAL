@@ -10,14 +10,40 @@
 // series: RP
 // version: 0.1
 // description: 
-// Dual Cortex-M33 or Hazard3 processors at 150MHz 520kB on-chip SRAM, in 10 independent banks Extended low-power sleep states with optional SRAM retention: as low as 10uA DVDD 8kB of one-time-programmable storage (OTP) Up to 16MB of external QSPI flash/PSRAM via dedicated QSPI bus Additional 16MB flash/PSRAM accessible via optional second chip-select On-chip switched-mode power supply to generate core voltage Low-quiescent-current LDO mode can be enabled for sleep states 2x on-chip PLLs for internal or external clock generation GPIOs are 5V-tolerant (powered), and 3.3V-failsafe (unpowered) Security features: Optional boot signing, enforced by on-chip mask ROM, with key fingerprint in OTP Protected OTP storage for optional boot decryption key Global bus filtering based on Arm or RISC-V security/privilege levels Peripherals, GPIOs and DMA channels individually assignable to security domains Hardware mitigations for fault injection attacks Hardware SHA-256 accelerator Peripherals: 2x UARTs 2x SPI controllers 2x I2C controllers 24x PWM channels USB 1.1 controller and PHY, with host and device support 12x PIO state machines 1x HSTX peripheral
+// Dual Cortex-M33 or Hazard3 processors at 150MHz
+// 520kB on-chip SRAM, in 10 independent banks
+// Extended low-power sleep states with optional SRAM retention: as low as 10uA DVDD
+// 8kB of one-time-programmable storage (OTP)
+// Up to 16MB of external QSPI flash/PSRAM via dedicated QSPI bus
+// Additional 16MB flash/PSRAM accessible via optional second chip-select
+// On-chip switched-mode power supply to generate core voltage
+// Low-quiescent-current LDO mode can be enabled for sleep states
+// 2x on-chip PLLs for internal or external clock generation
+// GPIOs are 5V-tolerant (powered), and 3.3V-failsafe (unpowered)
+// Security features:
+// Optional boot signing, enforced by on-chip mask ROM, with key fingerprint in OTP
+// Protected OTP storage for optional boot decryption key
+// Global bus filtering based on Arm or RISC-V security/privilege levels
+// Peripherals, GPIOs and DMA channels individually assignable to security domains
+// Hardware mitigations for fault injection attacks
+// Hardware SHA-256 accelerator
+// Peripherals:
+// 2x UARTs
+// 2x SPI controllers
+// 2x I2C controllers
+// 24x PWM channels
+// USB 1.1 controller and PHY, with host and device support
+// 12x PIO state machines
+// 1x HSTX peripheral
+// 
 // width: 32
 // size: 32
 // resetMask: 0xffffffff
 // resetValue: 0x00000000
 // access: read-write
 // licenseText: 
-// Copyright (c) 2024 Raspberry Pi Ltd. SPDX-License-Identifier: BSD-3-Clause
+// Copyright (c) 2024 Raspberry Pi Ltd.
+// SPDX-License-Identifier: BSD-3-Clause
 // cpu
 //     name: CM33
 //     revision: r1p0
@@ -289,15 +315,19 @@ namespace _CLOCKS_  {
     BEGIN_TYPE(CLK_GPOUT_CTRL_t, uint32_t)
         // clock generator is enabled
         ADD_BITFIELD_RO(ENABLED, 28, 1)
-        // An edge on this signal shifts the phase of the output by 1 cycle of the input clock  This can be done at any time
+        // An edge on this signal shifts the phase of the output by 1 cycle
+        // of the input clock. This can be done at any time.
         ADD_BITFIELD_RW(NUDGE, 20, 1)
-        // This delays the enable signal by up to 3 cycles of the input clock  This must be set before the clock is enabled to have any effect
+        // This delays the enable signal by up to 3 cycles of the input clock.
+        // This must be set before the clock is enabled to have any effect.
         ADD_BITFIELD_RW(PHASE, 16, 2)
-        // Enables duty cycle correction for odd divisors, can be changed on-the-fly
+        // Enables duty cycle correction for odd divisors,
+        // can be changed on-the-fly
         ADD_BITFIELD_RW(DC50, 12, 1)
         // Starts and stops the clock generator cleanly
         ADD_BITFIELD_RW(ENABLE, 11, 1)
-        // Asynchronously kills the clock generator, enable must be set low before deasserting kill
+        // Asynchronously kills the clock generator, enable must be set low
+        // before deasserting kill
         ADD_BITFIELD_RW(KILL, 10, 1)
         // Selects the auxiliary clock source, will glitch when switching
         ADD_BITFIELD_RW(AUXSRC, 5, 4)
@@ -330,7 +360,8 @@ namespace _CLOCKS_  {
     // Indicates which src is currently selected (one-hot)
     // Reset value: 0x00000001
     BEGIN_TYPE(CLK_GPOUT_SELECTED_t, uint32_t)
-        // This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.
+        // This slice does not have a glitchless mux (only the AUX_SRC field is present,
+        // not SRC) so this register is hardwired to 0x1.
         ADD_BITFIELD_RO(SELECTED, 0, 1)
     END_TYPE()
 
@@ -361,7 +392,12 @@ namespace _CLOCKS_  {
     // Indicates which src is currently selected (one-hot)
     // Reset value: 0x00000001
     BEGIN_TYPE(CLK_REF_SELECTED_t, uint32_t)
-        // The glitchless multiplexer does not switch instantaneously (to avoid glitches), so software should poll this register to wait for the switch to complete. This register contains one decoded bit for each of the clock sources enumerated in the CTRL SRC field. At most one of these bits will be set at any time, indicating that clock is currently present at the output of the glitchless mux. Whilst switching is in progress, this register may briefly show all-0s.
+        // The glitchless multiplexer does not switch instantaneously (to avoid glitches),
+        // so software should poll this register to wait for the switch to complete.
+        // This register contains one decoded bit for each of the clock sources enumerated
+        // in the CTRL SRC field. At most one of these bits will be set at any time, indicating
+        // that clock is currently present at the output of the glitchless mux.
+        // Whilst switching is in progress, this register may briefly show all-0s.
         ADD_BITFIELD_RO(CLK_REF_SELECTED, 0, 4)
     END_TYPE()
 
@@ -394,7 +430,12 @@ namespace _CLOCKS_  {
     // Indicates which src is currently selected (one-hot)
     // Reset value: 0x00000001
     BEGIN_TYPE(CLK_SYS_SELECTED_t, uint32_t)
-        // The glitchless multiplexer does not switch instantaneously (to avoid glitches), so software should poll this register to wait for the switch to complete. This register contains one decoded bit for each of the clock sources enumerated in the CTRL SRC field. At most one of these bits will be set at any time, indicating that clock is currently present at the output of the glitchless mux. Whilst switching is in progress, this register may briefly show all-0s.
+        // The glitchless multiplexer does not switch instantaneously (to avoid glitches),
+        // so software should poll this register to wait for the switch to complete.
+        // This register contains one decoded bit for each of the clock sources enumerated
+        // in the CTRL SRC field. At most one of these bits will be set at any time, indicating
+        // that clock is currently present at the output of the glitchless mux.
+        // Whilst switching is in progress, this register may briefly show all-0s.
         ADD_BITFIELD_RO(CLK_SYS_SELECTED, 0, 2)
     END_TYPE()
 
@@ -405,7 +446,8 @@ namespace _CLOCKS_  {
         ADD_BITFIELD_RO(ENABLED, 28, 1)
         // Starts and stops the clock generator cleanly
         ADD_BITFIELD_RW(ENABLE, 11, 1)
-        // Asynchronously kills the clock generator, enable must be set low before deasserting kill
+        // Asynchronously kills the clock generator,
+        // enable must be set low before deasserting kill
         ADD_BITFIELD_RW(KILL, 10, 1)
         // Selects the auxiliary clock source, will glitch when switching
         ADD_BITFIELD_RW(AUXSRC, 5, 3)
@@ -428,7 +470,8 @@ namespace _CLOCKS_  {
     // Indicates which src is currently selected (one-hot)
     // Reset value: 0x00000001
     BEGIN_TYPE(CLK_PERI_SELECTED_t, uint32_t)
-        // This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.
+        // This slice does not have a glitchless mux (only the AUX_SRC field is present,
+        // not SRC) so this register is hardwired to 0x1.
         ADD_BITFIELD_RO(CLK_PERI_SELECTED, 0, 1)
     END_TYPE()
 
@@ -437,13 +480,16 @@ namespace _CLOCKS_  {
     BEGIN_TYPE(CLK_HSTX_CTRL_t, uint32_t)
         // clock generator is enabled
         ADD_BITFIELD_RO(ENABLED, 28, 1)
-        // An edge on this signal shifts the phase of the output by 1 cycle of the input clock  This can be done at any time
+        // An edge on this signal shifts the phase of the output by
+        // 1 cycle of the input clock. This can be done at any time.
         ADD_BITFIELD_RW(NUDGE, 20, 1)
-        // This delays the enable signal by up to 3 cycles of the input clock  This must be set before the clock is enabled to have any effect
+        // This delays the enable signal by up to 3 cycles of the input clock
+        // This must be set before the clock is enabled to have any effect
         ADD_BITFIELD_RW(PHASE, 16, 2)
         // Starts and stops the clock generator cleanly
         ADD_BITFIELD_RW(ENABLE, 11, 1)
-        // Asynchronously kills the clock generator, enable must be set low before deasserting kill
+        // Asynchronously kills the clock generator,
+        // enable must be set low before deasserting kill
         ADD_BITFIELD_RW(KILL, 10, 1)
         // Selects the auxiliary clock source, will glitch when switching
         ADD_BITFIELD_RW(AUXSRC, 5, 3)
@@ -464,7 +510,8 @@ namespace _CLOCKS_  {
     // Indicates which src is currently selected (one-hot)
     // Reset value: 0x00000001
     BEGIN_TYPE(CLK_HSTX_SELECTED_t, uint32_t)
-        // This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.
+        // This slice does not have a glitchless mux (only the AUX_SRC field
+        // is present, not SRC) so this register is hardwired to 0x1.
         ADD_BITFIELD_RO(CLK_HSTX_SELECTED, 0, 1)
     END_TYPE()
 
@@ -473,13 +520,16 @@ namespace _CLOCKS_  {
     BEGIN_TYPE(CLK_USB_CTRL_t, uint32_t)
         // clock generator is enabled
         ADD_BITFIELD_RO(ENABLED, 28, 1)
-        // An edge on this signal shifts the phase of the output by 1 cycle of the input clock  This can be done at any time
+        // An edge on this signal shifts the phase of the output by 1
+        // cycle of the input clock. This can be done at any time
         ADD_BITFIELD_RW(NUDGE, 20, 1)
-        // This delays the enable signal by up to 3 cycles of the input clock  This must be set before the clock is enabled to have any effect
+        // This delays the enable signal by up to 3 cycles of the input clock
+        // This must be set before the clock is enabled to have any effect
         ADD_BITFIELD_RW(PHASE, 16, 2)
         // Starts and stops the clock generator cleanly
         ADD_BITFIELD_RW(ENABLE, 11, 1)
-        // Asynchronously kills the clock generator, enable must be set low before deasserting kill
+        // Asynchronously kills the clock generator,
+        // enable must be set low before deasserting kill
         ADD_BITFIELD_RW(KILL, 10, 1)
         // Selects the auxiliary clock source, will glitch when switching
         ADD_BITFIELD_RW(AUXSRC, 5, 3)
@@ -501,7 +551,8 @@ namespace _CLOCKS_  {
     // Indicates which src is currently selected (one-hot)
     // Reset value: 0x00000001
     BEGIN_TYPE(CLK_USB_SELECTED_t, uint32_t)
-        // This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.
+        // This slice does not have a glitchless mux (only the AUX_SRC field
+        // is present, not SRC) so this register is hardwired to 0x1.
         ADD_BITFIELD_RO(CLK_USB_SELECTED, 0, 1)
     END_TYPE()
 
@@ -510,13 +561,16 @@ namespace _CLOCKS_  {
     BEGIN_TYPE(CLK_ADC_CTRL_t, uint32_t)
         // clock generator is enabled
         ADD_BITFIELD_RO(ENABLED, 28, 1)
-        // An edge on this signal shifts the phase of the output by 1 cycle of the input clock  This can be done at any time
+        // An edge on this signal shifts the phase of the output by 1
+        // cycle of the input clock. This can be done at any time
         ADD_BITFIELD_RW(NUDGE, 20, 1)
-        // This delays the enable signal by up to 3 cycles of the input clock  This must be set before the clock is enabled to have any effect
+        // This delays the enable signal by up to 3 cycles of the input clock
+        // This must be set before the clock is enabled to have any effect
         ADD_BITFIELD_RW(PHASE, 16, 2)
         // Starts and stops the clock generator cleanly
         ADD_BITFIELD_RW(ENABLE, 11, 1)
-        // Asynchronously kills the clock generator, enable must be set low before deasserting kill
+        // Asynchronously kills the clock generator,
+        // enable must be set low before deasserting kill
         ADD_BITFIELD_RW(KILL, 10, 1)
         // Selects the auxiliary clock source, will glitch when switching
         ADD_BITFIELD_RW(AUXSRC, 5, 3)
@@ -538,7 +592,8 @@ namespace _CLOCKS_  {
     // Indicates which src is currently selected (one-hot)
     // Reset value: 0x00000001
     BEGIN_TYPE(CLK_ADC_SELECTED_t, uint32_t)
-        // This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.
+        // This slice does not have a glitchless mux (only the AUX_SRC
+        // field is present, not SRC) so this register is hardwired to 0x1.
         ADD_BITFIELD_RO(CLK_ADC_SELECTED, 0, 1)
     END_TYPE()
 
@@ -577,7 +632,8 @@ namespace _CLOCKS_  {
         ADD_BITFIELD_RW(FRCE, 12, 1)
         // Enable resus
         ADD_BITFIELD_RW(ENABLE, 8, 1)
-        // This is expressed as a number of clk_ref cycles  and must be >= 2x clk_ref_freq/min_clk_tst_freq
+        // This is expressed as a number of clk_ref cycles
+        // and must be >= 2x clk_ref_freq/min_clk_tst_freq
         ADD_BITFIELD_RW(TIMEOUT, 0, 8)
     END_TYPE()
 
@@ -593,31 +649,36 @@ namespace _CLOCKS_  {
         ADD_BITFIELD_RW(FC0_REF_KHZ, 0, 20)
     END_TYPE()
 
-    // Minimum pass frequency in kHz. This is optional. Set to 0 if you are not using the pass/fail flags
+    // Minimum pass frequency in kHz.
+    // This is optional. Set to 0 if you are not using the pass/fail flags
     // Reset value: 0x00000000
     BEGIN_TYPE(FC0_MIN_KHZ_t, uint32_t)
         ADD_BITFIELD_RW(FC0_MIN_KHZ, 0, 25)
     END_TYPE()
 
-    // Maximum pass frequency in kHz. This is optional. Set to 0x1ffffff if you are not using the pass/fail flags
+    // Maximum pass frequency in kHz. This is optional.
+    // Set to 0x1ffffff if you are not using the pass/fail flags
     // Reset value: 0x01ffffff
     BEGIN_TYPE(FC0_MAX_KHZ_t, uint32_t)
         ADD_BITFIELD_RW(FC0_MAX_KHZ, 0, 25)
     END_TYPE()
 
-    // Delays the start of frequency counting to allow the mux to settle  Delay is measured in multiples of the reference clock period
+    // Delays the start of frequency counting to allow the mux to settle
+    // Delay is measured in multiples of the reference clock period
     // Reset value: 0x00000001
     BEGIN_TYPE(FC0_DELAY_t, uint32_t)
         ADD_BITFIELD_RW(FC0_DELAY, 0, 3)
     END_TYPE()
 
-    // The test interval is 0.98us * 2**interval, but let's call it 1us * 2**interval  The default gives a test interval of 250us
+    // The test interval is 0.98us * 2**interval, but let's call it 1us * 2**interval
+    // The default gives a test interval of 250us
     // Reset value: 0x00000008
     BEGIN_TYPE(FC0_INTERVAL_t, uint32_t)
         ADD_BITFIELD_RW(FC0_INTERVAL, 0, 4)
     END_TYPE()
 
-    // Clock sent to frequency counter, set to 0 when not required  Writing to this register initiates the frequency count
+    // Clock sent to frequency counter, set to 0 when not required
+    // Writing to this register initiates the frequency count
     // Reset value: 0x00000000
     BEGIN_TYPE(FC0_SRC_t, uint32_t)
         ADD_BITFIELD_RW(FC0_SRC, 0, 8)
@@ -993,7 +1054,8 @@ namespace _TICKS_  {
     END_TYPE()
 
     BEGIN_TYPE(PROC0_COUNT_t, uint32_t)
-        // Count down timer: the remaining number clk_tick cycles before the next tick is generated.
+        // Count down timer: the remaining number clk_tick cycles before
+        // the next tick is generated.
         ADD_BITFIELD_RO(PROC0_COUNT, 0, 9)
     END_TYPE()
 
@@ -1013,7 +1075,8 @@ namespace _TICKS_  {
     END_TYPE()
 
     BEGIN_TYPE(PROC1_COUNT_t, uint32_t)
-        // Count down timer: the remaining number clk_tick cycles before the next tick is generated.
+        // Count down timer: the remaining number clk_tick cycles before
+        // the next tick is generated.
         ADD_BITFIELD_RO(PROC1_COUNT, 0, 9)
     END_TYPE()
 
@@ -1033,7 +1096,8 @@ namespace _TICKS_  {
     END_TYPE()
 
     BEGIN_TYPE(TIMER0_COUNT_t, uint32_t)
-        // Count down timer: the remaining number clk_tick cycles before the next tick is generated.
+        // Count down timer: the remaining number clk_tick cycles before
+        // the next tick is generated.
         ADD_BITFIELD_RO(TIMER0_COUNT, 0, 9)
     END_TYPE()
 
@@ -1053,7 +1117,8 @@ namespace _TICKS_  {
     END_TYPE()
 
     BEGIN_TYPE(TIMER1_COUNT_t, uint32_t)
-        // Count down timer: the remaining number clk_tick cycles before the next tick is generated.
+        // Count down timer: the remaining number clk_tick cycles
+        // before the next tick is generated.
         ADD_BITFIELD_RO(TIMER1_COUNT, 0, 9)
     END_TYPE()
 
@@ -1073,7 +1138,8 @@ namespace _TICKS_  {
     END_TYPE()
 
     BEGIN_TYPE(WATCHDOG_COUNT_t, uint32_t)
-        // Count down timer: the remaining number clk_tick cycles before the next tick is generated.
+        // Count down timer: the remaining number clk_tick cycles before
+        // the next tick is generated.
         ADD_BITFIELD_RO(WATCHDOG_COUNT, 0, 9)
     END_TYPE()
 
@@ -1093,7 +1159,8 @@ namespace _TICKS_  {
     END_TYPE()
 
     BEGIN_TYPE(RISCV_COUNT_t, uint32_t)
-        // Count down timer: the remaining number clk_tick cycles before the next tick is generated.
+        // Count down timer: the remaining number clk_tick cycles before
+        // the next tick is generated.
         ADD_BITFIELD_RO(RISCV_COUNT, 0, 9)
     END_TYPE()
 
@@ -1140,7 +1207,8 @@ namespace _PADS_BANK0_  {
 
     // Reset value: 0x00000116
     BEGIN_TYPE(GPIO_t, uint32_t)
-        // Pad isolation control. Remove this once the pad is configured by software.
+        // Pad isolation control.
+        // Remove this once the pad is configured by software.
         ADD_BITFIELD_RW(ISO, 8, 1)
         // Output disable. Has priority over output enable from peripherals
         ADD_BITFIELD_RW(OD, 7, 1)
@@ -1165,7 +1233,8 @@ namespace _PADS_BANK0_  {
 
     // Reset value: 0x0000005a
     BEGIN_TYPE(SWCLK_t, uint32_t)
-        // Pad isolation control. Remove this once the pad is configured by software.
+        // Pad isolation control.
+        // Remove this once the pad is configured by software.
         ADD_BITFIELD_RW(ISO, 8, 1)
         // Output disable. Has priority over output enable from peripherals
         ADD_BITFIELD_RW(OD, 7, 1)
@@ -1190,7 +1259,8 @@ namespace _PADS_BANK0_  {
 
     // Reset value: 0x0000005a
     BEGIN_TYPE(SWD_t, uint32_t)
-        // Pad isolation control. Remove this once the pad is configured by software.
+        // Pad isolation control.
+        // Remove this once the pad is configured by software.
         ADD_BITFIELD_RW(ISO, 8, 1)
         // Output disable. Has priority over output enable from peripherals
         ADD_BITFIELD_RW(OD, 7, 1)
@@ -1242,7 +1312,8 @@ namespace _PADS_QSPI_  {
 
     // Reset value: 0x00000156
     BEGIN_TYPE(GPIO_QSPI_SCLK_t, uint32_t)
-        // Pad isolation control. Remove this once the pad is configured by software.
+        // Pad isolation control.
+        // Remove this once the pad is configured by software.
         ADD_BITFIELD_RW(ISO, 8, 1)
         // Output disable. Has priority over output enable from peripherals
         ADD_BITFIELD_RW(OD, 7, 1)
@@ -1267,7 +1338,8 @@ namespace _PADS_QSPI_  {
 
     // Reset value: 0x00000156
     BEGIN_TYPE(GPIO_QSPI_SD_t, uint32_t)
-        // Pad isolation control. Remove this once the pad is configured by software.
+        // Pad isolation control.
+        // Remove this once the pad is configured by software.
         ADD_BITFIELD_RW(ISO, 8, 1)
         // Output disable. Has priority over output enable from peripherals
         ADD_BITFIELD_RW(OD, 7, 1)
@@ -1292,7 +1364,8 @@ namespace _PADS_QSPI_  {
 
     // Reset value: 0x0000015a
     BEGIN_TYPE(GPIO_QSPI_SS_t, uint32_t)
-        // Pad isolation control. Remove this once the pad is configured by software.
+        // Pad isolation control.
+        // Remove this once the pad is configured by software.
         ADD_BITFIELD_RW(ISO, 8, 1)
         // Output disable. Has priority over output enable from peripherals
         ADD_BITFIELD_RW(OD, 7, 1)
@@ -4938,7 +5011,9 @@ namespace _SYSINFO_  {
         ADD_BITFIELD_RO(PACKAGE_SEL, 0, 1)
     END_TYPE()
 
-    // Platform register. Allows software to know what environment it is running in during pre-production development. Post-production, the PLATFORM is always ASIC, non-SIM.
+    // Platform register. Allows software to know what environment it is running
+    // in during pre-production development. Post-production, the PLATFORM is
+    // always ASIC, non-SIM.
     // Reset value: 0x00000000
     BEGIN_TYPE(PLATFORM_t, uint32_t)
         ADD_BITFIELD_RO(GATESIM, 4, 1)
@@ -4974,17 +5049,47 @@ namespace _SHA256_  {
     // Control and status register
     // Reset value: 0x00001206
     BEGIN_TYPE(CSR_t, uint32_t)
-        // Enable byte swapping of 32-bit values at the point they are committed to the SHA message scheduler. This block's bus interface assembles byte/halfword data into message words in little-endian order, so that DMAing the same buffer with different transfer sizes always gives the same result on a little-endian system like RP2350. However, when marshalling bytes into blocks, SHA expects that the first byte is the *most significant* in each message word. To resolve this, once the bus interface has accumulated 32 bits of data (either a word write, two halfword writes in little-endian order, or four byte writes in little-endian order) the final value can be byte-swapped before passing to the actual SHA core. This feature is enabled by default because using the SHA core to checksum byte buffers is expected to be more common than having preformatted SHA message words lying around.
+        // Enable byte swapping of 32-bit values at the point they are committed to the
+        // SHA message scheduler. This block's bus interface assembles byte/halfword
+        // data into message words in little-endian order, so that DMAing the same buffer
+        // with different transfer sizes always gives the same result on a little-endian
+        // system like RP2350.
+        // However, when marshalling bytes into blocks, SHA expects that the first byte
+        // is the *most significant* in each message word. To resolve this, once the bus
+        // interface has accumulated 32 bits of data (either a word write, two halfword
+        // writes in little-endian order, or four byte writes in little-endian order)
+        // the final value can be byte-swapped before passing to the actual SHA core.
+        // This feature is enabled by default because using the SHA core to checksum
+        // byte buffers is expected to be more common than having preformatted SHA
+        // message words lying around.
         ADD_BITFIELD_RW(BSWAP, 12, 1)
-        // Configure DREQ logic for the correct DMA data size. Must be configured before the DMA channel is triggered. The SHA-256 core's DREQ logic requests one entire block of data at once, since there is no FIFO, and data goes straight into the core's message schedule and digest hardware. Therefore, when transferring data with DMA, CSR_DMA_SIZE must be configured in advance so that the correct number of transfers can be requested per block.
+        // Configure DREQ logic for the correct DMA data size. Must be configured before
+        // the DMA channel is triggered. The SHA-256 core's DREQ logic requests one
+        // entire block of data at once, since there is no FIFO, and data goes straight
+        // into the core's message schedule and digest hardware. Therefore, when
+        // transferring data with DMA, CSR_DMA_SIZE must be configured in advance so that
+        // the correct number of transfers can be requested per block.
         ADD_BITFIELD_RW(DMA_SIZE, 8, 2)
-        // Set when a write occurs whilst the SHA-256 core is not ready for data (WDATA_RDY is low). Write one to clear.
+        // Set when a write occurs whilst the SHA-256 core is not ready for data
+        // (WDATA_RDY is low). Write one to clear.
         ADD_BITFIELD_RW(ERR_WDATA_NOT_RDY, 4, 1)
-        // If 1, the SHA-256 checksum presented in registers SUM0 through SUM7 is currently valid. Goes low when WDATA is first written, then returns high once 16 words have been written and the digest of the current 512-bit block has subsequently completed.
+        // If 1, the SHA-256 checksum presented in registers SUM0 through SUM7 is
+        // currently valid. Goes low when WDATA is first written, then returns high
+        // once 16 words have been written and the digest of the current 512-bit
+        // block has subsequently completed.
         ADD_BITFIELD_RO(SUM_VLD, 2, 1)
-        // If 1, the SHA-256 core is ready to accept more data through the WDATA register. After writing 16 words, this flag will go low for 57 cycles whilst the core completes its digest.
+        // If 1, the SHA-256 core is ready to accept more data through the WDATA
+        // register. After writing 16 words, this flag will go low for 57 cycles
+        // whilst the core completes its digest.
         ADD_BITFIELD_RO(WDATA_RDY, 1, 1)
-        // Write 1 to prepare the SHA-256 core for a new checksum. The SUMx registers are initialised to the proper values (fractional bits of square roots of first 8 primes) and internal counters are cleared. This immediately forces WDATA_RDY and SUM_VLD high. START must be written before initiating a DMA transfer to the SHA-256 core, because the core will always request 16 transfers at a time (1 512-bit block). Additionally, the DMA channel should be configured for a multiple of 16 32-bit transfers.
+        // Write 1 to prepare the SHA-256 core for a new checksum.
+        // The SUMx registers are initialised to the proper values (fractional
+        // bits of square roots of first 8 primes) and internal counters are cleared.
+        // This immediately forces WDATA_RDY and SUM_VLD high.
+        // START must be written before initiating a DMA transfer to the SHA-256 core,
+        // because the core will always request 16 transfers at a time (1 512-bit block).
+        // Additionally, the DMA channel should be configured for a multiple of 16 32-bit
+        // transfers.
         ADD_BITFIELD_WO(START, 0, 1)
     END_TYPE()
 
@@ -4995,7 +5100,16 @@ namespace _SHA256_  {
     // Write data register
     // Reset value: 0x00000000
     BEGIN_TYPE(WDATA_t, uint32_t)
-        // After pulsing START and writing 16 words of data to this register, WDATA_RDY will go low and the SHA-256 core will complete the digest of the current 512-bit block. Software is responsible for ensuring the data is correctly padded and terminated to a whole number of 512-bit blocks. After this, WDATA_RDY will return high, and more data can be written (if any). This register supports word, halfword and byte writes, so that DMA from non-word-aligned buffers can be supported. The total amount of data per block remains the same (16 words, 32 halfwords or 64 bytes) and byte/halfword transfers must not be mixed within a block.
+        // After pulsing START and writing 16 words of data to this register,
+        // WDATA_RDY will go low and the SHA-256 core will complete the digest
+        // of the current 512-bit block.
+        // Software is responsible for ensuring the data is correctly padded and
+        // terminated to a whole number of 512-bit blocks.
+        // After this, WDATA_RDY will return high, and more data can be written (if any).
+        // This register supports word, halfword and byte writes, so that DMA from
+        // non-word-aligned buffers can be supported. The total amount of data per
+        // block remains the same (16 words, 32 halfwords or 64 bytes) and byte/halfword
+        // transfers must not be mixed within a block.
         ADD_BITFIELD_WO(WDATA, 0, 32)
     END_TYPE()
 
@@ -5047,33 +5161,86 @@ namespace _HSTX_FIFO_  {
 
 } // _HSTX_FIFO_
 
-// Control interface to HSTX. For FIFO write access and status, see the HSTX_FIFO register block.
+// Control interface to HSTX. For FIFO write access and status,
+// see the HSTX_FIFO register block.
 namespace _HSTX_CTRL_  {
 
     // Reset value: 0x10050600
     BEGIN_TYPE(CSR_t, uint32_t)
-        // Clock period of the generated clock, measured in HSTX clock cycles. Can be odd or even. The generated clock advances only on cycles where the shift register shifts. For example, a clkdiv of 5 would generate a complete output clock period for every 5 HSTX clocks (or every 10 half-clocks). A CLKDIV value of 0 is mapped to a period of 16 HSTX clock cycles.
+        // Clock period of the generated clock, measured in HSTX clock cycles.
+        // Can be odd or even. The generated clock advances only on cycles where
+        // the shift register shifts.
+        // For example, a clkdiv of 5 would generate a complete output clock period
+        // for every 5 HSTX clocks (or every 10 half-clocks).
+        // A CLKDIV value of 0 is mapped to a period of 16 HSTX clock cycles.
         ADD_BITFIELD_RW(CLKDIV, 28, 4)
-        // Set the initial phase of the generated clock. A CLKPHASE of 0 means the clock is initially low, and the first rising edge occurs after one half period of the generated clock (i.e. CLKDIV/2 cycles of clk_hstx). Incrementing CLKPHASE by 1 will advance the initial clock phase by one half clk_hstx period. For example, if CLKDIV=2 and CLKPHASE=1: * The clock will be initially low * The first rising edge will be 0.5 clk_hstx cycles after asserting first data * The first falling edge will be 1.5 clk_hstx cycles after asserting first data This configuration would be suitable for serialising at a bit rate of clk_hstx with a centre-aligned DDR clock. When the HSTX is halted by clearing CSR_EN, the clock generator will return to its initial phase as configured by the CLKPHASE field. Note CLKPHASE must be strictly less than double the value of CLKDIV (one full period), else its operation is undefined.
+        // Set the initial phase of the generated clock.
+        // A CLKPHASE of 0 means the clock is initially low, and the first rising
+        // edge occurs after one half period of the generated clock (i.e. CLKDIV/2
+        // cycles of clk_hstx). Incrementing CLKPHASE by 1 will advance the initial
+        // clock phase by one half clk_hstx period. For example, if CLKDIV=2 and
+        // CLKPHASE=1:
+        // 
+        // * The clock will be initially low
+        // * The first rising edge will be 0.5 clk_hstx cycles after asserting first data
+        // * The first falling edge will be 1.5 clk_hstx cycles after asserting first data
+        // 
+        // This configuration would be suitable for serialising at a bit rate of clk_hstx
+        // with a centre-aligned DDR clock.
+        // When the HSTX is halted by clearing CSR_EN, the clock generator will return
+        // to its initial phase as configured by the CLKPHASE field.
+        // Note CLKPHASE must be strictly less than double the value of CLKDIV
+        // (one full period), else its operation is undefined.
         ADD_BITFIELD_RW(CLKPHASE, 24, 4)
-        // Number of times to shift the shift register before refilling it from the FIFO. (A count of how many times it has been shifted, *not* the total shift distance.) A register value of 0 means shift 32 times.
+        // Number of times to shift the shift register before refilling it from
+        // the FIFO. (A count of how many times it has been shifted, *not* the total
+        // shift distance). A register value of 0 means shift 32 times.
         ADD_BITFIELD_RW(N_SHIFTS, 16, 5)
-        // How many bits to right-rotate the shift register by each cycle. The use of a rotate rather than a shift allows left shifts to be emulated, by subtracting the left-shift amount from 32. It also allows data to be repeated, when the product of SHIFT and N_SHIFTS is greater than 32.
+        // How many bits to right-rotate the shift register by each cycle.
+        // The use of a rotate rather than a shift allows left shifts to be
+        // emulated, by subtracting the left-shift amount from 32. It also
+        // allows data to be repeated, when the product of SHIFT and N_SHIFTS
+        // is greater than 32.
         ADD_BITFIELD_RW(SHIFT, 8, 5)
         // Select which PIO to use for coupled mode operation.
         ADD_BITFIELD_RW(COUPLED_SEL, 5, 2)
-        // Enable the PIO-to-HSTX 1:1 connection. The HSTX must be clocked *directly* from the system clock (not just from some other clock source of the same frequency) for this synchronous interface to function correctly. When COUPLED_MODE is set, BITx_SEL_P and SEL_N indices 24 through 31 will select bits from the 8-bit PIO-to-HSTX path, rather than shifter bits. Indices of 0 through 23 will still index the shift register as normal. The PIO outputs connected to the PIO-to-HSTX bus are those same outputs that would appear on the HSTX-capable pins if those pins' FUNCSELs were set to PIO instead of HSTX. For example, if HSTX is on GPIOs 12 through 19, then PIO outputs 12 through 19 are connected to the HSTX when coupled mode is engaged.
+        // Enable the PIO-to-HSTX 1:1 connection. The HSTX must be clocked *directly*
+        // from the system clock (not just from some other clock source of the same
+        // frequency) for this synchronous interface to function correctly.
+        // When COUPLED_MODE is set, BITx_SEL_P and SEL_N indices 24 through 31 will
+        // select bits from the 8-bit PIO-to-HSTX path, rather than shifter bits.
+        // Indices of 0 through 23 will still index the shift register as normal.
+        // The PIO outputs connected to the PIO-to-HSTX bus are those same outputs
+        // that would appear on the HSTX-capable pins if those pins' FUNCSELs
+        // were set to PIO instead of HSTX.
+        // For example, if HSTX is on GPIOs 12 through 19, then PIO outputs 12 through
+        // 19 are connected to the HSTX when coupled mode is engaged.
         ADD_BITFIELD_RW(COUPLED_MODE, 4, 1)
-        // Enable the command expander. When 0, raw FIFO data is passed directly to the output shift register. When 1, the command expander can perform simple operations such as run length decoding on data between the FIFO and the shift register. Do not change CXPD_EN whilst EN is set. It's safe to set CXPD_EN simultaneously with setting EN.
+        // Enable the command expander. When 0, raw FIFO data is passed directly to the
+        // output shift register. When 1, the command expander can perform simple operations
+        // such as run length decoding on data between the FIFO and the shift register.
+        // Do not change CXPD_EN whilst EN is set. It's safe to set CXPD_EN simultaneously
+        // with setting EN.
         ADD_BITFIELD_RW(EXPAND_EN, 1, 1)
-        // When EN is 1, the HSTX will shift out data as it appears in the FIFO. As long as there is data, the HSTX shift register will shift once per clock cycle, and the frequency of popping from the FIFO is determined by the ratio of SHIFT and SHIFT_THRESH. When EN is 0, the FIFO is not popped. The shift counter and clock generator are also reset to their initial state for as long as EN is low. Note the initial phase of the clock generator can be configured by the CLKPHASE field. Once the HSTX is enabled again, and data is pushed to the FIFO, the generated clock's first rising edge will be one half-period after the first data is launched.
+        // When EN is 1, the HSTX will shift out data as it appears in the FIFO. As long
+        // as there is data, the HSTX shift register will shift once per clock cycle, and
+        // the frequency of popping from the FIFO is determined by the ratio of SHIFT and
+        // SHIFT_THRESH.
+        // When EN is 0, the FIFO is not popped. The shift counter and clock generator
+        // are also reset to their initial state for as long as EN is low. Note the initial
+        // phase of the clock generator can be configured by the CLKPHASE field.
+        // Once the HSTX is enabled again, and data is pushed to the FIFO, the generated
+        // clock's first rising edge will be one half-period after the first data is
+        // launched.
         ADD_BITFIELD_RW(EN, 0, 1)
     END_TYPE()
 
     // Data control register for output bit 0
     // Reset value: 0x00000000
     BEGIN_TYPE(BIT_t, uint32_t)
-        // Connect this output to the generated clock, rather than the data shift register. SEL_P and SEL_N are ignored if this bit is set, but INV can still be set to generate an antiphase clock.
+        // Connect this output to the generated clock, rather than the data shift register.
+        // SEL_P and SEL_N are ignored if this bit is set, but INV can still be set to
+        // generate an antiphase clock.
         ADD_BITFIELD_RW(CLK, 17, 1)
         // Invert this data output (logical NOT)
         ADD_BITFIELD_RW(INV, 16, 1)
@@ -5086,28 +5253,38 @@ namespace _HSTX_CTRL_  {
     // Configure the optional shifter inside the command expander
     // Reset value: 0x01000100
     BEGIN_TYPE(EXPAND_SHIFT_t, uint32_t)
-        // Number of times to consume from the shift register before refilling it from the FIFO, when the current command is an encoded data command (e.g. TMDS). A register value of 0 means shift 32 times.
+        // Number of times to consume from the shift register before refilling it from
+        // the FIFO, when the current command is an encoded data command (e.g. TMDS).
+        // A register value of 0 means shift 32 times.
         ADD_BITFIELD_RW(ENC_N_SHIFTS, 24, 5)
-        // How many bits to right-rotate the shift register by each time data is pushed to the output shifter, when the current command is an encoded data command (e.g. TMDS).
+        // How many bits to right-rotate the shift register by each time data is pushed
+        // to the output shifter, when the current command is an encoded data command
+        // (e.g. TMDS).
         ADD_BITFIELD_RW(ENC_SHIFT, 16, 5)
-        // Number of times to consume from the shift register before refilling it from the FIFO, when the current command is a raw data command. A register value of 0 means shift 32 times.
+        // Number of times to consume from the shift register before refilling it from
+        // the FIFO, when the current command is a raw data command. A register value of
+        // 0 means shift 32 times.
         ADD_BITFIELD_RW(RAW_N_SHIFTS, 8, 5)
-        // How many bits to right-rotate the shift register by each time data is pushed to the output shifter, when the current command is a raw data command.
+        // How many bits to right-rotate the shift register by each time data is pushed
+        // to the output shifter, when the current command is a raw data command.
         ADD_BITFIELD_RW(RAW_SHIFT, 0, 5)
     END_TYPE()
 
     // Configure the optional TMDS encoder inside the command expander
     // Reset value: 0x00000000
     BEGIN_TYPE(EXPAND_TMDS_t, uint32_t)
-        // Number of valid data bits for the lane 2 TMDS encoder, starting from bit 7 of the rotated data. Field values of 0 -> 7 encode counts of 1 -> 8 bits.
+        // Number of valid data bits for the lane 2 TMDS encoder, starting from bit 7 of
+        // the rotated data. Field values of 0 -> 7 encode counts of 1 -> 8 bits.
         ADD_BITFIELD_RW(L2_NBITS, 21, 3)
         // Right-rotate applied to the current shifter data before the lane 2 TMDS encoder.
         ADD_BITFIELD_RW(L2_ROT, 16, 5)
-        // Number of valid data bits for the lane 1 TMDS encoder, starting from bit 7 of the rotated data. Field values of 0 -> 7 encode counts of 1 -> 8 bits.
+        // Number of valid data bits for the lane 1 TMDS encoder, starting from bit 7 of
+        // the rotated data. Field values of 0 -> 7 encode counts of 1 -> 8 bits.
         ADD_BITFIELD_RW(L1_NBITS, 13, 3)
         // Right-rotate applied to the current shifter data before the lane 1 TMDS encoder.
         ADD_BITFIELD_RW(L1_ROT, 8, 5)
-        // Number of valid data bits for the lane 0 TMDS encoder, starting from bit 7 of the rotated data. Field values of 0 -> 7 encode counts of 1 -> 8 bits.
+        // Number of valid data bits for the lane 0 TMDS encoder, starting from bit 7 of
+        // the rotated data. Field values of 0 -> 7 encode counts of 1 -> 8 bits.
         ADD_BITFIELD_RW(L0_NBITS, 5, 3)
         // Right-rotate applied to the current shifter data before the lane 0 TMDS encoder.
         ADD_BITFIELD_RW(L0_ROT, 0, 5)
@@ -5953,18 +6130,18 @@ namespace _PPB_  {
     // Controls and provides status information for NMI, PendSV, SysTick and interrupts
     // Reset value: 0x00000000
     BEGIN_TYPE(ICSR_t, uint32_t)
-        // Indicates whether the NMI exception is pending
+        // Indicates whether the NMI exception is pending or set this exception
         ADD_BITFIELD_RW(PENDNMISET, 31, 1)
         // Allows the NMI exception pend state to be cleared
-        ADD_BITFIELD_RW(PENDNMICLR, 30, 1)
-        // Indicates whether the PendSV `FTSSS exception is pending
+        ADD_BITFIELD_WO(PENDNMICLR, 30, 1)
+        // Indicates whether the PendSV exception is pending or set this exception
         ADD_BITFIELD_RW(PENDSVSET, 28, 1)
-        // Allows the PendSV exception pend state to be cleared `FTSSS
-        ADD_BITFIELD_RW(PENDSVCLR, 27, 1)
-        // Indicates whether the SysTick `FTSSS exception is pending
+        // Allows the PendSV exception pend state to be cleared
+        ADD_BITFIELD_WO(PENDSVCLR, 27, 1)
+        // Indicates whether the SysTick exception is pending or set this exception
         ADD_BITFIELD_RW(PENDSTSET, 26, 1)
-        // Allows the SysTick exception pend state to be cleared `FTSSS
-        ADD_BITFIELD_RW(PENDSTCLR, 25, 1)
+        // Allows the SysTick exception pend state to be cleared
+        ADD_BITFIELD_WO(PENDSTCLR, 25, 1)
         // Controls whether in a single SysTick implementation, the SysTick is Secure or Non-secure
         ADD_BITFIELD_RW(STTNS, 24, 1)
         // Indicates whether a pending exception will be serviced on exit from debug halt state
@@ -16926,1029 +17103,24 @@ namespace _GLITCH_DETECTOR_  {
 // SNPS OTP control IF (SBPI and RPi wrapper control)
 namespace _OTP_  {
 
-    // Software lock register for page 0. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
+    // Software lock register for page n [0..63].
+    // Locks are initialised from the OTP lock pages at reset.
+    // This register can be written to further advance the lock state of each page
+    // (until next reset), and read to check the current lock state of a page.
     // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK0_t, uint32_t)
+    BEGIN_TYPE(SW_LOCK_t, uint32_t)
         // Non-secure lock status. Writes are OR'd with the current value.
         ADD_BITFIELD_RW(NSEC, 2, 2)
         // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
         ADD_BITFIELD_RW(SEC, 0, 2)
     END_TYPE()
 
-    static const uint32_t SW_LOCK0_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK0_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK0_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK0_SEC__read_write = 0;
-    static const uint32_t SW_LOCK0_SEC__read_only = 1;
-    static const uint32_t SW_LOCK0_SEC__inaccessible = 3;
-
-    // Software lock register for page 1. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK1_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK1_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK1_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK1_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK1_SEC__read_write = 0;
-    static const uint32_t SW_LOCK1_SEC__read_only = 1;
-    static const uint32_t SW_LOCK1_SEC__inaccessible = 3;
-
-    // Software lock register for page 2. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK2_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK2_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK2_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK2_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK2_SEC__read_write = 0;
-    static const uint32_t SW_LOCK2_SEC__read_only = 1;
-    static const uint32_t SW_LOCK2_SEC__inaccessible = 3;
-
-    // Software lock register for page 3. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK3_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK3_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK3_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK3_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK3_SEC__read_write = 0;
-    static const uint32_t SW_LOCK3_SEC__read_only = 1;
-    static const uint32_t SW_LOCK3_SEC__inaccessible = 3;
-
-    // Software lock register for page 4. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK4_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK4_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK4_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK4_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK4_SEC__read_write = 0;
-    static const uint32_t SW_LOCK4_SEC__read_only = 1;
-    static const uint32_t SW_LOCK4_SEC__inaccessible = 3;
-
-    // Software lock register for page 5. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK5_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK5_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK5_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK5_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK5_SEC__read_write = 0;
-    static const uint32_t SW_LOCK5_SEC__read_only = 1;
-    static const uint32_t SW_LOCK5_SEC__inaccessible = 3;
-
-    // Software lock register for page 6. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK6_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK6_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK6_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK6_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK6_SEC__read_write = 0;
-    static const uint32_t SW_LOCK6_SEC__read_only = 1;
-    static const uint32_t SW_LOCK6_SEC__inaccessible = 3;
-
-    // Software lock register for page 7. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK7_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK7_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK7_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK7_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK7_SEC__read_write = 0;
-    static const uint32_t SW_LOCK7_SEC__read_only = 1;
-    static const uint32_t SW_LOCK7_SEC__inaccessible = 3;
-
-    // Software lock register for page 8. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK8_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK8_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK8_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK8_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK8_SEC__read_write = 0;
-    static const uint32_t SW_LOCK8_SEC__read_only = 1;
-    static const uint32_t SW_LOCK8_SEC__inaccessible = 3;
-
-    // Software lock register for page 9. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK9_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK9_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK9_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK9_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK9_SEC__read_write = 0;
-    static const uint32_t SW_LOCK9_SEC__read_only = 1;
-    static const uint32_t SW_LOCK9_SEC__inaccessible = 3;
-
-    // Software lock register for page 10. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK10_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK10_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK10_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK10_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK10_SEC__read_write = 0;
-    static const uint32_t SW_LOCK10_SEC__read_only = 1;
-    static const uint32_t SW_LOCK10_SEC__inaccessible = 3;
-
-    // Software lock register for page 11. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK11_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK11_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK11_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK11_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK11_SEC__read_write = 0;
-    static const uint32_t SW_LOCK11_SEC__read_only = 1;
-    static const uint32_t SW_LOCK11_SEC__inaccessible = 3;
-
-    // Software lock register for page 12. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK12_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK12_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK12_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK12_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK12_SEC__read_write = 0;
-    static const uint32_t SW_LOCK12_SEC__read_only = 1;
-    static const uint32_t SW_LOCK12_SEC__inaccessible = 3;
-
-    // Software lock register for page 13. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK13_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK13_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK13_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK13_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK13_SEC__read_write = 0;
-    static const uint32_t SW_LOCK13_SEC__read_only = 1;
-    static const uint32_t SW_LOCK13_SEC__inaccessible = 3;
-
-    // Software lock register for page 14. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK14_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK14_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK14_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK14_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK14_SEC__read_write = 0;
-    static const uint32_t SW_LOCK14_SEC__read_only = 1;
-    static const uint32_t SW_LOCK14_SEC__inaccessible = 3;
-
-    // Software lock register for page 15. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK15_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK15_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK15_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK15_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK15_SEC__read_write = 0;
-    static const uint32_t SW_LOCK15_SEC__read_only = 1;
-    static const uint32_t SW_LOCK15_SEC__inaccessible = 3;
-
-    // Software lock register for page 16. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK16_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK16_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK16_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK16_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK16_SEC__read_write = 0;
-    static const uint32_t SW_LOCK16_SEC__read_only = 1;
-    static const uint32_t SW_LOCK16_SEC__inaccessible = 3;
-
-    // Software lock register for page 17. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK17_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK17_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK17_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK17_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK17_SEC__read_write = 0;
-    static const uint32_t SW_LOCK17_SEC__read_only = 1;
-    static const uint32_t SW_LOCK17_SEC__inaccessible = 3;
-
-    // Software lock register for page 18. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK18_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK18_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK18_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK18_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK18_SEC__read_write = 0;
-    static const uint32_t SW_LOCK18_SEC__read_only = 1;
-    static const uint32_t SW_LOCK18_SEC__inaccessible = 3;
-
-    // Software lock register for page 19. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK19_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK19_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK19_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK19_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK19_SEC__read_write = 0;
-    static const uint32_t SW_LOCK19_SEC__read_only = 1;
-    static const uint32_t SW_LOCK19_SEC__inaccessible = 3;
-
-    // Software lock register for page 20. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK20_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK20_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK20_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK20_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK20_SEC__read_write = 0;
-    static const uint32_t SW_LOCK20_SEC__read_only = 1;
-    static const uint32_t SW_LOCK20_SEC__inaccessible = 3;
-
-    // Software lock register for page 21. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK21_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK21_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK21_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK21_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK21_SEC__read_write = 0;
-    static const uint32_t SW_LOCK21_SEC__read_only = 1;
-    static const uint32_t SW_LOCK21_SEC__inaccessible = 3;
-
-    // Software lock register for page 22. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK22_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK22_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK22_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK22_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK22_SEC__read_write = 0;
-    static const uint32_t SW_LOCK22_SEC__read_only = 1;
-    static const uint32_t SW_LOCK22_SEC__inaccessible = 3;
-
-    // Software lock register for page 23. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK23_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK23_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK23_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK23_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK23_SEC__read_write = 0;
-    static const uint32_t SW_LOCK23_SEC__read_only = 1;
-    static const uint32_t SW_LOCK23_SEC__inaccessible = 3;
-
-    // Software lock register for page 24. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK24_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK24_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK24_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK24_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK24_SEC__read_write = 0;
-    static const uint32_t SW_LOCK24_SEC__read_only = 1;
-    static const uint32_t SW_LOCK24_SEC__inaccessible = 3;
-
-    // Software lock register for page 25. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK25_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK25_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK25_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK25_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK25_SEC__read_write = 0;
-    static const uint32_t SW_LOCK25_SEC__read_only = 1;
-    static const uint32_t SW_LOCK25_SEC__inaccessible = 3;
-
-    // Software lock register for page 26. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK26_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK26_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK26_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK26_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK26_SEC__read_write = 0;
-    static const uint32_t SW_LOCK26_SEC__read_only = 1;
-    static const uint32_t SW_LOCK26_SEC__inaccessible = 3;
-
-    // Software lock register for page 27. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK27_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK27_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK27_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK27_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK27_SEC__read_write = 0;
-    static const uint32_t SW_LOCK27_SEC__read_only = 1;
-    static const uint32_t SW_LOCK27_SEC__inaccessible = 3;
-
-    // Software lock register for page 28. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK28_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK28_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK28_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK28_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK28_SEC__read_write = 0;
-    static const uint32_t SW_LOCK28_SEC__read_only = 1;
-    static const uint32_t SW_LOCK28_SEC__inaccessible = 3;
-
-    // Software lock register for page 29. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK29_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK29_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK29_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK29_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK29_SEC__read_write = 0;
-    static const uint32_t SW_LOCK29_SEC__read_only = 1;
-    static const uint32_t SW_LOCK29_SEC__inaccessible = 3;
-
-    // Software lock register for page 30. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK30_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK30_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK30_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK30_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK30_SEC__read_write = 0;
-    static const uint32_t SW_LOCK30_SEC__read_only = 1;
-    static const uint32_t SW_LOCK30_SEC__inaccessible = 3;
-
-    // Software lock register for page 31. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK31_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK31_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK31_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK31_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK31_SEC__read_write = 0;
-    static const uint32_t SW_LOCK31_SEC__read_only = 1;
-    static const uint32_t SW_LOCK31_SEC__inaccessible = 3;
-
-    // Software lock register for page 32. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK32_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK32_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK32_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK32_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK32_SEC__read_write = 0;
-    static const uint32_t SW_LOCK32_SEC__read_only = 1;
-    static const uint32_t SW_LOCK32_SEC__inaccessible = 3;
-
-    // Software lock register for page 33. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK33_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK33_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK33_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK33_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK33_SEC__read_write = 0;
-    static const uint32_t SW_LOCK33_SEC__read_only = 1;
-    static const uint32_t SW_LOCK33_SEC__inaccessible = 3;
-
-    // Software lock register for page 34. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK34_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK34_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK34_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK34_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK34_SEC__read_write = 0;
-    static const uint32_t SW_LOCK34_SEC__read_only = 1;
-    static const uint32_t SW_LOCK34_SEC__inaccessible = 3;
-
-    // Software lock register for page 35. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK35_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK35_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK35_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK35_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK35_SEC__read_write = 0;
-    static const uint32_t SW_LOCK35_SEC__read_only = 1;
-    static const uint32_t SW_LOCK35_SEC__inaccessible = 3;
-
-    // Software lock register for page 36. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK36_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK36_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK36_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK36_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK36_SEC__read_write = 0;
-    static const uint32_t SW_LOCK36_SEC__read_only = 1;
-    static const uint32_t SW_LOCK36_SEC__inaccessible = 3;
-
-    // Software lock register for page 37. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK37_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK37_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK37_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK37_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK37_SEC__read_write = 0;
-    static const uint32_t SW_LOCK37_SEC__read_only = 1;
-    static const uint32_t SW_LOCK37_SEC__inaccessible = 3;
-
-    // Software lock register for page 38. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK38_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK38_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK38_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK38_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK38_SEC__read_write = 0;
-    static const uint32_t SW_LOCK38_SEC__read_only = 1;
-    static const uint32_t SW_LOCK38_SEC__inaccessible = 3;
-
-    // Software lock register for page 39. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK39_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK39_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK39_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK39_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK39_SEC__read_write = 0;
-    static const uint32_t SW_LOCK39_SEC__read_only = 1;
-    static const uint32_t SW_LOCK39_SEC__inaccessible = 3;
-
-    // Software lock register for page 40. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK40_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK40_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK40_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK40_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK40_SEC__read_write = 0;
-    static const uint32_t SW_LOCK40_SEC__read_only = 1;
-    static const uint32_t SW_LOCK40_SEC__inaccessible = 3;
-
-    // Software lock register for page 41. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK41_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK41_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK41_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK41_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK41_SEC__read_write = 0;
-    static const uint32_t SW_LOCK41_SEC__read_only = 1;
-    static const uint32_t SW_LOCK41_SEC__inaccessible = 3;
-
-    // Software lock register for page 42. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK42_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK42_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK42_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK42_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK42_SEC__read_write = 0;
-    static const uint32_t SW_LOCK42_SEC__read_only = 1;
-    static const uint32_t SW_LOCK42_SEC__inaccessible = 3;
-
-    // Software lock register for page 43. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK43_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK43_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK43_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK43_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK43_SEC__read_write = 0;
-    static const uint32_t SW_LOCK43_SEC__read_only = 1;
-    static const uint32_t SW_LOCK43_SEC__inaccessible = 3;
-
-    // Software lock register for page 44. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK44_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK44_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK44_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK44_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK44_SEC__read_write = 0;
-    static const uint32_t SW_LOCK44_SEC__read_only = 1;
-    static const uint32_t SW_LOCK44_SEC__inaccessible = 3;
-
-    // Software lock register for page 45. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK45_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK45_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK45_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK45_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK45_SEC__read_write = 0;
-    static const uint32_t SW_LOCK45_SEC__read_only = 1;
-    static const uint32_t SW_LOCK45_SEC__inaccessible = 3;
-
-    // Software lock register for page 46. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK46_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK46_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK46_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK46_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK46_SEC__read_write = 0;
-    static const uint32_t SW_LOCK46_SEC__read_only = 1;
-    static const uint32_t SW_LOCK46_SEC__inaccessible = 3;
-
-    // Software lock register for page 47. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK47_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK47_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK47_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK47_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK47_SEC__read_write = 0;
-    static const uint32_t SW_LOCK47_SEC__read_only = 1;
-    static const uint32_t SW_LOCK47_SEC__inaccessible = 3;
-
-    // Software lock register for page 48. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK48_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK48_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK48_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK48_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK48_SEC__read_write = 0;
-    static const uint32_t SW_LOCK48_SEC__read_only = 1;
-    static const uint32_t SW_LOCK48_SEC__inaccessible = 3;
-
-    // Software lock register for page 49. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK49_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK49_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK49_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK49_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK49_SEC__read_write = 0;
-    static const uint32_t SW_LOCK49_SEC__read_only = 1;
-    static const uint32_t SW_LOCK49_SEC__inaccessible = 3;
-
-    // Software lock register for page 50. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK50_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK50_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK50_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK50_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK50_SEC__read_write = 0;
-    static const uint32_t SW_LOCK50_SEC__read_only = 1;
-    static const uint32_t SW_LOCK50_SEC__inaccessible = 3;
-
-    // Software lock register for page 51. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK51_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK51_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK51_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK51_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK51_SEC__read_write = 0;
-    static const uint32_t SW_LOCK51_SEC__read_only = 1;
-    static const uint32_t SW_LOCK51_SEC__inaccessible = 3;
-
-    // Software lock register for page 52. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK52_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK52_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK52_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK52_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK52_SEC__read_write = 0;
-    static const uint32_t SW_LOCK52_SEC__read_only = 1;
-    static const uint32_t SW_LOCK52_SEC__inaccessible = 3;
-
-    // Software lock register for page 53. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK53_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK53_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK53_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK53_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK53_SEC__read_write = 0;
-    static const uint32_t SW_LOCK53_SEC__read_only = 1;
-    static const uint32_t SW_LOCK53_SEC__inaccessible = 3;
-
-    // Software lock register for page 54. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK54_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK54_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK54_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK54_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK54_SEC__read_write = 0;
-    static const uint32_t SW_LOCK54_SEC__read_only = 1;
-    static const uint32_t SW_LOCK54_SEC__inaccessible = 3;
-
-    // Software lock register for page 55. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK55_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK55_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK55_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK55_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK55_SEC__read_write = 0;
-    static const uint32_t SW_LOCK55_SEC__read_only = 1;
-    static const uint32_t SW_LOCK55_SEC__inaccessible = 3;
-
-    // Software lock register for page 56. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK56_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK56_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK56_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK56_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK56_SEC__read_write = 0;
-    static const uint32_t SW_LOCK56_SEC__read_only = 1;
-    static const uint32_t SW_LOCK56_SEC__inaccessible = 3;
-
-    // Software lock register for page 57. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK57_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK57_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK57_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK57_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK57_SEC__read_write = 0;
-    static const uint32_t SW_LOCK57_SEC__read_only = 1;
-    static const uint32_t SW_LOCK57_SEC__inaccessible = 3;
-
-    // Software lock register for page 58. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK58_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK58_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK58_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK58_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK58_SEC__read_write = 0;
-    static const uint32_t SW_LOCK58_SEC__read_only = 1;
-    static const uint32_t SW_LOCK58_SEC__inaccessible = 3;
-
-    // Software lock register for page 59. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK59_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK59_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK59_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK59_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK59_SEC__read_write = 0;
-    static const uint32_t SW_LOCK59_SEC__read_only = 1;
-    static const uint32_t SW_LOCK59_SEC__inaccessible = 3;
-
-    // Software lock register for page 60. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK60_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK60_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK60_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK60_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK60_SEC__read_write = 0;
-    static const uint32_t SW_LOCK60_SEC__read_only = 1;
-    static const uint32_t SW_LOCK60_SEC__inaccessible = 3;
-
-    // Software lock register for page 61. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK61_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK61_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK61_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK61_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK61_SEC__read_write = 0;
-    static const uint32_t SW_LOCK61_SEC__read_only = 1;
-    static const uint32_t SW_LOCK61_SEC__inaccessible = 3;
-
-    // Software lock register for page 62. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK62_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK62_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK62_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK62_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK62_SEC__read_write = 0;
-    static const uint32_t SW_LOCK62_SEC__read_only = 1;
-    static const uint32_t SW_LOCK62_SEC__inaccessible = 3;
-
-    // Software lock register for page 63. Locks are initialised from the OTP lock pages at reset. This register can be written to further advance the lock state of each page (until next reset), and read to check the current lock state of a page.
-    // Reset value: 0x00000000
-    BEGIN_TYPE(SW_LOCK63_t, uint32_t)
-        // Non-secure lock status. Writes are OR'd with the current value.
-        ADD_BITFIELD_RW(NSEC, 2, 2)
-        // Secure lock status. Writes are OR'd with the current value. This field is read-only to Non-secure code.
-        ADD_BITFIELD_RW(SEC, 0, 2)
-    END_TYPE()
-
-    static const uint32_t SW_LOCK63_NSEC__read_write = 0;
-    static const uint32_t SW_LOCK63_NSEC__read_only = 1;
-    static const uint32_t SW_LOCK63_NSEC__inaccessible = 3;
-    static const uint32_t SW_LOCK63_SEC__read_write = 0;
-    static const uint32_t SW_LOCK63_SEC__read_only = 1;
-    static const uint32_t SW_LOCK63_SEC__inaccessible = 3;
+    static const uint32_t SW_LOCK_NSEC__read_write = 0;
+    static const uint32_t SW_LOCK_NSEC__read_only = 1;
+    static const uint32_t SW_LOCK_NSEC__inaccessible = 3;
+    static const uint32_t SW_LOCK_SEC__read_write = 0;
+    static const uint32_t SW_LOCK_SEC__read_only = 1;
+    static const uint32_t SW_LOCK_SEC__inaccessible = 3;
 
     // Dispatch instructions to the SBPI interface, used for programming the OTP fuses.
     // Reset value: 0x00000000
@@ -18230,70 +17402,7 @@ namespace _OTP_  {
     END_TYPE()
 
     struct OTP_t {
-        SW_LOCK0_t                    SW_LOCK0;
-        SW_LOCK1_t                    SW_LOCK1;
-        SW_LOCK2_t                    SW_LOCK2;
-        SW_LOCK3_t                    SW_LOCK3;
-        SW_LOCK4_t                    SW_LOCK4;
-        SW_LOCK5_t                    SW_LOCK5;
-        SW_LOCK6_t                    SW_LOCK6;
-        SW_LOCK7_t                    SW_LOCK7;
-        SW_LOCK8_t                    SW_LOCK8;
-        SW_LOCK9_t                    SW_LOCK9;
-        SW_LOCK10_t                   SW_LOCK10;
-        SW_LOCK11_t                   SW_LOCK11;
-        SW_LOCK12_t                   SW_LOCK12;
-        SW_LOCK13_t                   SW_LOCK13;
-        SW_LOCK14_t                   SW_LOCK14;
-        SW_LOCK15_t                   SW_LOCK15;
-        SW_LOCK16_t                   SW_LOCK16;
-        SW_LOCK17_t                   SW_LOCK17;
-        SW_LOCK18_t                   SW_LOCK18;
-        SW_LOCK19_t                   SW_LOCK19;
-        SW_LOCK20_t                   SW_LOCK20;
-        SW_LOCK21_t                   SW_LOCK21;
-        SW_LOCK22_t                   SW_LOCK22;
-        SW_LOCK23_t                   SW_LOCK23;
-        SW_LOCK24_t                   SW_LOCK24;
-        SW_LOCK25_t                   SW_LOCK25;
-        SW_LOCK26_t                   SW_LOCK26;
-        SW_LOCK27_t                   SW_LOCK27;
-        SW_LOCK28_t                   SW_LOCK28;
-        SW_LOCK29_t                   SW_LOCK29;
-        SW_LOCK30_t                   SW_LOCK30;
-        SW_LOCK31_t                   SW_LOCK31;
-        SW_LOCK32_t                   SW_LOCK32;
-        SW_LOCK33_t                   SW_LOCK33;
-        SW_LOCK34_t                   SW_LOCK34;
-        SW_LOCK35_t                   SW_LOCK35;
-        SW_LOCK36_t                   SW_LOCK36;
-        SW_LOCK37_t                   SW_LOCK37;
-        SW_LOCK38_t                   SW_LOCK38;
-        SW_LOCK39_t                   SW_LOCK39;
-        SW_LOCK40_t                   SW_LOCK40;
-        SW_LOCK41_t                   SW_LOCK41;
-        SW_LOCK42_t                   SW_LOCK42;
-        SW_LOCK43_t                   SW_LOCK43;
-        SW_LOCK44_t                   SW_LOCK44;
-        SW_LOCK45_t                   SW_LOCK45;
-        SW_LOCK46_t                   SW_LOCK46;
-        SW_LOCK47_t                   SW_LOCK47;
-        SW_LOCK48_t                   SW_LOCK48;
-        SW_LOCK49_t                   SW_LOCK49;
-        SW_LOCK50_t                   SW_LOCK50;
-        SW_LOCK51_t                   SW_LOCK51;
-        SW_LOCK52_t                   SW_LOCK52;
-        SW_LOCK53_t                   SW_LOCK53;
-        SW_LOCK54_t                   SW_LOCK54;
-        SW_LOCK55_t                   SW_LOCK55;
-        SW_LOCK56_t                   SW_LOCK56;
-        SW_LOCK57_t                   SW_LOCK57;
-        SW_LOCK58_t                   SW_LOCK58;
-        SW_LOCK59_t                   SW_LOCK59;
-        SW_LOCK60_t                   SW_LOCK60;
-        SW_LOCK61_t                   SW_LOCK61;
-        SW_LOCK62_t                   SW_LOCK62;
-        SW_LOCK63_t                   SW_LOCK63;
+        SW_LOCK_t                     SW_LOCK[64];
         SBPI_INSTR_t                  SBPI_INSTR;
         SBPI_WDATA_0_t                SBPI_WDATA_0;
         SBPI_WDATA_1_t                SBPI_WDATA_1;
@@ -19063,16 +18172,44 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(BOOT_FLAGS0_R2, 0, 24)
     END_TYPE()
 
-    // Disable/Enable boot paths/features in the RP2350 mask ROM. Disables always supersede enables. Enables are provided where there are other configurations in OTP that must be valid. (RBIT-3)
+    // Disable/Enable boot paths/features in the RP2350 mask ROM. Disables always supersede
+    // enables. Enables are provided where there are other configurations in OTP that must
+    // be valid. (RBIT-3)
     // Reset value: 0x00000000
     BEGIN_TYPE(BOOT_FLAGS1_t, uint32_t)
-        // Enable entering BOOTSEL mode via double-tap of the RUN/RSTn pin. Adds a significant delay to boot time, as configured by DOUBLE_TAP_DELAY. This functions by waiting at startup (i.e. following a reset) to see if a second reset is applied soon afterward. The second reset is detected by the bootrom with help of the POWMAN_CHIP_RESET_DOUBLE_TAP flag, which is not reset by the external reset pin, and the bootrom enters BOOTSEL mode (NSBOOT) to await further instruction over USB or UART.
+        // Enable entering BOOTSEL mode via double-tap of the RUN/RSTn pin. Adds a
+        // significant delay to boot time, as configured by DOUBLE_TAP_DELAY.
+        // This functions by waiting at startup (i.e. following a reset) to see if a
+        // second reset is applied soon afterward. The second reset is detected by the
+        // bootrom with help of the POWMAN_CHIP_RESET_DOUBLE_TAP flag, which is not
+        // reset by the external reset pin, and the bootrom enters BOOTSEL mode
+        // (NSBOOT) to await further instruction over USB or UART.
         ADD_BITFIELD_RO(DOUBLE_TAP, 19, 1)
-        // Adjust how long to wait for a second reset when double tap BOOTSEL mode is enabled via DOUBLE_TAP. The minimum is 50 milliseconds, and each unit of this field adds an additional 50 milliseconds. For example, settings this field to its maximum value of 7 will cause the chip to wait for 400 milliseconds at boot to check for a second reset which requests entry to BOOTSEL mode. 200 milliseconds (DOUBLE_TAP_DELAY=3) is a good intermediate value.
+        // Adjust how long to wait for a second reset when double tap BOOTSEL mode is enabled
+        // via DOUBLE_TAP. The minimum is 50 milliseconds, and each unit of this field adds an
+        // additional 50 milliseconds. For example, settings this field to its maximum value of
+        // 7 will cause the chip to wait for 400 milliseconds at boot to check for a second reset
+        // which requests entry to BOOTSEL mode.
+        // 200 milliseconds (DOUBLE_TAP_DELAY=3) is a good intermediate value.
         ADD_BITFIELD_RO(DOUBLE_TAP_DELAY, 16, 3)
-        // Mark a boot key as invalid, or prevent it from ever becoming valid. The bootrom will ignore any boot key marked as invalid during secure boot signature checks. Each bit in this field corresponds to one of the four 256-bit boot key hashes that may be stored in page 2 of the OTP. When provisioning boot keys, it's recommended to mark any boot key slots you don't intend to use as KEY_INVALID, so that spurious keys can not be installed at a later time.
+        // Mark a boot key as invalid, or prevent it from ever becoming valid. The bootrom
+        // will ignore any boot key marked as invalid during secure boot signature checks.
+        // Each bit in this field corresponds to one of the four 256-bit boot key hashes that
+        // may be stored in page 2 of the OTP. When provisioning boot keys, it's recommended
+        // to mark any boot key slots you don't intend to use as KEY_INVALID, so that
+        // spurious keys can not be installed at a later time.
         ADD_BITFIELD_RO(KEY_INVALID, 8, 4)
-        // Mark each of the possible boot keys as valid. The bootrom will check signatures against all valid boot keys, and ignore invalid boot keys. Each bit in this field corresponds to one of the four 256-bit boot key hashes that may be stored in page 2 of the OTP. A KEY_VALID bit is ignored if the corresponding KEY_INVALID bit is set. Boot keys are considered valid only when KEY_VALID is set and KEY_INVALID is clear. Do not mark a boot key as KEY_VALID if it does not contain a valid SHA-256 hash of your secp256k1 public key. Verify keys after programming, before setting the KEY_VALID bits -- a boot key with uncorrectable ECC faults will render your device unbootable if secure boot is enabled. Do not enable secure boot without first installing a valid key. This will render your device unbootable.
+        // Mark each of the possible boot keys as valid. The bootrom will check signatures
+        // against all valid boot keys, and ignore invalid boot keys. Each bit in this field
+        // corresponds to one of the four 256-bit boot key hashes that may be stored in page 2
+        // of the OTP. A KEY_VALID bit is ignored if the corresponding KEY_INVALID bit is set.
+        // Boot keys are considered valid only when KEY_VALID is set and KEY_INVALID is clear.
+        // Do not mark a boot key as KEY_VALID if it does not contain a valid SHA-256 hash of
+        // your secp256k1 public key. Verify keys after programming, before setting the KEY_VALID
+        // bits -- a boot key with uncorrectable ECC faults will render your device unbootable if
+        // secure boot is enabled.
+        // Do not enable secure boot without first installing a valid key. This will render your
+        // device unbootable.
         ADD_BITFIELD_RO(KEY_VALID, 0, 4)
     END_TYPE()
 
@@ -19116,16 +18253,37 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(DEFAULT_BOOT_VERSION1_R2, 0, 24)
     END_TYPE()
 
-    // Stores information about external flash device(s). (ECC) Assumed to be valid if BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is set.
+    // Stores information about external flash device(s). (ECC)
+    // Assumed to be valid if BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is set.
     // Reset value: 0x00000000
     BEGIN_TYPE(FLASH_DEVINFO_t, uint32_t)
-        // The size of the flash/PSRAM device on chip select 1 (addressable at 0x11000000 through 0x11ffffff). A value of zero is decoded as a size of zero (no device). Nonzero values are decoded as 4kiB << CS1_SIZE. For example, four megabytes is encoded with a CS1_SIZE value of 10, and 16 megabytes is encoded with a CS1_SIZE value of 12. When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, a default of zero is used.
+        // The size of the flash/PSRAM device on chip select 1 (addressable at 0x11000000
+        // through 0x11ffffff). A value of zero is decoded as a size of zero (no device).
+        // Nonzero values are decoded as 4kiB << CS1_SIZE. For example, four megabytes
+        // is encoded with a CS1_SIZE value of 10, and 16 megabytes is encoded with a
+        // CS1_SIZE value of 12.
+        // When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, a default of zero is used.
         ADD_BITFIELD_RO(CS1_SIZE, 12, 4)
-        // The size of the flash/PSRAM device on chip select 0 (addressable at 0x10000000 through 0x10ffffff). A value of zero is decoded as a size of zero (no device). Nonzero values are decoded as 4kiB << CS0_SIZE. For example, four megabytes is encoded with a CS0_SIZE value of 10, and 16 megabytes is encoded with a CS0_SIZE value of 12. When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, a default of 12 (16 MiB) is used.
+        // The size of the flash/PSRAM device on chip select 0 (addressable at 0x10000000 through
+        // 0x10ffffff). A value of zero is decoded as a size of zero (no device). Nonzero values
+        // are decoded as 4kiB << CS0_SIZE. For example, four megabytes is encoded with a
+        // CS0_SIZE value of 10, and 16 megabytes is encoded with a CS0_SIZE value of 12.
+        // When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, a default of 12 (16 MiB) is used.
         ADD_BITFIELD_RO(CS0_SIZE, 8, 4)
-        // If true, all attached devices are assumed to support (or ignore, in the case of PSRAM) a block erase command with a command prefix of D8h, an erase size of 64 kiB, and a 24-bit address. Almost all 25-series flash devices support this command. If set, the bootrom will use the D8h erase command where it is able, to accelerate bulk erase operations. This makes flash programming faster. When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, this field defaults to false.
+        // If true, all attached devices are assumed to support (or ignore, in the case of
+        // PSRAM) a block erase command with a command prefix of D8h, an erase size of 64 kiB,
+        // and a 24-bit address. Almost all 25-series flash devices support this command.
+        // If set, the bootrom will use the D8h erase command where it is able, to accelerate
+        // bulk erase operations. This makes flash programming faster.
+        // When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, this field defaults to false.
         ADD_BITFIELD_RO(D8H_ERASE_SUPPORTED, 7, 1)
-        // Indicate a GPIO number to be used for the secondary flash chip select (CS1), which selects the external QSPI device mapped at system addresses 0x11000000 through 0x11ffffff. There is no such configuration for CS0, as the primary chip select has a dedicated pin. On RP2350 the permissible GPIO numbers are 0, 8, 19 and 47. Ignored if CS1_size is zero. If CS1_SIZE is nonzero, the bootrom will automatically configure this GPIO as a second chip select upon entering the flash boot path, or entering any other path that may use the QSPI flash interface, such as BOOTSEL mode (nsboot).
+        // Indicate a GPIO number to be used for the secondary flash chip select (CS1), which
+        // selects the external QSPI device mapped at system addresses 0x11000000 through 0x11ffffff.
+        // There is no such configuration for CS0, as the primary chip select has a dedicated pin.
+        // On RP2350 the permissible GPIO numbers are 0, 8, 19 and 47.
+        // Ignored if CS1_size is zero. If CS1_SIZE is nonzero, the bootrom will automatically
+        // configure this GPIO as a second chip select upon entering the flash boot path, or entering
+        // any other path that may use the QSPI flash interface, such as BOOTSEL mode (nsboot).
         ADD_BITFIELD_RO(CS1_GPIO, 0, 6)
     END_TYPE()
 
@@ -19156,7 +18314,9 @@ namespace _OTP_DATA_RAW_  {
     static const uint32_t FLASH_DEVINFO_CS0_SIZE__8M = 11;
     static const uint32_t FLASH_DEVINFO_CS0_SIZE__16M = 12;
 
-    // Gap between partition table slot 0 and slot 1 at the start of flash (the default size is 4096 bytes) (ECC) Enabled by the OVERRIDE_FLASH_PARTITION_SLOT_SIZE bit in BOOT_FLAGS, the size is 4096 * (value + 1)
+    // Gap between partition table slot 0 and slot 1 at the start of flash (the default size is
+    // 4096 bytes) (ECC) Enabled by the OVERRIDE_FLASH_PARTITION_SLOT_SIZE bit in BOOT_FLAGS,
+    // the size is 4096 * (value + 1)
     BEGIN_TYPE(FLASH_PARTITION_SLOT_SIZE_t, uint32_t)
         ADD_BITFIELD_RO(FLASH_PARTITION_SLOT_SIZE, 0, 16)
     END_TYPE()
@@ -19170,7 +18330,20 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(PIN, 0, 6)
     END_TYPE()
 
-    // Optional PLL configuration for BOOTSEL mode. (ECC) This should be configured to produce an exact 48 MHz based on the crystal oscillator frequency. User mode software may also use this value to calculate the expected crystal frequency based on an assumed 48 MHz PLL output. If no configuration is given, the crystal is assumed to be 12 MHz. The PLL frequency can be calculated as: PLL out = (XOSC frequency / (REFDIV+1)) x FBDIV / (POSTDIV1 x POSTDIV2) Conversely the crystal frequency can be calculated as: XOSC frequency = 48 MHz x (REFDIV+1) x (POSTDIV1 x POSTDIV2) / FBDIV (Note the  +1 on REFDIV is because the value stored in this OTP location is the actual divisor value minus one.) Used if and only if ENABLE_BOOTSEL_NON_DEFAULT_PLL_XOSC_CFG is set in BOOT_FLAGS0. That bit should be set only after this row and BOOTSEL_XOSC_CFG are both correctly programmed.
+    // Optional PLL configuration for BOOTSEL mode. (ECC)
+    // This should be configured to produce an exact 48 MHz based on the crystal
+    // oscillator frequency. User mode software may also use this value to calculate
+    // the expected crystal frequency based on an assumed 48 MHz PLL output.
+    // If no configuration is given, the crystal is assumed to be 12 MHz.
+    // The PLL frequency can be calculated as:
+    // PLL out = (XOSC frequency / (REFDIV+1)) x FBDIV / (POSTDIV1 x POSTDIV2)
+    // Conversely the crystal frequency can be calculated as:
+    // XOSC frequency = 48 MHz x (REFDIV+1) x (POSTDIV1 x POSTDIV2) / FBDIV
+    // (Note the  +1 on REFDIV is because the value stored in this OTP location is
+    // the actual divisor value minus one.)
+    // Used if and only if ENABLE_BOOTSEL_NON_DEFAULT_PLL_XOSC_CFG is set in BOOT_FLAGS0.
+    // That bit should be set only after this row and BOOTSEL_XOSC_CFG are both correctly
+    // programmed.
     // Reset value: 0x00000000
     BEGIN_TYPE(BOOTSEL_PLL_CFG_t, uint32_t)
         // PLL reference divisor, minus one. Programming a value of 0 means a reference divisor of 1. Programming a value of 1 means a reference divisor of 2 (for exceptionally fast XIN inputs)
@@ -19183,7 +18356,11 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(FBDIV, 0, 9)
     END_TYPE()
 
-    // Non-default crystal oscillator configuration for the USB bootloader. (ECC) These values may also be used by user code configuring the crystal oscillator. Used if and only if ENABLE_BOOTSEL_NON_DEFAULT_PLL_XOSC_CFG is set in BOOT_FLAGS0. That bit should be set only after this row and BOOTSEL_PLL_CFG are both correctly programmed.
+    // Non-default crystal oscillator configuration for the USB bootloader. (ECC)
+    // These values may also be used by user code configuring the crystal oscillator.
+    // Used if and only if ENABLE_BOOTSEL_NON_DEFAULT_PLL_XOSC_CFG is set in BOOT_FLAGS0.
+    // That bit should be set only after this row and BOOTSEL_PLL_CFG are both correctly
+    // programmed.
     // Reset value: 0x00000000
     BEGIN_TYPE(BOOTSEL_XOSC_CFG_t, uint32_t)
         // Value of the XOSC_CTRL_FREQ_RANGE register.
@@ -19200,41 +18377,58 @@ namespace _OTP_DATA_RAW_  {
     // USB boot specific feature flags (RBIT-3)
     // Reset value: 0x00000000
     BEGIN_TYPE(USB_BOOT_FLAGS_t, uint32_t)
-        // Swap DM/DP during USB boot, to support board layouts with mirrored USB routing (deliberate or accidental).
+        // Swap DM/DP during USB boot, to support board layouts with mirrored
+        // USB routing (deliberate or accidental).
         ADD_BITFIELD_RO(DP_DM_SWAP, 23, 1)
-        // valid flag for INFO_UF2_TXT_BOARD_ID_STRDEF entry of the USB_WHITE_LABEL struct (index 15)
+        // valid flag for INFO_UF2_TXT_BOARD_ID_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 15)
         ADD_BITFIELD_RO(WHITE_LABEL_ADDR_VALID, 22, 1)
         // valid flag for the USB_WHITE_LABEL_ADDR field
         ADD_BITFIELD_RO(WL_INFO_UF2_TXT_BOARD_ID_STRDEF_VALID, 15, 1)
-        // valid flag for INFO_UF2_TXT_MODEL_STRDEF entry of the USB_WHITE_LABEL struct (index 14)
+        // valid flag for INFO_UF2_TXT_MODEL_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 14)
         ADD_BITFIELD_RO(WL_INFO_UF2_TXT_MODEL_STRDEF_VALID, 14, 1)
-        // valid flag for INDEX_HTM_REDIRECT_NAME_STRDEF entry of the USB_WHITE_LABEL struct (index 13)
+        // valid flag for INDEX_HTM_REDIRECT_NAME_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 13)
         ADD_BITFIELD_RO(WL_INDEX_HTM_REDIRECT_NAME_STRDEF_VALID, 13, 1)
-        // valid flag for INDEX_HTM_REDIRECT_URL_STRDEF entry of the USB_WHITE_LABEL struct (index 12)
+        // valid flag for INDEX_HTM_REDIRECT_URL_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 12)
         ADD_BITFIELD_RO(WL_INDEX_HTM_REDIRECT_URL_STRDEF_VALID, 12, 1)
-        // valid flag for SCSI_INQUIRY_VERSION_STRDEF entry of the USB_WHITE_LABEL struct (index 11)
+        // valid flag for SCSI_INQUIRY_VERSION_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 11)
         ADD_BITFIELD_RO(WL_SCSI_INQUIRY_VERSION_STRDEF_VALID, 11, 1)
-        // valid flag for SCSI_INQUIRY_PRODUCT_STRDEF entry of the USB_WHITE_LABEL struct (index 10)
+        // valid flag for SCSI_INQUIRY_PRODUCT_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 10)
         ADD_BITFIELD_RO(WL_SCSI_INQUIRY_PRODUCT_STRDEF_VALID, 10, 1)
-        // valid flag for SCSI_INQUIRY_VENDOR_STRDEF entry of the USB_WHITE_LABEL struct (index 9)
+        // valid flag for SCSI_INQUIRY_VENDOR_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 9)
         ADD_BITFIELD_RO(WL_SCSI_INQUIRY_VENDOR_STRDEF_VALID, 9, 1)
-        // valid flag for VOLUME_LABEL_STRDEF entry of the USB_WHITE_LABEL struct (index 8)
+        // valid flag for VOLUME_LABEL_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 8)
         ADD_BITFIELD_RO(WL_VOLUME_LABEL_STRDEF_VALID, 8, 1)
-        // valid flag for USB_CONFIG_ATTRIBUTES_MAX_POWER_VALUES entry of the USB_WHITE_LABEL struct (index 7)
+        // valid flag for USB_CONFIG_ATTRIBUTES_MAX_POWER_VALUES entry of the
+        // USB_WHITE_LABEL struct (index 7)
         ADD_BITFIELD_RO(WL_USB_CONFIG_ATTRIBUTES_MAX_POWER_VALUES_VALID, 7, 1)
-        // valid flag for USB_DEVICE_SERIAL_NUMBER_STRDEF entry of the USB_WHITE_LABEL struct (index 6)
+        // valid flag for USB_DEVICE_SERIAL_NUMBER_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 6)
         ADD_BITFIELD_RO(WL_USB_DEVICE_SERIAL_NUMBER_STRDEF_VALID, 6, 1)
-        // valid flag for USB_DEVICE_PRODUCT_STRDEF entry of the USB_WHITE_LABEL struct (index 5)
+        // valid flag for USB_DEVICE_PRODUCT_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 5)
         ADD_BITFIELD_RO(WL_USB_DEVICE_PRODUCT_STRDEF_VALID, 5, 1)
-        // valid flag for USB_DEVICE_MANUFACTURER_STRDEF entry of the USB_WHITE_LABEL struct (index 4)
+        // valid flag for USB_DEVICE_MANUFACTURER_STRDEF entry of the USB_WHITE_LABEL
+        // struct (index 4)
         ADD_BITFIELD_RO(WL_USB_DEVICE_MANUFACTURER_STRDEF_VALID, 4, 1)
-        // valid flag for USB_DEVICE_LANG_ID_VALUE entry of the USB_WHITE_LABEL struct (index 3)
+        // valid flag for USB_DEVICE_LANG_ID_VALUE entry of the USB_WHITE_LABEL struct
+        // (index 3)
         ADD_BITFIELD_RO(WL_USB_DEVICE_LANG_ID_VALUE_VALID, 3, 1)
-        // valid flag for USB_DEVICE_BCD_DEVICEVALUE entry of the USB_WHITE_LABEL struct (index 2)
+        // valid flag for USB_DEVICE_BCD_DEVICEVALUE entry of the USB_WHITE_LABEL struct
+        // (index 2)
         ADD_BITFIELD_RO(WL_USB_DEVICE_SERIAL_NUMBER_VALUE_VALID, 2, 1)
-        // valid flag for USB_DEVICE_PID_VALUE entry of the USB_WHITE_LABEL struct (index 1)
+        // valid flag for USB_DEVICE_PID_VALUE entry of the USB_WHITE_LABEL struct
+        // (index 1)
         ADD_BITFIELD_RO(WL_USB_DEVICE_PID_VALUE_VALID, 1, 1)
-        // valid flag for USB_DEVICE_VID_VALUE entry of the USB_WHITE_LABEL struct (index 0)
+        // valid flag for USB_DEVICE_VID_VALUE entry of the USB_WHITE_LABEL struct
+        // (index 0)
         ADD_BITFIELD_RO(WL_USB_DEVICE_VID_VALUE_VALID, 0, 1)
     END_TYPE()
 
@@ -19248,7 +18442,27 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(USB_BOOT_FLAGS_R2, 0, 24)
     END_TYPE()
 
-    // Row index of the USB_WHITE_LABEL structure within OTP (ECC) The table has 16 rows, each of which are also ECC and marked valid by the corresponding valid bit in USB_BOOT_FLAGS (ECC). The entries are either _VALUEs where the 16 bit value is used as is, or _STRDEFs which acts as a pointers to a string value. The value stored in a _STRDEF is two separate bytes: The low seven bits of the first (LSB) byte indicates the number of characters in the string, and the top bit of the first (LSB) byte if set to indicate that each character in the string is two bytes (Unicode) versus one byte if unset. The second (MSB) byte represents the location of the string data, and is encoded as the number of rows from this USB_WHITE_LABEL_ADDR; i.e. the row of the start of the string is USB_WHITE_LABEL_ADDR value + msb_byte. In each case, the corresponding valid bit enables replacing the default value for the corresponding item provided by the boot rom. Note that Unicode _STRDEFs are only supported for USB_DEVICE_PRODUCT_STRDEF, USB_DEVICE_SERIAL_NUMBER_STRDEF and USB_DEVICE_MANUFACTURER_STRDEF. Unicode values will be ignored if specified for other fields, and non-unicode values for these three items will be converted to Unicode characters by setting the upper 8 bits to zero. Note that if the USB_WHITE_LABEL structure or the corresponding strings are not readable by BOOTSEL mode based on OTP permissions, or if alignment requirements are not met, then the corresponding default values are used. The index values indicate where each field is located (row USB_WHITE_LABEL_ADDR value + index):
+    // Row index of the USB_WHITE_LABEL structure within OTP (ECC)
+    // The table has 16 rows, each of which are also ECC and marked valid by the
+    // corresponding valid bit in USB_BOOT_FLAGS (ECC). The entries are either
+    // _VALUEs where the 16 bit value is used as is, or _STRDEFs which acts as a
+    // pointers to a string value. The value stored in a _STRDEF is two separate bytes:
+    // The low seven bits of the first (LSB) byte indicates the number of characters
+    // in the string, and the top bit of the first (LSB) byte if set to indicate that
+    // each character in the string is two bytes (Unicode) versus one byte if unset.
+    // The second (MSB) byte represents the location of the string data, and is encoded
+    // as the number of rows from this USB_WHITE_LABEL_ADDR; i.e. the row of the start
+    // of the string is USB_WHITE_LABEL_ADDR value + msb_byte.
+    // In each case, the corresponding valid bit enables replacing the default value for
+    // the corresponding item provided by the boot rom.
+    // Note that Unicode _STRDEFs are only supported for USB_DEVICE_PRODUCT_STRDEF,
+    // USB_DEVICE_SERIAL_NUMBER_STRDEF and USB_DEVICE_MANUFACTURER_STRDEF. Unicode values
+    // will be ignored if specified for other fields, and non-unicode values for these
+    // three items will be converted to Unicode characters by setting the upper 8 bits to zero.
+    // Note that if the USB_WHITE_LABEL structure or the corresponding strings are not
+    // readable by BOOTSEL mode based on OTP permissions, or if alignment requirements
+    // are not met, then the corresponding default values are used. The index values
+    // indicate where each field is located (row USB_WHITE_LABEL_ADDR value + index).
     BEGIN_TYPE(USB_WHITE_LABEL_ADDR_t, uint32_t)
         ADD_BITFIELD_RO(USB_WHITE_LABEL_ADDR, 0, 16)
     END_TYPE()
@@ -19270,22 +18484,34 @@ namespace _OTP_DATA_RAW_  {
     static const uint32_t USB_WHITE_LABEL_ADDR_USB_WHITE_LABEL_ADDR__INDEX_INFO_UF2_TXT_MODEL_STRDEF = 14;
     static const uint32_t USB_WHITE_LABEL_ADDR_USB_WHITE_LABEL_ADDR__INDEX_INFO_UF2_TXT_BOARD_ID_STRDEF = 15;
 
-    // OTP start row for the OTP boot image. (ECC) If OTP boot is enabled, the bootrom will load from this location into SRAM and then directly enter the loaded image. Note that the image must be signed if SECURE_BOOT_ENABLE is set. The image itself is assumed to be ECC-protected. This must be an even number. Equivalently, the OTP boot image must start at a word-aligned location in the ECC read data address window.
+    // OTP start row for the OTP boot image. (ECC)
+    // If OTP boot is enabled, the bootrom will load from this location into
+    // SRAM and then directly enter the loaded image. Note that the image must
+    // be signed if SECURE_BOOT_ENABLE is set. The image itself is assumed to be
+    // ECC-protected.
+    // This must be an even number. Equivalently, the OTP boot image must start
+    // at a word-aligned location in the ECC read data address window.
     BEGIN_TYPE(OTPBOOT_SRC_t, uint32_t)
         ADD_BITFIELD_RO(OTPBOOT_SRC, 0, 16)
     END_TYPE()
 
-    // Length in rows of the OTP boot image. (ECC) OTPBOOT_LEN must be even. The total image size must be a multiple of 4 bytes (32 bits).
+    // Length in rows of the OTP boot image. (ECC)
+    // OTPBOOT_LEN must be even. The total image size must be a
+    // multiple of 4 bytes (32 bits).
     BEGIN_TYPE(OTPBOOT_LEN_t, uint32_t)
         ADD_BITFIELD_RO(OTPBOOT_LEN, 0, 16)
     END_TYPE()
 
-    // Bits 15:0 of the OTP boot image load destination (and entry point). (ECC) This must be a location in main SRAM (main SRAM is addresses 0x20000000 through 0x20082000) and must be word-aligned.
+    // Bits 15:0 of the OTP boot image load destination (and entry point). (ECC)
+    // This must be a location in main SRAM (main SRAM is addresses 0x20000000 through
+    // 0x20082000) and must be word-aligned.
     BEGIN_TYPE(OTPBOOT_DST0_t, uint32_t)
         ADD_BITFIELD_RO(OTPBOOT_DST0, 0, 16)
     END_TYPE()
 
-    // Bits 31:16 of the OTP boot image load destination (and entry point). (ECC) This must be a location in main SRAM (main SRAM is addresses 0x20000000 through 0x20082000) and must be word-aligned.
+    // Bits 31:16 of the OTP boot image load destination (and entry point). (ECC)
+    // This must be a location in main SRAM (main SRAM is addresses 0x20000000 through
+    // 0x20082000) and must be word-aligned.
     BEGIN_TYPE(OTPBOOT_DST1_t, uint32_t)
         ADD_BITFIELD_RO(OTPBOOT_DST1, 0, 16)
     END_TYPE()
@@ -19410,7 +18636,8 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(KEY_7, 0, 16)
     END_TYPE()
 
-    // Valid flag for key 1. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.
+    // Valid flag for key 1. Once the valid flag is set, the key can no longer be read
+    // or written, and becomes a valid fixed key for protecting OTP pages.
     // Reset value: 0x00000000
     BEGIN_TYPE(KEY1_VALID_t, uint32_t)
         // Redundant copy of VALID, with 3-way majority vote
@@ -19420,7 +18647,8 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(VALID, 0, 1)
     END_TYPE()
 
-    // Valid flag for key 2. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.
+    // Valid flag for key 2. Once the valid flag is set, the key can no longer be read
+    // or written, and becomes a valid fixed key for protecting OTP pages.
     // Reset value: 0x00000000
     BEGIN_TYPE(KEY2_VALID_t, uint32_t)
         // Redundant copy of VALID, with 3-way majority vote
@@ -19430,7 +18658,8 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(VALID, 0, 1)
     END_TYPE()
 
-    // Valid flag for key 3. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.
+    // Valid flag for key 3. Once the valid flag is set, the key can no longer be read
+    // or written, and becomes a valid fixed key for protecting OTP pages.
     // Reset value: 0x00000000
     BEGIN_TYPE(KEY3_VALID_t, uint32_t)
         // Redundant copy of VALID, with 3-way majority vote
@@ -19440,7 +18669,8 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(VALID, 0, 1)
     END_TYPE()
 
-    // Valid flag for key 4. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.
+    // Valid flag for key 4. Once the valid flag is set, the key can no longer be read
+    // or written, and becomes a valid fixed key for protecting OTP pages.
     // Reset value: 0x00000000
     BEGIN_TYPE(KEY4_VALID_t, uint32_t)
         // Redundant copy of VALID, with 3-way majority vote
@@ -19450,7 +18680,8 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(VALID, 0, 1)
     END_TYPE()
 
-    // Valid flag for key 5. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.
+    // Valid flag for key 5. Once the valid flag is set, the key can no longer be read
+    // or written, and becomes a valid fixed key for protecting OTP pages.
     // Reset value: 0x00000000
     BEGIN_TYPE(KEY5_VALID_t, uint32_t)
         // Redundant copy of VALID, with 3-way majority vote
@@ -19460,7 +18691,8 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(VALID, 0, 1)
     END_TYPE()
 
-    // Valid flag for key 6. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.
+    // Valid flag for key 6. Once the valid flag is set, the key can no longer be
+    // read or written, and becomes a valid fixed key for protecting OTP pages.
     // Reset value: 0x00000000
     BEGIN_TYPE(KEY6_VALID_t, uint32_t)
         // Redundant copy of VALID, with 3-way majority vote
@@ -19470,36 +18702,55 @@ namespace _OTP_DATA_RAW_  {
         ADD_BITFIELD_RO(VALID, 0, 1)
     END_TYPE()
 
-    // Lock configuration LSBs for page 0 (rows 0x0 through 0x3f). Locks are stored with 3-way majority vote encoding, so that bits can be set independently. This OTP location is always readable, and is write-protected by its own permissions.
+    // Lock configuration LSBs for page 0 (rows 0x0 through 0x3f). Locks are stored with
+    // 3-way majority vote encoding, so that bits can be set independently.
+    // This OTP location is always readable, and is write-protected by its own permissions.
     // Reset value: 0x00000000
     BEGIN_TYPE(PAGE_LOCK0_t, uint32_t)
         // Redundant copy of bits 7:0
         ADD_BITFIELD_RO(R2, 16, 8)
         // Redundant copy of bits 7:0
         ADD_BITFIELD_RO(R1, 8, 8)
-        // State when at least one key is registered for this page and no matching key has been entered.
+        // State when at least one key is registered for this page and no matching
+        // key has been entered.
         ADD_BITFIELD_RO(NO_KEY_STATE, 6, 1)
-        // Index 1-6 of a hardware key which must be entered to grant read access, or 0 if no such key is required.
+        // Index 1-6 of a hardware key which must be entered to grant read access,
+        // or 0 if no such key is required.
         ADD_BITFIELD_RO(KEY_R, 3, 3)
-        // Index 1-6 of a hardware key which must be entered to grant write access, or 0 if no such key is required.
+        // Index 1-6 of a hardware key which must be entered to grant write access,
+        // or 0 if no such key is required.
         ADD_BITFIELD_RO(KEY_W, 0, 3)
     END_TYPE()
 
     static const uint32_t PAGE_LOCK0_NO_KEY_STATE__read_only = 0;
     static const uint32_t PAGE_LOCK0_NO_KEY_STATE__inaccessible = 1;
 
-    // Lock configuration MSBs for page 0 (rows 0x0 through 0x3f). Locks are stored with 3-way majority vote encoding, so that bits can be set independently. This OTP location is always readable, and is write-protected by its own permissions.
+    // Lock configuration MSBs for page 0 (rows 0x0 through 0x3f). Locks are stored with 3-way
+    // majority vote encoding, so that bits can be set independently.
+    // This OTP location is always readable, and is write-protected by its own permissions.
     // Reset value: 0x00000000
     BEGIN_TYPE(PAGE_LOCK1_t, uint32_t)
         // Redundant copy of bits 7:0
         ADD_BITFIELD_RO(R2, 16, 8)
         // Redundant copy of bits 7:0
         ADD_BITFIELD_RO(R1, 8, 8)
-        // Dummy lock bits reserved for bootloaders (including the RP2350 USB bootloader) to store their own OTP access permissions. No hardware effect, and no corresponding SW_LOCKx registers.
+        // Dummy lock bits reserved for bootloaders (including the RP2350 USB bootloader)
+        // to store their own OTP access permissions. No hardware effect, and no corresponding
+        // SW_LOCKx registers.
         ADD_BITFIELD_RO(LOCK_BL, 4, 2)
-        // Lock state for Non-secure accesses to this page. Thermometer-coded, so lock state can be advanced permanently from any state to any less-permissive state by programming OTP. Software can also advance the lock state temporarily (until next OTP reset) using the SW_LOCKx registers. Note that READ_WRITE and READ_ONLY are equivalent in hardware, as the SBPI programming interface is not accessible to Non-secure software. However, Secure software may check these bits to apply write permissions to a Non-secure OTP programming API.
+        // Lock state for Non-secure accesses to this page. Thermometer-coded, so
+        // lock state can be advanced permanently from any state to any less-permissive
+        // state by programming OTP. Software can also advance the lock state temporarily
+        // (until next OTP reset) using the SW_LOCKx registers.
+        // Note that READ_WRITE and READ_ONLY are equivalent in hardware, as the SBPI
+        // programming interface is not accessible to Non-secure software.
+        // However, Secure software may check these bits to apply write permissions to
+        // a Non-secure OTP programming API.
         ADD_BITFIELD_RO(LOCK_NS, 2, 2)
-        // Lock state for Secure accesses to this page. Thermometer-coded, so lock state can be advanced permanently from any state to any less-permissive state by programming OTP. Software can also advance the lock state temporarily (until next OTP reset) using the SW_LOCKx registers.
+        // Lock state for Secure accesses to this page. Thermometer-coded, so lock
+        // state can be advanced permanently from any state to any less-permissive state
+        // by programming OTP. Software can also advance the lock state temporarily
+        // (until next OTP reset) using the SW_LOCKx registers.
         ADD_BITFIELD_RO(LOCK_S, 0, 2)
     END_TYPE()
 
@@ -19511,7 +18762,8 @@ namespace _OTP_DATA_RAW_  {
     static const uint32_t PAGE_LOCK1_LOCK_BL__reserved = 2;
     // Bootloader does not permit user access to this page
     static const uint32_t PAGE_LOCK1_LOCK_BL__inaccessible = 3;
-    // Page can be read by Non-secure software, and Secure software may permit Non-secure writes.
+    // Page can be read by Non-secure software, and Secure software may
+    // permit Non-secure writes.
     static const uint32_t PAGE_LOCK1_LOCK_NS__read_write = 0;
     // Page can be read by Non-secure software
     static const uint32_t PAGE_LOCK1_LOCK_NS__read_only = 1;
@@ -19528,38 +18780,59 @@ namespace _OTP_DATA_RAW_  {
     // Page can not be accessed by Secure software.
     static const uint32_t PAGE_LOCK1_LOCK_S__inaccessible = 3;
 
-    // Lock configuration LSBs for page 63 (rows 0xfc0 through 0xfff). Locks are stored with 3-way majority vote encoding, so that bits can be set independently. This OTP location is always readable, and is write-protected by its own permissions.
+    // Lock configuration LSBs for page 63 (rows 0xfc0 through 0xfff). Locks are
+    // stored with 3-way majority vote encoding, so that bits can be set independently.
+    // This OTP location is always readable, and is write-protected by its own permissions.
     // Reset value: 0x00000000
     BEGIN_TYPE(PAGE63_LOCK0_t, uint32_t)
         // Redundant copy of bits 7:0
         ADD_BITFIELD_RO(R2, 16, 8)
         // Redundant copy of bits 7:0
         ADD_BITFIELD_RO(R1, 8, 8)
-        // Decommission for RMA of a suspected faulty device. This re-enables the factory test JTAG interface, and makes pages 3 through 61 of the OTP permanently inaccessible.
+        // Decommission for RMA of a suspected faulty device. This re-enables the
+        // factory test JTAG interface, and makes pages 3 through 61 of the OTP
+        // permanently inaccessible.
         ADD_BITFIELD_RO(RMA, 7, 1)
-        // State when at least one key is registered for this page and no matching key has been entered.
+        // State when at least one key is registered for this page and no matching
+        // key has been entered.
         ADD_BITFIELD_RO(NO_KEY_STATE, 6, 1)
-        // Index 1-6 of a hardware key which must be entered to grant read access, or 0 if no such key is required.
+        // Index 1-6 of a hardware key which must be entered to grant read access,
+        // or 0 if no such key is required.
         ADD_BITFIELD_RO(KEY_R, 3, 3)
-        // Index 1-6 of a hardware key which must be entered to grant write access, or 0 if no such key is required.
+        // Index 1-6 of a hardware key which must be entered to grant write access,
+        // or 0 if no such key is required.
         ADD_BITFIELD_RO(KEY_W, 0, 3)
     END_TYPE()
 
     static const uint32_t PAGE63_LOCK0_NO_KEY_STATE__read_only = 0;
     static const uint32_t PAGE63_LOCK0_NO_KEY_STATE__inaccessible = 1;
 
-    // Lock configuration MSBs for page 63 (rows 0xfc0 through 0xfff). Locks are stored with 3-way majority vote encoding, so that bits can be set independently. This OTP location is always readable, and is write-protected by its own permissions.
+    // Lock configuration MSBs for page 63 (rows 0xfc0 through 0xfff). Locks are stored
+    // with 3-way majority vote encoding, so that bits can be set independently.
+    // This OTP location is always readable, and is write-protected by its own permissions.
     // Reset value: 0x00000000
     BEGIN_TYPE(PAGE63_LOCK1_t, uint32_t)
         // Redundant copy of bits 7:0
         ADD_BITFIELD_RO(R2, 16, 8)
         // Redundant copy of bits 7:0
         ADD_BITFIELD_RO(R1, 8, 8)
-        // Dummy lock bits reserved for bootloaders (including the RP2350 USB bootloader) to store their own OTP access permissions. No hardware effect, and no corresponding SW_LOCKx registers.
+        // Dummy lock bits reserved for bootloaders (including the RP2350 USB
+        // bootloader) to store their own OTP access permissions. No hardware
+        // effect, and no corresponding SW_LOCKx registers.
         ADD_BITFIELD_RO(LOCK_BL, 4, 2)
-        // Lock state for Non-secure accesses to this page. Thermometer-coded, so lock state can be advanced permanently from any state to any less-permissive state by programming OTP. Software can also advance the lock state temporarily (until next OTP reset) using the SW_LOCKx registers. Note that READ_WRITE and READ_ONLY are equivalent in hardware, as the SBPI programming interface is not accessible to Non-secure software. However, Secure software may check these bits to apply write permissions to a Non-secure OTP programming API.
+        // Lock state for Non-secure accesses to this page. Thermometer-coded, so
+        // lock state can be advanced permanently from any state to any less-permissive
+        // state by programming OTP. Software can also advance the lock state temporarily
+        // (until next OTP reset) using the SW_LOCKx registers.
+        // Note that READ_WRITE and READ_ONLY are equivalent in hardware, as the SBPI
+        // programming interface is not accessible to Non-secure software. However,
+        // Secure software may check these bits to apply write permissions to a
+        // Non-secure OTP programming API.
         ADD_BITFIELD_RO(LOCK_NS, 2, 2)
-        // Lock state for Secure accesses to this page. Thermometer-coded, so lock state can be advanced permanently from any state to any less-permissive state by programming OTP. Software can also advance the lock state temporarily (until next OTP reset) using the SW_LOCKx registers.
+        // Lock state for Secure accesses to this page. Thermometer-coded, so lock
+        // state can be advanced permanently from any state to any less-permissive
+        // state by programming OTP. Software can also advance the lock state
+        // temporarily (until next OTP reset) using the SW_LOCKx registers.
         ADD_BITFIELD_RO(LOCK_S, 0, 2)
     END_TYPE()
 
@@ -19571,7 +18844,8 @@ namespace _OTP_DATA_RAW_  {
     static const uint32_t PAGE63_LOCK1_LOCK_BL__reserved = 2;
     // Bootloader does not permit user access to this page
     static const uint32_t PAGE63_LOCK1_LOCK_BL__inaccessible = 3;
-    // Page can be read by Non-secure software, and Secure software may permit Non-secure writes.
+    // Page can be read by Non-secure software, and Secure software may
+    // permit Non-secure writes.
     static const uint32_t PAGE63_LOCK1_LOCK_NS__read_write = 0;
     // Page can be read by Non-secure software
     static const uint32_t PAGE63_LOCK1_LOCK_NS__read_only = 1;
@@ -19955,20 +19229,23 @@ namespace _USB_DPRAM_  {
 
     // Reset value: 0x00000000
     BEGIN_TYPE(EP_CONTROL_t, uint32_t)
-        // Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.
+        // Enable this endpoint. The device will not reply to any packets for this
+        // endpoint if this bit is not set.
         ADD_BITFIELD_RW(ENABLE, 31, 1)
         // This endpoint is double buffered.
         ADD_BITFIELD_RW(DOUBLE_BUFFERED, 30, 1)
         // Trigger an interrupt each time a buffer is done.
         ADD_BITFIELD_RW(INTERRUPT_PER_BUFF, 29, 1)
-        // Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.
+        // Trigger an interrupt each time both buffers are done. Only valid in
+        // double buffered mode.
         ADD_BITFIELD_RW(INTERRUPT_PER_DOUBLE_BUFF, 28, 1)
         ADD_BITFIELD_RW(ENDPOINT_TYPE, 26, 2)
         // Trigger an interrupt if a STALL is sent. Intended for debug only.
         ADD_BITFIELD_RW(INTERRUPT_ON_STALL, 17, 1)
         // Trigger an interrupt if a NAK is sent. Intended for debug only.
         ADD_BITFIELD_RW(INTERRUPT_ON_NAK, 16, 1)
-        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.
+        // 64 byte aligned buffer address for this EP (bits 0-5 are ignored).
+        // Relative to the start of the DPRAM.
         ADD_BITFIELD_RW(BUFFER_ADDRESS, 0, 16)
     END_TYPE()
 
@@ -19977,22 +19254,34 @@ namespace _USB_DPRAM_  {
     static const uint32_t EP_CONTROL_ENDPOINT_TYPE__Bulk = 2;
     static const uint32_t EP_CONTROL_ENDPOINT_TYPE__Interrupt = 3;
 
-    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1.  Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.
+    // Buffer control for both buffers of an endpoint. Fields ending in a _1 are for
+    // buffer 1. Fields ending in a _0 are for buffer 0. Buffer 1 controls are only
+    // valid if the endpoint is in double buffered mode.
     // Reset value: 0x00000000
     BEGIN_TYPE(EP_BUFFER_CONTROL_t, uint32_t)
-        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
+        // Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to
+        // indicate the data is valid. For an OUT transfer (RX from the host) this bit
+        // should be left as a 0. The host will set it when it has filled the buffer
+        // with data.
         ADD_BITFIELD_RW(FULL_1, 31, 1)
         // Buffer 1 is the last buffer of the transfer.
         ADD_BITFIELD_RW(LAST_1, 30, 1)
         // The data pid of buffer 1.
         ADD_BITFIELD_RW(PID_1, 29, 1)
-        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint.  For a non Isochronous endpoint the offset is always 64 bytes.
+        // The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode.
+        // Only valid in double buffered mode for an Isochronous endpoint.
+        // For a non Isochronous endpoint the offset is always 64 bytes.
         ADD_BITFIELD_RW(DOUBLE_BUFFER_ISO_OFFSET, 27, 2)
-        // Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
+        // Buffer 1 is available. This bit is set to indicate the buffer can be used
+        // by the controller. The controller clears the available bit when writing the
+        // status back.
         ADD_BITFIELD_RW(AVAILABLE_1, 26, 1)
         // The length of the data in buffer 1.
         ADD_BITFIELD_RW(LENGTH_1, 16, 10)
-        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.
+        // Buffer 0 is full. For an IN transfer (TX to the host) the bit is set
+        // to indicate the data is valid. For an OUT transfer (RX from the host)
+        // this bit should be left as a 0. The host will set it when it has filled
+        // the buffer with data.
         ADD_BITFIELD_RW(FULL_0, 15, 1)
         // Buffer 0 is the last buffer of the transfer.
         ADD_BITFIELD_RW(LAST_0, 14, 1)
@@ -20002,7 +19291,9 @@ namespace _USB_DPRAM_  {
         ADD_BITFIELD_RW(RESET, 12, 1)
         // Reply with a stall (valid for both buffers).
         ADD_BITFIELD_RW(STALL, 11, 1)
-        // Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.
+        // Buffer 0 is available. This bit is set to indicate the buffer can be used
+        // by the controller. The controller clears the available bit when writing
+        // the status back.
         ADD_BITFIELD_RW(AVAILABLE_0, 10, 1)
         // The length of the data in buffer 1.
         ADD_BITFIELD_RW(LENGTH_0, 0, 10)
