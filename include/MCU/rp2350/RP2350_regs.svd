@@ -1099,28 +1099,21 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>NUDGE</name>
-                        <description>
-                            An edge on this signal shifts the phase of the output by 1 cycle\n
-                            of the input clock. This can be done at any time.
-                        </description>
+                        <description>An edge on this signal shifts the phase of the output by 1 cycle of the input clock 
+                            This can be done at any time</description>
                         <bitRange>[20:20]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>PHASE</name>
-                        <description>
-                            This delays the enable signal by up to 3 cycles of the input clock.\n 
-                            This must be set before the clock is enabled to have any effect.
-                        </description>
+                        <description>This delays the enable signal by up to 3 cycles of the input clock 
+                            This must be set before the clock is enabled to have any effect</description>
                         <bitRange>[17:16]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>DC50</name>
-                        <description>
-                            Enables duty cycle correction for odd divisors,\n
-                            can be changed on-the-fly
-                        </description>
+                        <description>Enables duty cycle correction for odd divisors, can be changed on-the-fly</description>
                         <bitRange>[12:12]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1132,10 +1125,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>KILL</name>
-                        <description>
-                            Asynchronously kills the clock generator, enable must be set low\n
-                            before deasserting kill
-                        </description>
+                        <description>Asynchronously kills the clock generator, enable must be set low before deasserting kill</description>
                         <bitRange>[10:10]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1240,10 +1230,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>SELECTED</name>
-                        <description>
-                            This slice does not have a glitchless mux (only the AUX_SRC field is present,\n
-                            not SRC) so this register is hardwired to 0x1.
-                        </description>
+                        <description>This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.</description>
                         <bitRange>[0:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -1326,14 +1313,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLK_REF_SELECTED</name>
-                        <description>
-                            The glitchless multiplexer does not switch instantaneously (to avoid glitches),\n
-                            so software should poll this register to wait for the switch to complete.\n
-                            This register contains one decoded bit for each of the clock sources enumerated\n
-                            in the CTRL SRC field. At most one of these bits will be set at any time, indicating\n
-                            that clock is currently present at the output of the glitchless mux.\n
-                            Whilst switching is in progress, this register may briefly show all-0s.
-                        </description>
+                        <description>The glitchless multiplexer does not switch instantaneously (to avoid glitches), so software should poll this register to wait for the switch to complete. This register contains one decoded bit for each of the clock sources enumerated in the CTRL SRC field. At most one of these bits will be set at any time, indicating that clock is currently present at the output of the glitchless mux. Whilst switching is in progress, this register may briefly show all-0s.</description>
                         <bitRange>[3:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -1422,14 +1402,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLK_SYS_SELECTED</name>
-                        <description>
-                            The glitchless multiplexer does not switch instantaneously (to avoid glitches),\n
-                            so software should poll this register to wait for the switch to complete.\n
-                            This register contains one decoded bit for each of the clock sources enumerated\n
-                            in the CTRL SRC field. At most one of these bits will be set at any time, indicating\n
-                            that clock is currently present at the output of the glitchless mux.\n
-                            Whilst switching is in progress, this register may briefly show all-0s.
-                        </description>
+                        <description>The glitchless multiplexer does not switch instantaneously (to avoid glitches), so software should poll this register to wait for the switch to complete. This register contains one decoded bit for each of the clock sources enumerated in the CTRL SRC field. At most one of these bits will be set at any time, indicating that clock is currently present at the output of the glitchless mux. Whilst switching is in progress, this register may briefly show all-0s.</description>
                         <bitRange>[1:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -1455,10 +1428,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>KILL</name>
-                        <description>
-                            Asynchronously kills the clock generator,\n
-                            enable must be set low before deasserting kill
-                        </description>
+                        <description>Asynchronously kills the clock generator, enable must be set low before deasserting kill</description>
                         <bitRange>[10:10]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1521,10 +1491,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLK_PERI_SELECTED</name>
-                        <description>
-                            This slice does not have a glitchless mux (only the AUX_SRC field is present,\n
-                            not SRC) so this register is hardwired to 0x1.
-                        </description>
+                        <description>This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.</description>
                         <bitRange>[0:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -1544,16 +1511,14 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>NUDGE</name>
-                        <description>
-                            An edge on this signal shifts the phase of the output by\n
-                            1 cycle of the input clock. This can be done at any time.
-                        </description>
+                        <description>An edge on this signal shifts the phase of the output by 1 cycle of the input clock 
+                            This can be done at any time</description>
                         <bitRange>[20:20]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>PHASE</name>
-                        <description>This delays the enable signal by up to 3 cycles of the input clock\n
+                        <description>This delays the enable signal by up to 3 cycles of the input clock 
                             This must be set before the clock is enabled to have any effect</description>
                         <bitRange>[17:16]</bitRange>
                         <access>read-write</access>
@@ -1566,10 +1531,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>KILL</name>
-                        <description>
-                            Asynchronously kills the clock generator,\n
-                            enable must be set low before deasserting kill
-                        </description>
+                        <description>Asynchronously kills the clock generator, enable must be set low before deasserting kill</description>
                         <bitRange>[10:10]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1624,10 +1586,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLK_HSTX_SELECTED</name>
-                        <description>
-                            This slice does not have a glitchless mux (only the AUX_SRC field\n
-                            is present, not SRC) so this register is hardwired to 0x1.
-                        </description>
+                        <description>This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.</description>
                         <bitRange>[0:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -1647,19 +1606,15 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>NUDGE</name>
-                        <description>
-                            An edge on this signal shifts the phase of the output by 1\n
-                            cycle of the input clock. This can be done at any time
-                        </description>
+                        <description>An edge on this signal shifts the phase of the output by 1 cycle of the input clock 
+                            This can be done at any time</description>
                         <bitRange>[20:20]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>PHASE</name>
-                        <description>
-                            This delays the enable signal by up to 3 cycles of the input clock\n 
-                            This must be set before the clock is enabled to have any effect
-                        </description>
+                        <description>This delays the enable signal by up to 3 cycles of the input clock 
+                            This must be set before the clock is enabled to have any effect</description>
                         <bitRange>[17:16]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1671,18 +1626,13 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>KILL</name>
-                        <description>
-                            Asynchronously kills the clock generator,\n
-                            enable must be set low before deasserting kill
-                        </description>
+                        <description>Asynchronously kills the clock generator, enable must be set low before deasserting kill</description>
                         <bitRange>[10:10]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>AUXSRC</name>
-                        <description>
-                            Selects the auxiliary clock source, will glitch when switching
-                        </description>
+                        <description>Selects the auxiliary clock source, will glitch when switching</description>
                         <bitRange>[7:5]</bitRange>
                         <access>read-write</access>
                         <enumeratedValues>
@@ -1735,10 +1685,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLK_USB_SELECTED</name>
-                        <description>
-                            This slice does not have a glitchless mux (only the AUX_SRC field\n
-                            is present, not SRC) so this register is hardwired to 0x1.
-                        </description>
+                        <description>This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.</description>
                         <bitRange>[0:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -1758,19 +1705,15 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>NUDGE</name>
-                        <description>
-                            An edge on this signal shifts the phase of the output by 1\n
-                            cycle of the input clock. This can be done at any time
-                        </description>
+                        <description>An edge on this signal shifts the phase of the output by 1 cycle of the input clock 
+                            This can be done at any time</description>
                         <bitRange>[20:20]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>PHASE</name>
-                        <description>
-                            This delays the enable signal by up to 3 cycles of the input clock\n
-                            This must be set before the clock is enabled to have any effect
-                        </description>
+                        <description>This delays the enable signal by up to 3 cycles of the input clock 
+                            This must be set before the clock is enabled to have any effect</description>
                         <bitRange>[17:16]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1782,10 +1725,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>KILL</name>
-                        <description>
-                            Asynchronously kills the clock generator,\n
-                            enable must be set low before deasserting kill
-                        </description>
+                        <description>Asynchronously kills the clock generator, enable must be set low before deasserting kill</description>
                         <bitRange>[10:10]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1844,10 +1784,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLK_ADC_SELECTED</name>
-                        <description>
-                            This slice does not have a glitchless mux (only the AUX_SRC\n
-                            field is present, not SRC) so this register is hardwired to 0x1.
-                        </description>
+                        <description>This slice does not have a glitchless mux (only the AUX_SRC field is present, not SRC) so this register is hardwired to 0x1.</description>
                         <bitRange>[0:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -1938,9 +1875,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLEAR</name>
-                        <description>
-                            For clearing the resus after the fault that triggered it has been corrected
-                        </description>
+                        <description>For clearing the resus after the fault that triggered it has been corrected</description>
                         <bitRange>[16:16]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1958,10 +1893,8 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>TIMEOUT</name>
-                        <description>
-                            This is expressed as a number of clk_ref cycles\n
-                            and must be &gt;= 2x clk_ref_freq/min_clk_tst_freq
-                        </description>
+                        <description>This is expressed as a number of clk_ref cycles 
+                            and must be &gt;= 2x clk_ref_freq/min_clk_tst_freq</description>
                         <bitRange>[7:0]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -1974,9 +1907,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>RESUSSED</name>
-                        <description>
-                            Clock has been resuscitated, correct the error then send ctrl_clear=1
-                        </description>
+                        <description>Clock has been resuscitated, correct the error then send ctrl_clear=1</description>
                         <bitRange>[0:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -1998,10 +1929,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>FC0_MIN_KHZ</name>
                 <addressOffset>0x00000090</addressOffset>
-                <description>
-                    Minimum pass frequency in kHz.\n
-                    This is optional. Set to 0 if you are not using the pass/fail flags
-                </description>
+                <description>Minimum pass frequency in kHz. This is optional. Set to 0 if you are not using the pass/fail flags</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -2014,10 +1942,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>FC0_MAX_KHZ</name>
                 <addressOffset>0x00000094</addressOffset>
-                <description>
-                    Maximum pass frequency in kHz. This is optional.\n
-                    Set to 0x1ffffff if you are not using the pass/fail flags
-                </description>
+                <description>Maximum pass frequency in kHz. This is optional. Set to 0x1ffffff if you are not using the pass/fail flags</description>
                 <resetValue>0x01ffffff</resetValue>
                 <fields>
                     <field>
@@ -2030,10 +1955,8 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>FC0_DELAY</name>
                 <addressOffset>0x00000098</addressOffset>
-                <description>
-                    Delays the start of frequency counting to allow the mux to settle\n
-                    Delay is measured in multiples of the reference clock period
-                </description>
+                <description>Delays the start of frequency counting to allow the mux to settle 
+                    Delay is measured in multiples of the reference clock period</description>
                 <resetValue>0x00000001</resetValue>
                 <fields>
                     <field>
@@ -2046,10 +1969,8 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>FC0_INTERVAL</name>
                 <addressOffset>0x0000009c</addressOffset>
-                <description>
-                    The test interval is 0.98us * 2**interval, but let&#39;s call it 1us * 2**interval\n
-                    The default gives a test interval of 250us
-                </description>
+                <description>The test interval is 0.98us * 2**interval, but let&#39;s call it 1us * 2**interval 
+                    The default gives a test interval of 250us</description>
                 <resetValue>0x00000008</resetValue>
                 <fields>
                     <field>
@@ -2062,10 +1983,8 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>FC0_SRC</name>
                 <addressOffset>0x000000a0</addressOffset>
-                <description>
-                    Clock sent to frequency counter, set to 0 when not required\n
-                    Writing to this register initiates the frequency count
-                </description>
+                <description>Clock sent to frequency counter, set to 0 when not required 
+                    Writing to this register initiates the frequency count</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -3302,9 +3221,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>PROC0_CYCLES</name>
-                        <description>
-                            Total number of clk_tick cycles before the next tick.
-                        </description>
+                        <description>Total number of clk_tick cycles before the next tick.</description>
                         <bitRange>[8:0]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -3317,10 +3234,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>PROC0_COUNT</name>
-                        <description>
-                            Count down timer: the remaining number clk_tick cycles before\n
-                            the next tick is generated.
-                        </description>
+                        <description>Count down timer: the remaining number clk_tick cycles before the next tick is generated.</description>
                         <bitRange>[8:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -3366,10 +3280,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>PROC1_COUNT</name>
-                        <description>
-                            Count down timer: the remaining number clk_tick cycles before\n
-                            the next tick is generated.
-                        </description>
+                        <description>Count down timer: the remaining number clk_tick cycles before the next tick is generated.</description>
                         <bitRange>[8:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -3415,10 +3326,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>TIMER0_COUNT</name>
-                        <description>
-                            Count down timer: the remaining number clk_tick cycles before\n
-                            the next tick is generated.
-                        </description>
+                        <description>Count down timer: the remaining number clk_tick cycles before the next tick is generated.</description>
                         <bitRange>[8:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -3464,10 +3372,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>TIMER1_COUNT</name>
-                        <description>
-                            Count down timer: the remaining number clk_tick cycles\n
-                            before the next tick is generated.
-                        </description>
+                        <description>Count down timer: the remaining number clk_tick cycles before the next tick is generated.</description>
                         <bitRange>[8:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -3513,10 +3418,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>WATCHDOG_COUNT</name>
-                        <description>
-                            Count down timer: the remaining number clk_tick cycles before\n
-                            the next tick is generated.
-                        </description>
+                        <description>Count down timer: the remaining number clk_tick cycles before the next tick is generated.</description>
                         <bitRange>[8:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -3562,10 +3464,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>RISCV_COUNT</name>
-                        <description>
-                            Count down timer: the remaining number clk_tick cycles before\n
-                            the next tick is generated.
-                        </description>
+                        <description>Count down timer: the remaining number clk_tick cycles before the next tick is generated.</description>
                         <bitRange>[8:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -3616,10 +3515,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>ISO</name>
-                        <description>
-                            Pad isolation control.\n
-                            Remove this once the pad is configured by software.
-                        </description>
+                        <description>Pad isolation control. Remove this once the pad is configured by software.</description>
                         <bitRange>[8:8]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -3692,10 +3588,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>ISO</name>
-                        <description>
-                            Pad isolation control.\n
-                            Remove this once the pad is configured by software.
-                        </description>
+                        <description>Pad isolation control. Remove this once the pad is configured by software.</description>
                         <bitRange>[8:8]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -3768,10 +3661,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>ISO</name>
-                        <description>
-                            Pad isolation control.\n
-                            Remove this once the pad is configured by software.
-                        </description>
+                        <description>Pad isolation control. Remove this once the pad is configured by software.</description>
                         <bitRange>[8:8]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -3880,10 +3770,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>ISO</name>
-                        <description>
-                            Pad isolation control.\n
-                            Remove this once the pad is configured by software.
-                        </description>
+                        <description>Pad isolation control. Remove this once the pad is configured by software.</description>
                         <bitRange>[8:8]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -3958,10 +3845,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>ISO</name>
-                        <description>
-                            Pad isolation control.\n
-                            Remove this once the pad is configured by software.
-                        </description>
+                        <description>Pad isolation control. Remove this once the pad is configured by software.</description>
                         <bitRange>[8:8]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -4034,10 +3918,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>ISO</name>
-                        <description>
-                            Pad isolation control.\n
-                            Remove this once the pad is configured by software.
-                        </description>
+                        <description>Pad isolation control. Remove this once the pad is configured by software.</description>
                         <bitRange>[8:8]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -18967,11 +18848,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>PLATFORM</name>
                 <addressOffset>0x00000008</addressOffset>
-                <description>
-                    Platform register. Allows software to know what environment it is running\n
-                    in during pre-production development. Post-production, the PLATFORM is\n
-                    always ASIC, non-SIM.
-                </description>
+                <description>Platform register. Allows software to know what environment it is running in during pre-production development. Post-production, the PLATFORM is always ASIC, non-SIM.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -19034,34 +18911,21 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>BSWAP</name>
-                        <description>
-                            Enable byte swapping of 32-bit values at the point they are committed to the\n
-                            SHA message scheduler. This block&#39;s bus interface assembles byte/halfword\n
-                            data into message words in little-endian order, so that DMAing the same buffer\n
-                            with different transfer sizes always gives the same result on a little-endian\n
-                            system like RP2350.\n
-                            However, when marshalling bytes into blocks, SHA expects that the first byte\n
-                            is the *most significant* in each message word. To resolve this, once the bus\n
-                            interface has accumulated 32 bits of data (either a word write, two halfword\n
-                            writes in little-endian order, or four byte writes in little-endian order)\n
-                            the final value can be byte-swapped before passing to the actual SHA core.\n
-                            This feature is enabled by default because using the SHA core to checksum\n
-                            byte buffers is expected to be more common than having preformatted SHA\n
-                            message words lying around.
-                        </description>
+                        <description>Enable byte swapping of 32-bit values at the point they are committed to the SHA message scheduler.
+
+                            This block&#39;s bus interface assembles byte/halfword data into message words in little-endian order, so that DMAing the same buffer with different transfer sizes always gives the same result on a little-endian system like RP2350.
+
+                            However, when marshalling bytes into blocks, SHA expects that the first byte is the *most significant* in each message word. To resolve this, once the bus interface has accumulated 32 bits of data (either a word write, two halfword writes in little-endian order, or four byte writes in little-endian order) the final value can be byte-swapped before passing to the actual SHA core.
+
+                            This feature is enabled by default because using the SHA core to checksum byte buffers is expected to be more common than having preformatted SHA message words lying around.</description>
                         <bitRange>[12:12]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>DMA_SIZE</name>
-                        <description>
-                            Configure DREQ logic for the correct DMA data size. Must be configured before\n
-                            the DMA channel is triggered. The SHA-256 core&#39;s DREQ logic requests one\n
-                            entire block of data at once, since there is no FIFO, and data goes straight\n
-                            into the core&#39;s message schedule and digest hardware. Therefore, when\n
-                            transferring data with DMA, CSR_DMA_SIZE must be configured in advance so that\n
-                            the correct number of transfers can be requested per block.
-                        </description>
+                        <description>Configure DREQ logic for the correct DMA data size. Must be configured before the DMA channel is triggered.
+
+                            The SHA-256 core&#39;s DREQ logic requests one entire block of data at once, since there is no FIFO, and data goes straight into the core&#39;s message schedule and digest hardware. Therefore, when transferring data with DMA, CSR_DMA_SIZE must be configured in advance so that the correct number of transfers can be requested per block.</description>
                         <bitRange>[9:8]</bitRange>
                         <access>read-write</access>
                         <enumeratedValues>
@@ -19081,47 +18945,34 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>ERR_WDATA_NOT_RDY</name>
-                        <description>
-                            Set when a write occurs whilst the SHA-256 core is not ready for data\n
-                            (WDATA_RDY is low). Write one to clear.
-                        </description>
+                        <description>Set when a write occurs whilst the SHA-256 core is not ready for data (WDATA_RDY is low). Write one to clear.</description>
                         <bitRange>[4:4]</bitRange>
                         <access>read-write</access>
                         <modifiedWriteValues>oneToClear</modifiedWriteValues>
                     </field>
                     <field>
                         <name>SUM_VLD</name>
-                        <description>
-                            If 1, the SHA-256 checksum presented in registers SUM0 through SUM7 is\n
-                            currently valid. Goes low when WDATA is first written, then returns high\n
-                            once 16 words have been written and the digest of the current 512-bit\n
-                            block has subsequently completed.
-                        </description>
+                        <description>If 1, the SHA-256 checksum presented in registers SUM0 through SUM7 is currently valid.
+
+                            Goes low when WDATA is first written, then returns high once 16 words have been written and the digest of the current 512-bit block has subsequently completed.</description>
                         <bitRange>[2:2]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WDATA_RDY</name>
-                        <description>
-                            If 1, the SHA-256 core is ready to accept more data through the WDATA\n
-                            register. After writing 16 words, this flag will go low for 57 cycles\n
-                            whilst the core completes its digest.
-                        </description>
+                        <description>If 1, the SHA-256 core is ready to accept more data through the WDATA register.
+
+                            After writing 16 words, this flag will go low for 57 cycles whilst the core completes its digest.</description>
                         <bitRange>[1:1]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>START</name>
-                        <description>
-                            Write 1 to prepare the SHA-256 core for a new checksum.\n
-                            The SUMx registers are initialised to the proper values (fractional\n
-                            bits of square roots of first 8 primes) and internal counters are cleared.\n
-                            This immediately forces WDATA_RDY and SUM_VLD high.\n
-                            START must be written before initiating a DMA transfer to the SHA-256 core,\n
-                            because the core will always request 16 transfers at a time (1 512-bit block).\n
-                            Additionally, the DMA channel should be configured for a multiple of 16 32-bit\n
-                            transfers.
-                        </description>
+                        <description>Write 1 to prepare the SHA-256 core for a new checksum.
+
+                            The SUMx registers are initialised to the proper values (fractional bits of square roots of first 8 primes) and internal counters are cleared. This immediately forces WDATA_RDY and SUM_VLD high.
+
+                            START must be written before initiating a DMA transfer to the SHA-256 core, because the core will always request 16 transfers at a time (1 512-bit block). Additionally, the DMA channel should be configured for a multiple of 16 32-bit transfers.</description>
                         <bitRange>[0:0]</bitRange>
                         <access>write-only</access>
                     </field>
@@ -19135,18 +18986,13 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>WDATA</name>
-                        <description>
-                            After pulsing START and writing 16 words of data to this register,\n
-                            WDATA_RDY will go low and the SHA-256 core will complete the digest\n
-                            of the current 512-bit block.\n
-                            Software is responsible for ensuring the data is correctly padded and\n
-                            terminated to a whole number of 512-bit blocks.\n
-                            After this, WDATA_RDY will return high, and more data can be written (if any).\n
-                            This register supports word, halfword and byte writes, so that DMA from\n
-                            non-word-aligned buffers can be supported. The total amount of data per\n
-                            block remains the same (16 words, 32 halfwords or 64 bytes) and byte/halfword\n
-                            transfers must not be mixed within a block.
-                        </description>
+                        <description>After pulsing START and writing 16 words of data to this register, WDATA_RDY will go low and the SHA-256 core will complete the digest of the current 512-bit block.
+
+                            Software is responsible for ensuring the data is correctly padded and terminated to a whole number of 512-bit blocks.
+
+                            After this, WDATA_RDY will return high, and more data can be written (if any).
+
+                            This register supports word, halfword and byte writes, so that DMA from non-word-aligned buffers can be supported. The total amount of data per block remains the same (16 words, 32 halfwords or 64 bytes) and byte/halfword transfers must not be mixed within a block.</description>
                         <bitRange>[31:0]</bitRange>
                         <access>write-only</access>
                     </field>
@@ -19220,10 +19066,7 @@ SPDX-License-Identifier: BSD-3-Clause
     </peripheral>
     <peripheral>
         <name>HSTX_CTRL</name>
-        <description>
-            Control interface to HSTX. For FIFO write access and status,\n
-            see the HSTX_FIFO register block.
-        </description>
+        <description>Control interface to HSTX. For FIFO write access and status, see the HSTX_FIFO register block.</description>
         <baseAddress>0x400c0000</baseAddress>
         <addressBlock>
             <offset>0</offset>
@@ -19238,58 +19081,47 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLKDIV</name>
-                        <description>
-                            Clock period of the generated clock, measured in HSTX clock cycles.\n
-                            Can be odd or even. The generated clock advances only on cycles where\n
-                            the shift register shifts.\n
-                            For example, a clkdiv of 5 would generate a complete output clock period\n
-                            for every 5 HSTX clocks (or every 10 half-clocks).\n
-                            A CLKDIV value of 0 is mapped to a period of 16 HSTX clock cycles.
-                        </description>
+                        <description>Clock period of the generated clock, measured in HSTX clock cycles. Can be odd or even. The generated clock advances only on cycles where the shift register shifts.
+
+                            For example, a clkdiv of 5 would generate a complete output clock period for every 5 HSTX clocks (or every 10 half-clocks).
+
+                            A CLKDIV value of 0 is mapped to a period of 16 HSTX clock cycles.</description>
                         <bitRange>[31:28]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>CLKPHASE</name>
-                        <description>
-                            Set the initial phase of the generated clock.\n
-                            A CLKPHASE of 0 means the clock is initially low, and the first rising\n
-                            edge occurs after one half period of the generated clock (i.e. CLKDIV/2\n
-                            cycles of clk_hstx). Incrementing CLKPHASE by 1 will advance the initial\n
-                            clock phase by one half clk_hstx period. For example, if CLKDIV=2 and\n
-                            CLKPHASE=1:\n\n
-                            * The clock will be initially low\n
-                            * The first rising edge will be 0.5 clk_hstx cycles after asserting first data\n
-                            * The first falling edge will be 1.5 clk_hstx cycles after asserting first data\n\n
-                            This configuration would be suitable for serialising at a bit rate of clk_hstx\n
-                            with a centre-aligned DDR clock.\n
-                            When the HSTX is halted by clearing CSR_EN, the clock generator will return\n
-                            to its initial phase as configured by the CLKPHASE field.\n
-                            Note CLKPHASE must be strictly less than double the value of CLKDIV\n
-                            (one full period), else its operation is undefined.
-                        </description>
+                        <description>Set the initial phase of the generated clock.
+
+                            A CLKPHASE of 0 means the clock is initially low, and the first rising edge occurs after one half period of the generated clock (i.e. CLKDIV/2 cycles of clk_hstx). Incrementing CLKPHASE by 1 will advance the initial clock phase by one half clk_hstx period. For example, if CLKDIV=2 and CLKPHASE=1:
+
+                            * The clock will be initially low
+
+                            * The first rising edge will be 0.5 clk_hstx cycles after asserting first data
+
+                            * The first falling edge will be 1.5 clk_hstx cycles after asserting first data
+
+                            This configuration would be suitable for serialising at a bit rate of clk_hstx with a centre-aligned DDR clock.
+
+                            When the HSTX is halted by clearing CSR_EN, the clock generator will return to its initial phase as configured by the CLKPHASE field.
+
+                            Note CLKPHASE must be strictly less than double the value of CLKDIV (one full period), else its operation is undefined.</description>
                         <bitRange>[27:24]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>N_SHIFTS</name>
-                        <description>
-                            Number of times to shift the shift register before refilling it from\n
-                            the FIFO. (A count of how many times it has been shifted, *not* the total\n
-                            shift distance). A register value of 0 means shift 32 times.
-                        </description>
+                        <description>Number of times to shift the shift register before refilling it from the FIFO. (A count of how many times it has been shifted, *not* the total shift distance.)
+
+                            A register value of 0 means shift 32 times.</description>
                         <bitRange>[20:16]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>SHIFT</name>
-                        <description>
-                            How many bits to right-rotate the shift register by each cycle.\n
-                            The use of a rotate rather than a shift allows left shifts to be\n
-                            emulated, by subtracting the left-shift amount from 32. It also\n
-                            allows data to be repeated, when the product of SHIFT and N_SHIFTS\n
-                            is greater than 32.
-                        </description>
+                        <description>How many bits to right-rotate the shift register by each cycle.
+
+                            The use of a rotate rather than a shift allows left shifts to be emulated, by subtracting the left-shift amount from 32. It also allows data to be repeated, when the product of SHIFT and N_SHIFTS is greater than 32.</description>
                         <bitRange>[12:8]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -19301,48 +19133,31 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>COUPLED_MODE</name>
-                        <description>
-                            Enable the PIO-to-HSTX 1:1 connection. The HSTX must be clocked *directly*\n
-                            from the system clock (not just from some other clock source of the same\n
-                            frequency) for this synchronous interface to function correctly.\n
-                            When COUPLED_MODE is set, BITx_SEL_P and SEL_N indices 24 through 31 will\n
-                            select bits from the 8-bit PIO-to-HSTX path, rather than shifter bits.\n
-                            Indices of 0 through 23 will still index the shift register as normal.\n
-                            The PIO outputs connected to the PIO-to-HSTX bus are those same outputs\n
-                            that would appear on the HSTX-capable pins if those pins&#39; FUNCSELs\n
-                            were set to PIO instead of HSTX.\n
-                            For example, if HSTX is on GPIOs 12 through 19, then PIO outputs 12 through\n
-                            19 are connected to the HSTX when coupled mode is engaged.
-                        </description>
+                        <description>Enable the PIO-to-HSTX 1:1 connection. The HSTX must be clocked *directly* from the system clock (not just from some other clock source of the same frequency) for this synchronous interface to function correctly.
+
+                            When COUPLED_MODE is set, BITx_SEL_P and SEL_N indices 24 through 31 will select bits from the 8-bit PIO-to-HSTX path, rather than shifter bits. Indices of 0 through 23 will still index the shift register as normal.
+
+                            The PIO outputs connected to the PIO-to-HSTX bus are those same outputs that would appear on the HSTX-capable pins if those pins&#39; FUNCSELs were set to PIO instead of HSTX.
+
+                            For example, if HSTX is on GPIOs 12 through 19, then PIO outputs 12 through 19 are connected to the HSTX when coupled mode is engaged.</description>
                         <bitRange>[4:4]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>EXPAND_EN</name>
-                        <description>
-                            Enable the command expander. When 0, raw FIFO data is passed directly to the\n
-                            output shift register. When 1, the command expander can perform simple operations\n
-                            such as run length decoding on data between the FIFO and the shift register.\n
-                            Do not change CXPD_EN whilst EN is set. It&#39;s safe to set CXPD_EN simultaneously\n
-                            with setting EN.
-                        </description>
+                        <description>Enable the command expander. When 0, raw FIFO data is passed directly to the output shift register. When 1, the command expander can perform simple operations such as run length decoding on data between the FIFO and the shift register.
+
+                            Do not change CXPD_EN whilst EN is set. It&#39;s safe to set CXPD_EN simultaneously with setting EN.</description>
                         <bitRange>[1:1]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>EN</name>
-                        <description>
-                            When EN is 1, the HSTX will shift out data as it appears in the FIFO. As long\n
-                            as there is data, the HSTX shift register will shift once per clock cycle, and\n
-                            the frequency of popping from the FIFO is determined by the ratio of SHIFT and\n
-                            SHIFT_THRESH.\n
-                            When EN is 0, the FIFO is not popped. The shift counter and clock generator\n
-                            are also reset to their initial state for as long as EN is low. Note the initial\n
-                            phase of the clock generator can be configured by the CLKPHASE field.\n
-                            Once the HSTX is enabled again, and data is pushed to the FIFO, the generated\n
-                            clock&#39;s first rising edge will be one half-period after the first data is\n
-                            launched.
-                        </description>
+                        <description>When EN is 1, the HSTX will shift out data as it appears in the FIFO. As long as there is data, the HSTX shift register will shift once per clock cycle, and the frequency of popping from the FIFO is determined by the ratio of SHIFT and SHIFT_THRESH.
+
+                            When EN is 0, the FIFO is not popped. The shift counter and clock generator are also reset to their initial state for as long as EN is low. Note the initial phase of the clock generator can be configured by the CLKPHASE field.
+
+                            Once the HSTX is enabled again, and data is pushed to the FIFO, the generated clock&#39;s first rising edge will be one half-period after the first data is launched.</description>
                         <bitRange>[0:0]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -19358,11 +19173,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>CLK</name>
-                        <description>
-                            Connect this output to the generated clock, rather than the data shift register.\n
-                            SEL_P and SEL_N are ignored if this bit is set, but INV can still be set to\n
-                            generate an antiphase clock.
-                        </description>
+                        <description>Connect this output to the generated clock, rather than the data shift register. SEL_P and SEL_N are ignored if this bit is set, but INV can still be set to generate an antiphase clock.</description>
                         <bitRange>[17:17]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -19394,40 +19205,25 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>ENC_N_SHIFTS</name>
-                        <description>
-                            Number of times to consume from the shift register before refilling it from\n
-                            the FIFO, when the current command is an encoded data command (e.g. TMDS).\n
-                            A register value of 0 means shift 32 times.
-                        </description>
+                        <description>Number of times to consume from the shift register before refilling it from the FIFO, when the current command is an encoded data command (e.g. TMDS). A register value of 0 means shift 32 times.</description>
                         <bitRange>[28:24]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>ENC_SHIFT</name>
-                        <description>
-                            How many bits to right-rotate the shift register by each time data is pushed\n
-                            to the output shifter, when the current command is an encoded data command\n
-                            (e.g. TMDS).
-                        </description>
+                        <description>How many bits to right-rotate the shift register by each time data is pushed to the output shifter, when the current command is an encoded data command (e.g. TMDS).</description>
                         <bitRange>[20:16]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>RAW_N_SHIFTS</name>
-                        <description>
-                            Number of times to consume from the shift register before refilling it from\n
-                            the FIFO, when the current command is a raw data command. A register value of\n
-                            0 means shift 32 times.
-                        </description>
+                        <description>Number of times to consume from the shift register before refilling it from the FIFO, when the current command is a raw data command. A register value of 0 means shift 32 times.</description>
                         <bitRange>[12:8]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>RAW_SHIFT</name>
-                        <description>
-                            How many bits to right-rotate the shift register by each time data is pushed\n
-                            to the output shifter, when the current command is a raw data command.
-                        </description>
+                        <description>How many bits to right-rotate the shift register by each time data is pushed to the output shifter, when the current command is a raw data command.</description>
                         <bitRange>[4:0]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -19441,52 +19237,37 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>L2_NBITS</name>
-                        <description>
-                            Number of valid data bits for the lane 2 TMDS encoder, starting from bit 7 of\n
-                            the rotated data. Field values of 0 -&gt; 7 encode counts of 1 -&gt; 8 bits.
-                        </description>
+                        <description>Number of valid data bits for the lane 2 TMDS encoder, starting from bit 7 of the rotated data. Field values of 0 -&gt; 7 encode counts of 1 -&gt; 8 bits.</description>
                         <bitRange>[23:21]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>L2_ROT</name>
-                        <description>
-                            Right-rotate applied to the current shifter data before the lane 2 TMDS encoder.
-                        </description>
+                        <description>Right-rotate applied to the current shifter data before the lane 2 TMDS encoder.</description>
                         <bitRange>[20:16]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>L1_NBITS</name>
-                        <description>
-                            Number of valid data bits for the lane 1 TMDS encoder, starting from bit 7 of\n
-                            the rotated data. Field values of 0 -&gt; 7 encode counts of 1 -&gt; 8 bits.
-                        </description>
+                        <description>Number of valid data bits for the lane 1 TMDS encoder, starting from bit 7 of the rotated data. Field values of 0 -&gt; 7 encode counts of 1 -&gt; 8 bits.</description>
                         <bitRange>[15:13]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>L1_ROT</name>
-                        <description>
-                            Right-rotate applied to the current shifter data before the lane 1 TMDS encoder.
-                        </description>
+                        <description>Right-rotate applied to the current shifter data before the lane 1 TMDS encoder.</description>
                         <bitRange>[12:8]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>L0_NBITS</name>
-                        <description>
-                            Number of valid data bits for the lane 0 TMDS encoder, starting from bit 7 of\n
-                            the rotated data. Field values of 0 -&gt; 7 encode counts of 1 -&gt; 8 bits.
-                        </description>
+                        <description>Number of valid data bits for the lane 0 TMDS encoder, starting from bit 7 of the rotated data. Field values of 0 -&gt; 7 encode counts of 1 -&gt; 8 bits.</description>
                         <bitRange>[7:5]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>L0_ROT</name>
-                        <description>
-                            Right-rotate applied to the current shifter data before the lane 0 TMDS encoder.
-                        </description>
+                        <description>Right-rotate applied to the current shifter data before the lane 0 TMDS encoder.</description>
                         <bitRange>[4:0]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -21375,7 +21156,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>PENDNMISET</name>
-                        <description>Indicates whether the NMI exception is pending or set this exception</description>
+                        <description>Indicates whether the NMI exception is pending</description>
                         <bitRange>[31:31]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -33039,16 +32820,18 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>HT_TH</name>
-                        <description>high temperature protection threshold 
-                            regulator power transistors are disabled when junction temperature exceeds threshold 
-                            000 - 100C 
-                            001 - 105C 
-                            010 - 110C 
-                            011 - 115C 
-                            100 - 120C 
-                            101 - 125C 
-                            110 - 135C 
-                            111 - 150C</description>
+                        <description>
+                            high temperature protection threshold.
+                            regulator power transistors are disabled when junction temperature exceeds threshold\n
+                            000 - 100C\n
+                            001 - 105C\n
+                            010 - 110C\n
+                            011 - 115C\n
+                            100 - 120C\n
+                            101 - 125C\n
+                            110 - 135C\n
+                            111 - 150C
+                        </description>
                         <bitRange>[6:4]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -33091,41 +32874,42 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>VSEL</name>
-                        <description>output voltage select 
-                            the regulator output voltage is limited to 1.3V unless the voltage limit 
-                            is disabled using the disable_voltage_limit field in the vreg_ctrl register 
-                            00000 - 0.55V 
-                            00001 - 0.60V 
-                            00010 - 0.65V 
-                            00011 - 0.70V 
-                            00100 - 0.75V 
-                            00101 - 0.80V 
-                            00110 - 0.85V 
-                            00111 - 0.90V 
-                            01000 - 0.95V 
-                            01001 - 1.00V 
-                            01010 - 1.05V 
-                            01011 - 1.10V (default) 
-                            01100 - 1.15V 
-                            01101 - 1.20V 
-                            01110 - 1.25V 
-                            01111 - 1.30V 
-                            10000 - 1.35V 
-                            10001 - 1.40V 
-                            10010 - 1.50V 
-                            10011 - 1.60V 
-                            10100 - 1.65V 
-                            10101 - 1.70V 
-                            10110 - 1.80V 
-                            10111 - 1.90V 
-                            11000 - 2.00V 
-                            11001 - 2.35V 
-                            11010 - 2.50V 
-                            11011 - 2.65V 
-                            11100 - 2.80V 
-                            11101 - 3.00V 
-                            11110 - 3.15V 
-                            11111 - 3.30V</description>
+                        <description>
+                            Output voltage select\n
+                            The regulator output voltage is limited to 1.3V unless the voltage limit is disabled using the disable_voltage_limit field in the vreg_ctrl register\n
+                            00000 - 0.55V\n
+                            00001 - 0.60V\n
+                            00010 - 0.65V\n
+                            00011 - 0.70V\n
+                            00100 - 0.75V\n
+                            00101 - 0.80V\n
+                            00110 - 0.85V\n
+                            00111 - 0.90V\n
+                            01000 - 0.95V\n
+                            01001 - 1.00V\n
+                            01010 - 1.05V\n
+                            01011 - 1.10V (default)\n
+                            01100 - 1.15V\n
+                            01101 - 1.20V\n
+                            01110 - 1.25V\n
+                            01111 - 1.30V\n
+                            10000 - 1.35V\n
+                            10001 - 1.40V\n
+                            10010 - 1.50V\n
+                            10011 - 1.60V\n
+                            10100 - 1.65V\n
+                            10101 - 1.70V\n
+                            10110 - 1.80V\n
+                            10111 - 1.90V\n
+                            11000 - 2.00V\n
+                            11001 - 2.35V\n
+                            11010 - 2.50V\n
+                            11011 - 2.65V\n
+                            11100 - 2.80V\n
+                            11101 - 3.00V\n
+                            11110 - 3.15V\n
+                            11111 - 3.30V
+                        </description>
                         <bitRange>[8:4]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -33146,41 +32930,42 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>VSEL</name>
-                        <description>output voltage select 
-                            the regulator output voltage is limited to 1.3V unless the voltage limit 
-                            is disabled using the disable_voltage_limit field in the vreg_ctrl register 
-                            00000 - 0.55V 
-                            00001 - 0.60V 
-                            00010 - 0.65V 
-                            00011 - 0.70V 
-                            00100 - 0.75V 
-                            00101 - 0.80V 
-                            00110 - 0.85V 
-                            00111 - 0.90V 
-                            01000 - 0.95V 
-                            01001 - 1.00V 
-                            01010 - 1.05V 
-                            01011 - 1.10V (default) 
-                            01100 - 1.15V 
-                            01101 - 1.20V 
-                            01110 - 1.25V 
-                            01111 - 1.30V 
-                            10000 - 1.35V 
-                            10001 - 1.40V 
-                            10010 - 1.50V 
-                            10011 - 1.60V 
-                            10100 - 1.65V 
-                            10101 - 1.70V 
-                            10110 - 1.80V 
-                            10111 - 1.90V 
-                            11000 - 2.00V 
-                            11001 - 2.35V 
-                            11010 - 2.50V 
-                            11011 - 2.65V 
-                            11100 - 2.80V 
-                            11101 - 3.00V 
-                            11110 - 3.15V 
-                            11111 - 3.30V</description>
+                        <description>
+                            Output voltage select\n
+                            The regulator output voltage is limited to 1.3V unless the voltage limit is disabled using the disable_voltage_limit field in the vreg_ctrl register\n
+                            00000 - 0.55V\n
+                            00001 - 0.60V\n
+                            00010 - 0.65V\n
+                            00011 - 0.70V\n
+                            00100 - 0.75V\n
+                            00101 - 0.80V\n
+                            00110 - 0.85V\n
+                            00111 - 0.90V\n
+                            01000 - 0.95V\n
+                            01001 - 1.00V\n
+                            01010 - 1.05V\n
+                            01011 - 1.10V (default)\n
+                            01100 - 1.15V\n
+                            01101 - 1.20V\n
+                            01110 - 1.25V\n
+                            01111 - 1.30V\n
+                            10000 - 1.35V\n
+                            10001 - 1.40V\n
+                            10010 - 1.50V\n
+                            10011 - 1.60V\n
+                            10100 - 1.65V\n
+                            10101 - 1.70V\n
+                            10110 - 1.80V\n
+                            10111 - 1.90V\n
+                            11000 - 2.00V\n
+                            11001 - 2.35V\n
+                            11010 - 2.50V\n
+                            11011 - 2.65V\n
+                            11100 - 2.80V\n
+                            11101 - 3.00V\n
+                            11110 - 3.15V\n
+                            11111 - 3.30V
+                        </description>
                         <bitRange>[8:4]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -33210,41 +32995,42 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>VSEL</name>
-                        <description>output voltage select 
-                            the regulator output voltage is limited to 1.3V unless the voltage limit 
-                            is disabled using the disable_voltage_limit field in the vreg_ctrl register 
-                            00000 - 0.55V 
-                            00001 - 0.60V 
-                            00010 - 0.65V 
-                            00011 - 0.70V 
-                            00100 - 0.75V 
-                            00101 - 0.80V 
-                            00110 - 0.85V 
-                            00111 - 0.90V 
-                            01000 - 0.95V 
-                            01001 - 1.00V 
-                            01010 - 1.05V 
-                            01011 - 1.10V (default) 
-                            01100 - 1.15V 
-                            01101 - 1.20V 
-                            01110 - 1.25V 
-                            01111 - 1.30V 
-                            10000 - 1.35V 
-                            10001 - 1.40V 
-                            10010 - 1.50V 
-                            10011 - 1.60V 
-                            10100 - 1.65V 
-                            10101 - 1.70V 
-                            10110 - 1.80V 
-                            10111 - 1.90V 
-                            11000 - 2.00V 
-                            11001 - 2.35V 
-                            11010 - 2.50V 
-                            11011 - 2.65V 
-                            11100 - 2.80V 
-                            11101 - 3.00V 
-                            11110 - 3.15V 
-                            11111 - 3.30V</description>
+                        <description>
+                            Output voltage select\n
+                            The regulator output voltage is limited to 1.3V unless the voltage limit is disabled using the disable_voltage_limit field in the vreg_ctrl register\n
+                            00000 - 0.55V\n
+                            00001 - 0.60V\n
+                            00010 - 0.65V\n
+                            00011 - 0.70V\n
+                            00100 - 0.75V\n
+                            00101 - 0.80V\n
+                            00110 - 0.85V\n
+                            00111 - 0.90V\n
+                            01000 - 0.95V\n
+                            01001 - 1.00V\n
+                            01010 - 1.05V\n
+                            01011 - 1.10V (default)\n
+                            01100 - 1.15V\n
+                            01101 - 1.20V\n
+                            01110 - 1.25V\n
+                            01111 - 1.30V\n
+                            10000 - 1.35V\n
+                            10001 - 1.40V\n
+                            10010 - 1.50V\n
+                            10011 - 1.60V\n
+                            10100 - 1.65V\n
+                            10101 - 1.70V\n
+                            10110 - 1.80V\n
+                            10111 - 1.90V\n
+                            11000 - 2.00V\n
+                            11001 - 2.35V\n
+                            11010 - 2.50V\n
+                            11011 - 2.65V\n
+                            11100 - 2.80V\n
+                            11101 - 3.00V\n
+                            11110 - 3.15V\n
+                            11111 - 3.30V
+                        </description>
                         <bitRange>[8:4]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -33290,25 +33076,27 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>VSEL</name>
-                        <description>threshold select 
-                            00000 - 0.473V 
-                            00001 - 0.516V 
-                            00010 - 0.559V 
-                            00011 - 0.602V 
-                            00100 - 0.645VS 
-                            00101 - 0.688V 
-                            00110 - 0.731V 
-                            00111 - 0.774V 
-                            01000 - 0.817V 
-                            01001 - 0.860V (default) 
-                            01010 - 0.903V 
-                            01011 - 0.946V 
-                            01100 - 0.989V 
-                            01101 - 1.032V 
-                            01110 - 1.075V 
-                            01111 - 1.118V 
-                            10000 - 1.161 
-                            10001 - 1.204V</description>
+                        <description>
+                            Threshold select\n
+                            00000 - 0.473V\n
+                            00001 - 0.516V\n
+                            00010 - 0.559V\n
+                            00011 - 0.602V\n
+                            00100 - 0.645V\n
+                            00101 - 0.688V\n
+                            00110 - 0.731V\n
+                            00111 - 0.774V\n
+                            01000 - 0.817V\n
+                            01001 - 0.860V (default)\n
+                            01010 - 0.903V\n
+                            01011 - 0.946V\n
+                            01100 - 0.989V\n
+                            01101 - 1.032V\n
+                            01110 - 1.075V\n
+                            01111 - 1.118V\n
+                            10000 - 1.161\n
+                            10001 - 1.204V
+                        </description>
                         <bitRange>[8:4]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -33329,25 +33117,27 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>VSEL</name>
-                        <description>threshold select 
-                            00000 - 0.473V 
-                            00001 - 0.516V 
-                            00010 - 0.559V 
-                            00011 - 0.602V 
-                            00100 - 0.645VS 
-                            00101 - 0.688V 
-                            00110 - 0.731V 
-                            00111 - 0.774V 
-                            01000 - 0.817V 
-                            01001 - 0.860V (default) 
-                            01010 - 0.903V 
-                            01011 - 0.946V 
-                            01100 - 0.989V 
-                            01101 - 1.032V 
-                            01110 - 1.075V 
-                            01111 - 1.118V 
-                            10000 - 1.161 
-                            10001 - 1.204V</description>
+                        <description>
+                            Threshold select\n
+                            00000 - 0.473V\n
+                            00001 - 0.516V\n
+                            00010 - 0.559V\n
+                            00011 - 0.602V\n
+                            00100 - 0.645V\n 
+                            00101 - 0.688V\n
+                            00110 - 0.731V\n
+                            00111 - 0.774V\n
+                            01000 - 0.817V\n
+                            01001 - 0.860V (default)\n
+                            01010 - 0.903V\n
+                            01011 - 0.946V\n
+                            01100 - 0.989V\n
+                            01101 - 1.032V\n
+                            01110 - 1.075V\n
+                            01111 - 1.118V\n
+                            10000 - 1.161V\n
+                            10001 - 1.204V
+                        </description>
                         <bitRange>[8:4]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -33368,25 +33158,27 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>VSEL</name>
-                        <description>threshold select 
-                            00000 - 0.473V 
-                            00001 - 0.516V 
-                            00010 - 0.559V 
-                            00011 - 0.602V 
-                            00100 - 0.645VS 
-                            00101 - 0.688V 
-                            00110 - 0.731V 
-                            00111 - 0.774V 
-                            01000 - 0.817V 
-                            01001 - 0.860V (default) 
-                            01010 - 0.903V 
-                            01011 - 0.946V 
-                            01100 - 0.989V 
-                            01101 - 1.032V 
-                            01110 - 1.075V 
-                            01111 - 1.118V 
-                            10000 - 1.161 
-                            10001 - 1.204V</description>
+                        <description>
+                            Threshold select\n
+                            00000 - 0.473V\n
+                            00001 - 0.516V\n
+                            00010 - 0.559V\n
+                            00011 - 0.602V\n
+                            00100 - 0.645V\n 
+                            00101 - 0.688V\n
+                            00110 - 0.731V\n
+                            00111 - 0.774V\n
+                            01000 - 0.817V\n
+                            01001 - 0.860V (default)\n
+                            01010 - 0.903V\n
+                            01011 - 0.946V\n
+                            01100 - 0.989V\n
+                            01101 - 1.032V\n
+                            01110 - 1.075V\n
+                            01111 - 1.118V\n
+                            10000 - 1.161V\n
+                            10001 - 1.204V
+                        </description>
                         <bitRange>[8:4]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -33427,193 +33219,209 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>HAD_WATCHDOG_RESET_RSM</name>
-                        <description>Last reset was a watchdog timeout which was configured to reset the power-on state machine 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        no 
-                            timer              no 
-                            powman             no 
-                            swcore             no 
-                            psm                yes 
-                            and does not change the power state</description>
+                        <description>
+                            Last reset was a watchdog timeout which was configured to reset the power-on state machine.
+                            This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        no\n
+                            timer              no\n
+                            powman             no\n
+                            swcore             no\n
+                            psm                yes\n
+                            and does not change the power state
+                        </description>
                         <bitRange>[28:28]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_HZD_SYS_RESET_REQ</name>
-                        <description>Last reset was a system reset from the hazard debugger 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        no 
-                            timer              no 
-                            powman             no 
-                            swcore             no 
-                            psm                yes 
-                            and does not change the power state</description>
+                        <description>Last reset was a system reset from the hazard debugger.
+                            This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        no\n
+                            timer              no\n
+                            powman             no\n
+                            swcore             no\n
+                            psm                yes\n
+                            and does not change the power state
+                        </description>
                         <bitRange>[27:27]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_GLITCH_DETECT</name>
-                        <description>Last reset was due to a power supply glitch 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        no 
-                            timer              no 
-                            powman             no 
-                            swcore             no 
-                            psm                yes 
-                            and does not change the power state</description>
+                        <description>
+                            Last reset was due to a power supply glitch. This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        no\n
+                            timer              no\n
+                            powman             no\n
+                            swcore             no\n
+                            psm                yes\n
+                            and does not change the power state
+                        </description>
                         <bitRange>[26:26]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_SWCORE_PD</name>
-                        <description>Last reset was a switched core powerdown 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        no 
-                            timer              no 
-                            powman             no 
-                            swcore             yes 
-                            psm                yes 
-                            then starts the power sequencer</description>
+                        <description>
+                            Last reset was a switched core powerdown. This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        no\n
+                            timer              no\n
+                            powman             no\n
+                            swcore             yes\n
+                            psm                yes\n
+                            then starts the power sequencer
+                        </description>
                         <bitRange>[25:25]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_WATCHDOG_RESET_SWCORE</name>
-                        <description>Last reset was a watchdog timeout which was configured to reset the switched-core 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        no 
-                            timer              no 
-                            powman             no 
-                            swcore             yes 
-                            psm                yes 
-                            then starts the power sequencer</description>
+                        <description>
+                            Last reset was a watchdog timeout which was configured to reset the switched-core.
+                            This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        no\n
+                            timer              no\n
+                            powman             no\n
+                            swcore             yes\n
+                            psm                yes\n
+                            then starts the power sequencer
+                        </description>
                         <bitRange>[24:24]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_WATCHDOG_RESET_POWMAN</name>
-                        <description>Last reset was a watchdog timeout which was configured to reset the power manager 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        no 
-                            timer              yes 
-                            powman             yes 
-                            swcore             yes 
-                            psm                yes 
-                            then starts the power sequencer</description>
+                        <description>
+                            Last reset was a watchdog timeout which was configured to reset the power manager.
+                            This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        no\n
+                            timer              yes\n
+                            powman             yes\n
+                            swcore             yes\n
+                            psm                yes\n
+                            then starts the power sequencer
+                        </description>
                         <bitRange>[23:23]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_WATCHDOG_RESET_POWMAN_ASYNC</name>
-                        <description>Last reset was a watchdog timeout which was configured to reset the power manager asynchronously 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        no 
-                            timer              yes 
-                            powman             yes 
-                            swcore             yes 
-                            psm                yes 
-                            then starts the power sequencer</description>
+                        <description>
+                            Last reset was a watchdog timeout which was configured to reset the power manager asynchronously.
+                            This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        no\n
+                            timer              yes\n
+                            powman             yes\n
+                            swcore             yes\n
+                            psm                yes\n
+                            then starts the power sequencer
+                        </description>
                         <bitRange>[22:22]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_RESCUE</name>
-                        <description>Last reset was a rescue reset from the debugger 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        no, it sets this flag 
-                            timer              yes 
-                            powman             yes 
-                            swcore             yes 
-                            psm                yes 
+                        <description>
+                            Last reset was a rescue reset from the debugger\n
+                            This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        no, it sets this flag\n
+                            timer              yes\n
+                            powman             yes\n
+                            swcore             yes\n
+                            psm                yes\n
                             then starts the power sequencer</description>
                         <bitRange>[21:21]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_DP_RESET_REQ</name>
-                        <description>Last reset was an reset request from the arm debugger 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 no 
-                            RPAP               no 
-                            rescue_flag        yes 
-                            timer              yes 
-                            powman             yes 
-                            swcore             yes 
-                            psm                yes 
+                        <description>
+                            Last reset was an reset request from the arm debugger\n
+                            This resets:\n
+                            double_tap flag    no\n
+                            DP                 no\n
+                            RPAP               no\n
+                            rescue_flag        yes\n
+                            timer              yes\n
+                            powman             yes\n
+                            swcore             yes\n
+                            psm                yes\n
                             then starts the power sequencer</description>
                         <bitRange>[19:19]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_RUN_LOW</name>
-                        <description>Last reset was from the RUN pin 
-                            This resets: 
-                            double_tap flag    no 
-                            DP                 yes 
-                            RPAP               yes 
-                            rescue_flag        yes 
-                            timer              yes 
-                            powman             yes 
-                            swcore             yes 
-                            psm                yes 
+                        <description>
+                            Last reset was from the RUN pin. This resets:\n
+                            double_tap flag    no\n
+                            DP                 yes\n
+                            RPAP               yes\n
+                            rescue_flag        yes\n
+                            timer              yes\n
+                            powman             yes\n
+                            swcore             yes\n
+                            psm                yes\n
                             then starts the power sequencer</description>
                         <bitRange>[18:18]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_BOR</name>
-                        <description>Last reset was from the brown-out detection block 
-                            This resets: 
-                            double_tap flag    yes 
-                            DP                 yes 
-                            RPAP               yes 
-                            rescue_flag        yes 
-                            timer              yes 
-                            powman             yes 
-                            swcore             yes 
-                            psm                yes 
-                            then starts the power sequencer</description>
+                        <description>
+                            Last reset was from the brown-out detection block\n
+                            This resets:\n
+                            double_tap flag    yes\n
+                            DP                 yes\n
+                            RPAP               yes\n
+                            rescue_flag        yes\n
+                            timer              yes\n
+                            powman             yes\n
+                            swcore             yes\n
+                            psm                yes\n
+                            then starts the power sequencer
+                        </description>
                         <bitRange>[17:17]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>HAD_POR</name>
-                        <description>Last reset was from the power-on reset 
-                            This resets: 
-                            double_tap flag    yes 
-                            DP                 yes 
-                            RPAP               yes 
-                            rescue_flag        yes 
-                            timer              yes 
-                            powman             yes 
-                            swcore             yes 
-                            psm                yes 
-                            then starts the power sequencer</description>
+                        <description>
+                            Last reset was from the power-on reset. This resets:\n
+                            double_tap flag    yes\n
+                            DP                 yes\n
+                            RPAP               yes\n
+                            rescue_flag        yes\n
+                            timer              yes\n
+                            powman             yes\n
+                            swcore             yes\n
+                            psm                yes\n
+                            then starts the power sequencer
+                        </description>
                         <bitRange>[16:16]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -37631,74 +37439,75 @@ SPDX-License-Identifier: BSD-3-Clause
 
             List of configuration constants for the Synopsys I2C hardware (you may see references to these in I2C register header; these are *fixed* values, set at hardware design time):
 
-            IC_ULTRA_FAST_MODE ................ 0x0 
-            IC_UFM_TBUF_CNT_DEFAULT ........... 0x8 
-            IC_UFM_SCL_LOW_COUNT .............. 0x0008 
-            IC_UFM_SCL_HIGH_COUNT ............. 0x0006 
-            IC_TX_TL .......................... 0x0 
-            IC_TX_CMD_BLOCK ................... 0x1 
-            IC_HAS_DMA ........................ 0x1 
-            IC_HAS_ASYNC_FIFO ................. 0x0 
-            IC_SMBUS_ARP ...................... 0x0 
-            IC_FIRST_DATA_BYTE_STATUS ......... 0x1 
-            IC_INTR_IO ........................ 0x1 
-            IC_MASTER_MODE .................... 0x1 
-            IC_DEFAULT_ACK_GENERAL_CALL ....... 0x1 
-            IC_INTR_POL ....................... 0x1 
-            IC_OPTIONAL_SAR ................... 0x0 
-            IC_DEFAULT_TAR_SLAVE_ADDR ......... 0x055 
-            IC_DEFAULT_SLAVE_ADDR ............. 0x055 
-            IC_DEFAULT_HS_SPKLEN .............. 0x1 
-            IC_FS_SCL_HIGH_COUNT .............. 0x0006 
-            IC_HS_SCL_LOW_COUNT ............... 0x0008 
-            IC_DEVICE_ID_VALUE ................ 0x0 
-            IC_10BITADDR_MASTER ............... 0x0 
-            IC_CLK_FREQ_OPTIMIZATION .......... 0x0 
-            IC_DEFAULT_FS_SPKLEN .............. 0x7 
-            IC_ADD_ENCODED_PARAMS ............. 0x0 
-            IC_DEFAULT_SDA_HOLD ............... 0x000001 
-            IC_DEFAULT_SDA_SETUP .............. 0x64 
-            IC_AVOID_RX_FIFO_FLUSH_ON_TX_ABRT . 0x0 
-            IC_CLOCK_PERIOD ................... 100 
-            IC_EMPTYFIFO_HOLD_MASTER_EN ....... 1 
-            IC_RESTART_EN ..................... 0x1 
-            IC_TX_CMD_BLOCK_DEFAULT ........... 0x0 
-            IC_BUS_CLEAR_FEATURE .............. 0x0 
-            IC_CAP_LOADING .................... 100 
-            IC_FS_SCL_LOW_COUNT ............... 0x000d 
-            APB_DATA_WIDTH .................... 32 
-            IC_SDA_STUCK_TIMEOUT_DEFAULT ...... 0xffffffff 
-            IC_SLV_DATA_NACK_ONLY ............. 0x1 
-            IC_10BITADDR_SLAVE ................ 0x0 
-            IC_CLK_TYPE ....................... 0x0 
-            IC_SMBUS_UDID_MSB ................. 0x0 
-            IC_SMBUS_SUSPEND_ALERT ............ 0x0 
-            IC_HS_SCL_HIGH_COUNT .............. 0x0006 
-            IC_SLV_RESTART_DET_EN ............. 0x1 
-            IC_SMBUS .......................... 0x0 
-            IC_OPTIONAL_SAR_DEFAULT ........... 0x0 
-            IC_PERSISTANT_SLV_ADDR_DEFAULT .... 0x0 
-            IC_USE_COUNTS ..................... 0x0 
-            IC_RX_BUFFER_DEPTH ................ 16 
-            IC_SCL_STUCK_TIMEOUT_DEFAULT ...... 0xffffffff 
-            IC_RX_FULL_HLD_BUS_EN ............. 0x1 
-            IC_SLAVE_DISABLE .................. 0x1 
-            IC_RX_TL .......................... 0x0 
-            IC_DEVICE_ID ...................... 0x0 
-            IC_HC_COUNT_VALUES ................ 0x0 
-            I2C_DYNAMIC_TAR_UPDATE ............ 0 
-            IC_SMBUS_CLK_LOW_MEXT_DEFAULT ..... 0xffffffff 
-            IC_SMBUS_CLK_LOW_SEXT_DEFAULT ..... 0xffffffff 
-            IC_HS_MASTER_CODE ................. 0x1 
-            IC_SMBUS_RST_IDLE_CNT_DEFAULT ..... 0xffff 
-            IC_SMBUS_UDID_LSB_DEFAULT ......... 0xffffffff 
-            IC_SS_SCL_HIGH_COUNT .............. 0x0028 
-            IC_SS_SCL_LOW_COUNT ............... 0x002f 
-            IC_MAX_SPEED_MODE ................. 0x2 
-            IC_STAT_FOR_CLK_STRETCH ........... 0x0 
-            IC_STOP_DET_IF_MASTER_ACTIVE ...... 0x0 
-            IC_DEFAULT_UFM_SPKLEN ............. 0x1 
-            IC_TX_BUFFER_DEPTH ................ 16</description>
+            IC_ULTRA_FAST_MODE ................ 0x0\n
+            IC_UFM_TBUF_CNT_DEFAULT ........... 0x8\n
+            IC_UFM_SCL_LOW_COUNT .............. 0x0008\n
+            IC_UFM_SCL_HIGH_COUNT ............. 0x0006\n
+            IC_TX_TL .......................... 0x0\n
+            IC_TX_CMD_BLOCK ................... 0x1\n
+            IC_HAS_DMA ........................ 0x1\n
+            IC_HAS_ASYNC_FIFO ................. 0x0\n
+            IC_SMBUS_ARP ...................... 0x0\n
+            IC_FIRST_DATA_BYTE_STATUS ......... 0x1\n
+            IC_INTR_IO ........................ 0x1\n
+            IC_MASTER_MODE .................... 0x1\n
+            IC_DEFAULT_ACK_GENERAL_CALL ....... 0x1\n
+            IC_INTR_POL ....................... 0x1\n
+            IC_OPTIONAL_SAR ................... 0x0\n
+            IC_DEFAULT_TAR_SLAVE_ADDR ......... 0x055\n
+            IC_DEFAULT_SLAVE_ADDR ............. 0x055\n
+            IC_DEFAULT_HS_SPKLEN .............. 0x1\n
+            IC_FS_SCL_HIGH_COUNT .............. 0x0006\n
+            IC_HS_SCL_LOW_COUNT ............... 0x0008\n
+            IC_DEVICE_ID_VALUE ................ 0x0\n
+            IC_10BITADDR_MASTER ............... 0x0\n
+            IC_CLK_FREQ_OPTIMIZATION .......... 0x0\n
+            IC_DEFAULT_FS_SPKLEN .............. 0x7\n
+            IC_ADD_ENCODED_PARAMS ............. 0x0\n
+            IC_DEFAULT_SDA_HOLD ............... 0x000001\n
+            IC_DEFAULT_SDA_SETUP .............. 0x64\n
+            IC_AVOID_RX_FIFO_FLUSH_ON_TX_ABRT . 0x0\n
+            IC_CLOCK_PERIOD ................... 100\n
+            IC_EMPTYFIFO_HOLD_MASTER_EN ....... 1\n
+            IC_RESTART_EN ..................... 0x1\n
+            IC_TX_CMD_BLOCK_DEFAULT ........... 0x0\n
+            IC_BUS_CLEAR_FEATURE .............. 0x0\n
+            IC_CAP_LOADING .................... 100\n
+            IC_FS_SCL_LOW_COUNT ............... 0x000d\n
+            APB_DATA_WIDTH .................... 32\n
+            IC_SDA_STUCK_TIMEOUT_DEFAULT ...... 0xffffffff\n
+            IC_SLV_DATA_NACK_ONLY ............. 0x1\n
+            IC_10BITADDR_SLAVE ................ 0x0\n
+            IC_CLK_TYPE ....................... 0x0\n
+            IC_SMBUS_UDID_MSB ................. 0x0\n
+            IC_SMBUS_SUSPEND_ALERT ............ 0x0\n
+            IC_HS_SCL_HIGH_COUNT .............. 0x0006\n
+            IC_SLV_RESTART_DET_EN ............. 0x1\n
+            IC_SMBUS .......................... 0x0\n
+            IC_OPTIONAL_SAR_DEFAULT ........... 0x0\n
+            IC_PERSISTANT_SLV_ADDR_DEFAULT .... 0x0\n
+            IC_USE_COUNTS ..................... 0x0\n
+            IC_RX_BUFFER_DEPTH ................ 16\n
+            IC_SCL_STUCK_TIMEOUT_DEFAULT ...... 0xffffffff\n
+            IC_RX_FULL_HLD_BUS_EN ............. 0x1\n
+            IC_SLAVE_DISABLE .................. 0x1\n
+            IC_RX_TL .......................... 0x0\n
+            IC_DEVICE_ID ...................... 0x0\n
+            IC_HC_COUNT_VALUES ................ 0x0\n
+            I2C_DYNAMIC_TAR_UPDATE ............ 0\n
+            IC_SMBUS_CLK_LOW_MEXT_DEFAULT ..... 0xffffffff\n
+            IC_SMBUS_CLK_LOW_SEXT_DEFAULT ..... 0xffffffff\n
+            IC_HS_MASTER_CODE ................. 0x1\n
+            IC_SMBUS_RST_IDLE_CNT_DEFAULT ..... 0xffff\n
+            IC_SMBUS_UDID_LSB_DEFAULT ......... 0xffffffff\n
+            IC_SS_SCL_HIGH_COUNT .............. 0x0028\n
+            IC_SS_SCL_LOW_COUNT ............... 0x002f\n
+            IC_MAX_SPEED_MODE ................. 0x2\n
+            IC_STAT_FOR_CLK_STRETCH ........... 0x0\n
+            IC_STOP_DET_IF_MASTER_ACTIVE ...... 0x0\n
+            IC_DEFAULT_UFM_SPKLEN ............. 0x1\n
+            IC_TX_BUFFER_DEPTH ................ 16
+        </description>
         <baseAddress>0x40090000</baseAddress>
         <addressBlock>
             <offset>0</offset>
@@ -51623,68 +51432,48 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>BOOT_FLAGS1</name>
                 <addressOffset>0x0000012c</addressOffset>
-                <description>
-                    Disable/Enable boot paths/features in the RP2350 mask ROM. Disables always supersede\n
-                    enables. Enables are provided where there are other configurations in OTP that must\n
-                    be valid. (RBIT-3)
-                </description>
+                <description>Disable/Enable boot paths/features in the RP2350 mask ROM. Disables always supersede enables. Enables are provided where there are other configurations in OTP that must be valid. (RBIT-3)</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
                         <name>DOUBLE_TAP</name>
-                        <description>
-                            Enable entering BOOTSEL mode via double-tap of the RUN/RSTn pin. Adds a\n
-                            significant delay to boot time, as configured by DOUBLE_TAP_DELAY.\n
-                            This functions by waiting at startup (i.e. following a reset) to see if a\n
-                            second reset is applied soon afterward. The second reset is detected by the\n
-                            bootrom with help of the POWMAN_CHIP_RESET_DOUBLE_TAP flag, which is not\n
-                            reset by the external reset pin, and the bootrom enters BOOTSEL mode\n
-                            (NSBOOT) to await further instruction over USB or UART.
-                        </description>
+                        <description>Enable entering BOOTSEL mode via double-tap of the RUN/RSTn pin. Adds a significant delay to boot time, as configured by DOUBLE_TAP_DELAY.
+
+                            This functions by waiting at startup (i.e. following a reset) to see if a second reset is applied soon afterward. The second reset is detected by the bootrom with help of the POWMAN_CHIP_RESET_DOUBLE_TAP flag, which is not reset by the external reset pin, and the bootrom enters BOOTSEL mode (NSBOOT) to await further instruction over USB or UART.</description>
                         <bitRange>[19:19]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>DOUBLE_TAP_DELAY</name>
-                        <description>
-                            Adjust how long to wait for a second reset when double tap BOOTSEL mode is enabled\n
-                            via DOUBLE_TAP. The minimum is 50 milliseconds, and each unit of this field adds an\n
-                            additional 50 milliseconds. For example, settings this field to its maximum value of\n
-                            7 will cause the chip to wait for 400 milliseconds at boot to check for a second reset\n
-                            which requests entry to BOOTSEL mode.\n
-                            200 milliseconds (DOUBLE_TAP_DELAY=3) is a good intermediate value.
-                        </description>
+                        <description>Adjust how long to wait for a second reset when double tap BOOTSEL mode is enabled via DOUBLE_TAP. The minimum is 50 milliseconds, and each unit of this field adds an additional 50 milliseconds.
+
+                            For example, settings this field to its maximum value of 7 will cause the chip to wait for 400 milliseconds at boot to check for a second reset which requests entry to BOOTSEL mode.
+
+                            200 milliseconds (DOUBLE_TAP_DELAY=3) is a good intermediate value.</description>
                         <bitRange>[18:16]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>KEY_INVALID</name>
-                        <description>
-                            Mark a boot key as invalid, or prevent it from ever becoming valid. The bootrom\n
-                            will ignore any boot key marked as invalid during secure boot signature checks.\n
-                            Each bit in this field corresponds to one of the four 256-bit boot key hashes that\n
-                            may be stored in page 2 of the OTP. When provisioning boot keys, it&#39;s recommended\n
-                            to mark any boot key slots you don&#39;t intend to use as KEY_INVALID, so that\n
-                            spurious keys can not be installed at a later time.
-                        </description>
+                        <description>Mark a boot key as invalid, or prevent it from ever becoming valid. The bootrom will ignore any boot key marked as invalid during secure boot signature checks.
+
+                            Each bit in this field corresponds to one of the four 256-bit boot key hashes that may be stored in page 2 of the OTP.
+
+                            When provisioning boot keys, it&#39;s recommended to mark any boot key slots you don&#39;t intend to use as KEY_INVALID, so that spurious keys can not be installed at a later time.</description>
                         <bitRange>[11:8]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>KEY_VALID</name>
-                        <description>
-                            Mark each of the possible boot keys as valid. The bootrom will check signatures\n
-                            against all valid boot keys, and ignore invalid boot keys. Each bit in this field\n
-                            corresponds to one of the four 256-bit boot key hashes that may be stored in page 2\n
-                            of the OTP. A KEY_VALID bit is ignored if the corresponding KEY_INVALID bit is set.\n
-                            Boot keys are considered valid only when KEY_VALID is set and KEY_INVALID is clear.\n
-                            Do not mark a boot key as KEY_VALID if it does not contain a valid SHA-256 hash of\n
-                            your secp256k1 public key. Verify keys after programming, before setting the KEY_VALID\n
-                            bits -- a boot key with uncorrectable ECC faults will render your device unbootable if\n
-                            secure boot is enabled.\n
-                            Do not enable secure boot without first installing a valid key. This will render your\n
-                            device unbootable.
-                        </description>
+                        <description>Mark each of the possible boot keys as valid. The bootrom will check signatures against all valid boot keys, and ignore invalid boot keys.
+
+                            Each bit in this field corresponds to one of the four 256-bit boot key hashes that may be stored in page 2 of the OTP.
+
+                            A KEY_VALID bit is ignored if the corresponding KEY_INVALID bit is set. Boot keys are considered valid only when KEY_VALID is set and KEY_INVALID is clear.
+
+                            Do not mark a boot key as KEY_VALID if it does not contain a valid SHA-256 hash of your secp256k1 public key. Verify keys after programming, before setting the KEY_VALID bits -- a boot key with uncorrectable ECC faults will render your device unbootable if secure boot is enabled.
+
+                            Do not enable secure boot without first installing a valid key. This will render your device unbootable.</description>
                         <bitRange>[3:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -51797,22 +51586,18 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>FLASH_DEVINFO</name>
                 <addressOffset>0x00000150</addressOffset>
-                <description>
-                    Stores information about external flash device(s). (ECC)\n
-                    Assumed to be valid if BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is set.
-                </description>
+                <description>Stores information about external flash device(s). (ECC)
+
+                    Assumed to be valid if BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is set.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
                         <name>CS1_SIZE</name>
-                        <description>
-                            The size of the flash/PSRAM device on chip select 1 (addressable at 0x11000000\n
-                            through 0x11ffffff). A value of zero is decoded as a size of zero (no device).\n
-                            Nonzero values are decoded as 4kiB &lt;&lt; CS1_SIZE. For example, four megabytes\n
-                            is encoded with a CS1_SIZE value of 10, and 16 megabytes is encoded with a\n
-                            CS1_SIZE value of 12.\n
-                            When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, a default of zero is used.
-                        </description>
+                        <description>The size of the flash/PSRAM device on chip select 1 (addressable at 0x11000000 through 0x11ffffff).
+
+                            A value of zero is decoded as a size of zero (no device). Nonzero values are decoded as 4kiB &lt;&lt; CS1_SIZE. For example, four megabytes is encoded with a CS1_SIZE value of 10, and 16 megabytes is encoded with a CS1_SIZE value of 12.
+
+                            When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, a default of zero is used.</description>
                         <bitRange>[15:12]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
@@ -51872,13 +51657,11 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>CS0_SIZE</name>
-                        <description>
-                            The size of the flash/PSRAM device on chip select 0 (addressable at 0x10000000 through\n
-                            0x10ffffff). A value of zero is decoded as a size of zero (no device). Nonzero values\n
-                            are decoded as 4kiB &lt;&lt; CS0_SIZE. For example, four megabytes is encoded with a\n
-                            CS0_SIZE value of 10, and 16 megabytes is encoded with a CS0_SIZE value of 12.\n
-                            When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, a default of 12 (16 MiB) is used.
-                        </description>
+                        <description>The size of the flash/PSRAM device on chip select 0 (addressable at 0x10000000 through 0x10ffffff).
+
+                            A value of zero is decoded as a size of zero (no device). Nonzero values are decoded as 4kiB &lt;&lt; CS0_SIZE. For example, four megabytes is encoded with a CS0_SIZE value of 10, and 16 megabytes is encoded with a CS0_SIZE value of 12.
+
+                            When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, a default of 12 (16 MiB) is used.</description>
                         <bitRange>[11:8]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
@@ -51938,28 +51721,21 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>D8H_ERASE_SUPPORTED</name>
-                        <description>
-                            If true, all attached devices are assumed to support (or ignore, in the case of\n
-                            PSRAM) a block erase command with a command prefix of D8h, an erase size of 64 kiB,\n
-                            and a 24-bit address. Almost all 25-series flash devices support this command.\n
-                            If set, the bootrom will use the D8h erase command where it is able, to accelerate\n
-                            bulk erase operations. This makes flash programming faster.\n
-                            When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, this field defaults to false.
-                        </description>
+                        <description>If true, all attached devices are assumed to support (or ignore, in the case of PSRAM) a block erase command with a command prefix of D8h, an erase size of 64 kiB, and a 24-bit address. Almost all 25-series flash devices support this command.
+
+                            If set, the bootrom will use the D8h erase command where it is able, to accelerate bulk erase operations. This makes flash programming faster.
+
+                            When BOOT_FLAGS0_FLASH_DEVINFO_ENABLE is not set, this field defaults to false.</description>
                         <bitRange>[7:7]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>CS1_GPIO</name>
-                        <description>
-                            Indicate a GPIO number to be used for the secondary flash chip select (CS1), which\n
-                            selects the external QSPI device mapped at system addresses 0x11000000 through 0x11ffffff.\n
-                            There is no such configuration for CS0, as the primary chip select has a dedicated pin.\n
-                            On RP2350 the permissible GPIO numbers are 0, 8, 19 and 47.\n
-                            Ignored if CS1_size is zero. If CS1_SIZE is nonzero, the bootrom will automatically\n
-                            configure this GPIO as a second chip select upon entering the flash boot path, or entering\n
-                            any other path that may use the QSPI flash interface, such as BOOTSEL mode (nsboot).
-                        </description>
+                        <description>Indicate a GPIO number to be used for the secondary flash chip select (CS1), which selects the external QSPI device mapped at system addresses 0x11000000 through 0x11ffffff. There is no such configuration for CS0, as the primary chip select has a dedicated pin.
+
+                            On RP2350 the permissible GPIO numbers are 0, 8, 19 and 47.
+
+                            Ignored if CS1_size is zero. If CS1_SIZE is nonzero, the bootrom will automatically configure this GPIO as a second chip select upon entering the flash boot path, or entering any other path that may use the QSPI flash interface, such as BOOTSEL mode (nsboot).</description>
                         <bitRange>[5:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -51968,11 +51744,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>FLASH_PARTITION_SLOT_SIZE</name>
                 <addressOffset>0x00000154</addressOffset>
-                <description>
-                    Gap between partition table slot 0 and slot 1 at the start of flash (the default size is\n
-                    4096 bytes) (ECC) Enabled by the OVERRIDE_FLASH_PARTITION_SLOT_SIZE bit in BOOT_FLAGS,\n
-                    the size is 4096 * (value + 1)
-                </description>
+                <description>Gap between partition table slot 0 and slot 1 at the start of flash (the default size is 4096 bytes) (ECC) Enabled by the OVERRIDE_FLASH_PARTITION_SLOT_SIZE bit in BOOT_FLAGS, the size is 4096 * (value + 1)</description>
                 <resetMask>0x00000000</resetMask>
                 <fields>
                     <field>
@@ -52006,22 +51778,23 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>BOOTSEL_PLL_CFG</name>
                 <addressOffset>0x0000015c</addressOffset>
-                <description>
-                    Optional PLL configuration for BOOTSEL mode. (ECC)\n
-                    This should be configured to produce an exact 48 MHz based on the crystal\n
-                    oscillator frequency. User mode software may also use this value to calculate\n
-                    the expected crystal frequency based on an assumed 48 MHz PLL output.\n
-                    If no configuration is given, the crystal is assumed to be 12 MHz.\n
-                    The PLL frequency can be calculated as:\n
-                    PLL out = (XOSC frequency / (REFDIV+1)) x FBDIV / (POSTDIV1 x POSTDIV2)\n
-                    Conversely the crystal frequency can be calculated as:\n
-                    XOSC frequency = 48 MHz x (REFDIV+1) x (POSTDIV1 x POSTDIV2) / FBDIV\n
-                    (Note the  +1 on REFDIV is because the value stored in this OTP location is\n
-                    the actual divisor value minus one.)\n
-                    Used if and only if ENABLE_BOOTSEL_NON_DEFAULT_PLL_XOSC_CFG is set in BOOT_FLAGS0.\n
-                    That bit should be set only after this row and BOOTSEL_XOSC_CFG are both correctly\n
-                    programmed.
-                </description>
+                <description>Optional PLL configuration for BOOTSEL mode. (ECC)
+
+                    This should be configured to produce an exact 48 MHz based on the crystal oscillator frequency. User mode software may also use this value to calculate the expected crystal frequency based on an assumed 48 MHz PLL output.
+
+                    If no configuration is given, the crystal is assumed to be 12 MHz.
+
+                    The PLL frequency can be calculated as:
+
+                    PLL out = (XOSC frequency / (REFDIV+1)) x FBDIV / (POSTDIV1 x POSTDIV2)
+
+                    Conversely the crystal frequency can be calculated as:
+
+                    XOSC frequency = 48 MHz x (REFDIV+1) x (POSTDIV1 x POSTDIV2) / FBDIV
+
+                    (Note the  +1 on REFDIV is because the value stored in this OTP location is the actual divisor value minus one.)
+
+                    Used if and only if ENABLE_BOOTSEL_NON_DEFAULT_PLL_XOSC_CFG is set in BOOT_FLAGS0. That bit should be set only after this row and BOOTSEL_XOSC_CFG are both correctly programmed.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -52055,13 +51828,11 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>BOOTSEL_XOSC_CFG</name>
                 <addressOffset>0x00000160</addressOffset>
-                <description>
-                    Non-default crystal oscillator configuration for the USB bootloader. (ECC)\n
-                    These values may also be used by user code configuring the crystal oscillator.\n
-                    Used if and only if ENABLE_BOOTSEL_NON_DEFAULT_PLL_XOSC_CFG is set in BOOT_FLAGS0.\n
-                    That bit should be set only after this row and BOOTSEL_PLL_CFG are both correctly\n
-                    programmed.
-                </description>
+                <description>Non-default crystal oscillator configuration for the USB bootloader. (ECC)
+
+                    These values may also be used by user code configuring the crystal oscillator.
+
+                    Used if and only if ENABLE_BOOTSEL_NON_DEFAULT_PLL_XOSC_CFG is set in BOOT_FLAGS0. That bit should be set only after this row and BOOTSEL_PLL_CFG are both correctly programmed.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -52104,19 +51875,13 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>DP_DM_SWAP</name>
-                        <description>
-                            Swap DM/DP during USB boot, to support board layouts with mirrored\n
-                            USB routing (deliberate or accidental).
-                        </description>
+                        <description>Swap DM/DP during USB boot, to support board layouts with mirrored USB routing (deliberate or accidental).</description>
                         <bitRange>[23:23]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WHITE_LABEL_ADDR_VALID</name>
-                        <description>
-                            valid flag for INFO_UF2_TXT_BOARD_ID_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 15)
-                        </description>
+                        <description>valid flag for INFO_UF2_TXT_BOARD_ID_STRDEF entry of the USB_WHITE_LABEL struct (index 15)</description>
                         <bitRange>[22:22]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -52128,136 +51893,91 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>WL_INFO_UF2_TXT_MODEL_STRDEF_VALID</name>
-                        <description>
-                            valid flag for INFO_UF2_TXT_MODEL_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 14)
-                        </description>
+                        <description>valid flag for INFO_UF2_TXT_MODEL_STRDEF entry of the USB_WHITE_LABEL struct (index 14)</description>
                         <bitRange>[14:14]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_INDEX_HTM_REDIRECT_NAME_STRDEF_VALID</name>
-                        <description>
-                            valid flag for INDEX_HTM_REDIRECT_NAME_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 13)
-                        </description>
+                        <description>valid flag for INDEX_HTM_REDIRECT_NAME_STRDEF entry of the USB_WHITE_LABEL struct (index 13)</description>
                         <bitRange>[13:13]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_INDEX_HTM_REDIRECT_URL_STRDEF_VALID</name>
-                        <description>
-                            valid flag for INDEX_HTM_REDIRECT_URL_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 12)
-                        </description>
+                        <description>valid flag for INDEX_HTM_REDIRECT_URL_STRDEF entry of the USB_WHITE_LABEL struct (index 12)</description>
                         <bitRange>[12:12]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_SCSI_INQUIRY_VERSION_STRDEF_VALID</name>
-                        <description>
-                            valid flag for SCSI_INQUIRY_VERSION_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 11)
-                        </description>
+                        <description>valid flag for SCSI_INQUIRY_VERSION_STRDEF entry of the USB_WHITE_LABEL struct (index 11)</description>
                         <bitRange>[11:11]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_SCSI_INQUIRY_PRODUCT_STRDEF_VALID</name>
-                        <description>
-                            valid flag for SCSI_INQUIRY_PRODUCT_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 10)
-                        </description>
+                        <description>valid flag for SCSI_INQUIRY_PRODUCT_STRDEF entry of the USB_WHITE_LABEL struct (index 10)</description>
                         <bitRange>[10:10]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_SCSI_INQUIRY_VENDOR_STRDEF_VALID</name>
-                        <description>
-                            valid flag for SCSI_INQUIRY_VENDOR_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 9)
-                        </description>
+                        <description>valid flag for SCSI_INQUIRY_VENDOR_STRDEF entry of the USB_WHITE_LABEL struct (index 9)</description>
                         <bitRange>[9:9]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_VOLUME_LABEL_STRDEF_VALID</name>
-                        <description>
-                            valid flag for VOLUME_LABEL_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 8)
-                        </description>
+                        <description>valid flag for VOLUME_LABEL_STRDEF entry of the USB_WHITE_LABEL struct (index 8)</description>
                         <bitRange>[8:8]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_USB_CONFIG_ATTRIBUTES_MAX_POWER_VALUES_VALID</name>
-                        <description>
-                            valid flag for USB_CONFIG_ATTRIBUTES_MAX_POWER_VALUES entry of the\n
-                            USB_WHITE_LABEL struct (index 7)
-                        </description>
+                        <description>valid flag for USB_CONFIG_ATTRIBUTES_MAX_POWER_VALUES entry of the USB_WHITE_LABEL struct (index 7)</description>
                         <bitRange>[7:7]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_USB_DEVICE_SERIAL_NUMBER_STRDEF_VALID</name>
-                        <description>
-                            valid flag for USB_DEVICE_SERIAL_NUMBER_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 6)
-                        </description>
+                        <description>valid flag for USB_DEVICE_SERIAL_NUMBER_STRDEF entry of the USB_WHITE_LABEL struct (index 6)</description>
                         <bitRange>[6:6]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_USB_DEVICE_PRODUCT_STRDEF_VALID</name>
-                        <description>
-                            valid flag for USB_DEVICE_PRODUCT_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 5)
-                        </description>
+                        <description>valid flag for USB_DEVICE_PRODUCT_STRDEF entry of the USB_WHITE_LABEL struct (index 5)</description>
                         <bitRange>[5:5]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_USB_DEVICE_MANUFACTURER_STRDEF_VALID</name>
-                        <description>
-                            valid flag for USB_DEVICE_MANUFACTURER_STRDEF entry of the USB_WHITE_LABEL\n
-                            struct (index 4)
-                        </description>
+                        <description>valid flag for USB_DEVICE_MANUFACTURER_STRDEF entry of the USB_WHITE_LABEL struct (index 4)</description>
                         <bitRange>[4:4]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_USB_DEVICE_LANG_ID_VALUE_VALID</name>
-                        <description>
-                            valid flag for USB_DEVICE_LANG_ID_VALUE entry of the USB_WHITE_LABEL struct\n
-                            (index 3)
-                        </description>
+                        <description>valid flag for USB_DEVICE_LANG_ID_VALUE entry of the USB_WHITE_LABEL struct (index 3)</description>
                         <bitRange>[3:3]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_USB_DEVICE_SERIAL_NUMBER_VALUE_VALID</name>
-                        <description>
-                            valid flag for USB_DEVICE_BCD_DEVICEVALUE entry of the USB_WHITE_LABEL struct\n
-                            (index 2)
-                        </description>
+                        <description>valid flag for USB_DEVICE_BCD_DEVICEVALUE entry of the USB_WHITE_LABEL struct (index 2)</description>
                         <bitRange>[2:2]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_USB_DEVICE_PID_VALUE_VALID</name>
-                        <description>
-                            valid flag for USB_DEVICE_PID_VALUE entry of the USB_WHITE_LABEL struct\n
-                            (index 1)
-                        </description>
+                        <description>valid flag for USB_DEVICE_PID_VALUE entry of the USB_WHITE_LABEL struct (index 1)</description>
                         <bitRange>[1:1]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>WL_USB_DEVICE_VID_VALUE_VALID</name>
-                        <description>
-                            valid flag for USB_DEVICE_VID_VALUE entry of the USB_WHITE_LABEL struct\n
-                            (index 0)
-                        </description>
+                        <description>valid flag for USB_DEVICE_VID_VALUE entry of the USB_WHITE_LABEL struct (index 0)</description>
                         <bitRange>[0:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -52292,29 +52012,21 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>USB_WHITE_LABEL_ADDR</name>
                 <addressOffset>0x00000170</addressOffset>
-                <description>
-                    Row index of the USB_WHITE_LABEL structure within OTP (ECC)\n
-                    The table has 16 rows, each of which are also ECC and marked valid by the\n
-                    corresponding valid bit in USB_BOOT_FLAGS (ECC). The entries are either\n
-                    _VALUEs where the 16 bit value is used as is, or _STRDEFs which acts as a\n
-                    pointers to a string value. The value stored in a _STRDEF is two separate bytes:\n
-                    The low seven bits of the first (LSB) byte indicates the number of characters\n
-                    in the string, and the top bit of the first (LSB) byte if set to indicate that\n
-                    each character in the string is two bytes (Unicode) versus one byte if unset.\n
-                    The second (MSB) byte represents the location of the string data, and is encoded\n
-                    as the number of rows from this USB_WHITE_LABEL_ADDR; i.e. the row of the start\n
-                    of the string is USB_WHITE_LABEL_ADDR value + msb_byte.\n
-                    In each case, the corresponding valid bit enables replacing the default value for\n
-                    the corresponding item provided by the boot rom.\n
-                    Note that Unicode _STRDEFs are only supported for USB_DEVICE_PRODUCT_STRDEF,\n
-                    USB_DEVICE_SERIAL_NUMBER_STRDEF and USB_DEVICE_MANUFACTURER_STRDEF. Unicode values\n
-                    will be ignored if specified for other fields, and non-unicode values for these\n
-                    three items will be converted to Unicode characters by setting the upper 8 bits to zero.\n
-                    Note that if the USB_WHITE_LABEL structure or the corresponding strings are not\n
-                    readable by BOOTSEL mode based on OTP permissions, or if alignment requirements\n
-                    are not met, then the corresponding default values are used. The index values\n
-                    indicate where each field is located (row USB_WHITE_LABEL_ADDR value + index).
-                </description>
+                <description>Row index of the USB_WHITE_LABEL structure within OTP (ECC)
+
+                    The table has 16 rows, each of which are also ECC and marked valid by the corresponding valid bit in USB_BOOT_FLAGS (ECC).
+
+                    The entries are either _VALUEs where the 16 bit value is used as is, or _STRDEFs which acts as a pointers to a string value.
+
+                    The value stored in a _STRDEF is two separate bytes: The low seven bits of the first (LSB) byte indicates the number of characters in the string, and the top bit of the first (LSB) byte if set to indicate that each character in the string is two bytes (Unicode) versus one byte if unset. The second (MSB) byte represents the location of the string data, and is encoded as the number of rows from this USB_WHITE_LABEL_ADDR; i.e. the row of the start of the string is USB_WHITE_LABEL_ADDR value + msb_byte.
+
+                    In each case, the corresponding valid bit enables replacing the default value for the corresponding item provided by the boot rom.
+
+                    Note that Unicode _STRDEFs are only supported for USB_DEVICE_PRODUCT_STRDEF, USB_DEVICE_SERIAL_NUMBER_STRDEF and USB_DEVICE_MANUFACTURER_STRDEF. Unicode values will be ignored if specified for other fields, and non-unicode values for these three items will be converted to Unicode characters by setting the upper 8 bits to zero.
+
+                    Note that if the USB_WHITE_LABEL structure or the corresponding strings are not readable by BOOTSEL mode based on OTP permissions, or if alignment requirements are not met, then the corresponding default values are used.
+
+                    The index values indicate where each field is located (row USB_WHITE_LABEL_ADDR value + index):</description>
                 <resetMask>0x00000000</resetMask>
                 <fields>
                     <field>
@@ -52393,15 +52105,11 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>OTPBOOT_SRC</name>
                 <addressOffset>0x00000178</addressOffset>
-                <description>
-                    OTP start row for the OTP boot image. (ECC)\n
-                    If OTP boot is enabled, the bootrom will load from this location into\n
-                    SRAM and then directly enter the loaded image. Note that the image must\n
-                    be signed if SECURE_BOOT_ENABLE is set. The image itself is assumed to be\n
-                    ECC-protected.\n
-                    This must be an even number. Equivalently, the OTP boot image must start\n
-                    at a word-aligned location in the ECC read data address window.
-                </description>
+                <description>OTP start row for the OTP boot image. (ECC)
+
+                    If OTP boot is enabled, the bootrom will load from this location into SRAM and then directly enter the loaded image. Note that the image must be signed if SECURE_BOOT_ENABLE is set. The image itself is assumed to be ECC-protected.
+
+                    This must be an even number. Equivalently, the OTP boot image must start at a word-aligned location in the ECC read data address window.</description>
                 <resetMask>0x00000000</resetMask>
                 <fields>
                     <field>
@@ -52414,10 +52122,9 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>OTPBOOT_LEN</name>
                 <addressOffset>0x0000017c</addressOffset>
-                <description>Length in rows of the OTP boot image. (ECC)\n
-                    OTPBOOT_LEN must be even. The total image size must be a\n
-                    multiple of 4 bytes (32 bits).
-                </description>
+                <description>Length in rows of the OTP boot image. (ECC)
+
+                    OTPBOOT_LEN must be even. The total image size must be a multiple of 4 bytes (32 bits).</description>
                 <resetMask>0x00000000</resetMask>
                 <fields>
                     <field>
@@ -52430,11 +52137,9 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>OTPBOOT_DST0</name>
                 <addressOffset>0x00000180</addressOffset>
-                <description>
-                    Bits 15:0 of the OTP boot image load destination (and entry point). (ECC)\n
-                    This must be a location in main SRAM (main SRAM is addresses 0x20000000 through\n
-                    0x20082000) and must be word-aligned.
-                </description>
+                <description>Bits 15:0 of the OTP boot image load destination (and entry point). (ECC)
+
+                    This must be a location in main SRAM (main SRAM is addresses 0x20000000 through 0x20082000) and must be word-aligned.</description>
                 <resetMask>0x00000000</resetMask>
                 <fields>
                     <field>
@@ -52447,11 +52152,9 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>OTPBOOT_DST1</name>
                 <addressOffset>0x00000184</addressOffset>
-                <description>
-                    Bits 31:16 of the OTP boot image load destination (and entry point). (ECC)\n
-                    This must be a location in main SRAM (main SRAM is addresses 0x20000000 through\n
-                    0x20082000) and must be word-aligned.
-                </description>
+                <description>Bits 31:16 of the OTP boot image load destination (and entry point). (ECC)
+
+                    This must be a location in main SRAM (main SRAM is addresses 0x20000000 through 0x20082000) and must be word-aligned.</description>
                 <resetMask>0x00000000</resetMask>
                 <fields>
                     <field>
@@ -52832,10 +52535,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>KEY1_VALID</name>
                 <addressOffset>0x00003de4</addressOffset>
-                <description>
-                    Valid flag for key 1. Once the valid flag is set, the key can no longer be read\n
-                    or written, and becomes a valid fixed key for protecting OTP pages.
-                </description>
+                <description>Valid flag for key 1. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -52860,10 +52560,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>KEY2_VALID</name>
                 <addressOffset>0x00003de8</addressOffset>
-                <description>
-                    Valid flag for key 2. Once the valid flag is set, the key can no longer be read\n
-                    or written, and becomes a valid fixed key for protecting OTP pages.
-                </description>
+                <description>Valid flag for key 2. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -52888,10 +52585,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>KEY3_VALID</name>
                 <addressOffset>0x00003dec</addressOffset>
-                <description>
-                    Valid flag for key 3. Once the valid flag is set, the key can no longer be read\n
-                    or written, and becomes a valid fixed key for protecting OTP pages.
-                </description>
+                <description>Valid flag for key 3. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -52916,10 +52610,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>KEY4_VALID</name>
                 <addressOffset>0x00003df0</addressOffset>
-                <description>
-                    Valid flag for key 4. Once the valid flag is set, the key can no longer be read\n
-                    or written, and becomes a valid fixed key for protecting OTP pages.
-                </description>
+                <description>Valid flag for key 4. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -52944,10 +52635,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>KEY5_VALID</name>
                 <addressOffset>0x00003df4</addressOffset>
-                <description>
-                    Valid flag for key 5. Once the valid flag is set, the key can no longer be read\n
-                    or written, and becomes a valid fixed key for protecting OTP pages.
-                </description>
+                <description>Valid flag for key 5. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -52972,10 +52660,7 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>KEY6_VALID</name>
                 <addressOffset>0x00003df8</addressOffset>
-                <description>
-                    Valid flag for key 6. Once the valid flag is set, the key can no longer be\n
-                    read or written, and becomes a valid fixed key for protecting OTP pages.
-                </description>
+                <description>Valid flag for key 6. Once the valid flag is set, the key can no longer be read or written, and becomes a valid fixed key for protecting OTP pages.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -53002,11 +52687,9 @@ SPDX-License-Identifier: BSD-3-Clause
                 <dimIncrement>8</dimIncrement>
                 <name>PAGE%s_LOCK0</name>
                 <addressOffset>0x00003e00</addressOffset>
-                <description>
-                    Lock configuration LSBs for page 0 (rows 0x0 through 0x3f). Locks are stored with\n
-                    3-way majority vote encoding, so that bits can be set independently.\n
-                    This OTP location is always readable, and is write-protected by its own permissions.
-                </description>
+                <description>Lock configuration LSBs for page 0 (rows 0x0 through 0x3f). Locks are stored with 3-way majority vote encoding, so that bits can be set independently.
+
+                    This OTP location is always readable, and is write-protected by its own permissions.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -53023,10 +52706,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>NO_KEY_STATE</name>
-                        <description>
-                            State when at least one key is registered for this page and no matching\n
-                            key has been entered.
-                        </description>
+                        <description>State when at least one key is registered for this page and no matching key has been entered.</description>
                         <bitRange>[6:6]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
@@ -53042,19 +52722,13 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>KEY_R</name>
-                        <description>
-                            Index 1-6 of a hardware key which must be entered to grant read access,\n
-                            or 0 if no such key is required.
-                        </description>
+                        <description>Index 1-6 of a hardware key which must be entered to grant read access, or 0 if no such key is required.</description>
                         <bitRange>[5:3]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>KEY_W</name>
-                        <description>
-                            Index 1-6 of a hardware key which must be entered to grant write access,\n
-                            or 0 if no such key is required.
-                        </description>
+                        <description>Index 1-6 of a hardware key which must be entered to grant write access, or 0 if no such key is required.</description>
                         <bitRange>[2:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -53065,11 +52739,9 @@ SPDX-License-Identifier: BSD-3-Clause
                 <dimIncrement>8</dimIncrement>
                 <name>PAGE%s_LOCK1</name>
                 <addressOffset>0x00003e04</addressOffset>
-                <description>
-                    Lock configuration MSBs for page 0 (rows 0x0 through 0x3f). Locks are stored with 3-way\n
-                    majority vote encoding, so that bits can be set independently.\n
-                    This OTP location is always readable, and is write-protected by its own permissions.
-                </description>
+                <description>Lock configuration MSBs for page 0 (rows 0x0 through 0x3f). Locks are stored with 3-way majority vote encoding, so that bits can be set independently.
+
+                    This OTP location is always readable, and is write-protected by its own permissions.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -53086,11 +52758,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>LOCK_BL</name>
-                        <description>
-                            Dummy lock bits reserved for bootloaders (including the RP2350 USB bootloader)\n
-                            to store their own OTP access permissions. No hardware effect, and no corresponding\n
-                            SW_LOCKx registers.
-                        </description>
+                        <description>Dummy lock bits reserved for bootloaders (including the RP2350 USB bootloader) to store their own OTP access permissions. No hardware effect, and no corresponding SW_LOCKx registers.</description>
                         <bitRange>[5:4]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
@@ -53118,26 +52786,16 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>LOCK_NS</name>
-                        <description>
-                            Lock state for Non-secure accesses to this page. Thermometer-coded, so\n
-                            lock state can be advanced permanently from any state to any less-permissive\n
-                            state by programming OTP. Software can also advance the lock state temporarily\n
-                            (until next OTP reset) using the SW_LOCKx registers.\n
-                            Note that READ_WRITE and READ_ONLY are equivalent in hardware, as the SBPI\n
-                            programming interface is not accessible to Non-secure software.\n
-                            However, Secure software may check these bits to apply write permissions to\n
-                            a Non-secure OTP programming API.
-                        </description>
+                        <description>Lock state for Non-secure accesses to this page. Thermometer-coded, so lock state can be advanced permanently from any state to any less-permissive state by programming OTP. Software can also advance the lock state temporarily (until next OTP reset) using the SW_LOCKx registers.
+
+                            Note that READ_WRITE and READ_ONLY are equivalent in hardware, as the SBPI programming interface is not accessible to Non-secure software. However, Secure software may check these bits to apply write permissions to a Non-secure OTP programming API.</description>
                         <bitRange>[3:2]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
                             <enumeratedValue>
                                 <name>read_write</name>
                                 <value>0</value>
-                                <description>
-                                    Page can be read by Non-secure software, and Secure software may\n
-                                    permit Non-secure writes.
-                                </description>
+                                <description>Page can be read by Non-secure software, and Secure software may permit Non-secure writes.</description>
                             </enumeratedValue>
                             <enumeratedValue>
                                 <name>read_only</name>
@@ -53158,12 +52816,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>LOCK_S</name>
-                        <description>
-                            Lock state for Secure accesses to this page. Thermometer-coded, so lock\n
-                            state can be advanced permanently from any state to any less-permissive state\n
-                            by programming OTP. Software can also advance the lock state temporarily\n
-                            (until next OTP reset) using the SW_LOCKx registers.
-                        </description>
+                        <description>Lock state for Secure accesses to this page. Thermometer-coded, so lock state can be advanced permanently from any state to any less-permissive state by programming OTP. Software can also advance the lock state temporarily (until next OTP reset) using the SW_LOCKx registers.</description>
                         <bitRange>[1:0]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
@@ -53194,11 +52847,9 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>PAGE63_LOCK0</name>
                 <addressOffset>0x00003ff8</addressOffset>
-                <description>
-                    Lock configuration LSBs for page 63 (rows 0xfc0 through 0xfff). Locks are\n
-                    stored with 3-way majority vote encoding, so that bits can be set independently.\n
-                    This OTP location is always readable, and is write-protected by its own permissions.
-                </description>
+                <description>Lock configuration LSBs for page 63 (rows 0xfc0 through 0xfff). Locks are stored with 3-way majority vote encoding, so that bits can be set independently.
+
+                    This OTP location is always readable, and is write-protected by its own permissions.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -53215,20 +52866,13 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>RMA</name>
-                        <description>
-                            Decommission for RMA of a suspected faulty device. This re-enables the\n
-                            factory test JTAG interface, and makes pages 3 through 61 of the OTP\n
-                            permanently inaccessible.
-                        </description>
+                        <description>Decommission for RMA of a suspected faulty device. This re-enables the factory test JTAG interface, and makes pages 3 through 61 of the OTP permanently inaccessible.</description>
                         <bitRange>[7:7]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>NO_KEY_STATE</name>
-                        <description>
-                            State when at least one key is registered for this page and no matching\n
-                            key has been entered.
-                        </description>
+                        <description>State when at least one key is registered for this page and no matching key has been entered.</description>
                         <bitRange>[6:6]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
@@ -53244,19 +52888,13 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>KEY_R</name>
-                        <description>
-                            Index 1-6 of a hardware key which must be entered to grant read access,\n
-                            or 0 if no such key is required.
-                        </description>
+                        <description>Index 1-6 of a hardware key which must be entered to grant read access, or 0 if no such key is required.</description>
                         <bitRange>[5:3]</bitRange>
                         <access>read-only</access>
                     </field>
                     <field>
                         <name>KEY_W</name>
-                        <description>
-                            Index 1-6 of a hardware key which must be entered to grant write access,\n
-                            or 0 if no such key is required.
-                        </description>
+                        <description>Index 1-6 of a hardware key which must be entered to grant write access, or 0 if no such key is required.</description>
                         <bitRange>[2:0]</bitRange>
                         <access>read-only</access>
                     </field>
@@ -53265,11 +52903,9 @@ SPDX-License-Identifier: BSD-3-Clause
             <register>
                 <name>PAGE63_LOCK1</name>
                 <addressOffset>0x00003ffc</addressOffset>
-                <description>
-                    Lock configuration MSBs for page 63 (rows 0xfc0 through 0xfff). Locks are stored\n
-                    with 3-way majority vote encoding, so that bits can be set independently.\n
-                    This OTP location is always readable, and is write-protected by its own permissions.
-                </description>
+                <description>Lock configuration MSBs for page 63 (rows 0xfc0 through 0xfff). Locks are stored with 3-way majority vote encoding, so that bits can be set independently.
+
+                    This OTP location is always readable, and is write-protected by its own permissions.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
@@ -53286,11 +52922,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>LOCK_BL</name>
-                        <description>
-                            Dummy lock bits reserved for bootloaders (including the RP2350 USB\n
-                            bootloader) to store their own OTP access permissions. No hardware\n
-                            effect, and no corresponding SW_LOCKx registers.
-                        </description>
+                        <description>Dummy lock bits reserved for bootloaders (including the RP2350 USB bootloader) to store their own OTP access permissions. No hardware effect, and no corresponding SW_LOCKx registers.</description>
                         <bitRange>[5:4]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
@@ -53318,26 +52950,16 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>LOCK_NS</name>
-                        <description>
-                            Lock state for Non-secure accesses to this page. Thermometer-coded, so\n
-                            lock state can be advanced permanently from any state to any less-permissive\n
-                            state by programming OTP. Software can also advance the lock state temporarily\n
-                            (until next OTP reset) using the SW_LOCKx registers.\n
-                            Note that READ_WRITE and READ_ONLY are equivalent in hardware, as the SBPI\n
-                            programming interface is not accessible to Non-secure software. However,\n
-                            Secure software may check these bits to apply write permissions to a\n
-                            Non-secure OTP programming API.
-                        </description>
+                        <description>Lock state for Non-secure accesses to this page. Thermometer-coded, so lock state can be advanced permanently from any state to any less-permissive state by programming OTP. Software can also advance the lock state temporarily (until next OTP reset) using the SW_LOCKx registers.
+
+                            Note that READ_WRITE and READ_ONLY are equivalent in hardware, as the SBPI programming interface is not accessible to Non-secure software. However, Secure software may check these bits to apply write permissions to a Non-secure OTP programming API.</description>
                         <bitRange>[3:2]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
                             <enumeratedValue>
                                 <name>read_write</name>
                                 <value>0</value>
-                                <description>
-                                    Page can be read by Non-secure software, and Secure software may\n
-                                    permit Non-secure writes.
-                                </description>
+                                <description>Page can be read by Non-secure software, and Secure software may permit Non-secure writes.</description>
                             </enumeratedValue>
                             <enumeratedValue>
                                 <name>read_only</name>
@@ -53358,12 +52980,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>LOCK_S</name>
-                        <description>
-                            Lock state for Secure accesses to this page. Thermometer-coded, so lock\n
-                            state can be advanced permanently from any state to any less-permissive\n
-                            state by programming OTP. Software can also advance the lock state\n
-                            temporarily (until next OTP reset) using the SW_LOCKx registers.
-                        </description>
+                        <description>Lock state for Secure accesses to this page. Thermometer-coded, so lock state can be advanced permanently from any state to any less-permissive state by programming OTP. Software can also advance the lock state temporarily (until next OTP reset) using the SW_LOCKx registers.</description>
                         <bitRange>[1:0]</bitRange>
                         <access>read-only</access>
                         <enumeratedValues>
@@ -53492,10 +53109,7 @@ SPDX-License-Identifier: BSD-3-Clause
                 <fields>
                     <field>
                         <name>ENABLE</name>
-                        <description>
-                            Enable this endpoint. The device will not reply to any packets for this\n
-                            endpoint if this bit is not set.
-                        </description>
+                        <description>Enable this endpoint. The device will not reply to any packets for this endpoint if this bit is not set.</description>
                         <bitRange>[31:31]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -53513,10 +53127,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>INTERRUPT_PER_DOUBLE_BUFF</name>
-                        <description>
-                            Trigger an interrupt each time both buffers are done. Only valid in\n
-                            double buffered mode.
-                        </description>
+                        <description>Trigger an interrupt each time both buffers are done. Only valid in double buffered mode.</description>
                         <bitRange>[28:28]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -53545,26 +53156,19 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>INTERRUPT_ON_STALL</name>
-                        <description>
-                            Trigger an interrupt if a STALL is sent. Intended for debug only.
-                        </description>
+                        <description>Trigger an interrupt if a STALL is sent. Intended for debug only.</description>
                         <bitRange>[17:17]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>INTERRUPT_ON_NAK</name>
-                        <description>
-                            Trigger an interrupt if a NAK is sent. Intended for debug only.
-                        </description>
+                        <description>Trigger an interrupt if a NAK is sent. Intended for debug only.</description>
                         <bitRange>[16:16]</bitRange>
                         <access>read-write</access>
                     </field>
                     <field>
                         <name>BUFFER_ADDRESS</name>
-                        <description>
-                            64 byte aligned buffer address for this EP (bits 0-5 are ignored).\n
-                            Relative to the start of the DPRAM.
-                        </description>
+                        <description>64 byte aligned buffer address for this EP (bits 0-5 are ignored). Relative to the start of the DPRAM.</description>
                         <bitRange>[15:0]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -53576,21 +53180,13 @@ SPDX-License-Identifier: BSD-3-Clause
                 <dimIndex>0_IN,0_OUT,1_IN,1_OUT,2_IN,2_OUT,3_IN,3_OUT,4_IN,4_OUT,5_IN,5_OUT,6_IN,6_OUT,7_IN,7_OUT,8_IN,8_OUT,9_IN,9_OUT,10_IN,10_OUT,11_IN,11_OUT,12_IN,12_OUT,13_IN,13_OUT,14_IN,14_OUT,15_IN,15_OUT</dimIndex>
                 <name>EP%s_BUFFER_CONTROL</name>
                 <addressOffset>0x00000080</addressOffset>
-                <description>
-                    Buffer control for both buffers of an endpoint. Fields ending in a _1 are for \n
-                    buffer 1. Fields ending in a _0 are for buffer 0. Buffer 1 controls are only\n
-                    valid if the endpoint is in double buffered mode.
-                </description>
+                <description>Buffer control for both buffers of an endpoint. Fields ending in a _1 are for buffer 1. 
+                    Fields ending in a _0 are for buffer 0. Buffer 1 controls are only valid if the endpoint is in double buffered mode.</description>
                 <resetValue>0x00000000</resetValue>
                 <fields>
                     <field>
                         <name>FULL_1</name>
-                        <description>
-                            Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to\n
-                            indicate the data is valid. For an OUT transfer (RX from the host) this bit\n
-                            should be left as a 0. The host will set it when it has filled the buffer\n
-                            with data.
-                        </description>
+                        <description>Buffer 1 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.</description>
                         <bitRange>[31:31]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -53608,11 +53204,8 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>DOUBLE_BUFFER_ISO_OFFSET</name>
-                        <description>
-                            The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode.\n
-                            Only valid in double buffered mode for an Isochronous endpoint.\n 
-                            For a non Isochronous endpoint the offset is always 64 bytes.
-                        </description>
+                        <description>The number of bytes buffer 1 is offset from buffer 0 in Isochronous mode. Only valid in double buffered mode for an Isochronous endpoint. 
+                            For a non Isochronous endpoint the offset is always 64 bytes.</description>
                         <bitRange>[28:27]</bitRange>
                         <access>read-write</access>
                         <enumeratedValues>
@@ -53636,11 +53229,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>AVAILABLE_1</name>
-                        <description>
-                            Buffer 1 is available. This bit is set to indicate the buffer can be used\n
-                            by the controller. The controller clears the available bit when writing the\n
-                            status back.
-                        </description>
+                        <description>Buffer 1 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.</description>
                         <bitRange>[26:26]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -53652,12 +53241,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>FULL_0</name>
-                        <description>
-                            Buffer 0 is full. For an IN transfer (TX to the host) the bit is set\n
-                            to indicate the data is valid. For an OUT transfer (RX from the host)\n
-                            this bit should be left as a 0. The host will set it when it has filled\n
-                            the buffer with data.
-                        </description>
+                        <description>Buffer 0 is full. For an IN transfer (TX to the host) the bit is set to indicate the data is valid. For an OUT transfer (RX from the host) this bit should be left as a 0. The host will set it when it has filled the buffer with data.</description>
                         <bitRange>[15:15]</bitRange>
                         <access>read-write</access>
                     </field>
@@ -53687,11 +53271,7 @@ SPDX-License-Identifier: BSD-3-Clause
                     </field>
                     <field>
                         <name>AVAILABLE_0</name>
-                        <description>
-                            Buffer 0 is available. This bit is set to indicate the buffer can be used\n
-                            by the controller. The controller clears the available bit when writing\n
-                            the status back.
-                        </description>
+                        <description>Buffer 0 is available. This bit is set to indicate the buffer can be used by the controller. The controller clears the available bit when writing the status back.</description>
                         <bitRange>[10:10]</bitRange>
                         <access>read-write</access>
                     </field>
