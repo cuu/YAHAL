@@ -30,6 +30,8 @@ bitloop:    out     pins, 1         side 1        ; Output a single bit on ..
 
 % yahal {
 
+#include <cassert>
+
 // Method to set the PCM rate.
 void setRate(SM * pcm_sm, /*SM * timer_sm,*/ uint32_t Hz) {
     static uint32_t last_Hz = 0;
@@ -40,6 +42,16 @@ void setRate(SM * pcm_sm, /*SM * timer_sm,*/ uint32_t Hz) {
 }
 
 void configure_SM(SM * pcm_sm, uint8_t mosi_pin, uint8_t sclk_pin, uint8_t sync_pin) {
+    // Check if we use a 'higher' GPIO pins
+    if (mosi_pin > 31 && sclk_pin > 31 && sync_pin > 31) {
+        pcm_sm->pio.GPIOBASE.GPIOBASE = 1;
+        mosi_pin -= 16;
+        sclk_pin -= 16;
+        sync_pin -= 16;
+    }
+    // Make sure all pins are 'lower' pins
+    assert(mosi_pin < 32 && sclk_pin < 32 && sync_pin < 32);
+
     // Set the PINDIR register
     pcm_sm->setRegister(out_dest_t::PINDIRS, 1, mosi_pin, 1);
     pcm_sm->setRegister(out_dest_t::PINDIRS, 1, sclk_pin, 1);

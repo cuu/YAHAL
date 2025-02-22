@@ -4,7 +4,8 @@
 
 MEMORY
 {
-    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 4096k
+    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 8192k
+    PSRAM(rwx)     : ORIGIN = 0x11000000, LENGTH = 8192k
     RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 512k
     SCRATCH_X(rwx) : ORIGIN = 0x20080000, LENGTH = 4k
     SCRATCH_Y(rwx) : ORIGIN = 0x20081000, LENGTH = 4k
@@ -161,6 +162,14 @@ SECTIONS
     .stack (NOLOAD): {
         *(.stack*)
     } > SCRATCH_Y
+
+    /**********/
+    /* PS RAM */
+    /**********/
+    .psram (NOLOAD): {
+        . = ALIGN(4);
+        *(.psram*)
+    } > PSRAM
 
     /* Lower stack limit */
     __StackLimit = ORIGIN(RAM) + LENGTH(RAM);

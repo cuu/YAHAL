@@ -39,7 +39,7 @@ public:
         ws2812_rp2350 * _ws2812_rp2350 {nullptr};
         uint16_t _index    {0};
         uint32_t _color    {0};
-        uint32_t _on_color {0x080000}; // Default dark red
+        uint32_t _on_color {0x180000}; // Default dark red
     };
 
     // CTOR takes the GPIO number connected to the

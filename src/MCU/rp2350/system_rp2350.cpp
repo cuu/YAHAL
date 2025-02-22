@@ -72,6 +72,13 @@ void SystemInit (void)
         while(1) ;
     }
 
+    // Initialize the PS-RAM
+    _IO_BANK0_::IO_BANK0.GPIO8_CTRL.FUNCSEL = 9;
+    _PADS_BANK0_::PADS_BANK0.GPIO[8].PDE = 0;
+    _PADS_BANK0_::PADS_BANK0.GPIO[8].PUE = 1;
+    _PADS_BANK0_::PADS_BANK0.GPIO[8].ISO = 0;
+    _XIP_CTRL_::XIP_CTRL.CTRL.WRITABLE_M1 = 1;
+
     // Start the crystal oscillator (XOSC)
     XOSC.CTRL.FREQ_RANGE              = CTRL_FREQ_RANGE__1_15MHZ;
     XOSC.STARTUP                      = XOSC_STARTUP;

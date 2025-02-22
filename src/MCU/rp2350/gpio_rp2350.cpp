@@ -198,15 +198,15 @@ void gpio_rp2350::setMode (uint16_t mode) {
         io_ctrl->INOVER = GPIO_CTRL_INOVER__INVERT;
     }
     if (mode & GPIO::OUTPUT) {
-        SIO.GPIO_OE_SET = _mask;
+        OFF32( SIO.GPIO_OE_SET ) = _mask;
     }
     if (mode & GPIO::OUTPUT_OPEN_DRAIN) {
         _open_drain |= _mask;
-        SIO.GPIO_OE_SET = _mask;
+        OFF32( SIO.GPIO_OE_SET ) = _mask;
     }
     if (mode & GPIO::OUTPUT_OPEN_SOURCE) {
         _open_source |= _mask;
-        SIO.GPIO_OUT_SET = _mask;
+        OFF32( SIO.GPIO_OUT_SET ) = _mask;
     }
     if (mode & GPIO::PULLUP) {
         PAD_CTRL->PUE = 1;
