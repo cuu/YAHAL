@@ -29,9 +29,9 @@
 // top. See the doc folder in YAHAL/src/uGUI for more
 // information on the uGUI API.
 
-// Board includes
 #include "boostxl_eduMKII.h"
-// Driver includes
+#include "gpio_rp2040.h"
+#include "spi_rp2040.h"
 #include "st7735s_drv.h"
 #include "uGUI.h"
 #include "task.h"
@@ -39,21 +39,19 @@
 extern const uint16_t angry_bird[16384];
 
 int main(void) {
-
-    // Inject dependencies
-    boostxl_eduMKII edu;
-    edu.need_led_rgb = true;
-    edu.need_lcd     = true;
-    edu.inject();
-    
     // Switch on backlight
-    edu.led_red().gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
+    gpio_rp2040 lcd_bl(EDU_LCD_BL);
+    lcd_bl.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
+
     // Setup SPI interface
-    edu.lcd_spi().setSpeed(30000000);
+    gpio_rp2040 lcd_cs (EDU_LCD_CS);
+    spi_rp2040  spi(1, EDU_LCD_MISO, EDU_LCD_MOSI, EDU_LCD_SCLK, lcd_cs);
+    spi.setSpeed(24000000);
 
     // Setup LCD driver
-    st7735s_drv lcd(edu.lcd_spi(), edu.lcd_rst(), edu.lcd_dc(),
-                    st7735s_drv::Crystalfontz_128x128);
+    gpio_rp2040 lcd_rst(EDU_LCD_RST);
+    gpio_rp2040 lcd_dc (EDU_LCD_DC);
+    st7735s_drv lcd(spi, lcd_rst, lcd_dc, st7735s_drv::Crystalfontz_128x128);
 
     // Setup uGUI
     uGUI gui(lcd);
