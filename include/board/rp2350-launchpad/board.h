@@ -13,4 +13,13 @@
 
 #define PS_RAM_CS_GPIO 0
 
+// Use PSRAM without copying code/data or zeroing
+#define PSRAM __attribute__((section(".ps_noload")))
+
+// Use PSRAM and initialize with zeros
+#define PSRAM_BSS __attribute__((section(".ps_bss")))
+
+// Use PSRAM and copy code/data
+#define PSRAM_LOAD __attribute__((section(".ps_data")))
+
 #endif // RP2350_LAUNCHPAD_BOARD_H

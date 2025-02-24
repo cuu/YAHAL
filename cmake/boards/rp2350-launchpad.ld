@@ -87,15 +87,22 @@ SECTIONS
         *(.rodata.*)
     } > FLASH
     
-    /***********************************/
-    /* .copy.table used by cmsis_gcc.h */
-    /***********************************/
+    /********************************************/
+    /* .copy.table used by cmsis_gcc.h          */
+    /* The CMSIS code handling the copy tables  */
+    /* copies uint32_t values, so the start/end */
+    /* values have to be aligned and the size   */
+    /* has to be divided by 4.                  */
+    /********************************************/
     .copy.table : {
-        . = ALIGN(8);
+        . = ALIGN(4);
         __copy_table_start__ = .;
-        LONG (__data_load__)
-        LONG (__data_start__)
-        LONG (__data_end__ - __data_start__)
+        LONG  (__data_load__)
+        LONG  (__data_start__)
+        LONG ((__data_end__ - __data_start__)/4)
+        LONG  (__ps_data_load__)
+        LONG  (__ps_data_start__)
+        LONG ((__ps_data_end__ - __ps_data_start__)/4)
         __copy_table_end__ = .;
     } > FLASH
 
@@ -103,10 +110,12 @@ SECTIONS
     /* .zero.table used by cmsis_gcc.h */
     /***********************************/
     .zero.table : {
-        . = ALIGN(8);
+        . = ALIGN(4);
         __zero_table_start__ = .;
-        LONG (__bss_start__)
-        LONG (__bss_end__ - __bss_start__)
+        LONG  (__bss_start__)
+        LONG ((__bss_end__ - __bss_start__)/4)
+        LONG  (__ps_bss_start__)
+        LONG ((__ps_bss_end__ - __ps_bss_start__)/4)
         __zero_table_end__ = .;
     } > FLASH
 
@@ -129,7 +138,7 @@ SECTIONS
     /***************************************/
     /* uninizialized data (will be zeroed) */
     /***************************************/
-    .bss : {
+    .bss (NOLOAD): {
         . = ALIGN (4);
         __bss_start__ = .;
         *(SORT_BY_ALIGNMENT(SORT_BY_NAME(.bss*)))
@@ -140,6 +149,37 @@ SECTIONS
 
     __end__ = .;    /* end of written RAM */
     end = __end__;
+
+    /******************************************/
+    /* data which needs to be copied to PSRAM */
+    /******************************************/
+    .ps_data : {
+        . = ALIGN (4);
+        __ps_data_load__  = LOADADDR(.ps_data);
+        __ps_data_start__ = .;
+        *(.ps_data)
+        . = ALIGN (4);
+        __ps_data_end__ = .;
+    } > PSRAM AT> FLASH
+
+    /************************************************/
+    /* uninizialized data in PSRAM (will be zeroed) */
+    /************************************************/
+    .ps_bss (NOLOAD): {
+        . = ALIGN (4);
+        __ps_bss_start__ = .;
+        *(.ps_bss)
+        . = ALIGN (4);
+        __ps_bss_end__ = .;
+    } > PSRAM
+
+    /****************************************************/
+    /* uninizialized data in PSRAM (will not be zeroed) */
+    /****************************************************/
+    .ps_noload (NOLOAD): {
+        . = ALIGN (4);
+        *(.ps_noload)
+    } > PSRAM
 
     /********/
     /* heap */
@@ -162,14 +202,6 @@ SECTIONS
     .stack (NOLOAD): {
         *(.stack*)
     } > SCRATCH_Y
-
-    /**********/
-    /* PS RAM */
-    /**********/
-    .psram (NOLOAD): {
-        . = ALIGN(4);
-        *(.psram*)
-    } > PSRAM
 
     /* Lower stack limit */
     __StackLimit = ORIGIN(RAM) + LENGTH(RAM);
