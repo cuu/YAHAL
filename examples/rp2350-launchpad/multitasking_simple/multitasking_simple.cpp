@@ -1,0 +1,92 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// This is an example program for a very simple
+// multitasking kernel. Two methods are defined
+// to blink a red and blue LED with different
+// frequencies. Both methods are added as tasks
+// to the mini-OS, and the scheduler is started.
+//
+// The purpose of this project is to demonstrate
+// and teach multitasking. If you want to use
+// a more complete and fully featured multitasking
+// kernel, use YAHAL's task class.
+//
+#include "board.h"
+#include "ws2812_rp2350.h"
+#include "uart_rp2350.h"
+#include "posix_io.h"
+#include <cstdio>
+
+#include "OS.h"
+
+ws2812_rp2350 leds(LED_RGB_GPIO, LED_RGB_COUNT);
+led_rgb_interface & led_red  = leds[0];
+led_rgb_interface & led_blue = leds[1];
+
+// Simple delay function. It is not very precise and depends on the CPU clock
+// and compiler optimizations. Usually the for-loop would be discarded by the
+// optimizer, so in CMakeLists.txt we switch off optimization!
+void delay(int ms) {
+    for(int i=0; i < 7600 * ms; ++i) ;
+}
+
+// simple first task: Blink red LED
+[[noreturn]] void task1() {
+    while(true) {
+        delay(500);
+        led_red.toggle();
+    }
+}
+
+// simple second task: Blink blue LED
+[[noreturn]] void task2() {
+    while(true) {
+        delay(350);
+        led_blue.toggle();
+    }
+}
+
+int global = 0;
+
+// simple task to increment a global variable
+void task3() {
+    for (int i=0; i < 50000; ++i) {
+        ++global;
+    }
+    printf("Task 3 ending. global is: %d\n", global);
+}
+
+int main()
+{
+    // Set up UART and enable stdin/stdout
+    uart_rp2350 uart; // default is backchannel UART!
+    posix_io::inst.register_stdin ( uart );
+    posix_io::inst.register_stdout( uart );
+    posix_io::inst.register_stderr( uart );
+
+    // Set the color of the blue LED
+    led_blue.set_on_color(0x000050);
+
+    // Add two tasks to our mini-OS
+    OS_add_task(task1);
+    OS_add_task(task2);
+
+    // Add two tasks which should increment the
+    // global integer by 50000 each.
+    OS_add_task(task3);
+    OS_add_task(task3);
+
+    // Start the scheduler. This method will never return...
+    OS_start_scheduler();
+}
