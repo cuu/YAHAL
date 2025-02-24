@@ -36,16 +36,12 @@
 // UART and start a task monitor, so task statistics
 // can be seen on the terminal.
 
-#include "gpio_rp2040.h"
+#include "board.h"
 #include "uart_rp2040.h"
 #include "ws2812_rp2040.h"
 #include "posix_io.h"
 #include "task.h"
 #include "task_monitor.h"
-
-// WS2812 GPIO mumber
-#define WS2812_PIN  29  // GPIO Pin controlling the WS2812 LEDs
-#define WS2812_COUNT 8  // Number of WS2812 LEDs
 
 // This class defines a new task class. The task
 // code in run() only toggles a gpio with a delay
@@ -80,7 +76,7 @@ private:
 int main(void)
 {
     // Set up the LEDs
-    ws2812_rp2040 leds(WS2812_PIN, WS2812_COUNT);
+    ws2812_rp2040 leds(LED_RGB_GPIO, LED_RGB_COUNT);
 
     leds[0].set_on_color(0x080000);	// LED0 is red
     leds[1].set_on_color(0x000600);	// LED1 is green

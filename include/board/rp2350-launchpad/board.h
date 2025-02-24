@@ -1,6 +1,19 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
 //
-// Created by andreas on 22.02.25.
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
 //
+// ---------------------------------------------
+//
+// This file defines the hardware components
+// on the RP2350 Launchpad. Additionally it
+// defines some macros for PSRAM usage.
 
 #ifndef RP2350_LAUNCHPAD_BOARD_H
 #define RP2350_LAUNCHPAD_BOARD_H
@@ -11,7 +24,7 @@
 #define LED_RGB_GPIO 39
 #define LED_RGB_COUNT 8
 
-#define PS_RAM_CS_GPIO 0
+#define PSRAM_CS_GPIO 8
 
 // Use PSRAM without copying code/data or zeroing
 #define PSRAM __attribute__((section(".ps_noload")))
