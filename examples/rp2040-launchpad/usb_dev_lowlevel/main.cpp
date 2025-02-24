@@ -95,12 +95,14 @@ int main() {
         if (ret != BLOCKIO::result_t::OK) {
             TUPP_LOG(LOG_ERROR, "Reading SD card failed with %d", ret);
         }
+        return BLOCKIO::result_t::OK;
     };
     msc_device.write_handler = [&](uint8_t * buff, uint32_t block) {
         auto ret = sd.writeBlock(buff, block, 1);
         if (ret != BLOCKIO::result_t::OK) {
             TUPP_LOG(LOG_ERROR, "Writing SD card failed with %d", ret);
         }
+        return BLOCKIO::result_t::OK;
     };
 
     //////////////////////
