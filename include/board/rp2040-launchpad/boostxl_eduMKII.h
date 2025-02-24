@@ -19,40 +19,51 @@
 #define _RP2040_LAUNCHPAD_BOOSTXL_EDUMKII_H_
 
 // Big Buttons
-#define BUTTON1         16
-#define BUTTON2         17
+#define EDU_BUTTON1     16
+#define EDU_BUTTON2     17
+
 // 3 color LED
-#define RGB_LED_RED     13
-#define RGB_LED_GREEN   10
-#define RGB_LED_BLUE     8
+#define EDU_RGB_RED     13
+#define EDU_RGB_GREEN   10
+#define EDU_RGB_BLUE     8
+
 // Buzzer
-#define BUZZER          14
+#define EDU_BUZZER      14
+
 // Gator holes
-#define GATOR            6
+#define EDU_GATOR        6
+
 // Servo PWM signal
-#define SERVO           12
+#define EDU_SERVO       12
+
 // LCD
-#define LCD_MISO         4
-#define LCD_MOSI         7
-#define LCD_SCLK        22
-#define LCD_CS           5
-#define LCD_RST          9
-#define LCD_DC           2
-#define LCD_BL          13
+#define EDU_LCD_MISO     4
+#define EDU_LCD_MOSI     7
+#define EDU_LCD_SCLK    22
+#define EDU_LCD_CS       5
+#define EDU_LCD_RST      9
+#define EDU_LCD_DC       2
+#define EDU_LCD_BL      13
+
 // I2C sensors
-#define SENSOR_SDA      24
-#define SENSOR_SCL      25
-#define OPT3001_INT     23
-#define TMP006_INT       3
-// Joystick
-#define JOY_X           A1
-#define JOY_Y           A3
-#define JOY_BUTTON      19
-// Microphone
-#define MIC             A6
-// Accelerometer
-#define ACC_X           A0
-#define ACC_Y           A2
-#define ACC_Z           A4
+#define EDU_I2C_SDA     24
+#define EDU_I2C_SCL     25
+#define EDU_OPT3001_INT 23
+#define EDU_TMP006_INT   3
+
+// Joystick button
+#define EDU_JOY_BUTTON  19
+
+// Joystick ADC channels
+#define EDU_JOY_X        1
+#define EDU_JOY_Y        3
+
+// Microphone ADC channel
+#define EDU_MIC          6
+
+// Accelerometer ADC channels
+#define EDU_ACC_X        0
+#define EDU_ACC_Y        2
+#define EDU_ACC_Z        4
 
 #endif // _RP2040_LAUNCHPAD_BOOSTXL_EDUMKII_H_
