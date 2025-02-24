@@ -97,6 +97,7 @@ int main() {
             TUPP_LOG(LOG_ERROR, "Reading SD card failed (%d)", res);
         }
         read_active = true;
+        return BLOCKIO::result_t::OK;
     };
     msc_device.write_handler = [&](uint8_t *buff, uint32_t block) {
         auto res = sd.writeBlock(buff, block, 1);
@@ -104,6 +105,7 @@ int main() {
             TUPP_LOG(LOG_ERROR, "Writing SD card failed (%d)", res);
         }
         write_active = true;
+        return BLOCKIO::result_t::OK;
     };
     msc_device.is_writeable_handler = [&]() {
         return true;
