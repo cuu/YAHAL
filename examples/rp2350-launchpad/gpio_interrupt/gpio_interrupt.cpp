@@ -13,9 +13,8 @@
 //
 // This program is a small example for gpio interrupts.
 // It uses the two buttons S1 and S2 on the launchpad
-// to toggle two red LEDs from a interrupt handler.
-// The main functions is in a endless loop, doing
-// nothing (see below).
+// to toggle two LEDs from an interrupt handler. The
+// final endless loop is doing nothing (see below).
 //
 #include "board.h"
 #include "gpio_rp2350.h"
@@ -39,13 +38,18 @@ int main()
 
     // Attach a IRQ handler to every button. Both handlers
     // are lambda expressions in this case. The parameter
-    // is a std::function<void()>, so the handler can also
+    // is a std::function<void()>, so the handler could also
     // be a functor or a simple C function...
+    //
+    // The buttons S1 and S2 are 'active LOW', meaning that
+    // the GPIO pin is pulled to LOW when the button is pressed.
+    // When not pressed, the PULLUP-resistor will make sure that
+    // the GPIO state is HIGH.
     //
     // The left  LED will change its status when S1 is _pressed_!
     // (pressing the button sets the gpio to LOW, so this is
-    // a falling edge!)
-    // The right LED will change its status when S2 is _released_!
+    // a FALLING edge!) The right LED will change its status when
+    // S2 is _released_, which results in a RISING edge!
     button_S1.gpioAttachIrq(GPIO::FALLING, [&]() {
         leds[0].toggle();
     });

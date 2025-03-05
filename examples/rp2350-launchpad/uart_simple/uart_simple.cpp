@@ -27,16 +27,22 @@
 // understands these escape sequences.
 //
 
-#define VT100_COLOR "\e[%dm"
-#define RESET_COLOR 0
-#define BLACK 30
-#define RED 31
-#define GREEN 32
-#define YELLOW 33
-#define BLUE 34
-#define MAGENTA 35
-#define CYAN 36
-#define WHITE 37
+#define VT100_COLOR "\e[%sm"
+#define AND        ";"
+#define ATTR_OFF   "0"
+#define BOLD       "1"
+#define ITALIC     "3"
+#define UNDERSCORE "4"
+#define BLINK      "5"
+#define NEGATIVE   "7"
+#define BLACK     "30"
+#define RED       "31"
+#define GREEN     "32"
+#define YELLOW    "33"
+#define BLUE      "34"
+#define MAGENTA   "35"
+#define CYAN      "36"
+#define WHITE     "37"
 
 #include <cstdio>
 #include "uart_rp2350.h"
@@ -52,7 +58,7 @@ int main(void) {
 
     // Reset the color so new text is
     // shown correctly on the terminal.
-    printf(VT100_COLOR"\n", RESET_COLOR);
+    printf(VT100_COLOR"\n", ATTR_OFF);
 
     // Print out a simple ASCII table
     printf("ASCII Tabelle\n\n");
@@ -65,7 +71,7 @@ int main(void) {
     // Some simple input/output with printf and scanf (C API)
     char buf1[50], buf2[50];
 
-    printf(VT100_COLOR, GREEN);
+    printf(VT100_COLOR, GREEN AND ITALIC AND BOLD);
     printf("\nPlease enter first and last name: ");
     fflush(stdout);
     scanf("%50s %50s", buf1, buf2);
