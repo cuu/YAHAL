@@ -24,7 +24,7 @@ extern uint32_t __StackTop;
 typedef void (*pFunc)(void);
 
 // Forward declaration of the implemented handlers.
-[[noreturn]] WEAK_FUNC(Default_Handler)
+WEAK_FUNC(Default_Handler)
 WEAK_FUNC(Reset_Handler)
 WEAK_INT_FUNC(return_0)
 
@@ -153,7 +153,7 @@ void Reset_Handler(void) {
 // This is the code that gets called when the processor receives an unexpected
 // interrupt. This simply enters an infinite loop, preserving the system state
 // for examination by a debugger.
-[[noreturn]] void Default_Handler(void) {
+void Default_Handler(void) {
     // Enter an infinite loop.
     while (true) { }
 }
