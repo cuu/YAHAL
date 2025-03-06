@@ -24,7 +24,7 @@ extern uint32_t __StackTop;
 typedef void (*pFunc)(void);
 
 // Forward declaration of the implemented handlers.
-WEAK_FUNC(Default_Handler)
+[[noreturn]] WEAK_FUNC(Default_Handler)
 WEAK_FUNC(Reset_Handler)
 WEAK_INT_FUNC(return_0)
 
@@ -111,8 +111,18 @@ void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) 
     RTC_IRQ_Handler                 //  25 RTC_IRQ
 };
 
-// The ELF entry point. This code will hand over control to the ROM at 0x0,
-// which in turn will check the Flash for a runnable binary.
+// The ELF entry point. This code first checks if the CPU
+// is running a flash image or a ram image (flash is located
+// at 0x10xxxxxx, ram is located at 0x20xxxxxx).
+// flash image: Use the ISR vector table of the bootrom
+//              at address 0x0. Jump to the reset handler
+//              and let the bootrom initialize the XIP and
+//              find (and run) a flash image.
+// ram image:   After downloading a UF2 ram image, the bootrom
+//              will jump to 0x20000001. So the _elf_entry_point
+//              is located at 0x20000000, and will use the
+//              ISR vector table of the ram image, located at
+//              __vector_start__.
 void _elf_entry_point() __attribute__((section(".reset"), naked, used));
 void _elf_entry_point() {
     asm volatile(
@@ -129,7 +139,7 @@ void _elf_entry_point() {
     "       str     r0, [r1]            @ ... and store value             \n"
     "       ldmia   r0!, {r1, r2}       @ R1=initial SP, R2=reset handler \n"
     "       msr     msp, r1             @ set the master stack pointer... \n"
-    "       bx      r2                  @ and jump to reset handler.      \n");
+    "       bx      r2                  @ ...and jump to reset handler.   \n");
 }
 
 // The reset irq handler
@@ -143,7 +153,7 @@ void Reset_Handler(void) {
 // This is the code that gets called when the processor receives an unexpected
 // interrupt. This simply enters an infinite loop, preserving the system state
 // for examination by a debugger.
-void Default_Handler(void) {
+[[noreturn]] void Default_Handler(void) {
     // Enter an infinite loop.
     while (true) { }
 }
