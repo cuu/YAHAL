@@ -40,8 +40,6 @@ void SystemInit (void)
         while(1) ;
     }
 
-    SCB->VTOR = 0x10000100;
-
     // Reset peripherals
     RESETS.RESET = 0xfbcdbf;
     RESETS.RESET = 0xc38001;

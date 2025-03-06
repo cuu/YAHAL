@@ -54,11 +54,19 @@ function(yahal_add_custom_targets TARGET)
     # Add a upload target using openocd if configuration was given
     if (OPENOCD_CONFIG)
         set(TF $<TARGET_FILE:${TARGET}>)
-        add_custom_target("upload_${TARGET}" 
-            openocd ${OPENOCD_CONFIG} -c "program \"${TF}\" verify reset exit"
-            DEPENDS ${TF}
-            VERBATIM
-        )
+        if (YAHAL_NO_FLASH)
+            add_custom_target("upload_${TARGET}"
+                openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x20000000" -c "exit"
+                DEPENDS ${TF}
+                VERBATIM
+            )
+        else()
+            add_custom_target("upload_${TARGET}"
+                openocd ${OPENOCD_CONFIG} -c "program \"${TF}\" verify reset exit"
+                DEPENDS ${TF}
+                VERBATIM
+            )
+        endif()
     endif()
 endfunction()
 
@@ -108,7 +116,7 @@ function(yahal_add_extra_outputs TARGET)
     yahal_add_bin_output(${TARGET})
     yahal_add_dis_output(${TARGET})
 
-    # Add uf2 output for rp2040
+    # Add uf2 output for rp2040 and rp2350
     if (${YAHAL_MCU} STREQUAL rp2040 OR ${YAHAL_MCU} STREQUAL rp2350)
         yahal_add_uf2_output(${TARGET})
     endif()

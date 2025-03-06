@@ -113,12 +113,23 @@ void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) 
 
 // The ELF entry point. This code will hand over control to the ROM at 0x0,
 // which in turn will check the Flash for a runnable binary.
+void _elf_entry_point() __attribute__((section(".reset"), naked, used));
 void _elf_entry_point() {
-    PPB.VTOR.TBLOFF = 0;
-    uint32_t top_of_stack = *(uint32_t *)0x0;
-    uint32_t reset_func   = *(uint32_t *)0x4;
-    __set_MSP( top_of_stack );
-    ((void (*)())reset_func)();
+    asm volatile(
+    "       .syntax unified             @ \n"
+    "       movs    r0, #0              @ R0 is pointer to the isr vector.\n"
+    "                                   @ Default is bootrom at 0x0.      \n"
+    "       mov     r3, pc              @ Get the most significant byte   \n"
+    "       lsrs    r3, r3, 24          @ of the PC.                      \n"
+    "       cmp     r3, #0x01           @ Are we running a FLASH image?   \n"
+    "       beq     _do_reset           @ If yes, branch to reset routine \n"
+    "       ldr     r0, =__vector_start__ @ Load vector table start       \n"
+    "_do_reset:                         @                                 \n"
+    "       ldr     r1, =0xe000ed08     @ Load VTOR register address ...  \n"
+    "       str     r0, [r1]            @ ... and store value             \n"
+    "       ldmia   r0!, {r1, r2}       @ R1=initial SP, R2=reset handler \n"
+    "       msr     msp, r1             @ set the master stack pointer... \n"
+    "       bx      r2                  @ and jump to reset handler.      \n");
 }
 
 // The reset irq handler
