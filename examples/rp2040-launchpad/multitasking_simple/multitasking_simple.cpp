@@ -43,7 +43,7 @@ void delay(int ms) {
 }
 
 // simple first task: Blink red LED
-void task1(void) {
+[[noreturn]] void task1() {
     while(true) {
         delay(500);
         led_red.toggle();
@@ -51,7 +51,7 @@ void task1(void) {
 }
 
 // simple second task: Blink blue LED
-void task2(void) {
+[[noreturn]] void task2() {
     while(true) {
         delay(300);
         led_blue.toggle();
@@ -61,14 +61,14 @@ void task2(void) {
 int global = 0;
 
 // simple task to increment a global variable
-void task3(void) {
+void task3() {
     for (int i=0; i < 50000; ++i) {
         ++global;
     }
     printf("Task 3 ending. global is: %d\n", global);
 }
 
-int main(void)
+int main()
 {
     // Set up UART and enable stdin/stdout
     uart_rp2040 uart; // default is backchannel UART!
