@@ -60,31 +60,31 @@ public:
     item_image_def();
 
     // Getter / Setter
-    inline image_type_t get_image_type() {
+    inline image_type_t get_image_type() const {
         return _header.image_type;
     }
     inline void set_image_type(image_type_t type) {
         _header.image_type = type;
     }
-    inline security_t get_security() {
+    inline security_t get_security() const {
         return _header.security;
     }
     inline void set_security(security_t sec) {
         _header.security = sec;
     }
-    inline cpu_t get_cpu() {
+    inline cpu_t get_cpu() const {
         return _header.cpu;
     }
     inline void set_cpu(cpu_t cpu) {
         _header.cpu = cpu;
     }
-    inline chip_t get_chip() {
+    inline chip_t get_chip() const {
         return _header.chip;
     }
     inline void set_chip(chip_t chip) {
         _header.chip = chip;
     }
-    inline bool get_tbyb() {
+    inline bool get_tbyb() const {
         return _header.tbyb;
     }
     inline void set_tbyb(bool v) {
@@ -94,13 +94,12 @@ public:
     void read (uint32_t* & ptr) override;
     void write(uint32_t* & ptr) override;
     uint16_t size32() override;
-    inline item_type_t get_type() {
+
+    inline item_type_t get_type() override {
         return _header.item_type;
     }
 
     friend std::ostream & operator << (std::ostream & os, const item_image_def &);
-
-    const image_def_t & header;
 
 private:
     image_def_t _header {};

@@ -14,8 +14,9 @@
 #ifndef ELF2UF2_UF2_STRUCTS_H
 #define ELF2UF2_UF2_STRUCTS_H
 
-#include <cstdint>
 #include <array>
+#include <iostream>
+#include <cstdint>
 using std::array;
 
 #define UF2_MAGIC_START0 0x0A324655u
@@ -104,6 +105,8 @@ enum class family_id_t : uint32_t {
     CH32V           = 0x699b62ec,    // WCH CH32V2xx and CH32V3xx
     RA4M1           = 0x7be8976d,    // Renesas RA4M1
 };
+
+std::ostream & operator << (std::ostream & os, const family_id_t &);
 
 union filesize_family_t {
     uint32_t    filesize;

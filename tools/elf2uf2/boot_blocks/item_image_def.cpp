@@ -62,21 +62,20 @@ std::ostream & operator << (std::ostream & os, const image_def_t &id) {
     return os;
 }
 
-
-item_image_def::item_image_def() : header(_header) {
+item_image_def::item_image_def() {
     _header.item_type  = item_type_t::IMAGE_DEF;
     _header.block_size = 1;
 }
 
-
 void item_image_def::read(uint32_t* & ptr) {
-    _header.value = *ptr++;
-    if (_header.item_type != item_type_t::IMAGE_DEF) {
+    auto * id_ptr = (image_def_t *)ptr;
+    if (id_ptr->item_type != item_type_t::IMAGE_DEF) {
         throw "IMAGE item has wrong item type";
     }
-    if (_header.block_size != 1) {
+    if (id_ptr->block_size != 1) {
         throw "IMAGE item has wrong size";
     }
+    _header.value = *ptr++;
 }
 
 void item_image_def::write(uint32_t* & ptr) {

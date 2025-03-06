@@ -9,7 +9,7 @@ void item_version::read(uint32_t* & ptr) {
     if (_header.item_type != item_type_t::VERSION) {
         throw "VERSION item has wrong item type";
     }
-    uint16_t * ptr16 = (uint16_t *)ptr;
+    auto * ptr16 = (uint16_t *)ptr;
     _minor_version = *ptr16++;
     _major_version = *ptr16++;
     if (_header.num_otp_row_enties) {
@@ -25,7 +25,7 @@ void item_version::read(uint32_t* & ptr) {
 
 void item_version::write(uint32_t* & ptr) {
     *ptr++ = _header.value;
-    uint16_t * ptr16 = (uint16_t *)ptr;
+    auto * ptr16 = (uint16_t *)ptr;
     *ptr16++ = _minor_version;
     *ptr16++ = _major_version;
     if (_header.num_otp_row_enties) {

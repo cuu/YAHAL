@@ -37,31 +37,29 @@ void usage(const char * bin) {
 }
 
 int main(int argc, char *argv[]) {
-    bool verbose = false;
+    // Flags
+    bool verbose         = false;
+    bool found_boot2     = false;
+    bool found_image_def = false;
+    bool is_ram_image    = false;
+
     string elf_filename;
     string uf2_filename;
 
-    // Check number of command line args
-    if (argc < 2 || argc > 4 ) {
-        usage(argv[0]);
-    }
-
-    if (strcmp(argv[1], "-v")) {
-        elf_filename = argv[1];
-        if (argc == 3) {
-            uf2_filename = argv[2];
-        }
-    } else {
+    // Check -v flag
+    if (argc > 1 &&  !strcmp(argv[1], "-v")) {
         verbose = true;
-        if (argc == 2) {
-            usage(argv[0]);
-        } else if (argc == 3) {
-            elf_filename = argv[2];
-        } else if (argc == 4) {
-            elf_filename = argv[2];
-            uf2_filename = argv[3];
-        }
+        argc--;
+        argv++;
     }
+    // Get file names
+    if (argc > 1) {
+        elf_filename = argv[1];
+    } else usage(argv[0]);
+    if (argc > 2) {
+        uf2_filename = argv[2];
+    }
+    if (argc > 3) usage(argv[0]);
 
     // Set filenames
     if (uf2_filename.empty()) {
@@ -78,8 +76,9 @@ int main(int argc, char *argv[]) {
     // Read the ELF file
     if (verbose) cout << "Reading " << elf_filename << endl;
     elfio elf;
-    if ( !elf.load( elf_filename ) ) {
-        cerr << "File " << elf_filename << " is not found or is not an ELF file.\n" << endl;
+    if (!elf.load(elf_filename)) {
+        cerr << "File " << elf_filename
+             << " is not found or is not an ELF file." << endl;
         exit(1);
     }
 
@@ -91,31 +90,37 @@ int main(int argc, char *argv[]) {
         elf.get_encoding()    != ELFDATA2LSB ||
         elf.get_os_abi()      != ELFOSABI_NONE ||
         elf.get_abi_version() != 0) {
-        cerr << "File " << elf_filename << " is not a 32bit ARM little endian ELF file." << endl;
+        cerr << "File " << elf_filename
+             << " is not a 32bit ARM little endian ELF file." << endl;
         exit(1);
     }
 
     // Open the UF2 file for writing
     uf2_ofstream uf2(uf2_filename);
     if (!uf2.good()) {
-        cerr << "Output file " << uf2_filename << "Could not be opened." << endl;
+        cerr << "Output file " << uf2_filename
+             << " could not be opened." << endl;
         uf2.close();
         exit(1);
     }
 
-    if (verbose) cout << "Found the following loadable ELF segments:" << endl;
-    if (verbose) cout << "[  Nr ] Type           VirtAddr   PhysAddr   FileSize   "
-                         "Mem.Size   Flags    Align" << endl;
-    int seg_no = 1;
+    if (verbose) {
+        cout << "Found the following loadable ELF segments:" << endl;
+        cout << "[  Nr ] Type           VirtAddr   PhysAddr   FileSize   "
+                "Mem.Size   Flags    Align" << endl;
+    }
 
     // Iterate over all ELF segments.
     // Find the lowest and highest physical address
     uint64_t low_addr  = UINT32_MAX;
     uint64_t high_addr = 0;
+    int seg_no = 1;
     for (auto & seg : elf.segments) {
         // Only check loadable segments
         if (seg->get_type() == PT_LOAD) {
-            if (verbose) dump::segment_header(cout, seg_no++, seg.get(), elf.get_class());
+            if (verbose) {
+                dump::segment_header(cout, seg_no++, seg.get(), elf.get_class());
+            }
             uint32_t phy_addr  = seg->get_physical_address();
             uint32_t file_size = seg->get_file_size();
             // Check minimum
@@ -130,18 +135,22 @@ int main(int argc, char *argv[]) {
     uint32_t bin_size  = high_addr - low_addr + 1;
 
     if (bin_size > 16*1024*1024) {
-        cerr << "Loadable size exceeds 16MiB." << endl;
+        cerr << "Loadable size exceeds 16MB." << endl;
         exit(1);
     }
 
-    if (verbose) {
-        if (low_addr == 0x10000000) {
-            cout << "Using FLASH ";
-        } else if (low_addr == 0x20000000) {
-            cout << "Using RAM ";
-        }
-        cout << "from 0x" << DUMP_HEX_FORMAT(8) << low_addr << " - 0x" << high_addr << endl;
+    // Check the physical load addresses
+    if (low_addr == 0x10000000) {
+        is_ram_image = false;
+    } else if (low_addr == 0x20000000) {
+        is_ram_image = true;
     }
+    if (verbose) {
+        cout << "Using " << (is_ram_image ? "RAM" : "FLASH");
+        cout << DUMP_HEX_FORMAT(8)
+             << " from 0x" << low_addr << " to 0x" << high_addr << endl;
+    }
+
     // Create array to hold all loadable code/data.
     // Make sure the bin_array is n * PAGE_SIZE;
     while (bin_size & (PAGE_SIZE-1)) bin_size++;
@@ -159,20 +168,20 @@ int main(int argc, char *argv[]) {
     }
 
     // Check for stage 2 bootloader in first page
-    bool found_boot2 = false;
     if (bin_size >= BOOT2_SIZE) {
         uint32_t crc = crc32::calculate(bin_array, 252);
         if (((uint32_t *)bin_array)[63] == crc) {
             found_boot2 = true;
-            if (verbose) cout << "Found stage 2 bootloader in first page." << endl;
+            if (verbose) {
+                cout << "Found stage 2 bootloader in first page." << endl;
+            }
         }
     }
-
 
     std::vector<block *> blocks;
     try {
         // Check for boot blocks in for 4096 bytes of the image
-        uint32_t *bin_array_32 = (uint32_t *) bin_array;
+        auto *bin_array_32 = (uint32_t *) bin_array;
         uint32_t bin_size_32 = bin_size >= 4096 ? 1024 : bin_size / 4;
         for (int i = 0; i < bin_size_32; ++i) {
             if (bin_array_32[i] == BLOCK_HEADER) {
@@ -181,7 +190,7 @@ int main(int argc, char *argv[]) {
                 uint32_t *first_block_addr = bin_array_32 + i;
                 uint32_t *block_addr = first_block_addr;
                 do {
-                    block *b = new block;
+                    auto *b = new block;
                     block_addr = b->read(block_addr);
                     blocks.push_back(b);
                 } while (block_addr != first_block_addr);
@@ -193,7 +202,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    bool found_image_def = false;
     item_image_def * image_def;
     // Find an image in the blocks
     for (auto b : blocks) {
@@ -208,26 +216,28 @@ int main(int argc, char *argv[]) {
     // Derive family type
     family_id_t family = family_id_t::RP2040; // default
     if (!found_boot2 && !found_image_def) {
-        cerr << "Could not find a stage 2 bootloader or boot blocks." << endl;
-        cerr << "Exiting." << endl;
-        exit(1);
+        if (!is_ram_image) {
+            cerr << "Could not find a stage 2 bootloader or boot blocks." << endl;
+            cerr << "Exiting." << endl;
+            exit(1);
+        }
     } else if (found_boot2 && !found_image_def) {
         // default is okay
     } else if (found_image_def) {
-        switch (image_def->header.chip) {
+        switch (image_def->get_chip()) {
             case chip_t::RP2040:
                 // Default is okay
                 break;
             case chip_t::RP2350:
-                if (image_def->header.cpu == cpu_t::RISCV) {
+                if (image_def->get_cpu() == cpu_t::RISCV) {
                     family = family_id_t::RP2350_RISCV;
                     break;
                 }
-                if (image_def->header.cpu == cpu_t::ARM) {
-                    if (image_def->header.security == security_t::S) {
+                if (image_def->get_cpu() == cpu_t::ARM) {
+                    if (image_def->get_security() == security_t::S) {
                         family = family_id_t::RP2350_ARM_S;
                         break;
-                    } else if (image_def->header.security == security_t::NS) {
+                    } else if (image_def->get_security() == security_t::NS) {
                         family = family_id_t::RP2350_ARM_NS;
                         break;
                     } else {
@@ -236,7 +246,7 @@ int main(int argc, char *argv[]) {
                         break;
                     }
                 }
-                cerr << "Wrong cpu specification. Defaulting to RP2040" << endl;
+                cerr << "Wrong CPU specification. Defaulting to RP2040" << endl;
                 break;
             default: {
                 cerr << "Wrong chip specification. Defaulting to RP2040" << endl;
@@ -245,29 +255,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (verbose) {
-        cout << "Using UF2 family ID ";
-        switch (family) {
-            case family_id_t::RP2040:
-                cout << "RP2040";
-                break;
-            case family_id_t::RP2XXX_ABSOLUTE:
-                cout << "RP2xxx_ABSOLUTE";
-                break;
-            case family_id_t::RP2350_ARM_S:
-                cout << "RP2350_ARM_S";
-                break;
-            case family_id_t::RP2350_RISCV:
-                cout << "RP2350_RISCV";
-            case family_id_t::RP2350_ARM_NS:
-                cout << "RP2350_NS";
-                break;
-            default:
-                cout << "?";
-                break;
-        }
-        cout << endl;
-    }
+    if (verbose) cout << "Using UF2 family ID " << family << endl;
 
     // Add a dummy block due to errata E10
     if (family == family_id_t::RP2350_ARM_S  ||
@@ -284,6 +272,7 @@ int main(int argc, char *argv[]) {
         uf2.write_block(dummy_data.data());
         uf2.clear_extension_flags();
     }
+    
     // Write data from bin_array
     if (verbose) cout << "Writing UF2 file " << uf2_filename << endl;
     uint32_t num_blocks = bin_size / PAGE_SIZE;

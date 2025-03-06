@@ -22,13 +22,13 @@ static_assert(sizeof(version_t) == 4);
 class item_version : public item_base {
 public:
 
-    inline uint16_t get_minor_version() {
+    inline uint16_t get_minor_version() const {
         return _minor_version;
     }
     inline void set_minor_version(uint16_t v) {
         _minor_version = v;
     }
-    inline uint16_t get_major_version() {
+    inline uint16_t get_major_version() const {
         return _major_version;
     }
     inline void set_major_version(uint16_t v) {
@@ -42,7 +42,8 @@ public:
     void read (uint32_t* & ptr) override;
     void write(uint32_t* & ptr) override;
     uint16_t size32() override;
-    inline item_type_t get_type() {
+
+    inline item_type_t get_type() override {
         return _header.item_type;
     }
 
@@ -56,6 +57,5 @@ private:
     uint16_t                _rollback_version;
     std::vector<uint16_t>   _otp_row_entries;
 };
-
 
 #endif //ELF2UF2_ITEM_VERSION_H
