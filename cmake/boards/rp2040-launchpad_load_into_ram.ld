@@ -4,6 +4,7 @@
 
 MEMORY
 {
+    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 4096k
     RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 256k
     SCRATCH_X(rwx) : ORIGIN = 0x20040000, LENGTH = 4k
     SCRATCH_Y(rwx) : ORIGIN = 0x20041000, LENGTH = 4k
@@ -21,9 +22,12 @@ SECTIONS
     /********/
     .text : {
         KEEP (*(.reset))
+        . = ALIGN(4);
+        KEEP (*(.boot_blocks))
         . = ALIGN(256);
         __vector_start__ = .;
         KEEP (*(.isr_vector))
+
         *(.text.*)
 
         *(SORT(.ctors.*))
@@ -69,11 +73,15 @@ SECTIONS
         *(.rodata.*)
     } > RAM
     
-    /***********************************/
-    /* .copy.table used by cmsis_gcc.h */
-    /***********************************/
+    /********************************************/
+    /* .copy.table used by cmsis_gcc.h          */
+    /* The CMSIS code handling the copy tables  */
+    /* copies uint32_t values, so the start/end */
+    /* values have to be aligned and the size   */
+    /* has to be divided by 4.                  */
+    /********************************************/
     .copy.table : {
-        . = ALIGN(8);
+        . = ALIGN(4);
         __copy_table_start__ = .;
         __copy_table_end__ = .;
     } > RAM
@@ -82,7 +90,7 @@ SECTIONS
     /* .zero.table used by cmsis_gcc.h */
     /***********************************/
     .zero.table : {
-        . = ALIGN(8);
+        . = ALIGN(4);
         __zero_table_start__ = .;
         LONG  (__bss_start__)
         LONG ((__bss_end__ - __bss_start__)/4)

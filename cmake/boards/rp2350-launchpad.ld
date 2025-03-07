@@ -22,10 +22,12 @@ SECTIONS
     /* Code */
     /********/
     .text : {
+        __vector_start__ = .;
         KEEP (*(.isr_vector))
-        __boot_blocks_start__ = .;
+        . = ALIGN(4);
         KEEP (*(.boot_blocks))
-        __boot_blocks_end__ = .;
+        . = ALIGN(4);
+        KEEP (*(.reset))
 
         *(.text.*)
 
@@ -50,21 +52,6 @@ SECTIONS
         __fini_array_end = .;
 
     } > FLASH
-
-    ASSERT(__boot_blocks_end__ - __boot_blocks_start__ >= 20,
-        "ERROR: RP2350 Boot Blocks too small")
-
-    /***************************/
-    /* Second stage bootloader */
-    /***************************/
-    .boot2 : {
-        __boot2_start__ = .;
-        KEEP (*(.boot2))
-        __boot2_end__ = .;
-    } > FLASH
-
-    ASSERT(__boot2_end__ - __boot2_start__ == 256,
-        "ERROR: Pico second stage bootloader must be 256 bytes in size")
 
     /*************************/
     /* Exception information */

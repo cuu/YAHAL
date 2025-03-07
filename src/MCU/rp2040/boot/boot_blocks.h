@@ -11,8 +11,8 @@
 //
 // ---------------------------------------------
 //
-#ifndef _BOOT_BLOCKS_RP2350_H_
-#define _BOOT_BLOCKS_RP2350_H_
+#ifndef _BOOT_BLOCKS_H_
+#define _BOOT_BLOCKS_H_
 
 #include <cstdint>
 #include <array>
@@ -110,4 +110,4 @@ namespace BLOCKS {
 
 };
 
-#endif // _BOOT_BLOCKS_RP2350_H_
+#endif // _BOOT_BLOCKS_H_

@@ -9,7 +9,14 @@ set(CMAKE_TOOLCHAIN_FILE toolchains/arm-gcc)
 include(MCU/rp2350)
 
 # Linker script
-set(LINKER_SCRIPT_PATH     "${CMAKE_CURRENT_LIST_DIR}/rp2350-launchpad.ld" CACHE FILEPATH "Linker Script")
+if (YAHAL_LOAD_INTO_RAM)
+    set(LINKER_SCRIPT_PATH "${CMAKE_CURRENT_LIST_DIR}/rp2350-launchpad_load_into_ram.ld"
+        CACHE FILEPATH "Linker Script")
+else()
+    set(LINKER_SCRIPT_PATH "${CMAKE_CURRENT_LIST_DIR}/rp2350-launchpad.ld"
+        CACHE FILEPATH "Linker Script")
+endif()
+
 set(LINKER_SCRIPT_FLAGS    "-Wl,-T \"${LINKER_SCRIPT_PATH}\" ${YAHAL_DIR}/src/MCU/${YAHAL_MCU}/boot/bs2_default.S")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINKER_SCRIPT_FLAGS}")
 

@@ -13,8 +13,8 @@
 //
 // Startup code for RP2350.
 //
+#include "boot/boot_blocks.h"
 #include "system_rp2350.h"
-#include "boot_blocks_rp2350.h"
 #include "RP2350.h"
 using namespace _PPB_;
 
@@ -101,6 +101,11 @@ WEAK_ALIAS_FUNC(PLL_SYS_IRQ_Handler,        Default_Handler)
 WEAK_ALIAS_FUNC(PLL_USB_IRQ_Handler,        Default_Handler)
 WEAK_ALIAS_FUNC(POWMAN_IRQ_POW_Handler,     Default_Handler)
 WEAK_ALIAS_FUNC(POWMAN_IRQ_TIMER_Handler,   Default_Handler)
+
+void foo() __attribute((section(".entry_point"), naked, used));
+void foo() {
+
+};
 
 // The interrupt vector table.
 void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) = {
@@ -190,14 +195,35 @@ namespace BLOCKS {
 const auto boot_blocks __attribute__((section(".boot_blocks"), used)) = BLOCKS::footer;
 
 
-// The ELF entry point. This code will hand over control to the ROM at 0x0,
-// which in turn will check the Flash for a runnable binary.
+// The ELF entry point. This code first checks if the CPU
+// is running a flash image or a ram image (flash is located
+// at 0x10xxxxxx, ram is located at 0x20xxxxxx).
+// flash image: Use the ISR vector table of the bootrom
+//              at address 0x0. Jump to the reset handler
+//              and let the bootrom initialize the XIP and
+//              find (and run) a flash image.
+// ram image:   After downloading a UF2 ram image, the bootrom
+//              will jump to 0x20000001. So the _elf_entry_point
+//              is located at 0x20000000, and will use the
+//              ISR vector table of the ram image, located at
+//              __vector_start__.
+void _elf_entry_point() __attribute__((section(".reset"), naked, used));
 void _elf_entry_point() {
-    PPB.VTOR.TBLOFF = 0;
-    uint32_t top_of_stack = *(uint32_t *)0x0;
-    uint32_t reset_func   = *(uint32_t *)0x4;
-    __set_MSP( top_of_stack );
-    ((void (*)())reset_func)();
+    asm volatile(
+    "       .syntax unified             @ \n"
+    "       movs    r0, #0              @ R0 is pointer to the isr vector.\n"
+    "                                   @ Default is bootrom at 0x0.      \n"
+    "       mov     r3, pc              @ Get the most significant byte   \n"
+    "       lsrs    r3, r3, 24          @ of the PC.                      \n"
+    "       cmp     r3, #0x10           @ Are we running a FLASH image?   \n"
+    "       beq     _do_reset           @ If yes, branch to reset routine \n"
+    "       ldr     r0, =__vector_start__ @ Load vector table start       \n"
+    "_do_reset:                         @                                 \n"
+    "       ldr     r1, =0xe000ed08     @ Load VTOR register address ...  \n"
+    "       str     r0, [r1]            @ ... and store value             \n"
+    "       ldmia   r0!, {r1, r2}       @ R1=initial SP, R2=reset handler \n"
+    "       msr     msp, r1             @ set the master stack pointer... \n"
+    "       bx      r2                  @ ...and jump to reset handler.   \n");
 }
 
 // The reset irq handler
@@ -213,7 +239,7 @@ void Reset_Handler(void) {
 // for examination by a debugger.
 void Default_Handler(void) {
     // Enter an infinite loop.
-    while (true) ;
+    while (true) { }
 }
 
 // Dummy Posix File IO functions to suppress linker warnings

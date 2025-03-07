@@ -1,5 +1,20 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Startup code for RP2350.
+//
+#include "boot/boot_blocks.h"
 #include "system_rp2040.h"
-
 #include "RP2040.h"
 using namespace _PPB_;
 
@@ -111,6 +126,28 @@ void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) 
     RTC_IRQ_Handler                 //  25 RTC_IRQ
 };
 
+#define MAJOR_VER 1
+#define MINOR_VER 0
+
+namespace BLOCKS {
+
+    constexpr blocks<0> start;
+    constexpr auto header   = HEADER    (start);
+    constexpr auto image    = IMAGE_DEF (header,
+                                         image_type::TYPE_EXE,
+                                         exe_security::UNSPECIFIED,
+                                         exe_cpu::CPU_ARM,
+                                         exe_chip::CHIP_RP2040);
+    constexpr auto version  = VERSION   (image, MAJOR_VER, MINOR_VER);
+    constexpr auto last     = LAST_ITEM (version, version.size() - header.size());
+    constexpr auto link     = LINK      (last, 0);
+    constexpr auto footer   = FOOTER    (link);
+};
+
+// Put the calculated boot blocks into the correct section during compile/link-time
+const auto boot_blocks __attribute__((section(".boot_blocks"), used)) = BLOCKS::footer;
+
+
 // The ELF entry point. This code first checks if the CPU
 // is running a flash image or a ram image (flash is located
 // at 0x10xxxxxx, ram is located at 0x20xxxxxx).
@@ -131,7 +168,7 @@ void _elf_entry_point() {
     "                                   @ Default is bootrom at 0x0.      \n"
     "       mov     r3, pc              @ Get the most significant byte   \n"
     "       lsrs    r3, r3, 24          @ of the PC.                      \n"
-    "       cmp     r3, #0x01           @ Are we running a FLASH image?   \n"
+    "       cmp     r3, #0x10           @ Are we running a FLASH image?   \n"
     "       beq     _do_reset           @ If yes, branch to reset routine \n"
     "       ldr     r0, =__vector_start__ @ Load vector table start       \n"
     "_do_reset:                         @                                 \n"

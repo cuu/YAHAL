@@ -13,10 +13,13 @@
 //
 // System startup code RP2350.
 //
+#include "board.h"
 #include "system_rp2350.h"
 
 #include "RP2350.h"
 using namespace _CLOCKS_;
+using namespace _IO_BANK0_;
+using namespace _PADS_BANK0_;
 using namespace _PLL_SYS_;
 using namespace _PLL_USB_;
 using namespace _PPB_;
@@ -26,6 +29,7 @@ using namespace _XOSC_;
 using namespace _TICKS_;
 using namespace _TIMER0_;
 using namespace _TIMER1_;
+using namespace _XIP_CTRL_;
 
 // XOSC configuration (depends on HW)
 /////////////////////////////////////
@@ -62,6 +66,10 @@ void SystemInit (void)
     PPB.CPACR.CP10 = 3;
     PPB.CPACR.CP11 = 3;
 
+    // Set vector table offset
+    extern const uint32_t __vector_start__;
+    PPB.VTOR.value = __vector_start__;
+
     // Reset every peripheral. They will be activated
     // (put out of reset) by the specific drivers.
     RESETS.RESET = 0x478393f;
@@ -72,12 +80,16 @@ void SystemInit (void)
         while(1) ;
     }
 
-    // Initialize the PS-RAM
-    _IO_BANK0_::IO_BANK0.GPIO8_CTRL.FUNCSEL = 9;
-    _PADS_BANK0_::PADS_BANK0.GPIO[8].PDE = 0;
-    _PADS_BANK0_::PADS_BANK0.GPIO[8].PUE = 1;
-    _PADS_BANK0_::PADS_BANK0.GPIO[8].ISO = 0;
-    _XIP_CTRL_::XIP_CTRL.CTRL.WRITABLE_M1 = 1;
+#ifdef PSRAM_CS_GPIO
+    // Initialize CS line for the PSRAM
+    GPIO_CTRL_t *cs_psram = &IO_BANK0.GPIO0_CTRL + (2*PSRAM_CS_GPIO);
+    cs_psram->FUNCSEL = GPIO_CTRL_FUNCSEL__clock;
+    PADS_BANK0.GPIO[PSRAM_CS_GPIO].PDE      = 0;
+    PADS_BANK0.GPIO[PSRAM_CS_GPIO].PUE      = 1;
+    PADS_BANK0.GPIO[PSRAM_CS_GPIO].SLEWFAST = 1;
+    PADS_BANK0.GPIO[PSRAM_CS_GPIO].ISO      = 0;
+    XIP_CTRL.CTRL.WRITABLE_M1 = 1;
+#endif
 
     // Start the crystal oscillator (XOSC)
     XOSC.CTRL.FREQ_RANGE              = CTRL_FREQ_RANGE__1_15MHZ;

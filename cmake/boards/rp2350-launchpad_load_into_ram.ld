@@ -1,13 +1,14 @@
 /**************************************/
-/* rp2040-launchpad GCC linker script */
+/* rp2350 launchpad GCC linker script */
 /**************************************/
 
 MEMORY
 {
-    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 4096k
-    RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 256k
-    SCRATCH_X(rwx) : ORIGIN = 0x20040000, LENGTH = 4k
-    SCRATCH_Y(rwx) : ORIGIN = 0x20041000, LENGTH = 4k
+    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 8192k
+    PSRAM(rwx)     : ORIGIN = 0x11000000, LENGTH = 8192k
+    RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 512k
+    SCRATCH_X(rwx) : ORIGIN = 0x20080000, LENGTH = 4k
+    SCRATCH_Y(rwx) : ORIGIN = 0x20081000, LENGTH = 4k
 }
 
 /********************/
@@ -17,28 +18,16 @@ ENTRY(_elf_entry_point)
 
 SECTIONS
 {
-    /***************************/
-    /* Second stage bootloader */
-    /***************************/
-    .boot2 : {
-        __boot2_start__ = .;
-        KEEP (*(.boot2))
-        __boot2_end__ = .;
-    } > FLASH
-
-    ASSERT(__boot2_end__ - __boot2_start__ == 256,
-        "ERROR: Pico second stage bootloader must be 256 bytes in size")
-
     /********/
     /* Code */
     /********/
     .text : {
-        __vector_start__ = .;
-        KEEP (*(.isr_vector))
+        KEEP (*(.reset))
         . = ALIGN(4);
         KEEP (*(.boot_blocks))
-        . = ALIGN(4);
-        KEEP (*(.reset))
+        . = ALIGN(256);
+        __vector_start__ = .;
+        KEEP (*(.isr_vector))
 
         *(.text.*)
 
@@ -62,20 +51,20 @@ SECTIONS
         KEEP (*(.fini_array*))
         __fini_array_end = .;
 
-    } > FLASH
+    } > RAM
 
     /*************************/
     /* Exception information */
     /*************************/
     .ARM.extab : {
         KEEP (*(.ARM.extab* .gnu.linkonce.armextab.*))
-    } > FLASH
+    } > RAM
 
     .ARM.exidx : {
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end = .;
-    } > FLASH
+    } > RAM
 
     /******************/
     /* Read-only data */
@@ -83,7 +72,7 @@ SECTIONS
     .rodata : {
         *(.rodata)
         *(.rodata.*)
-    } > FLASH
+    } > RAM
     
     /********************************************/
     /* .copy.table used by cmsis_gcc.h          */
@@ -95,11 +84,11 @@ SECTIONS
     .copy.table : {
         . = ALIGN(4);
         __copy_table_start__ = .;
-        LONG  (__data_load__)
-        LONG  (__data_start__)
-        LONG ((__data_end__ - __data_start__)/4)
+        LONG  (__ps_data_load__)
+        LONG  (__ps_data_start__)
+        LONG ((__ps_data_end__ - __ps_data_start__)/4)
         __copy_table_end__ = .;
-    } > FLASH
+    } > RAM
 
     /***********************************/
     /* .zero.table used by cmsis_gcc.h */
@@ -109,8 +98,10 @@ SECTIONS
         __zero_table_start__ = .;
         LONG  (__bss_start__)
         LONG ((__bss_end__ - __bss_start__)/4)
+        LONG  (__ps_bss_start__)
+        LONG ((__ps_bss_end__ - __ps_bss_start__)/4)
         __zero_table_end__ = .;
-    } > FLASH
+    } > RAM
 
     __etext = .;    /* end of .text-like segments */
 
@@ -126,7 +117,7 @@ SECTIONS
         *(.data*)
         . = ALIGN (4);
         __data_end__ = .;
-    } > RAM AT> FLASH
+    } > RAM
 
     /***************************************/
     /* uninizialized data (will be zeroed) */
@@ -142,6 +133,37 @@ SECTIONS
 
     __end__ = .;    /* end of written RAM */
     end = __end__;
+
+    /******************************************/
+    /* data which needs to be copied to PSRAM */
+    /******************************************/
+    .ps_data : {
+        . = ALIGN (4);
+        __ps_data_load__  = LOADADDR(.ps_data);
+        __ps_data_start__ = .;
+        *(.ps_data)
+        . = ALIGN (4);
+        __ps_data_end__ = .;
+    } > PSRAM AT> FLASH
+
+    /************************************************/
+    /* uninizialized data in PSRAM (will be zeroed) */
+    /************************************************/
+    .ps_bss (NOLOAD): {
+        . = ALIGN (4);
+        __ps_bss_start__ = .;
+        *(.ps_bss)
+        . = ALIGN (4);
+        __ps_bss_end__ = .;
+    } > PSRAM
+
+    /****************************************************/
+    /* uninizialized data in PSRAM (will not be zeroed) */
+    /****************************************************/
+    .ps_noload (NOLOAD): {
+        . = ALIGN (4);
+        *(.ps_noload)
+    } > PSRAM
 
     /********/
     /* heap */
