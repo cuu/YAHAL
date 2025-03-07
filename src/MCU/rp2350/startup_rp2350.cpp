@@ -102,11 +102,6 @@ WEAK_ALIAS_FUNC(PLL_USB_IRQ_Handler,        Default_Handler)
 WEAK_ALIAS_FUNC(POWMAN_IRQ_POW_Handler,     Default_Handler)
 WEAK_ALIAS_FUNC(POWMAN_IRQ_TIMER_Handler,   Default_Handler)
 
-void foo() __attribute((section(".entry_point"), naked, used));
-void foo() {
-
-};
-
 // The interrupt vector table.
 void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) = {
     (pFunc) &__StackTop,            // The initial stack pointer
