@@ -37,7 +37,9 @@
 #define WHITE 37
 
 extern uint32_t __data_start__;
-extern uint32_t __heap_start__;
+extern uint32_t __data_end__;
+extern uint32_t __bss_start__;
+extern uint32_t __bss_end__;
 
 class task_monitor : public task_timer
 {
@@ -56,12 +58,11 @@ public:
                     millis%1000);
             printf(VT100_COLOR, BLACK);
 
-            auto ram_start  = (uint32_t)(&__data_start__);
-            auto heap_start = (uint32_t)(&__heap_start__);
+            auto data_size = (uint32_t)(&__data_end__) - (uint32_t)(&__data_start__);
+            auto bss_size  = (uint32_t)(&__bss_end__)  - (uint32_t)(&__bss_start__);
             uint32_t heap_used  = mallinfo().uordblks;
-            printf("       RAM usage: data %ld, heap %ld, total: %ld bytes\n",
-                   heap_start - ram_start,  heap_used,
-                   heap_start - ram_start + heap_used);
+            printf("   RAM usage: data:%ld, bss:%ld, heap:%ld, total:%ld bytes\n",
+                   data_size, bss_size, heap_used, data_size + bss_size + heap_used);
 
             puts("+------------------+-----+------+-----------+-------------+--------+");
             puts("| Task Name        | Flg | Prio | State     | Stack usage |  CPU % |");

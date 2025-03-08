@@ -58,8 +58,7 @@ class spi_rp2350 : public spi_interface {
 
 public:
 
-    spi_rp2350(uint8_t     index,
-               gpio_pin_t  miso_pin,
+    spi_rp2350(gpio_pin_t  miso_pin,
                gpio_pin_t  mosi_pin,
                gpio_pin_t  sclk_pin,
                gpio_interface &  cs_pin,

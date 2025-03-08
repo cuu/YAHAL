@@ -25,35 +25,40 @@ using namespace _RESETS_;
 function<void(uint8_t)> spi_rp2350::_intHandler[2];
 
 int8_t spi_rp2350::_spi_miso_pins[2][6] =
-    { { 0,  4, 16, 20, 32, 36 }, { 8, 12, 24, 28, 40, 44 } };
+    { { 0, 4, 16, 20, 32, 36 }, { 8, 12, 24, 28, 40, 44 } };
 
-spi_rp2350::spi_rp2350( uint8_t             index ,
-                        gpio_pin_t          miso_pin,
+spi_rp2350::spi_rp2350( gpio_pin_t          miso_pin,
                         gpio_pin_t          mosi_pin,
                         gpio_pin_t          sclk_pin,
                         gpio_interface &    cs_pin,
                         const bool          spi_master,
                         uint16_t            mode)
-    : _index(index),  _miso(miso_pin),   _mosi(mosi_pin), _sclk(sclk_pin),
+    : _miso(miso_pin),   _mosi(mosi_pin), _sclk(sclk_pin),
       _cs(cs_pin),  _master(spi_master), _mode(mode),     _init(false),
       _generate_CS(true), _baud(0)  {
 
-    assert(index < 2);
-    _spi     = (index==0) ? &SPI0     : &SPI1;
-    _spi_set = (index==0) ? &SPI0_SET : &SPI1_SET;
-    _spi_clr = (index==0) ? &SPI0_CLR : &SPI1_CLR;
     bool miso_found = false;
     bool mosi_found = false;
     bool sclk_found = false;
-    for (int i = 0; i < 6; ++i) {
-        if (miso_pin ==  _spi_miso_pins[index][i])   miso_found = true;
-        if (mosi_pin ==  _spi_miso_pins[index][i]+3) mosi_found = true;
-        if (sclk_pin ==  _spi_miso_pins[index][i]+2) sclk_found = true;
+    for (_index=0; _index < 2; ++_index) {
+        // Reset 'found' booleans for every new index
+        miso_found = false;
+        mosi_found = false;
+        sclk_found = false;
+        // Try to find the pins within one index
+        for (int i = 0; i < 6; ++i) {
+            if (miso_pin == _spi_miso_pins[_index][i])   miso_found = true;
+            if (mosi_pin == _spi_miso_pins[_index][i]+3) mosi_found = true;
+            if (sclk_pin == _spi_miso_pins[_index][i]+2) sclk_found = true;
+        }
+        if (miso_found && mosi_found && sclk_found) break;
     }
-    (void)miso_found;  // suppress warnings
-    (void)mosi_found;
-    (void)sclk_found;
     assert(miso_found && mosi_found && sclk_found);
+
+    // Set register pointer
+    _spi     = (_index==0) ? &SPI0     : &SPI1;
+    _spi_set = (_index==0) ? &SPI0_SET : &SPI1_SET;
+    _spi_clr = (_index==0) ? &SPI0_CLR : &SPI1_CLR;
 }
 
 spi_rp2350::~spi_rp2350() {
