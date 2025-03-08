@@ -54,9 +54,15 @@ function(yahal_add_custom_targets TARGET)
     # Add a upload target using openocd if configuration was given
     if (OPENOCD_CONFIG)
         set(TF $<TARGET_FILE:${TARGET}>)
-        if (YAHAL_NO_FLASH)
+        if (YAHAL_LOAD_INTO_RAM)
             add_custom_target("upload_${TARGET}"
                 openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x20000000" -c "exit"
+                DEPENDS ${TF}
+                VERBATIM
+            )
+        elseif(YAHAL_LOAD_INTO_PSRAM)
+            add_custom_target("upload_${TARGET}"
+                openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x11000000" -c "exit"
                 DEPENDS ${TF}
                 VERBATIM
             )
