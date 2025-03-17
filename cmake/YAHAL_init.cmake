@@ -55,14 +55,23 @@ function(yahal_add_custom_targets TARGET)
     if (OPENOCD_CONFIG)
         set(TF $<TARGET_FILE:${TARGET}>)
         if (YAHAL_LOAD_INTO_RAM)
-            add_custom_target("upload_${TARGET}"
-                openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x20000101" -c "exit"
-                DEPENDS ${TF}
-                VERBATIM
-            )
+            if (${YAHAL_MCU} STREQUAL rp2040)
+                add_custom_target("upload_${TARGET}"
+                    openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x20000001" -c "exit"
+                    DEPENDS ${TF}
+                    VERBATIM
+                )
+            endif ()
+            if (${YAHAL_MCU} STREQUAL rp2350)
+                add_custom_target("upload_${TARGET}"
+                    openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x20000109" -c "exit"
+                    DEPENDS ${TF}
+                    VERBATIM
+                )
+            endif ()
         elseif(YAHAL_LOAD_INTO_PSRAM)
             add_custom_target("upload_${TARGET}"
-                openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x11000101" -c "exit"
+                openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x11000109" -c "exit"
                 DEPENDS ${TF}
                 VERBATIM
             )
