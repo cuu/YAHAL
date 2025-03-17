@@ -63,16 +63,23 @@ reset_handler:
             cmp     r0, r1
             beq     no_copy
 
+copy_loop:
             // Copy the complete image (.text, .rodata, .data)
             // to the runtime memory area in RAM
-copy_loop:  ldr     r2, =__image_end__
+            ldr     r2, =__image_end__
             ldmia   r0!, {r3}
             stmia   r1!, {r3}
             cmp     r1, r2
             blo     copy_loop
 
+no_copy:
+            // Setup stack pointer, because the C-part
+            // of the reset handler will use it!!
+            ldr     r0, =__StackTop
+            msr     msp, r0
+
             // Set the ISR vector offset register (VTOR)
-no_copy:    ldr     r0, =__vector_start__
+            ldr     r0, =__vector_start__
             ldr     r1, =VTOR_REG
             str     r0, [r1]
 
@@ -83,12 +90,13 @@ no_copy:    ldr     r0, =__vector_start__
             ldr     r0, =Reset_Handler
             blx     r0
 
+endless:
             // We should never get here, but just in case
             // run into an endless loop
-endless:    b       endless
+            b       endless
 
 
-            // If the image is enteres via the _elf_entry_point,
+            // If the image is entered via the _elf_entry_point,
             // take a loop through the bootrom, to make sure the
             // flash and other related things are initialized
             .thumb_func
@@ -97,10 +105,12 @@ _elf_entry_point:
             movs    r0, #0
             ldr     r1, =VTOR_REG
             str     r0, [r1]
+
             // r1=initial SP, r2=reset handler of bootrom
             ldmia   r0!, {r1, r2}
             msr     msp, r1
             blx     r2
+
             // We should never get here, but just in case
             // run into an endless loop
             b       endless

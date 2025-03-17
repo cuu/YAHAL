@@ -57,7 +57,7 @@ function(yahal_add_custom_targets TARGET)
         if (YAHAL_LOAD_INTO_RAM)
             if (${YAHAL_MCU} STREQUAL rp2040)
                 add_custom_target("upload_${TARGET}"
-                    openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x20000001" -c "exit"
+                    openocd ${OPENOCD_CONFIG} -c "init" -c "reset halt" -c "load_image ${TF}" -c "resume 0x20000009" -c "exit"
                     DEPENDS ${TF}
                     VERBATIM
                 )
