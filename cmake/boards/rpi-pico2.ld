@@ -10,9 +10,6 @@ MEMORY
     SCRATCH_Y(rwx) : ORIGIN = 0x20081000, LENGTH = 4k
 }
 
-/********************/
-/* ELF entry point. */
-/********************/
 ENTRY(_elf_entry_point)
 
 SECTIONS
@@ -21,10 +18,21 @@ SECTIONS
     /* Code */
     /********/
     .text : {
+
+        __image_load__  = LOADADDR(.text);
+        __image_start__ = .;
+
+        /* We always begin with the ISR vector */
+        __vector_start__ = .;
         KEEP (*(.isr_vector))
-        __boot_blocks_start__ = .;
+
+        /* Align our reset code to start of flash + 256, */
+        /* followed by the boot blocks                   */
+        . = ALIGN(256);
+        KEEP (*(.reset))
+        . = ALIGN(4);
         KEEP (*(.boot_blocks))
-        __boot_blocks_end__ = .;
+        . = ALIGN(4);
 
         *(.text.*)
 
@@ -50,21 +58,6 @@ SECTIONS
 
     } > FLASH
 
-    ASSERT(__boot_blocks_end__ - __boot_blocks_start__ >= 20,
-        "ERROR: RP2350 Boot Blocks too small")
-
-    /***************************/
-    /* Second stage bootloader */
-    /***************************/
-    .boot2 : {
-        __boot2_start__ = .;
-        KEEP (*(.boot2))
-        __boot2_end__ = .;
-    } > FLASH
-
-    ASSERT(__boot2_end__ - __boot2_start__ == 256,
-        "ERROR: Pico second stage bootloader must be 256 bytes in size")
-
     /*************************/
     /* Exception information */
     /*************************/
@@ -82,15 +75,21 @@ SECTIONS
     /* Read-only data */
     /******************/
     .rodata : {
+        . = ALIGN(4);
         *(.rodata)
         *(.rodata.*)
+        . = ALIGN(4);
     } > FLASH
     
-    /***********************************/
-    /* .copy.table used by cmsis_gcc.h */
-    /***********************************/
+    /********************************************/
+    /* .copy.table used by cmsis_gcc.h          */
+    /* The CMSIS code handling the copy tables  */
+    /* copies uint32_t values, so the start/end */
+    /* values have to be aligned and the size   */
+    /* has to be divided by 4.                  */
+    /********************************************/
     .copy.table : {
-        . = ALIGN(8);
+        . = ALIGN(4);
         __copy_table_start__ = .;
         LONG  (__data_load__)
         LONG  (__data_start__)
@@ -102,14 +101,12 @@ SECTIONS
     /* .zero.table used by cmsis_gcc.h */
     /***********************************/
     .zero.table : {
-        . = ALIGN(8);
+        . = ALIGN(4);
         __zero_table_start__ = .;
         LONG  (__bss_start__)
         LONG ((__bss_end__ - __bss_start__)/4)
         __zero_table_end__ = .;
     } > FLASH
-
-    __etext = .;    /* end of .text-like segments */
 
     /****************************************/
     /* data which needs to be copied to RAM */
@@ -124,6 +121,8 @@ SECTIONS
         . = ALIGN (4);
         __data_end__ = .;
     } > RAM AT> FLASH
+
+    __image_end__ = .;
 
     /***************************************/
     /* uninizialized data (will be zeroed) */
@@ -154,12 +153,12 @@ SECTIONS
     /*********/
     /* stack */
     /*********/
-    .stack1 (NOLOAD): {
-        *(.stack1*)
+    .stack.x (NOLOAD): {
+        *(.stack.x*)
     } > SCRATCH_X
 
-    .stack (NOLOAD): {
-        *(.stack*)
+    .stack.y (NOLOAD): {
+        *(.stack.y*)
     } > SCRATCH_Y
 
     /* Lower stack limit */

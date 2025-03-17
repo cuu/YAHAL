@@ -75,17 +75,6 @@ void SystemInit (void)
     // (put out of reset) by the specific drivers.
     RESETS.RESET = 0x478393f;
 
-#ifdef PSRAM_CS_GPIO
-    // Initialize CS line for the PSRAM
-    GPIO_CTRL_t *cs_psram = &IO_BANK0.GPIO0_CTRL + (2*PSRAM_CS_GPIO);
-    cs_psram->FUNCSEL = GPIO_CTRL_FUNCSEL__clock;
-    PADS_BANK0.GPIO[PSRAM_CS_GPIO].PDE      = 0;
-    PADS_BANK0.GPIO[PSRAM_CS_GPIO].PUE      = 1;
-    PADS_BANK0.GPIO[PSRAM_CS_GPIO].SLEWFAST = 1;
-    PADS_BANK0.GPIO[PSRAM_CS_GPIO].ISO      = 0;
-    XIP_CTRL.CTRL.WRITABLE_M1 = 1;
-#endif
-
     // Start the crystal oscillator (XOSC)
     XOSC.CTRL.FREQ_RANGE              = CTRL_FREQ_RANGE__1_15MHZ;
     XOSC.STARTUP                      = XOSC_STARTUP;

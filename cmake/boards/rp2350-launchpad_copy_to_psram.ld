@@ -15,11 +15,20 @@ ENTRY(_elf_entry_point)
 
 SECTIONS
 {
+    /* In a COPY_TO_PSRAM scenario, the reset handler */
+    /* will handle the copying to RAM. It will copy   */
+    /* from __image_load__ to the memory area         */
+    /* from __image_start__ to __image_end__          */
+
+    .flashtext : {
+        KEEP (*(.reset))
+    } > FLASH
+
     /********/
     /* Code */
     /********/
     .text : {
-
+        . = ALIGN(4);
         __image_load__  = LOADADDR(.text);
         __image_start__ = .;
 
@@ -27,10 +36,6 @@ SECTIONS
         __vector_start__ = .;
         KEEP (*(.isr_vector))
 
-        /* Align our reset code to start of flash + 256, */
-        /* followed by the boot blocks                   */
-        . = ALIGN(256);
-        KEEP (*(.reset))
         . = ALIGN(4);
         KEEP (*(.boot_blocks))
         . = ALIGN(4);
@@ -57,20 +62,20 @@ SECTIONS
         KEEP (*(.fini_array*))
         __fini_array_end = .;
 
-    } > PSRAM
+    } > PSRAM AT> FLASH
 
     /*************************/
     /* Exception information */
     /*************************/
     .ARM.extab : {
         KEEP (*(.ARM.extab* .gnu.linkonce.armextab.*))
-    } > PSRAM
+    } > PSRAM AT> FLASH
 
     .ARM.exidx : {
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end = .;
-    } > PSRAM
+    } > PSRAM AT> FLASH
 
     /******************/
     /* Read-only data */
@@ -80,8 +85,8 @@ SECTIONS
         *(.rodata)
         *(.rodata.*)
         . = ALIGN(4);
-    } > PSRAM
-    
+    } > PSRAM AT> FLASH
+
     /********************************************/
     /* .copy.table used by cmsis_gcc.h          */
     /* The CMSIS code handling the copy tables  */
@@ -93,7 +98,7 @@ SECTIONS
         . = ALIGN(4);
         __copy_table_start__ = .;
         __copy_table_end__ = .;
-    } > PSRAM
+    } > PSRAM AT> FLASH
 
     /***********************************/
     /* .zero.table used by cmsis_gcc.h */
@@ -104,7 +109,7 @@ SECTIONS
         LONG  (__bss_start__)
         LONG ((__bss_end__ - __bss_start__)/4)
         __zero_table_end__ = .;
-    } > PSRAM
+    } > PSRAM AT> FLASH
 
     /****************************************/
     /* data which needs to be copied to RAM */
@@ -118,7 +123,7 @@ SECTIONS
         *(.data*)
         . = ALIGN (4);
         __data_end__ = .;
-    } > PSRAM
+    } > PSRAM AT> FLASH
 
     __image_end__ = .;
 

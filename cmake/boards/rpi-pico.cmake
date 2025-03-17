@@ -1,6 +1,6 @@
-######################################
-# Configuration for RP2040 launchpad #
-######################################
+##############################
+# Configuration for RPi pico #
+##############################
 
 message("Using board RPi Pico") 
 

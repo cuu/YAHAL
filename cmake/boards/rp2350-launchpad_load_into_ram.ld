@@ -11,9 +11,6 @@ MEMORY
     SCRATCH_Y(rwx) : ORIGIN = 0x20081000, LENGTH = 4k
 }
 
-/********************/
-/* ELF entry point. */
-/********************/
 ENTRY(_elf_entry_point)
 
 SECTIONS
@@ -22,12 +19,21 @@ SECTIONS
     /* Code */
     /********/
     .text : {
+
+        __image_load__  = LOADADDR(.text);
+        __image_start__ = .;
+
+        /* We always begin with the ISR vector */
+        __vector_start__ = .;
+        KEEP (*(.isr_vector))
+
+        /* Align our reset code to start of flash + 256, */
+        /* followed by the boot blocks                   */
+        . = ALIGN(256);
         KEEP (*(.reset))
         . = ALIGN(4);
         KEEP (*(.boot_blocks))
-        . = ALIGN(256);
-        __vector_start__ = .;
-        KEEP (*(.isr_vector))
+        . = ALIGN(4);
 
         *(.text.*)
 
@@ -70,8 +76,10 @@ SECTIONS
     /* Read-only data */
     /******************/
     .rodata : {
+        . = ALIGN(4);
         *(.rodata)
         *(.rodata.*)
+        . = ALIGN(4);
     } > RAM
     
     /********************************************/
@@ -84,6 +92,8 @@ SECTIONS
     .copy.table : {
         . = ALIGN(4);
         __copy_table_start__ = .;
+        /* .data copying is not necessary because */
+        /* this section is anyway in RAM ...      */
         LONG  (__ps_data_load__)
         LONG  (__ps_data_start__)
         LONG ((__ps_data_end__ - __ps_data_start__)/4)
@@ -103,8 +113,6 @@ SECTIONS
         __zero_table_end__ = .;
     } > RAM
 
-    __etext = .;    /* end of .text-like segments */
-
     /****************************************/
     /* data which needs to be copied to RAM */
     /****************************************/
@@ -118,6 +126,8 @@ SECTIONS
         . = ALIGN (4);
         __data_end__ = .;
     } > RAM
+
+    __image_end__ = .;
 
     /***************************************/
     /* uninizialized data (will be zeroed) */
@@ -179,12 +189,12 @@ SECTIONS
     /*********/
     /* stack */
     /*********/
-    .stack1 (NOLOAD): {
-        *(.stack1*)
+    .stack.x (NOLOAD): {
+        *(.stack.x*)
     } > SCRATCH_X
 
-    .stack (NOLOAD): {
-        *(.stack*)
+    .stack.y (NOLOAD): {
+        *(.stack.y*)
     } > SCRATCH_Y
 
     /* Lower stack limit */

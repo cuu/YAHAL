@@ -1,6 +1,6 @@
-######################################
-# Configuration for RP2350 launchpad #
-######################################
+###############################
+# Configuration for RPi pico2 #
+###############################
 
 message("Using board RP2350 Lauchpad") 
 
@@ -9,13 +9,7 @@ set(CMAKE_TOOLCHAIN_FILE toolchains/arm-gcc)
 include(MCU/rp2350)
 
 # Linker script
-set(LINKER_SCRIPT_PATH     "${CMAKE_CURRENT_LIST_DIR}/rp2350-launchpad.ld" CACHE FILEPATH "Linker Script")
-set(LINKER_SCRIPT_FLAGS    "-Wl,-T \"${LINKER_SCRIPT_PATH}\" ${YAHAL_DIR}/src/MCU/${YAHAL_MCU}/boot/bs2_default.S")
+set(LINKER_SCRIPT_PATH     "${CMAKE_CURRENT_LIST_DIR}/rpi-pico2.ld" 
+    CACHE FILEPATH "Linker Script")
+set(LINKER_SCRIPT_FLAGS    "-Wl,-T \"${LINKER_SCRIPT_PATH}\"")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINKER_SCRIPT_FLAGS}")
-
-# Debug interface: The RP2350 LP has a
-# buildin picoprobe debug probe, which
-# is supported by OpenOCD.
-set(OPENOCD_CONFIG 
-    "-s tcl" "-f" "interface/cmsis-dap.cfg" "-c" "adapter speed 5000" "-f" "target/rp2350.cfg"
-    CACHE STRING "OpenOCD configuration")

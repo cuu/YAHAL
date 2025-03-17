@@ -16,7 +16,6 @@
 #include "boot/boot_blocks.h"
 #include "system_rp2350.h"
 #include "RP2350.h"
-using namespace _PPB_;
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,10 +32,10 @@ void FUN(void) __attribute__ ((weak, alias(#FUN_ALIAS)));
 int FUN() __attribute__ ((weak, alias(#FUN_ALIAS)));
 
 // External variables and functions
-extern void     __cmsis_start(void);
+extern void reset_handler();
 extern uint32_t __StackTop;
 
-typedef void (*pFunc)(void);
+typedef void (*pFunc)();
 
 // Forward declaration of the implemented handlers.
 WEAK_FUNC(Default_Handler)
@@ -106,7 +105,7 @@ WEAK_ALIAS_FUNC(POWMAN_IRQ_TIMER_Handler,   Default_Handler)
 void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) = {
     (pFunc) &__StackTop,            // The initial stack pointer
 
-    Reset_Handler,                  // -15 The reset handler
+    reset_handler,                  // -15 The reset handler
     NMI_Handler,                    // -14 The NMI handler
     HardFault_Handler,              // -13 The hard fault handler
     MemoryManagement_Handler,       // -12 The Memory Management handler
@@ -168,9 +167,6 @@ void (* const isr_vector[])(void) __attribute__((section(".isr_vector"), used)) 
     POWMAN_IRQ_TIMER_Handler        // 45 POWMAN_IRQ_TIMER
 };
 
-#define MAJOR_VER 1
-#define MINOR_VER 0
-
 namespace BLOCKS {
 
     constexpr blocks<0> start;
@@ -180,46 +176,13 @@ namespace BLOCKS {
                                          exe_security::SEC_S,
                                          exe_cpu::CPU_ARM,
                                          exe_chip::CHIP_RP2350);
-    constexpr auto version  = VERSION   (image, MAJOR_VER, MINOR_VER);
-    constexpr auto last     = LAST_ITEM (version, version.size() - header.size());
+    constexpr auto last     = LAST_ITEM (image, image.size() - header.size());
     constexpr auto link     = LINK      (last, 0);
     constexpr auto footer   = FOOTER    (link);
 };
 
 // Put the calculated boot blocks into the correct section during compile/link-time
 const auto boot_blocks __attribute__((section(".boot_blocks"), used)) = BLOCKS::footer;
-
-
-// The ELF entry point. This code first checks if the CPU
-// is running a flash image or a ram image (flash is located
-// at 0x10xxxxxx, ram is located at 0x20xxxxxx).
-// flash image: Use the ISR vector table of the bootrom
-//              at address 0x0. Jump to the reset handler
-//              and let the bootrom initialize the XIP and
-//              find (and run) a flash image.
-// ram image:   After downloading a UF2 ram image, the bootrom
-//              will jump to 0x20000001. So the _elf_entry_point
-//              is located at 0x20000000, and will use the
-//              ISR vector table of the ram image, located at
-//              __vector_start__.
-void _elf_entry_point() __attribute__((section(".reset"), naked, used));
-void _elf_entry_point() {
-    asm volatile(
-    "       .syntax unified             @ \n"
-    "       movs    r0, #0              @ R0 is pointer to the isr vector.\n"
-    "                                   @ Default is bootrom at 0x0.      \n"
-    "       mov     r3, pc              @ Get the most significant byte   \n"
-    "       lsrs    r3, r3, 24          @ of the PC.                      \n"
-    "       cmp     r3, #0x10           @ Are we running a FLASH image?   \n"
-    "       beq     _do_reset           @ If yes, branch to reset routine \n"
-    "       ldr     r0, =__vector_start__ @ Load vector table start       \n"
-    "_do_reset:                         @                                 \n"
-    "       ldr     r1, =0xe000ed08     @ Load VTOR register address ...  \n"
-    "       str     r0, [r1]            @ ... and store value             \n"
-    "       ldmia   r0!, {r1, r2}       @ R1=initial SP, R2=reset handler \n"
-    "       msr     msp, r1             @ set the master stack pointer... \n"
-    "       bx      r2                  @ ...and jump to reset handler.   \n");
-}
 
 // The reset irq handler
 void Reset_Handler(void) {

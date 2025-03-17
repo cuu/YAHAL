@@ -61,15 +61,21 @@ SECTIONS {
     /* Read-only data */
     /******************/
     .rodata : {
+        . = ALIGN(4);
         *(.rodata)
         *(.rodata.*)
+        . = ALIGN(4);
     } > FLASH
 
-    /***********************************/
-    /* .copy.table used by cmsis_gcc.h */
-    /***********************************/
+    /********************************************/
+    /* .copy.table used by cmsis_gcc.h          */
+    /* The CMSIS code handling the copy tables  */
+    /* copies uint32_t values, so the start/end */
+    /* values have to be aligned and the size   */
+    /* has to be divided by 4.                  */
+    /********************************************/
     .copy.table : {
-        . = ALIGN(8);
+        . = ALIGN(4);
         __copy_table_start__ = .;
         LONG  (__data_load__)
         LONG  (__data_start__)
@@ -81,7 +87,7 @@ SECTIONS {
     /* .zero.table used by cmsis_gcc.h */
     /***********************************/
     .zero.table : {
-        . = ALIGN(8);
+        . = ALIGN(4);
         __zero_table_start__ = .;
         LONG  (__bss_start__)
         LONG ((__bss_end__ - __bss_start__)/4)
@@ -98,6 +104,7 @@ SECTIONS {
         __data_load__  = LOADADDR(.data);
         __data_start__ = .;
         *(.vtable)
+        *(.move_to_ram*)
         *(.data*)
         . = ALIGN (4);
         __data_end__ = .;

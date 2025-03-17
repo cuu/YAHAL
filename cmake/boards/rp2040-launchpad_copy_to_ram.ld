@@ -1,25 +1,47 @@
 /**************************************/
-/* rp2350 launchpad GCC linker script */
+/* rp2040-launchpad GCC linker script */
 /**************************************/
 
 MEMORY
 {
-    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 8192k
-    PSRAM(rwx)     : ORIGIN = 0x11000000, LENGTH = 8192k
-    RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 512k
-    SCRATCH_X(rwx) : ORIGIN = 0x20080000, LENGTH = 4k
-    SCRATCH_Y(rwx) : ORIGIN = 0x20081000, LENGTH = 4k
+    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 4096k
+    RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 256k
+    SCRATCH_X(rwx) : ORIGIN = 0x20040000, LENGTH = 4k
+    SCRATCH_Y(rwx) : ORIGIN = 0x20041000, LENGTH = 4k
 }
 
 ENTRY(_elf_entry_point)
 
 SECTIONS
 {
+    /***************************/
+    /* Second stage bootloader */
+    /***************************/
+    .boot2 : {
+        __boot2_start__ = .;
+        KEEP (*(.boot2))
+        __boot2_end__ = .;
+    } > FLASH
+
+    ASSERT(__boot2_end__ - __boot2_start__ == 256,
+        "ERROR: Pico second stage bootloader must be 256 bytes in size")
+
     /********/
     /* Code */
     /********/
-    .text : {
 
+    /* In a COPY_TO_RAM scenario, the reset handler */
+    /* will handle the copying to RAM. It will copy */
+    /* from __image_load__ to the memory area       */
+    /* from __image_start__ to __image_end__        */
+
+    .flashtext : {
+        KEEP (*(.reset))
+        . = ALIGN(4);
+     } > FLASH
+
+    .text : {
+        . = ALIGN(4);
         __image_load__  = LOADADDR(.text);
         __image_start__ = .;
 
@@ -27,10 +49,6 @@ SECTIONS
         __vector_start__ = .;
         KEEP (*(.isr_vector))
 
-        /* Align our reset code to start of flash + 256, */
-        /* followed by the boot blocks                   */
-        . = ALIGN(256);
-        KEEP (*(.reset))
         . = ALIGN(4);
         KEEP (*(.boot_blocks))
         . = ALIGN(4);
@@ -57,20 +75,20 @@ SECTIONS
         KEEP (*(.fini_array*))
         __fini_array_end = .;
 
-    } > PSRAM
+    } > RAM AT> FLASH
 
     /*************************/
     /* Exception information */
     /*************************/
     .ARM.extab : {
         KEEP (*(.ARM.extab* .gnu.linkonce.armextab.*))
-    } > PSRAM
+    } > RAM AT> FLASH
 
     .ARM.exidx : {
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end = .;
-    } > PSRAM
+    } > RAM AT> FLASH
 
     /******************/
     /* Read-only data */
@@ -80,7 +98,7 @@ SECTIONS
         *(.rodata)
         *(.rodata.*)
         . = ALIGN(4);
-    } > PSRAM
+    } > RAM AT> FLASH
     
     /********************************************/
     /* .copy.table used by cmsis_gcc.h          */
@@ -93,7 +111,7 @@ SECTIONS
         . = ALIGN(4);
         __copy_table_start__ = .;
         __copy_table_end__ = .;
-    } > PSRAM
+    } > RAM AT> FLASH
 
     /***********************************/
     /* .zero.table used by cmsis_gcc.h */
@@ -104,7 +122,7 @@ SECTIONS
         LONG  (__bss_start__)
         LONG ((__bss_end__ - __bss_start__)/4)
         __zero_table_end__ = .;
-    } > PSRAM
+    } > RAM AT> FLASH
 
     /****************************************/
     /* data which needs to be copied to RAM */
@@ -118,7 +136,7 @@ SECTIONS
         *(.data*)
         . = ALIGN (4);
         __data_end__ = .;
-    } > PSRAM
+    } > RAM AT> FLASH
 
     __image_end__ = .;
 
@@ -132,7 +150,7 @@ SECTIONS
         *(COMMON)
         . = ALIGN (4);
         __bss_end__ = .;
-    } > PSRAM
+    } > RAM
 
     __end__ = .;    /* end of written RAM */
     end = __end__;

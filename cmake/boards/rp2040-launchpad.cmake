@@ -12,6 +12,9 @@ include(MCU/rp2040)
 if (YAHAL_LOAD_INTO_RAM)
     set(LINKER_SCRIPT_PATH "${CMAKE_CURRENT_LIST_DIR}/rp2040-launchpad_load_into_ram.ld"
     CACHE FILEPATH "Linker Script")
+elseif(YAHAL_COPY_TO_RAM)
+    set(LINKER_SCRIPT_PATH "${CMAKE_CURRENT_LIST_DIR}/rp2040-launchpad_copy_to_ram.ld"
+            CACHE FILEPATH "Linker Script")
 else()
     set(LINKER_SCRIPT_PATH "${CMAKE_CURRENT_LIST_DIR}/rp2040-launchpad.ld"
     CACHE FILEPATH "Linker Script")

@@ -24,7 +24,7 @@
 #define LED_RGB_GPIO 39
 #define LED_RGB_COUNT 8
 
-#define PSRAM_CS_GPIO 0
+#define PSRAM_CS_GPIO 8
 
 // Use PSRAM without copying code/data or zeroing
 #define PSRAM __attribute__((section(".ps_noload")))

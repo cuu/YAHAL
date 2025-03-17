@@ -40,6 +40,15 @@ namespace BLOCKS {
         return res;
     }
 
+    template<std::size_t N, std::size_t M>
+    constexpr auto append_N(const blocks<N> &arr, const blocks<M> &to_append) {
+        blocks<N + M> res{};
+        copy(arr.begin(), arr.end(), res.begin());
+        copy(to_append.begin(), to_append.end(), res.at(N));
+        return res;
+    }
+
+
     // Specific block methods and enums
 
     template<std::size_t N>
@@ -103,9 +112,21 @@ namespace BLOCKS {
                              const exe_cpu cpu,
                              const exe_chip chip,
                              const exe_tbyb tbyb = exe_tbyb::FALSE) {
-        return append(arr, 0x00000142 + (uint32_t) type + (uint32_t) sec +
-                           (uint32_t) cpu + (uint32_t) chip +
-                           (uint32_t) tbyb);
+        return append(arr, 0x00000142 +
+                           (uint32_t) type + (uint32_t) sec  + (uint32_t) cpu  +
+                           (uint32_t) chip + (uint32_t) tbyb);
+    }
+
+    template<std::size_t N>
+    constexpr auto LOAD_MAP_ABS(const blocks<N> &arr,
+                                const uint32_t storage_start,
+                                const uint32_t runtime_start,
+                                const uint32_t storage_end) {
+        auto a1 = append(arr, 0x81000406);
+        auto a2 = append(a1,  storage_start);
+        auto a3 = append(a2,  runtime_start);
+        auto a4 = append(a3,  storage_end );
+        return a4;
     }
 
 };

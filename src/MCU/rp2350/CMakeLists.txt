@@ -18,6 +18,7 @@ target_sources(${YAHAL_TARGET} PRIVATE
         # files have to be last.
         startup_rp2350.cpp
         system_rp2350.cpp
+        reset_rp2350.S
 )
 
 # generate PIO header files

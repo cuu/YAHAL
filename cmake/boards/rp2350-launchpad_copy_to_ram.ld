@@ -15,11 +15,20 @@ ENTRY(_elf_entry_point)
 
 SECTIONS
 {
+    /* In a COPY_TO_RAM scenario, the reset handler */
+    /* will handle the copying to RAM. It will copy */
+    /* from __image_load__ to the memory area       */
+    /* from __image_start__ to __image_end__        */
+
+    .flashtext : {
+        KEEP (*(.reset))
+    } > FLASH
+
     /********/
     /* Code */
     /********/
     .text : {
-
+        . = ALIGN(4);
         __image_load__  = LOADADDR(.text);
         __image_start__ = .;
 
@@ -27,10 +36,6 @@ SECTIONS
         __vector_start__ = .;
         KEEP (*(.isr_vector))
 
-        /* Align our reset code to start of flash + 256, */
-        /* followed by the boot blocks                   */
-        . = ALIGN(256);
-        KEEP (*(.reset))
         . = ALIGN(4);
         KEEP (*(.boot_blocks))
         . = ALIGN(4);
@@ -57,20 +62,20 @@ SECTIONS
         KEEP (*(.fini_array*))
         __fini_array_end = .;
 
-    } > PSRAM
+    } > RAM AT> FLASH
 
     /*************************/
     /* Exception information */
     /*************************/
     .ARM.extab : {
         KEEP (*(.ARM.extab* .gnu.linkonce.armextab.*))
-    } > PSRAM
+    } > RAM AT> FLASH
 
     .ARM.exidx : {
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end = .;
-    } > PSRAM
+    } > RAM AT> FLASH
 
     /******************/
     /* Read-only data */
@@ -80,8 +85,8 @@ SECTIONS
         *(.rodata)
         *(.rodata.*)
         . = ALIGN(4);
-    } > PSRAM
-    
+    } > RAM AT> FLASH
+
     /********************************************/
     /* .copy.table used by cmsis_gcc.h          */
     /* The CMSIS code handling the copy tables  */
@@ -92,8 +97,11 @@ SECTIONS
     .copy.table : {
         . = ALIGN(4);
         __copy_table_start__ = .;
+        LONG  (__ps_data_load__)
+        LONG  (__ps_data_start__)
+        LONG ((__ps_data_end__ - __ps_data_start__)/4)
         __copy_table_end__ = .;
-    } > PSRAM
+    } > RAM AT> FLASH
 
     /***********************************/
     /* .zero.table used by cmsis_gcc.h */
@@ -103,8 +111,10 @@ SECTIONS
         __zero_table_start__ = .;
         LONG  (__bss_start__)
         LONG ((__bss_end__ - __bss_start__)/4)
+        LONG  (__ps_bss_start__)
+        LONG ((__ps_bss_end__ - __ps_bss_start__)/4)
         __zero_table_end__ = .;
-    } > PSRAM
+    } > RAM AT> FLASH
 
     /****************************************/
     /* data which needs to be copied to RAM */
@@ -118,7 +128,7 @@ SECTIONS
         *(.data*)
         . = ALIGN (4);
         __data_end__ = .;
-    } > PSRAM
+    } > RAM AT> FLASH
 
     __image_end__ = .;
 
@@ -132,10 +142,41 @@ SECTIONS
         *(COMMON)
         . = ALIGN (4);
         __bss_end__ = .;
-    } > PSRAM
+    } > RAM
 
     __end__ = .;    /* end of written RAM */
     end = __end__;
+
+    /******************************************/
+    /* data which needs to be copied to PSRAM */
+    /******************************************/
+    .ps_data : {
+        . = ALIGN (4);
+        __ps_data_load__  = LOADADDR(.ps_data);
+        __ps_data_start__ = .;
+        *(.ps_data)
+        . = ALIGN (4);
+        __ps_data_end__ = .;
+    } > PSRAM AT> FLASH
+
+    /************************************************/
+    /* uninizialized data in PSRAM (will be zeroed) */
+    /************************************************/
+    .ps_bss (NOLOAD): {
+        . = ALIGN (4);
+        __ps_bss_start__ = .;
+        *(.ps_bss)
+        . = ALIGN (4);
+        __ps_bss_end__ = .;
+    } > PSRAM
+
+    /****************************************************/
+    /* uninizialized data in PSRAM (will not be zeroed) */
+    /****************************************************/
+    .ps_noload (NOLOAD): {
+        . = ALIGN (4);
+        *(.ps_noload)
+    } > PSRAM
 
     /********/
     /* heap */
