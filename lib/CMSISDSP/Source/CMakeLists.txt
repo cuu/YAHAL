@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.14)
 cmake_policy(SET CMP0077 NEW)
 
-set(CMSISDSP cmsisdsp_${PROJECT_NAME})
+set(CMSISDSP CMSISDSP_${PROJECT_NAME})
 # Use current project instead of new one...
 # project(${CMSISDSP})
 
