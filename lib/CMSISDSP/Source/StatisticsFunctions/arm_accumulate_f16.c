@@ -58,16 +58,15 @@
  @param[in]     pSrc       points to the input vector.
  @param[in]     blockSize  number of samples in input vector.
  @param[out]    pResult    sum of values in input vector.
- @return        none
  */
 
-void arm_accumulate_f16(
+ARM_DSP_ATTRIBUTE void arm_accumulate_f16(
                         const float16_t * pSrc,
                         uint32_t blockSize,
                         float16_t * pResult)
 {
   uint32_t blkCnt;                               /* Loop counter */
-  float16_t sum = 0.0f16;                          /* Temporary result storage */
+  _Float16 sum = 0.0f16;                          /* Temporary result storage */
   
 #if defined (ARM_MATH_LOOPUNROLL) && !defined(ARM_MATH_AUTOVECTORIZE)
   

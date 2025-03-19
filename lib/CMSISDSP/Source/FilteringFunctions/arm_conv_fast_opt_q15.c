@@ -46,7 +46,6 @@
   @param[out]    pDst       points to the location where the output result is written.  Length srcALen+srcBLen-1
   @param[in]     pScratch1  points to scratch buffer of size max(srcALen, srcBLen) + 2*min(srcALen, srcBLen) - 2
   @param[in]     pScratch2  points to scratch buffer of size min(srcALen, srcBLen
-  @return        none
 
   @par           Scaling and Overflow Behavior
                    This fast version uses a 32-bit accumulator with 2.30 format.
@@ -62,7 +61,7 @@
                    Refer to \ref arm_conv_q15() for a slower implementation of this function which uses 64-bit accumulation to avoid wrap around distortion.
  */
 
-void arm_conv_fast_opt_q15(
+ARM_DSP_ATTRIBUTE void arm_conv_fast_opt_q15(
   const q15_t * pSrcA,
         uint32_t srcALen,
   const q15_t * pSrcB,
@@ -157,7 +156,7 @@ void arm_conv_fast_opt_q15(
     k--;
   }
 
-  /* Initialze temporary scratch pointer */
+  /* Initialize temporary scratch pointer */
   pScr1 = pScratch1;
 
   /* Assuming scratch1 buffer is aligned by 32-bit */
@@ -196,10 +195,10 @@ void arm_conv_fast_opt_q15(
 
   while (blkCnt > 0)
   {
-    /* Initialze temporary scratch pointer as scratch1 */
+    /* Initialize temporary scratch pointer as scratch1 */
     pScr1 = pScratch1;
 
-    /* Clear Accumlators */
+    /* Clear Accumulators */
     acc0 = 0;
     acc1 = 0;
     acc2 = 0;
@@ -315,10 +314,10 @@ void arm_conv_fast_opt_q15(
   /* Calculate convolution for remaining samples of Bigger length sequence */
   while (blkCnt > 0)
   {
-    /* Initialze temporary scratch pointer as scratch1 */
+    /* Initialize temporary scratch pointer as scratch1 */
     pScr1 = pScratch1;
 
-    /* Clear Accumlators */
+    /* Clear Accumulators */
     acc0 = 0;
 
     tapCnt = (srcBLen) >> 1U;

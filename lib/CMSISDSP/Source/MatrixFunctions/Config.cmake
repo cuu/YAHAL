@@ -1,7 +1,14 @@
 cmake_minimum_required (VERSION 3.14)
 
 
+if (FASTBUILD)
+  target_sources(${CMSISDSP} PRIVATE MatrixFunctions/MatrixFunctions.c)
 
+  if ((NOT ARMAC5) AND (NOT DISABLEFLOAT16))
+    target_sources(${CMSISDSP} PRIVATE MatrixFunctions/MatrixFunctionsF16.c)
+  endif()
+
+else()
 
 set(SRCF64 MatrixFunctions/arm_mat_cholesky_f64.c
 MatrixFunctions/arm_mat_inverse_f64.c
@@ -13,6 +20,7 @@ MatrixFunctions/arm_mat_sub_f64.c
 MatrixFunctions/arm_mat_trans_f64.c
 MatrixFunctions/arm_mat_qr_f64.c
 MatrixFunctions/arm_householder_f64.c
+MatrixFunctions/arm_mat_init_f64.c
 )
 
 set(SRCF32 MatrixFunctions/arm_mat_add_f32.c
@@ -59,21 +67,22 @@ MatrixFunctions/arm_mat_vec_mult_q15.c
 )
 
 set(SRCQ7  MatrixFunctions/arm_mat_mult_q7.c   
+    MatrixFunctions/arm_mat_init_q7.c
     MatrixFunctions/arm_mat_vec_mult_q7.c
     MatrixFunctions/arm_mat_trans_q7.c
 )
 
 
-target_sources(${PROJECT_NAME} PRIVATE ${SRCF64})
-target_sources(${PROJECT_NAME} PRIVATE ${SRCF32})
+target_sources(${CMSISDSP} PRIVATE ${SRCF64})
+target_sources(${CMSISDSP} PRIVATE ${SRCF32})
 
-target_sources(${PROJECT_NAME} PRIVATE ${SRCQ31})
-target_sources(${PROJECT_NAME} PRIVATE ${SRCQ15})
-target_sources(${PROJECT_NAME} PRIVATE ${SRCQ7})
+target_sources(${CMSISDSP} PRIVATE ${SRCQ31})
+target_sources(${CMSISDSP} PRIVATE ${SRCQ15})
+target_sources(${CMSISDSP} PRIVATE ${SRCQ7})
 
 
 if ((NOT ARMAC5) AND (NOT DISABLEFLOAT16))
-target_sources(${PROJECT_NAME} PRIVATE MatrixFunctions/arm_mat_add_f16.c
+target_sources(${CMSISDSP} PRIVATE MatrixFunctions/arm_mat_add_f16.c
 MatrixFunctions/arm_mat_cholesky_f16.c
 MatrixFunctions/arm_mat_cmplx_mult_f16.c
 MatrixFunctions/arm_mat_cmplx_trans_f16.c
@@ -90,4 +99,5 @@ MatrixFunctions/arm_mat_qr_f16.c
 MatrixFunctions/arm_householder_f16.c
 )
 
+endif()
 endif()

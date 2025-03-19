@@ -76,7 +76,7 @@
 #if !defined(ARM_MATH_AUTOVECTORIZE)
 #if defined(ARM_MATH_MVE_FLOAT16)
 
-arm_status arm_mat_qr_f16(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_qr_f16(
     const arm_matrix_instance_f16 * pSrc,
     const float16_t threshold,
     arm_matrix_instance_f16 * pOutR,
@@ -540,7 +540,7 @@ arm_status arm_mat_qr_f16(
 #if (!defined(ARM_MATH_MVE_FLOAT16)) || defined(ARM_MATH_AUTOVECTORIZE)
 
 
-arm_status arm_mat_qr_f16(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_qr_f16(
     const arm_matrix_instance_f16 * pSrc,
     const float16_t threshold,
     arm_matrix_instance_f16 * pOutR,
@@ -603,7 +603,7 @@ arm_status arm_mat_qr_f16(
       k=1;
       while(blkCnt > 0)
       {
-          float16_t sum;
+          _Float16 sum;
 
           for(j=0;j<pSrc->numCols-col; j++)
           {
@@ -629,9 +629,12 @@ arm_status arm_mat_qr_f16(
       pa = pa0;
       for(;k<pSrc->numRows-col; k++)
       {
+          _Float16 sum;
           for(j=0;j<pSrc->numCols-col; j++)
           {
-              *pdst++ += (_Float16)*pv * (_Float16)*pa++; 
+              sum = *pdst;
+              sum += (_Float16)*pv * (_Float16)*pa++;
+              *pdst++ = sum ; 
           }
           pa += col;
           pv++;
@@ -713,7 +716,7 @@ arm_status arm_mat_qr_f16(
        k=1;
        while(blkCnt > 0)
        {
-           float16_t sum;
+           _Float16 sum;
 
            for(j=0;j<pOutQ->numRows-pos; j++)
            {
@@ -739,9 +742,12 @@ arm_status arm_mat_qr_f16(
        pa = pa0;
        for(;k<pOutQ->numRows-pos; k++)
        {
+           _Float16 sum;
            for(j=0;j<pOutQ->numRows-pos; j++)
            {
-               *pdst++ += (_Float16)*pv * (_Float16)*pa++; 
+               sum = *pdst;
+               sum += (_Float16)*pv * (_Float16)*pa++;
+               *pdst++ = sum ; 
            }
            pa += pos;
            pv++;

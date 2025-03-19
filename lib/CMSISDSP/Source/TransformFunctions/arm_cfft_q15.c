@@ -510,24 +510,7 @@ static void arm_cfft_radix4by2_inverse_q15_mve(const arm_cfft_instance_q15 *S, q
     }
 }
 
-/**
-  @addtogroup ComplexFFTQ15
-  @{
- */
-
-/**
-  @brief         Processing function for Q15 complex FFT.
-  @param[in]     S               points to an instance of Q15 CFFT structure
-  @param[in,out] p1              points to the complex data buffer of size <code>2*fftLen</code>. Processing occurs in-place
-  @param[in]     ifftFlag       flag that selects transform direction
-                   - value = 0: forward transform
-                   - value = 1: inverse transform
-  @param[in]     bitReverseFlag flag that enables / disables bit reversal of output
-                   - value = 0: disables bit reversal of output
-                   - value = 1: enables bit reversal of output
-  @return        none
- */
-void arm_cfft_q15(
+ARM_DSP_ATTRIBUTE void arm_cfft_q15(
   const arm_cfft_instance_q15 * S,
         q15_t * pSrc,
         uint8_t ifftFlag,
@@ -583,6 +566,8 @@ void arm_cfft_q15(
 
 #else
 
+#if !defined(ARM_MATH_NEON) || defined(ARM_MATH_AUTOVECTORIZE)
+
 extern void arm_radix4_butterfly_q15(
         q15_t * pSrc,
         uint32_t fftLen,
@@ -600,17 +585,17 @@ extern void arm_bitreversal_16(
   const uint16_t bitRevLen,
   const uint16_t * pBitRevTable);
 
-void arm_cfft_radix4by2_q15(
+ARM_DSP_ATTRIBUTE void arm_cfft_radix4by2_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pCoef);
 
-void arm_cfft_radix4by2_inverse_q15(
+ARM_DSP_ATTRIBUTE void arm_cfft_radix4by2_inverse_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pCoef);
 
-
+#endif
 
 /**
   @addtogroup ComplexFFTQ15
@@ -627,10 +612,62 @@ void arm_cfft_radix4by2_inverse_q15(
   @param[in]     bitReverseFlag flag that enables / disables bit reversal of output
                    - value = 0: disables bit reversal of output
                    - value = 1: enables bit reversal of output
-  @return        none
+ 
+  @par             Input and Output formats for CFFT Q15
+
+| CFFT Size  | Input Format  | Output Format  | Number of bits to upscale |
+| ---------: | ------------: | -------------: | ------------------------: |
+| 16         | 1.15          | 5.11           | 4        
+| 64         | 1.15          | 7.9            | 6      
+| 256        | 1.15          | 9.7            | 8     
+| 1024       | 1.15          | 11.5           | 10      
+
+  @par             Input and Output formats for CIFFT Q15
+
+| CIFFT Size  | Input Format  | Output Format  | Number of bits to upscale |
+| ----------: | ------------: | -------------: | ------------------------: |
+| 16          | 1.15          | 5.11           | 0        
+| 64          | 1.15          | 7.9            | 0      
+| 256         | 1.15          | 9.7            | 0     
+| 1024        | 1.15          | 11.5           | 0     
+
+  @par Neon version
+                     The neon version has a different API.
+                     The input and output buffers must be
+                     different.
+                     There is a temporary buffer.
+                     The temporary buffer has same size as
+                     input or output buffer.
+                     The bit reverse flag is not more 
+                     available in Neon version.
+
+  @code
+        void arm_cfft_q15(
+  const arm_cfft_instance_q15 * S,
+        const q15_t * src,
+        q15_t * dst,
+        q15_t *buffer,
+        uint8_t ifftFlag)
+  @endcode
+
  */
 
-void arm_cfft_q15(
+#if defined(ARM_MATH_NEON) && !defined(ARM_MATH_AUTOVECTORIZE)
+#include "CMSIS_NE10_types.h"
+#include "CMSIS_NE10_fft.h"
+
+ARM_DSP_ATTRIBUTE void arm_cfft_q15(
+  const arm_cfft_instance_q15 * S,
+        const q15_t * src,
+        q15_t * dst,
+        q15_t *buffer,
+        uint8_t ifftFlag)
+{
+   arm_ne10_fft_c2c_1d_int16_neon (dst,src,S,ifftFlag,1,buffer);
+}
+
+#else
+ARM_DSP_ATTRIBUTE void arm_cfft_q15(
   const arm_cfft_instance_q15 * S,
         q15_t * p1,
         uint8_t ifftFlag,
@@ -683,11 +720,15 @@ void arm_cfft_q15(
     arm_bitreversal_16 ((uint16_t*) p1, S->bitRevLength, S->pBitRevTable);
 }
 
+#endif 
+
 /**
   @} end of ComplexFFTQ15 group
  */
 
-void arm_cfft_radix4by2_q15(
+#if !defined(ARM_MATH_NEON) || defined(ARM_MATH_AUTOVECTORIZE)
+
+ARM_DSP_ATTRIBUTE void arm_cfft_radix4by2_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pCoef)
@@ -786,7 +827,7 @@ void arm_cfft_radix4by2_q15(
 
 }
 
-void arm_cfft_radix4by2_inverse_q15(
+ARM_DSP_ATTRIBUTE void arm_cfft_radix4by2_inverse_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pCoef)
@@ -883,5 +924,5 @@ void arm_cfft_radix4by2_inverse_q15(
      pSrc[4 * i + 3] = p3;
   }
 }
-
+#endif /* defined NEON */
 #endif /* defined(ARM_MATH_MVEI) */

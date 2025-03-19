@@ -337,7 +337,7 @@ __STATIC_INLINE arm_status arm_mat_mult_opt_q31_4x4_mve(
 }
 
 
-arm_status arm_mat_mult_opt_q31(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_mult_opt_q31(
     const arm_matrix_instance_q31 * pSrcA,
     const arm_matrix_instance_q31 * pSrcB,
     arm_matrix_instance_q31 * pDst,
@@ -412,7 +412,7 @@ arm_status arm_mat_mult_opt_q31(
         while (row > 0u) {
             /*
              * For every row wise process, the column loop counter is to be initiated
-             * Compute 2 columns and 2 rows in parrallel
+             * Compute 2 columns and 2 rows in parallel
              */
             col = numColsB >> 1;
             j = 0;
@@ -645,7 +645,7 @@ arm_status arm_mat_mult_opt_q31(
 }
 
 #else
-arm_status arm_mat_mult_opt_q31(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_mult_opt_q31(
   const arm_matrix_instance_q31 * pSrcA,
   const arm_matrix_instance_q31 * pSrcB,
         arm_matrix_instance_q31 * pDst,

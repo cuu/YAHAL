@@ -45,7 +45,6 @@
  * @param[in]    S        Pointer to an instance of the rbf SVM structure.
  * @param[in]    in       Pointer to input vector
  * @param[out]   pResult  Decision value
- * @return none.
  *
  */
 
@@ -54,7 +53,7 @@
 #include "arm_helium_utils.h"
 #include "arm_vec_math_f16.h"
 
-void arm_svm_sigmoid_predict_f16(
+ARM_DSP_ATTRIBUTE void arm_svm_sigmoid_predict_f16(
     const arm_svm_sigmoid_instance_f16 *S,
     const float16_t * in,
     int32_t * pResult)
@@ -75,7 +74,7 @@ void arm_svm_sigmoid_predict_f16(
     row = numRows;
 
     /*
-     * compute 4 rows in parrallel
+     * compute 4 rows in parallel
      */
     while (row >= 4) {
         const float16_t *pInA2, *pInA3;
@@ -170,7 +169,7 @@ void arm_svm_sigmoid_predict_f16(
     }
 
     /*
-     * compute 2 rows in parrallel
+     * compute 2 rows in parallel
      */
     if (row >= 2) {
         float16_t const *pSrcA0Vec, *pSrcA1Vec, *pInVec;
@@ -301,7 +300,7 @@ void arm_svm_sigmoid_predict_f16(
 }
 
 #else
-void arm_svm_sigmoid_predict_f16(
+ARM_DSP_ATTRIBUTE void arm_svm_sigmoid_predict_f16(
     const arm_svm_sigmoid_instance_f16 *S,
     const float16_t * in,
     int32_t * pResult)

@@ -23,14 +23,16 @@ endif()
 if (NEON)
     # Used in arm_vec_math.h
     target_include_directories(${project} PUBLIC "${DSP}/ComputeLibrary/Include")
-    target_compile_definitions(${project} PRIVATE ARM_MATH_NEON)
+    target_include_directories(${project} PRIVATE "${DSP}/Ne10")
+    target_compile_definitions(${project} PUBLIC ARM_MATH_NEON)
 
 endif()
 
 if (NEONEXPERIMENTAL)
     # Used in arm_vec_math.h
     target_include_directories(${project} PUBLIC "${DSP}/ComputeLibrary/Include")
-    target_compile_definitions(${project} PRIVATE ARM_MATH_NEON_EXPERIMENTAL)
+    target_include_directories(${project} PRIVATE "${DSP}/Ne10")
+    target_compile_definitions(${project} PUBLIC ARM_MATH_NEON_EXPERIMENTAL)
 endif()
 
 if (MVEFLOAT16)
@@ -39,7 +41,7 @@ endif()
 
 target_include_directories(${project} PRIVATE "${DSP}/PrivateInclude")
 
-if (MVEI OR MVEF OR HELIUM)
+if (MVEI OR MVEF OR HELIUM OR NEON OR NEONEXPERIMENTAL)
     # By default, GCC does not enable implicit conversion between vectors of different numbers or types of elements
     # which is required by some code in CMSIS-DSP
     if (LAXVECTORCONVERSIONS)

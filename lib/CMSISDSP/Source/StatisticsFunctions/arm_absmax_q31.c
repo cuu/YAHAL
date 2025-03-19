@@ -43,13 +43,12 @@
   @param[in]     blockSize  number of samples in input vector
   @param[out]    pResult    maximum value returned here
   @param[out]    pIndex     index of maximum value returned here
-  @return        none
  */
 
 #if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
 
 #include "arm_helium_utils.h"
-void arm_absmax_q31(
+ARM_DSP_ATTRIBUTE void arm_absmax_q31(
   const q31_t * pSrc,
         uint32_t blockSize,
         q31_t * pResult,
@@ -101,7 +100,7 @@ void arm_absmax_q31(
 }
 #else
 #if defined(ARM_MATH_DSP)
-void arm_absmax_q31(
+ARM_DSP_ATTRIBUTE void arm_absmax_q31(
   const q31_t * pSrc,
         uint32_t blockSize,
         q31_t * pResult,
@@ -113,7 +112,7 @@ void arm_absmax_q31(
                                                                                                             \
   /* Initialize index value to zero. */                                                                     \
   outIndex = 0U;                                                                                            \
-  /* Load first input value that act as reference value for comparision */                                  \
+  /* Load first input value that act as reference value for comparison */                                  \
   out = *pSrc++;                                                                                            \
   out = (out > 0) ? out : (q31_t)__QSUB(0, out);                                                                           \
   /* Initialize index of extrema value. */                                                                  \
@@ -188,7 +187,7 @@ void arm_absmax_q31(
   *pIndex = outIndex;  
 }
 #else
-void arm_absmax_q31(
+ARM_DSP_ATTRIBUTE void arm_absmax_q31(
   const q31_t * pSrc,
         uint32_t blockSize,
         q31_t * pResult,
@@ -200,7 +199,7 @@ void arm_absmax_q31(
 
   /* Initialise index value to zero. */
   outIndex = 0U;
-  /* Load first input value that act as reference value for comparision */
+  /* Load first input value that act as reference value for comparison */
   out = (*pSrc > 0) ? *pSrc : ((*pSrc == INT32_MIN) ? INT32_MAX : -*pSrc);
   pSrc++;
 

@@ -46,7 +46,7 @@
 
 #if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
 #define RFFTINIT_Q31(LEN,CFFTLEN,TWIDMOD)                         \
-arm_status arm_rfft_init_##LEN##_q31( arm_rfft_instance_q31 * S,  \
+ARM_DSP_ATTRIBUTE arm_status arm_rfft_init_##LEN##_q31( arm_rfft_instance_q31 * S,  \
     uint32_t ifftFlagR,                                           \
     uint32_t bitReverseFlag )                                     \
 {                                                                 \
@@ -75,9 +75,29 @@ arm_status arm_rfft_init_##LEN##_q31( arm_rfft_instance_q31 * S,  \
     /* return the status of RFFT Init function */                 \
     return (status);                                              \
 }
+#elif defined(ARM_MATH_NEON) && !defined(ARM_MATH_AUTOVECTORIZE)
+#define RFFTINIT_Q31(LEN,CFFTLEN,TWIDMOD)                                          \
+ARM_DSP_ATTRIBUTE arm_status arm_rfft_init_##LEN##_q31( arm_rfft_instance_q31 * S )\
+{                                                                                  \
+    /*  Initialise the default arm status */                                       \
+    arm_status status = ARM_MATH_SUCCESS;                                          \
+    S->nfft = LEN;                                                                 \
+    S->ncfft = LEN >> 1;                                                           \
+                                                                                   \
+    S->twiddles = arm_neon_rfft_twiddles_##LEN##_q31;                              \
+    S->factors = arm_neon_rfft_factors_##LEN##_q31;                                \
+                                                                                   \
+    S->super_twiddles = arm_neon_rfft_super_twiddles_neon_##LEN##_q31;             \
+                                                                                   \
+    /* return the status of RFFT Init function */                                  \
+    return (status);                                                               \
+}
+#include "arm_neon_tables.h"
+
+
 #else
 #define RFFTINIT_Q31(LEN,CFFTLEN,TWIDMOD)                         \
-arm_status arm_rfft_init_##LEN##_q31( arm_rfft_instance_q31 * S,  \
+ARM_DSP_ATTRIBUTE arm_status arm_rfft_init_##LEN##_q31( arm_rfft_instance_q31 * S,  \
     uint32_t ifftFlagR,                                           \
     uint32_t bitReverseFlag )                                     \
 {                                                                 \
@@ -128,7 +148,7 @@ arm_status arm_rfft_init_##LEN##_q31( arm_rfft_instance_q31 * S,  \
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(8192,4096,1);
+RFFTINIT_Q31(8192,4096,1)
 
 /**
   @brief         Initialization function for the 4096 pt Q31 real FFT.
@@ -152,7 +172,7 @@ RFFTINIT_Q31(8192,4096,1);
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(4096,2048,2);
+RFFTINIT_Q31(4096,2048,2)
 
 /**
   @brief         Initialization function for the 2048 pt Q31 real FFT.
@@ -176,7 +196,7 @@ RFFTINIT_Q31(4096,2048,2);
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(2048,1024,4);
+RFFTINIT_Q31(2048,1024,4)
 
 /**
   @brief         Initialization function for the 1024 pt Q31 real FFT.
@@ -200,7 +220,7 @@ RFFTINIT_Q31(2048,1024,4);
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(1024,512,8);
+RFFTINIT_Q31(1024,512,8)
 
 /**
   @brief         Initialization function for the 512 pt Q31 real FFT.
@@ -224,7 +244,7 @@ RFFTINIT_Q31(1024,512,8);
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(512,256,16);
+RFFTINIT_Q31(512,256,16)
 
 /**
   @brief         Initialization function for the 256 pt Q31 real FFT.
@@ -248,7 +268,7 @@ RFFTINIT_Q31(512,256,16);
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(256,128,32);
+RFFTINIT_Q31(256,128,32)
 
 /**
   @brief         Initialization function for the 128 pt Q31 real FFT.
@@ -272,7 +292,7 @@ RFFTINIT_Q31(256,128,32);
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(128,64,64);
+RFFTINIT_Q31(128,64,64)
 
 /**
   @brief         Initialization function for the 64 pt Q31 real FFT.
@@ -296,7 +316,7 @@ RFFTINIT_Q31(128,64,64);
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(64,32,128);
+RFFTINIT_Q31(64,32,128)
 
 /**
   @brief         Initialization function for the 32 pt Q31 real FFT.
@@ -320,7 +340,7 @@ RFFTINIT_Q31(64,32,128);
   @par
                    This function also initializes Twiddle factor table.
  */
-RFFTINIT_Q31(32,16,256);
+RFFTINIT_Q31(32,16,256)
 
 
 /**
@@ -348,21 +368,65 @@ RFFTINIT_Q31(32,16,256);
                    Set(=1) bitReverseFlag for output to be in normal order otherwise output is in bit reversed order.
   @par
                    This function also initializes Twiddle factor table.
-
-  @par          
-                This function should be used only if you don't know the FFT sizes that 
-                you'll need at build time. The use of this function will prevent the 
-                linker from removing the FFT tables that are not needed and the library 
-                code size will be bigger than needed.
-
-  @par          
-                If you use CMSIS-DSP as a static library, and if you know the FFT sizes 
-                that you need at build time, then it is better to use the initialization
-                functions defined for each FFT size.
+  @par
+                   This function should be used only if you don't know the FFT sizes that 
+                   you'll need at build time. The use of this function will prevent the 
+                   linker from removing the FFT tables that are not needed and the library 
+                   code size will be bigger than needed.
+  @par
+                   If you use CMSIS-DSP as a static library, and if you know the FFT sizes 
+                   that you need at build time, then it is better to use the initialization
+                   functions defined for each FFT size.
 
 */
+#if defined(ARM_MATH_NEON) && !defined(ARM_MATH_AUTOVECTORIZE)
+ARM_DSP_ATTRIBUTE arm_status arm_rfft_init_q31(
+    arm_rfft_instance_q31 * S,
+    uint32_t fftLenReal)
+{
+       /*  Initialise the default arm status */
+    arm_status status = ARM_MATH_ARGUMENT_ERROR;
+    /*  Initialization of coef modifier depending on the FFT length */
+    switch (fftLenReal)
+    {
+    case 8192U:
+        status = arm_rfft_init_8192_q31( S );
+        break;
+    case 4096U:
+        status = arm_rfft_init_4096_q31( S );
+        break;
+    case 2048U:
+        status = arm_rfft_init_2048_q31( S );
+        break;
+    case 1024U:
+        status = arm_rfft_init_1024_q31( S );
+        break;
+    case 512U:
+        status = arm_rfft_init_512_q31( S );
+        break;
+    case 256U:
+        status = arm_rfft_init_256_q31( S );
+        break;
+    case 128U:
+        status = arm_rfft_init_128_q31( S );
+        break;
+    case 64U:
+        status = arm_rfft_init_64_q31( S );
+        break;
+    case 32U:
+        status = arm_rfft_init_32_q31( S );
+        break;
+    default:
+        /*  Reporting argument error if rfftSize is not valid value */
+        status = ARM_MATH_ARGUMENT_ERROR;
+        break;
+    }
 
-arm_status arm_rfft_init_q31(
+    /* return the status of RFFT Init function */
+    return (status);
+}
+#else
+ARM_DSP_ATTRIBUTE arm_status arm_rfft_init_q31(
     arm_rfft_instance_q31 * S,
     uint32_t fftLenReal,
     uint32_t ifftFlagR,
@@ -409,6 +473,7 @@ arm_status arm_rfft_init_q31(
     /* return the status of RFFT Init function */
     return (status);
 }
+#endif /* neon */
 /**
   @} end of RealFFTQ31 group
  */

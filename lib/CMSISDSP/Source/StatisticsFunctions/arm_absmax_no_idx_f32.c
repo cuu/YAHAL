@@ -46,13 +46,12 @@
   @param[in]     pSrc       points to the input vector
   @param[in]     blockSize  number of samples in input vector
   @param[out]    pResult    maximum value returned here
-  @return        none
  */
 #if defined(ARM_MATH_MVEF) && !defined(ARM_MATH_AUTOVECTORIZE)
 
 #include "arm_helium_utils.h"
 
-void arm_absmax_no_idx_f32(
+ARM_DSP_ATTRIBUTE void arm_absmax_no_idx_f32(
   const float32_t * pSrc,
         uint32_t blockSize,
         float32_t * pResult)
@@ -106,7 +105,7 @@ void arm_absmax_no_idx_f32(
 
 #else
 #if defined(ARM_MATH_LOOPUNROLL)
-void arm_absmax_no_idx_f32(
+ARM_DSP_ATTRIBUTE void arm_absmax_no_idx_f32(
   const float32_t * pSrc,
         uint32_t blockSize,
         float32_t * pResult)
@@ -114,7 +113,7 @@ void arm_absmax_no_idx_f32(
         float32_t cur_absmax, out;                     /* Temporary variables to store the output value. */\
         uint32_t blkCnt;                     /* Loop counter */                                   \
                                                                                                             \
-  /* Load first input value that act as reference value for comparision */                                  \
+  /* Load first input value that act as reference value for comparison */                                  \
   out = *pSrc++;                                                                                            \
   out = (out > 0.0f) ? out : -out;                                                                             \
                                                                                                             \
@@ -180,7 +179,7 @@ void arm_absmax_no_idx_f32(
   *pResult = out;                                                                                           \
 }
 #else
-void arm_absmax_no_idx_f32(
+ARM_DSP_ATTRIBUTE void arm_absmax_no_idx_f32(
   const float32_t * pSrc,
         uint32_t blockSize,
         float32_t * pResult)
@@ -192,7 +191,7 @@ void arm_absmax_no_idx_f32(
 
 
 
-  /* Load first input value that act as reference value for comparision */
+  /* Load first input value that act as reference value for comparison */
   out = fabsf(*pSrc++);
 
   /* Initialize blkCnt with number of samples */

@@ -42,7 +42,6 @@
   @param[in]     pSrc       points to the Q15 input vector
   @param[out]    pDst       points to the Q7 output vector
   @param[in]     blockSize  number of samples in each vector
-  @return        none
 
   @par           Details
                    The equation used for the conversion process is:
@@ -51,7 +50,7 @@
   </pre>
  */
 #if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
-void arm_q15_to_q7(
+ARM_DSP_ATTRIBUTE void arm_q15_to_q7(
   const q15_t * pSrc,
         q7_t * pDst,
         uint32_t blockSize)
@@ -94,7 +93,7 @@ void arm_q15_to_q7(
   }
 }
 #else
-void arm_q15_to_q7(
+ARM_DSP_ATTRIBUTE void arm_q15_to_q7(
   const q15_t * pSrc,
         q7_t * pDst,
         uint32_t blockSize)
@@ -145,7 +144,7 @@ void arm_q15_to_q7(
     /* oring two values(contains two 8 bit values) to get four packed 8 bit values */
     out1 = out1 | out2;
 
-    /* store 4 samples at a time to destiantion buffer */
+    /* store 4 samples at a time to destination buffer */
     write_q7x4_ia (&pDst, out1);
 
 #else

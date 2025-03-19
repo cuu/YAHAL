@@ -80,7 +80,7 @@
                    - \ref ARM_MATH_SIZE_MISMATCH : Matrix size check failed
  */
 #if defined(ARM_MATH_MVEF) && !defined(ARM_MATH_AUTOVECTORIZE)
-arm_status arm_mat_scale_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_scale_f32(
   const arm_matrix_instance_f32 * pSrc,
   float32_t scale,
   arm_matrix_instance_f32 * pDst)
@@ -149,7 +149,7 @@ arm_status arm_mat_scale_f32(
 }
 #else
 #if defined(ARM_MATH_NEON_EXPERIMENTAL)
-arm_status arm_mat_scale_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_scale_f32(
   const arm_matrix_instance_f32 * pSrc,
   float32_t scale,
   arm_matrix_instance_f32 * pDst)
@@ -189,7 +189,7 @@ arm_status arm_mat_scale_f32(
       res = vmulq_f32(vec1, vdupq_n_f32(scale));
       vst1q_f32(pOut, res);
 
-      /* update pointers to process next sampels */
+      /* update pointers to process next samples */
       pIn += 4U;
       pOut += 4U;
 
@@ -219,7 +219,7 @@ arm_status arm_mat_scale_f32(
   return (status);
 }
 #else
-arm_status arm_mat_scale_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_scale_f32(
   const arm_matrix_instance_f32 * pSrc,
         float32_t                 scale,
         arm_matrix_instance_f32 * pDst)

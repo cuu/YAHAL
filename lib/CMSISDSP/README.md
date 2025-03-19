@@ -1,7 +1,6 @@
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ARM-software/CMSIS-DSP?include_prereleases)](https://github.com/ARM-software/CMSIS-DSP/releases/latest) [![GitHub](https://img.shields.io/github/license/ARM-software/CMSIS-DSP)](https://github.com/ARM-software/CMSIS-DSP/blob/main/LICENSE) [![C Tests](https://img.shields.io/github/actions/workflow/status/ARM-software/CMSIS-DSP/runtest.yaml?logo=arm&logoColor=0091bd&label=C%20Cortex-M%20Tests)](https://github.com/ARM-software/CMSIS-DSP/actions/workflows/runtest.yaml) [![CPP Tests](https://img.shields.io/github/actions/workflow/status/ARM-software/CMSIS-DSP/runcpptest.yaml?logo=arm&logoColor=0091bd&label=CPP%20Cortex-M%20Tests)](https://github.com/ARM-software/CMSIS-DSP/actions/workflows/runcpptest.yaml) [![Neon Tests](https://img.shields.io/github/actions/workflow/status/ARM-software/CMSIS-DSP/runneontest.yaml?logo=arm&logoColor=0091bd&label=C%20Cortex-A%20Tests)](https://github.com/ARM-software/CMSIS-DSP/actions/workflows/runneontest.yaml)
+
 # CMSIS-DSP
-
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ARM-software/CMSIS-DSP?include_prereleases) ![GitHub](https://img.shields.io/github/license/ARM-software/CMSIS-DSP)
-
 
 ## About
 
@@ -15,7 +14,6 @@ This repository contains the CMSIS-DSP library and several other projects:
 
 * Test framework for bare metal Cortex-M or Cortex-A
 * Examples for bare metal Cortex-M
-* ComputeGraph
 * PythonWrapper
 
 You don't need any of the other projects to build and use CMSIS-DSP library. Building the other projects may require installation of other libraries (CMSIS), other tools (Arm Virtual Hardware) or CMSIS build tools.
@@ -43,20 +41,6 @@ With this wrapper you can design your algorithm in Python using an API as close 
 
 The goal is to make it easier to move from a design to a final implementation in C.
 
-### Compute Graph
-
-CMSIS-DSP is also providing an experimental [static scheduler for compute graph](ComputeGraph/README.md) to describe streaming solutions:
-
-* You define your compute graph in Python
-* A static and deterministic schedule (computed by the Python script) is generated
-* The static schedule can be run on the device with low overhead
-
-The Python scripts for the static scheduler generator are part of the CMSIS-DSP Python wrapper. 
-
-The header files are part of the CMSIS-DSP pack (version 1.10.2 and above).
-
-The Compute Graph makes it easier to implement a streaming solution : connecting different compute kernels each consuming and producing different amount of data.
-
 ## Support / Contact
 
 For any questions or to reach the CMSIS-DSP  team, please create a new issue in https://github.com/ARM-software/CMSIS-DSP/issues
@@ -72,7 +56,7 @@ For any questions or to reach the CMSIS-DSP  team, please create a new issue in 
   * [How to build with Make](#how-to-build-with-make)
   * [How to build with cmake](#how-to-build-with-cmake)
   * [How to build with any other build system](#how-to-build-with-any-other-build-system)
-  * [How to build for aarch64](#how-to-build-for-aarch64)
+  * [How to build for Neon and aarch64](#how-to-build-for-aarch64)
 * [Code size](#code-size)
 * [Folders and files](#folders-and-files)
   * [Folders](#folders)
@@ -122,33 +106,13 @@ You can build CMSIS-DSP with the open CMSIS-Pack, or cmake, or Makefile and it i
 
 The standard way to build is by using the CMSIS pack technology. CMSIS-DSP is available as a pack.
 
-This pack technology is supported by some IDE like [Keil MDK](https://www.keil.com/download/product/) or [Keil studio](https://www.keil.arm.com/).
-
-You can also use those packs using the [Open CMSIS-Pack](https://www.open-cmsis-pack.org/) technology and from command line on any platform.
-
-You should first install the tools from https://github.com/Open-CMSIS-Pack/devtools/tree/main/tools
-
-You can get the CMSIS-Toolbox which is containing the package installer, cmsis build and cmsis project manager. Here is some documentation:
-
-* Documentation about [CMSIS Build](https://open-cmsis-pack.github.io/devtools/buildmgr/latest/index.html)
-* Documentation about [CMSIS Pack](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/index.html)
-* Documentation about [CMSIS Project manager](https://github.com/Open-CMSIS-Pack/devtools/blob/main/tools/projmgr/docs/Manual/Overview.md)
-
-Once you have installed the tools, you'll need to download the pack index using the `cpackget` tool.
-
-Then, you'll need to convert a solution file into `.cprj`. For instance, for the CMSIS-DSP Examples, you can go to: 
-
-`Examples/cmsis_build` 
-
-and then type 
-
-`csolution convert -s examples.csolution_ac6.yml`
-
-This command processes the `examples.csolution_ac6.yml` describing how to build the examples for several platforms. It will generate lots of `.cprj` files that can be built with `cbuild`.
+You can use [CMSIS-Toolbox](https://open-cmsis-pack.github.io/cmsis-toolbox/) or any of the [Arm Keil IDEs](https://www.keil.arm.com/)
 
 If you want to build the `FFT` example for the `Corstone-300` virtual hardware platform, you could just do:
 
-`cbuild "fftbin.Release+VHT-Corstone-300.cprj"`
+`cbuild -O cprj examples_ac6.csolution.yml --update-rte -r --toolchain AC6 -c fftbin.Release+VHT-Corstone-300"`
+
+from the `Examples/cmsis_build` folder and assuming the command line tools and the needed packs have been installed.
 
 ### How to build with Make
 
@@ -199,12 +163,13 @@ You need the following folders:
 * Include
 * PrivateInclude
 * ComputeLibrary (only if you target Neon)
+* Ne10 (only if you target Neon)
 
 In `Source` subfolders, you may either build all of the source file with a datatype suffix (like `_f32.c`), or just compile the files without a datatype suffix. For instance for `BasicMathFunctions`, you can build all the C files except `BasicMathFunctions.c` and `BasicMathFunctionsF16.c`, or you can just build those two files (they are including all of the other C files of the folder).
 
 `f16` files are not mandatory. You can build with `-DDISABLEFLOAT16`
 
-### How to build for aarch64
+### How to build for Neon and aarch64
 
 The intrinsics defined in `Core_A/Include` are not available on recent Cortex-A processors.
 
@@ -230,6 +195,14 @@ For cmake the equivalent options are:
 * `-DNEON=ON`
 
 cmake is automatically including the `ComputeLibrary` folder. If you are using a different build, you need to include this folder too to build with Neon support.
+
+Some APIs are a different on Neon:
+
+* Biquad f32 initialization is done differently
+* CFFT and RFFT F32 have different APIs. They are no more in-place and require use of an additional temporary buffer
+* MFCC F32 requires the use of a second temporary buffer
+
+See the Doxygen documentation for the size of those additional buffers. You can also look at the tests in `Testing/Source/Tests` to see how to use the functions.
 
 ## Code size
 
@@ -274,12 +247,6 @@ Other folders are part of different projects, tests or examples.
 * Scripts:
   * Debugging scripts
   * Script to generate some coefficient tables used by CMSIS-DSP
-* Compute Graph:
-  * Not needed to build CMSIS-DSP. This project is relying on CMSIS-DSP library
-  * Examples for the Compute Graph
-  * C++ templates for the Compute Graph
-  * Default (and optional) nodes
-  
 * Source:
   * CMSIS-DSP source
 * Testing:
@@ -291,13 +258,15 @@ Other folders are part of different projects, tests or examples.
 Some files are needed to generate the PythonWrapper:
 
 * PythonWrapper_README.md
-* LICENSE.txt
+* LICENSE
 * MANIFEST.in
 * pyproject.toml
 * setup.py
 
-And we have a script to make it easier to customize the build:
+# License
 
-* cmsisdspconfig.py:
-  * Web browser UI to generate build configurations (temporary until the CMSIS-DSP configuration is reworked to be simpler and more maintainable)
+CMSIS-DSP  is licensed under [![License](https://img.shields.io/github/license/ARM-software/CMSIS-DSP?label)](https://github.com/ARM-software/CMSIS-DSP/blob/main/LICENSE).
 
+# Contributions and Pull Requests
+
+Contributions are accepted under [![License](https://img.shields.io/github/license/ARM-software/CMSIS-DSP?label)](https://github.com/ARM-software/CMSIS-DSP/blob/main/LICENSE). Only submit contributions where you have authored all of the code.

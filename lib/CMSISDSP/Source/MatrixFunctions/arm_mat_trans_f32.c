@@ -35,7 +35,7 @@
 /**
   @defgroup MatrixTrans Matrix Transpose
 
-  Tranposes a matrix.
+  Transposes a matrix.
 
   Transposing an <code>M x N</code> matrix flips it around the center diagonal and results in an <code>N x M</code> matrix.
 
@@ -74,7 +74,7 @@
 
 #include "arm_helium_utils.h"
 
-arm_status arm_mat_trans_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_trans_f32(
   const arm_matrix_instance_f32 * pSrc,
   arm_matrix_instance_f32 * pDst)
 {
@@ -113,7 +113,7 @@ arm_status arm_mat_trans_f32(
 #else
 #if defined(ARM_MATH_NEON)
 
-arm_status arm_mat_trans_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_trans_f32(
   const arm_matrix_instance_f32 * pSrc,
   arm_matrix_instance_f32 * pDst)
 {
@@ -239,7 +239,7 @@ arm_status arm_mat_trans_f32(
   return (status);
 }
 #else
-arm_status arm_mat_trans_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_trans_f32(
   const arm_matrix_instance_f32 * pSrc,
         arm_matrix_instance_f32 * pDst)
 {

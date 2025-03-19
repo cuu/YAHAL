@@ -99,8 +99,23 @@ arm_status arm_cfft_init_##LEN##_f16(                                  \
     status=arm_cfft_radix4by2_rearrange_twiddles_##LENTWIDDLE##_f16(S);\
                                                                        \
     return (status);                                                   \
-};
+}
 
+#elif defined(ARM_MATH_NEON_FLOAT16)  && !defined(ARM_MATH_AUTOVECTORIZE)
+#include "arm_neon_tables_f16.h"
+
+#define CFFTINIT_F16(LEN,LENTWIDDLE)                                             \
+ARM_DSP_ATTRIBUTE arm_status arm_cfft_init_##LEN##_f16(arm_cfft_instance_f16 * S)\
+{                                                                                \
+  /*  Initialise the default arm status */                                       \
+  arm_status status = ARM_MATH_SUCCESS;                                          \
+  S->pTwiddle = arm_neon_twiddles_##LEN##_f16;                                   \
+  S->factors=arm_neon_factors_##LEN##_f16;                                       \
+  S->fftLen = LEN;                                                               \
+  S->algorithm_flag = 0;                                                         \
+  S->last_twiddles = NULL;                                                       \
+  return status;                                                                 \
+}
 #else
 
 #if defined(ARM_FLOAT16_SUPPORTED)
@@ -126,7 +141,7 @@ arm_status arm_cfft_init_##LEN##_f16(arm_cfft_instance_f16 * S)                 
         FFTINIT(f16,LEN);                                                       \
                                                                                 \
         return (status);                                                        \
-};
+}
 
 
 #endif /* #if defined(ARM_FLOAT16_SUPPORTED) */
@@ -140,11 +155,11 @@ arm_status arm_cfft_init_##LEN##_f16(arm_cfft_instance_f16 * S)                 
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(4096,4096);
+CFFTINIT_F16(4096,4096)
 
 /**
   @brief         Initialization function for the cfft f16 function with 2048 samples
@@ -153,11 +168,11 @@ CFFTINIT_F16(4096,4096);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(2048,1024);
+CFFTINIT_F16(2048,1024)
 
 
 /**
@@ -167,11 +182,11 @@ CFFTINIT_F16(2048,1024);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(1024,1024);
+CFFTINIT_F16(1024,1024)
 
 
 /**
@@ -181,11 +196,11 @@ CFFTINIT_F16(1024,1024);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(512,256);
+CFFTINIT_F16(512,256)
 
 
 /**
@@ -195,11 +210,11 @@ CFFTINIT_F16(512,256);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(256,256);
+CFFTINIT_F16(256,256)
 
 
 /**
@@ -209,11 +224,11 @@ CFFTINIT_F16(256,256);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(128,64);
+CFFTINIT_F16(128,64)
 
 
 /**
@@ -223,11 +238,11 @@ CFFTINIT_F16(128,64);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(64,64);
+CFFTINIT_F16(64,64)
  
 
 /**
@@ -237,11 +252,11 @@ CFFTINIT_F16(64,64);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(32,16);
+CFFTINIT_F16(32,16)
  
 
 /**
@@ -251,11 +266,11 @@ CFFTINIT_F16(32,16);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F16(16,16);
+CFFTINIT_F16(16,16)
 
 
 /**
@@ -266,22 +281,20 @@ CFFTINIT_F16(16,16);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
   
-  @par          
-                This function should be used only if you don't know the FFT sizes that 
+  @par          This function should be used only if you don't know the FFT sizes that 
                 you'll need at build time. The use of this function will prevent the 
                 linker from removing the FFT tables that are not needed and the library 
                 code size will be bigger than needed.
 
-  @par          
-                If you use CMSIS-DSP as a static library, and if you know the FFT sizes 
+  @par          If you use CMSIS-DSP as a static library, and if you know the FFT sizes 
                 that you need at build time, then it is better to use the initialization
                 functions defined for each FFT size.
  */
-arm_status arm_cfft_init_f16(
+ARM_DSP_ATTRIBUTE arm_status arm_cfft_init_f16(
   arm_cfft_instance_f16 * S,
   uint16_t fftLen)
 {

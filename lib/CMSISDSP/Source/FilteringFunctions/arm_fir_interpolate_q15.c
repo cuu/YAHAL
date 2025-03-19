@@ -43,7 +43,6 @@
   @param[in]     pSrc       points to the block of input data
   @param[out]    pDst       points to the block of output data
   @param[in]     blockSize  number of input samples to process
-  @return        none
 
   @par           Scaling and Overflow Behavior
                    The function is implemented using a 64-bit internal accumulator.
@@ -57,7 +56,7 @@
 #if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
 
 #include "arm_helium_utils.h"
-void arm_fir_interpolate_q15(
+ARM_DSP_ATTRIBUTE void arm_fir_interpolate_q15(
   const arm_fir_interpolate_instance_q15 * S,
   const q15_t * pSrc,
         q15_t * pDst,
@@ -86,7 +85,7 @@ void arm_fir_interpolate_q15(
      */
     pStateCurnt = S->pState + ((q15_t) phaseLen - 1);
     /*
-     * Total number of intput samples
+     * Total number of input samples
      */
     blkCnt = blockSize;
     /*
@@ -349,7 +348,7 @@ void arm_fir_interpolate_q15(
     }
 }
 #else
-void arm_fir_interpolate_q15(
+ARM_DSP_ATTRIBUTE void arm_fir_interpolate_q15(
   const arm_fir_interpolate_instance_q15 * S,
   const q15_t * pSrc,
         q15_t * pDst,
@@ -694,7 +693,7 @@ void arm_fir_interpolate_q15(
   /* pStateCur points to the location where the new input data should be written */
   pStateCur = S->pState + (phaseLen - 1U);
 
-  /* Total number of intput samples */
+  /* Total number of input samples */
   blkCnt = blockSize;
 
   /* Loop over the blockSize. */

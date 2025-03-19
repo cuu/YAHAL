@@ -43,14 +43,13 @@
   @param[in]     pSrc       points to the input vector
   @param[in]     blockSize  number of samples in input vector
   @param[out]    pResult    minimum value returned here
-  @return        none
  */
 
 #if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
 
 #include "arm_helium_utils.h"
 
-void arm_absmin_no_idx_q31(
+ARM_DSP_ATTRIBUTE void arm_absmin_no_idx_q31(
   const q31_t * pSrc,
         uint32_t blockSize,
         q31_t * pResult)
@@ -58,8 +57,8 @@ void arm_absmin_no_idx_q31(
     int32_t  blkCnt;           /* loop counters */
     q31x4_t       vecSrc;
     q31_t   const *pSrcVec;
-    uint32x4_t    curExtremValVec = vdupq_n_s32(Q31_ABSMAX);
-    q31_t           minValue = Q31_ABSMAX;
+    uint32x4_t    curExtremValVec = vdupq_n_u32(Q31_ABSMAX);
+    uint32_t           minValue = Q31_ABSMAX;
     mve_pred16_t    p0;
 
 
@@ -97,13 +96,13 @@ void arm_absmin_no_idx_q31(
     /*
      * Get min value across the vector
      */
-    minValue = vminavq(minValue, (q31x4_t)curExtremValVec);
-    *pResult = minValue;
+    minValue = vminvq(minValue, curExtremValVec);
+    *pResult = clip_q63_to_q31((q63_t)minValue);
 }
 
 #else
 #if defined(ARM_MATH_DSP)
-void arm_absmin_no_idx_q31(
+ARM_DSP_ATTRIBUTE void arm_absmin_no_idx_q31(
   const q31_t * pSrc,
         uint32_t blockSize,
         q31_t * pResult)
@@ -112,7 +111,7 @@ void arm_absmin_no_idx_q31(
         uint32_t blkCnt;                     /* Loop counter */                                   \
                                                                                                             \
                                                                                            \
-  /* Load first input value that act as reference value for comparision */                                  \
+  /* Load first input value that act as reference value for comparison */                                  \
   out = *pSrc++;                                                                                            \
   out = (out > 0) ? out : (q31_t)__QSUB(0, out);                                                                           \
                                                                                               \
@@ -179,7 +178,7 @@ void arm_absmin_no_idx_q31(
   *pResult = out;                                                                                           \
 }
 #else
-void arm_absmin_no_idx_q31(
+ARM_DSP_ATTRIBUTE void arm_absmin_no_idx_q31(
   const q31_t * pSrc,
         uint32_t blockSize,
         q31_t * pResult)
@@ -187,7 +186,7 @@ void arm_absmin_no_idx_q31(
         q31_t minVal, out;                             /* Temporary variables to store the output value. */
         uint32_t blkCnt;                     /* Loop counter */
 
-  /* Load first input value that act as reference value for comparision */
+  /* Load first input value that act as reference value for comparison */
   out = (*pSrc > 0) ? *pSrc : ((*pSrc == INT32_MIN) ? INT32_MAX : -*pSrc);
   pSrc++;
 

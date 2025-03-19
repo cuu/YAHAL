@@ -520,7 +520,7 @@ __STATIC_INLINE arm_status arm_mat_cmplx_mult_f32_4x4_mve(
     return (ARM_MATH_SUCCESS);
 }
 
-arm_status arm_mat_cmplx_mult_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_cmplx_mult_f32(
   const arm_matrix_instance_f32 * pSrcA,
   const arm_matrix_instance_f32 * pSrcB,
   arm_matrix_instance_f32 * pDst)
@@ -836,7 +836,7 @@ arm_status arm_mat_cmplx_mult_f32(
 
 #else
 #if defined(ARM_MATH_NEON)
-arm_status arm_mat_cmplx_mult_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_cmplx_mult_f32(
   const arm_matrix_instance_f32 * pSrcA,
   const arm_matrix_instance_f32 * pSrcB,
   arm_matrix_instance_f32 * pDst)
@@ -1178,7 +1178,7 @@ arm_status arm_mat_cmplx_mult_f32(
   return (status);
 }
 #else
-arm_status arm_mat_cmplx_mult_f32(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_cmplx_mult_f32(
   const arm_matrix_instance_f32 * pSrcA,
   const arm_matrix_instance_f32 * pSrcB,
         arm_matrix_instance_f32 * pDst)
@@ -1262,7 +1262,7 @@ arm_status arm_mat_cmplx_mult_f32(
           /* Reading imaginary part of complex matrix B */
           d0 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a0 * c0;
           sumImag += b0 * c0;
 
@@ -1270,7 +1270,7 @@ arm_status arm_mat_cmplx_mult_f32(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b0 * d0;
           sumImag += a0 * d0;
 
@@ -1282,7 +1282,7 @@ arm_status arm_mat_cmplx_mult_f32(
           b1 = *(pIn1 + 1U);
           d1 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a1 * c1;
           sumImag += b1 * c1;
 
@@ -1290,7 +1290,7 @@ arm_status arm_mat_cmplx_mult_f32(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b1 * d1;
           sumImag += a1 * d1;
 
@@ -1299,7 +1299,7 @@ arm_status arm_mat_cmplx_mult_f32(
           b0 = *(pIn1 + 1U);
           d0 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a0 * c0;
           sumImag += b0 * c0;
 
@@ -1307,7 +1307,7 @@ arm_status arm_mat_cmplx_mult_f32(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b0 * d0;
           sumImag += a0 * d0;
 
@@ -1318,7 +1318,7 @@ arm_status arm_mat_cmplx_mult_f32(
           b1 = *(pIn1 + 1U);
           d1 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a1 * c1;
           sumImag += b1 * c1;
 
@@ -1326,7 +1326,7 @@ arm_status arm_mat_cmplx_mult_f32(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b1 * d1;
           sumImag += a1 * d1;
 
@@ -1353,7 +1353,7 @@ arm_status arm_mat_cmplx_mult_f32(
           b1 = *(pIn1 + 1U);
           d1 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a1 * c1;
           sumImag += b1 * c1;
 
@@ -1361,7 +1361,7 @@ arm_status arm_mat_cmplx_mult_f32(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b1 * d1;
           sumImag += a1 * d1;
 

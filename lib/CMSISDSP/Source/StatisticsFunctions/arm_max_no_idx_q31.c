@@ -43,14 +43,13 @@
   @param[in]     pSrc       points to the input vector
   @param[in]     blockSize  number of samples in input vector
   @param[out]    pResult    maximum value returned here
-  @return        none
  */
 
 #if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
 
 #include "arm_helium_utils.h"
 
-void arm_max_no_idx_q31(
+ARM_DSP_ATTRIBUTE void arm_max_no_idx_q31(
   const q31_t * pSrc,
         uint32_t blockSize,
         q31_t * pResult)
@@ -102,7 +101,7 @@ void arm_max_no_idx_q31(
 }
 
 #else
-void arm_max_no_idx_q31(
+ARM_DSP_ATTRIBUTE void arm_max_no_idx_q31(
   const q31_t * pSrc,
         uint32_t blockSize,
         q31_t * pResult)
@@ -110,7 +109,7 @@ void arm_max_no_idx_q31(
   q31_t maxVal1, out;       /* Temporary variables to store the output value. */    
   uint32_t blkCnt;              /* loop counter */                                  
                                                                                     
-  /* Load first input value that act as reference value for comparision */          
+  /* Load first input value that act as reference value for comparison */          
   out = *pSrc++;                                                                    
                                                                                     
   blkCnt = (blockSize - 1U);                                                        

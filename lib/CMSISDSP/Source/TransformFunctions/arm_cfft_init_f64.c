@@ -70,7 +70,7 @@ arm_status arm_cfft_init_##LEN##_f64(arm_cfft_instance_f64 * S)\
         FFTINIT(f64,LEN);                                   \
                                                                \
         return (status);                                       \
-};
+}
 
 /**
   @brief         Initialization function for the cfft f64 function with 4096 samples
@@ -79,11 +79,11 @@ arm_status arm_cfft_init_##LEN##_f64(arm_cfft_instance_f64 * S)\
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(4096);
+CFFTINIT_F64(4096)
 
 /**
   @brief         Initialization function for the cfft f64 function with 2048 samples
@@ -92,11 +92,11 @@ CFFTINIT_F64(4096);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(2048);
+CFFTINIT_F64(2048)
  
 
 /**
@@ -106,11 +106,11 @@ CFFTINIT_F64(2048);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(1024);
+CFFTINIT_F64(1024)
 
 /**
   @brief         Initialization function for the cfft f64 function with 512 samples
@@ -119,11 +119,11 @@ CFFTINIT_F64(1024);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(512);
+CFFTINIT_F64(512)
 
 /**
   @brief         Initialization function for the cfft f64 function with 256 samples
@@ -132,11 +132,11 @@ CFFTINIT_F64(512);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(256);
+CFFTINIT_F64(256)
 
 /**
   @brief         Initialization function for the cfft f64 function with 128 samples
@@ -145,11 +145,11 @@ CFFTINIT_F64(256);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(128);
+CFFTINIT_F64(128)
 
 /**
   @brief         Initialization function for the cfft f64 function with 64 samples
@@ -158,11 +158,11 @@ CFFTINIT_F64(128);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(64);
+CFFTINIT_F64(64)
 
 /**
   @brief         Initialization function for the cfft f64 function with 32 samples
@@ -171,11 +171,11 @@ CFFTINIT_F64(64);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(32);
+CFFTINIT_F64(32)
 
 /**
   @brief         Initialization function for the cfft f64 function with 16 samples
@@ -184,11 +184,11 @@ CFFTINIT_F64(32);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_F64(16);
+CFFTINIT_F64(16)
 
 /**
   @brief         Generic initialization function for the cfft f64 function
@@ -198,7 +198,7 @@ CFFTINIT_F64(16);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
   
@@ -212,7 +212,7 @@ CFFTINIT_F64(16);
                 functions defined for each FFT size.
   
  */
-arm_status arm_cfft_init_f64(
+ARM_DSP_ATTRIBUTE arm_status arm_cfft_init_f64(
   arm_cfft_instance_f64 * S,
   uint16_t fftLen)
 {

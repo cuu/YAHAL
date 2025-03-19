@@ -57,7 +57,7 @@ extern void arm_boolean_distance_TT_FF_TF_FT(const uint32_t *pA
  *
  */
 
-float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t numberOfBools)
+ARM_DSP_ATTRIBUTE float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t numberOfBools)
 {
     uint32_t ctt=0,cff=0,ctf=0,cft=0,r;
 
@@ -65,7 +65,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 
     r = 2*(ctf * cft);
 
-    return(1.0*r / (r/2.0 + ctt * cff));
+    return(1.0f*r / (r/2.0f + ctt * cff));
 }
 
 

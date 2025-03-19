@@ -58,7 +58,7 @@
       y[n] = fM[n]
   </pre>
   @par
-                   <code>pCoeffs</code> points to tha array of reflection coefficients of size <code>numStages</code>.
+                   <code>pCoeffs</code> points to the array of reflection coefficients of size <code>numStages</code>.
                    Reflection Coefficients are stored in the following order.
   @par
   <pre>
@@ -118,10 +118,9 @@
   @param[in]     pSrc       points to the block of input data
   @param[out]    pDst       points to the block of output data
   @param[in]     blockSize  number of samples to process
-  @return        none
  */
 
-void arm_fir_lattice_f32(
+ARM_DSP_ATTRIBUTE void arm_fir_lattice_f32(
   const arm_fir_lattice_instance_f32 * S,
   const float32_t * pSrc,
         float32_t * pDst,

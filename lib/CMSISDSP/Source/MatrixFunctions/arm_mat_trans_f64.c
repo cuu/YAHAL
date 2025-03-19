@@ -35,7 +35,7 @@
 /**
   @defgroup MatrixTrans Matrix Transpose
 
-  Tranposes a matrix.
+  Transposes a matrix.
 
   Transposing an <code>M x N</code> matrix flips it around the center diagonal and results in an <code>N x M</code> matrix.
   \image html MatrixTranspose.gif "Transpose of a 3 x 3 matrix"
@@ -56,7 +56,7 @@
  */
 #if defined(ARM_MATH_NEON) && defined(__aarch64__)
 
-arm_status arm_mat_trans_f64(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_trans_f64(
     const arm_matrix_instance_f64 * pSrc,
     arm_matrix_instance_f64 * pDst)
 {
@@ -174,7 +174,7 @@ arm_status arm_mat_trans_f64(
     return (status);
 }
 #else
-arm_status arm_mat_trans_f64(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_trans_f64(
     const arm_matrix_instance_f64 * pSrc,
     arm_matrix_instance_f64 * pDst)
 {

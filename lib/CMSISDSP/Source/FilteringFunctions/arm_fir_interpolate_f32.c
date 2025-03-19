@@ -126,7 +126,6 @@
   @param[in]     pSrc       points to the block of input data
   @param[out]    pDst       points to the block of output data
   @param[in]     blockSize  number of input samples to process
-  @return        none
  */
 
 #if defined(ARM_MATH_MVEF) && !defined(ARM_MATH_AUTOVECTORIZE)
@@ -157,7 +156,7 @@ static void arm_fir_interpolate2_f32_mve(
      */
     pStateCurnt = S->pState + (phaseLen - 1U);
     /*
-     * Total number of intput samples
+     * Total number of input samples
      */
     blkCnt = blockSize;
     /*
@@ -256,7 +255,7 @@ static void arm_fir_interpolate2_f32_mve(
     }
 }
 
-void arm_fir_interpolate_f32(
+ARM_DSP_ATTRIBUTE void arm_fir_interpolate_f32(
   const arm_fir_interpolate_instance_f32 * S,
   const float32_t * pSrc,
   float32_t * pDst,
@@ -289,7 +288,7 @@ void arm_fir_interpolate_f32(
      */
     pStateCurnt = S->pState + (phaseLen - 1U);
     /*
-     * Total number of intput samples
+     * Total number of input samples
      */
     blkCnt = blockSize;
     /*
@@ -470,7 +469,7 @@ void arm_fir_interpolate_f32(
 
 #else
 #if defined(ARM_MATH_NEON)
-void arm_fir_interpolate_f32(
+ARM_DSP_ATTRIBUTE void arm_fir_interpolate_f32(
   const arm_fir_interpolate_instance_f32 * S,
   const float32_t * pSrc,
   float32_t * pDst,
@@ -822,7 +821,7 @@ void arm_fir_interpolate_f32(
 }
 #else
 
-void arm_fir_interpolate_f32(
+ARM_DSP_ATTRIBUTE void arm_fir_interpolate_f32(
   const arm_fir_interpolate_instance_f32 * S,
   const float32_t * pSrc,
         float32_t * pDst,
@@ -1170,7 +1169,7 @@ void arm_fir_interpolate_f32(
   /* pStateCur points to the location where the new input data should be written */
   pStateCur = S->pState + (phaseLen - 1U);
 
-  /* Total number of intput samples */
+  /* Total number of input samples */
   blkCnt = blockSize;
 
   /* Loop over the blockSize. */

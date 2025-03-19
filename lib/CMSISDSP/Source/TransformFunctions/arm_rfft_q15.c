@@ -32,7 +32,9 @@
  * Internal functions prototypes
  * -------------------------------------------------------------------- */
 
-void arm_split_rfft_q15(
+#if !defined(ARM_MATH_NEON) || defined(ARM_MATH_AUTOVECTORIZE)
+
+ARM_DSP_ATTRIBUTE void arm_split_rfft_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pATable,
@@ -40,13 +42,14 @@ void arm_split_rfft_q15(
         q15_t * pDst,
         uint32_t modifier);
 
-void arm_split_rifft_q15(
+ARM_DSP_ATTRIBUTE void arm_split_rifft_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pATable,
   const q15_t * pBTable,
         q15_t * pDst,
         uint32_t modifier);
+#endif
 
 /**
   @addtogroup RealFFTQ15
@@ -58,7 +61,6 @@ void arm_split_rifft_q15(
   @param[in]     S     points to an instance of the Q15 RFFT/RIFFT structure
   @param[in]     pSrc  points to input buffer (Source buffer is modified by this function.)
   @param[out]    pDst  points to output buffer
-  @return        none
 
   @par           Input an output formats
                    Internally input is downscaled by 2 for every stage to avoid saturations inside CFFT/CIFFT process.
@@ -100,9 +102,63 @@ void arm_split_rifft_q15(
                    For the RIFFT, the source buffer must have length N+2 since the Nyquist frequency value
                    is needed but conjugate part is ignored. 
                    It is not using the packing trick of the float version.
+  
+  @par Neon implementation
+       The temporary buffer has size fftLength * 2
+       The RFFT output buffer has size fftLen + 2
+       The RIFFT output buffer has size fftLen
+
+  @code 
+       void arm_rfft_q15(
+  const arm_rfft_instance_q15 * S,
+        const q15_t * pSrc,
+        q15_t * pDst,
+        q15_t *tmp,
+        uint8_t ifftFlag
+        )
+  @endcode
+
+  @par RFFT Output buffer sizes
+       They are also the input sizes for the RIFFT
+
+| Scalar     | Helium        | Neon           |
+| ---------: | ------------: | -------------: | 
+| 2*fftSize  | fftSize + 2   | fftSize + 2    |  
+
  */
 
-void arm_rfft_q15(
+#if defined(ARM_MATH_NEON) && !defined(ARM_MATH_AUTOVECTORIZE)
+#include "CMSIS_NE10_types.h"
+#include "CMSIS_NE10_fft.h"
+
+
+ARM_DSP_ATTRIBUTE void arm_rfft_q15(
+  const arm_rfft_instance_q15 * S,
+        const q15_t * pSrc,
+        q15_t * pDst,
+        q15_t *tmp,
+        uint8_t ifftFlag
+        )
+{
+    if (ifftFlag)
+    {
+        arm_ne10_fft_c2r_1d_int16_neon (pDst,
+                                 pSrc,
+                                 S,
+                                 1,
+                                 tmp);
+    }
+    else 
+    {
+        arm_ne10_fft_r2c_1d_int16_neon (pDst,
+                                 pSrc,
+                                 S,
+                                 1,
+                                 tmp);
+    }
+}
+#else
+ARM_DSP_ATTRIBUTE void arm_rfft_q15(
   const arm_rfft_instance_q15 * S,
         q15_t * pSrc,
         q15_t * pDst)
@@ -137,6 +193,7 @@ void arm_rfft_q15(
   }
 
 }
+#endif
 
 /**
   @} end of RealFFTQ15 group
@@ -150,7 +207,6 @@ void arm_rfft_q15(
   @param[in]     pBTable   points to twiddle Coef B buffer
   @param[out]    pDst      points to output buffer
   @param[in]     modifier  twiddle coefficient modifier that supports different size FFTs with the same twiddle factor table
-  @return        none
 
   @par
                    The function implements a Real FFT
@@ -161,13 +217,8 @@ void arm_rfft_q15(
 #include "arm_helium_utils.h"
 #include "arm_vec_fft.h"
 
-#if defined(__CMSIS_GCC_H)
-#define MVE_CMPLX_MULT_FX_AxB_S16(A,B)          vqdmladhxq_s16(vqdmlsdhq_s16((__typeof(A))vuninitializedq_s16(), A, B), A, B)
-#define MVE_CMPLX_MULT_FX_AxConjB_S16(A,B)      vqdmladhq_s16(vqdmlsdhxq_s16((__typeof(A))vuninitializedq_s16(), A, B), A, B)
 
-#endif 
-
-void arm_split_rfft_q15(
+ARM_DSP_ATTRIBUTE void arm_split_rfft_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pATable,
@@ -207,13 +258,9 @@ void arm_split_rfft_q15(
         q15x8_t         coefA = vldrhq_gather_shifted_offset_s16(pCoefAb, offsetCoef);
         q15x8_t         coefB = vldrhq_gather_shifted_offset_s16(pCoefBb, offsetCoef);
 
-#if defined(__CMSIS_GCC_H)
-        q15x8_t         out = vhaddq_s16(MVE_CMPLX_MULT_FX_AxB_S16(in1, coefA),
-                                     MVE_CMPLX_MULT_FX_AxConjB_S16(coefB, in2));
-#else
+
         q15x8_t         out = vhaddq_s16(MVE_CMPLX_MULT_FX_AxB(in1, coefA, q15x8_t),
                                          MVE_CMPLX_MULT_FX_AxConjB(coefB, in2, q15x8_t));
-#endif
         vst1q_s16(pOut1, out);
         pOut1 += 8;
 
@@ -229,8 +276,8 @@ void arm_split_rfft_q15(
     pDst[0] = (pSrc[0] + pSrc[1]) >> 1U;
     pDst[1] = 0;
 }
-#else
-void arm_split_rfft_q15(
+#elif !defined(ARM_MATH_NEON) || defined(ARM_MATH_AUTOVECTORIZE)
+ARM_DSP_ATTRIBUTE void arm_split_rfft_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pATable,
@@ -382,7 +429,6 @@ void arm_split_rfft_q15(
   @param[in]     pBTable   points to twiddle Coef B buffer
   @param[out]    pDst      points to output buffer
   @param[in]     modifier  twiddle coefficient modifier that supports different size FFTs with the same twiddle factor table
-  @return        none
 
   @par
                    The function implements a Real IFFT
@@ -393,7 +439,7 @@ void arm_split_rfft_q15(
 #include "arm_helium_utils.h"
 #include "arm_vec_fft.h"
 
-void arm_split_rifft_q15(
+ARM_DSP_ATTRIBUTE void arm_split_rifft_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pATable,
@@ -449,8 +495,8 @@ void arm_split_rifft_q15(
         i -= 1;
     }
 }
-#else
-void arm_split_rifft_q15(
+#elif !defined(ARM_MATH_NEON) || defined(ARM_MATH_AUTOVECTORIZE)
+ARM_DSP_ATTRIBUTE void arm_split_rifft_q15(
         q15_t * pSrc,
         uint32_t fftLen,
   const q15_t * pATable,

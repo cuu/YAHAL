@@ -51,11 +51,7 @@
                    - \ref ARM_MATH_SIZE_MISMATCH : Matrix size check failed
  */
 
-#if defined(ARM_MATH_MVE_FLOAT16) && !defined(ARM_MATH_AUTOVECTORIZE) && defined(__CMSIS_GCC_H)
-#pragma GCC warning "Scalar version of arm_mat_cmplx_mult_f16 built. Helium version has build issues with gcc."
-#endif 
-
-#if defined(ARM_MATH_MVE_FLOAT16) && !defined(ARM_MATH_AUTOVECTORIZE) &&  !defined(__CMSIS_GCC_H)
+#if defined(ARM_MATH_MVE_FLOAT16) && !defined(ARM_MATH_AUTOVECTORIZE)
 
 #include "arm_helium_utils.h"
 
@@ -378,7 +374,7 @@ __STATIC_FORCEINLINE arm_status arm_mat_cmplx_mult_f16_4x4_mve(
 
 
 
-arm_status arm_mat_cmplx_mult_f16(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_cmplx_mult_f16(
   const arm_matrix_instance_f16 * pSrcA,
   const arm_matrix_instance_f16 * pSrcB,
   arm_matrix_instance_f16 * pDst)
@@ -704,7 +700,7 @@ if ((pSrcA->numCols != pSrcB->numRows) ||
 }
 #else
 
-arm_status arm_mat_cmplx_mult_f16(
+ARM_DSP_ATTRIBUTE arm_status arm_mat_cmplx_mult_f16(
   const arm_matrix_instance_f16 * pSrcA,
   const arm_matrix_instance_f16 * pSrcB,
         arm_matrix_instance_f16 * pDst)
@@ -788,7 +784,7 @@ arm_status arm_mat_cmplx_mult_f16(
           /* Reading imaginary part of complex matrix B */
           d0 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a0 * c0;
           sumImag += b0 * c0;
 
@@ -796,7 +792,7 @@ arm_status arm_mat_cmplx_mult_f16(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b0 * d0;
           sumImag += a0 * d0;
 
@@ -808,7 +804,7 @@ arm_status arm_mat_cmplx_mult_f16(
           b1 = *(pIn1 + 1U);
           d1 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a1 * c1;
           sumImag += b1 * c1;
 
@@ -816,7 +812,7 @@ arm_status arm_mat_cmplx_mult_f16(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b1 * d1;
           sumImag += a1 * d1;
 
@@ -825,7 +821,7 @@ arm_status arm_mat_cmplx_mult_f16(
           b0 = *(pIn1 + 1U);
           d0 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a0 * c0;
           sumImag += b0 * c0;
 
@@ -833,7 +829,7 @@ arm_status arm_mat_cmplx_mult_f16(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b0 * d0;
           sumImag += a0 * d0;
 
@@ -844,7 +840,7 @@ arm_status arm_mat_cmplx_mult_f16(
           b1 = *(pIn1 + 1U);
           d1 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a1 * c1;
           sumImag += b1 * c1;
 
@@ -852,7 +848,7 @@ arm_status arm_mat_cmplx_mult_f16(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b1 * d1;
           sumImag += a1 * d1;
 
@@ -879,7 +875,7 @@ arm_status arm_mat_cmplx_mult_f16(
           b1 = *(pIn1 + 1U);
           d1 = *(pIn2 + 1U);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal += a1 * c1;
           sumImag += b1 * c1;
 
@@ -887,7 +883,7 @@ arm_status arm_mat_cmplx_mult_f16(
           pIn1 += 2U;
           pIn2 += 2 * numColsB;
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sumReal -= b1 * d1;
           sumImag += a1 * d1;
 

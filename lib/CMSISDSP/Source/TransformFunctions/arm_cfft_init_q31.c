@@ -76,7 +76,7 @@ CFFT_RADIX4BY2_REARRANGE_TWIDDLES_Q31(16);
 
 
 #define CFFTINIT_Q31(LEN,LENTWIDDLE)                                    \
-arm_status arm_cfft_init_##LEN##_q31(                                \
+ARM_DSP_ATTRIBUTE arm_status arm_cfft_init_##LEN##_q31(                                \
   arm_cfft_instance_q31 * S)                                         \
 {                                                                    \
     /*  Initialise the default arm status */                         \
@@ -95,9 +95,24 @@ arm_status arm_cfft_init_##LEN##_q31(                                \
     status=arm_cfft_radix4by2_rearrange_twiddles_##LENTWIDDLE##_q31(S);\
                                                                      \
     return (status);                                                 \
-};
+}
 
+#elif defined(ARM_MATH_NEON) && !defined(ARM_MATH_AUTOVECTORIZE)
 
+#include "arm_neon_tables.h"
+
+#define CFFTINIT_Q31(LEN,LENTWIDDLE)                   \
+ARM_DSP_ATTRIBUTE arm_status arm_cfft_init_##LEN##_q31(\
+  arm_cfft_instance_q31 * S)                           \
+{                                                      \
+     arm_status status = ARM_MATH_SUCCESS;             \
+     S->pTwiddle = arm_neon_twiddles_##LEN##_q31;      \
+     S->factors=arm_neon_factors_##LEN##_q31;          \
+     S->fftLen = LEN;                                  \
+     S->algorithm_flag = 0;                            \
+     S->last_twiddles = NULL;                          \
+    return (status);                                   \
+}
 
 #else
 
@@ -107,7 +122,7 @@ arm_status arm_cfft_init_##LEN##_q31(                                \
   S->pTwiddle = arm_cfft_sR_##EXT##_len##SIZE.pTwiddle;
 
 #define CFFTINIT_Q31(LEN,LENTWIDDLE)                                      \
-arm_status arm_cfft_init_##LEN##_q31(arm_cfft_instance_q31 * S)\
+ARM_DSP_ATTRIBUTE arm_status arm_cfft_init_##LEN##_q31(arm_cfft_instance_q31 * S)\
 {                                                              \
     /*  Initialise the default arm status */                   \
         arm_status status = ARM_MATH_SUCCESS;                  \
@@ -121,7 +136,7 @@ arm_status arm_cfft_init_##LEN##_q31(arm_cfft_instance_q31 * S)\
         FFTINIT(q31,LEN);                                      \
                                                                \
         return (status);                                       \
-};
+}
 
 
 #endif /* defined(ARM_MATH_MVEF) && !defined(ARM_MATH_AUTOVECTORIZE) */
@@ -133,11 +148,11 @@ arm_status arm_cfft_init_##LEN##_q31(arm_cfft_instance_q31 * S)\
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(4096,4096);
+CFFTINIT_Q31(4096,4096)
 
 /**
   @brief         Initialization function for the cfft q31 function for 2048 samples
@@ -146,11 +161,11 @@ CFFTINIT_Q31(4096,4096);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(2048,1024);
+CFFTINIT_Q31(2048,1024)
 
 /**
   @brief         Initialization function for the cfft q31 function for 1024 samples
@@ -159,11 +174,11 @@ CFFTINIT_Q31(2048,1024);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(1024,1024);
+CFFTINIT_Q31(1024,1024)
 
 /**
   @brief         Initialization function for the cfft q31 function for 512 samples
@@ -172,11 +187,11 @@ CFFTINIT_Q31(1024,1024);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(512,256);
+CFFTINIT_Q31(512,256)
 
 /**
   @brief         Initialization function for the cfft q31 function for 256 samples
@@ -185,11 +200,11 @@ CFFTINIT_Q31(512,256);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(256,256);
+CFFTINIT_Q31(256,256)
 
 /**
   @brief         Initialization function for the cfft q31 function for 128 samples
@@ -198,11 +213,11 @@ CFFTINIT_Q31(256,256);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(128,64);
+CFFTINIT_Q31(128,64)
 
 /**
   @brief         Initialization function for the cfft q31 function for 64 samples
@@ -211,11 +226,11 @@ CFFTINIT_Q31(128,64);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(64,64);
+CFFTINIT_Q31(64,64)
 
 /**
   @brief         Initialization function for the cfft q31 function for 32 samples
@@ -224,11 +239,11 @@ CFFTINIT_Q31(64,64);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(32,16);
+CFFTINIT_Q31(32,16)
 
 /**
   @brief         Initialization function for the cfft q31 function for 16 samples
@@ -237,11 +252,11 @@ CFFTINIT_Q31(32,16);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  */
-CFFTINIT_Q31(16,16);
+CFFTINIT_Q31(16,16)
 
 /**
   @brief         Generic initialization function for the cfft q31 function
@@ -251,22 +266,22 @@ CFFTINIT_Q31(16,16);
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 
-  @par          Use of this function is mandatory only for the MVE version of the FFT.
+  @par          Use of this function is mandatory only for the Helium and Neon versions of the FFT.
                 Other versions can still initialize directly the data structure using 
                 variables declared in arm_const_structs.h
  
-  @par          
+  @par
                 This function should be used only if you don't know the FFT sizes that 
                 you'll need at build time. The use of this function will prevent the 
                 linker from removing the FFT tables that are not needed and the library 
                 code size will be bigger than needed.
 
-  @par          
+  @par
                 If you use CMSIS-DSP as a static library, and if you know the FFT sizes 
                 that you need at build time, then it is better to use the initialization
                 functions defined for each FFT size.
  */
-arm_status arm_cfft_init_q31(
+ARM_DSP_ATTRIBUTE arm_status arm_cfft_init_q31(
   arm_cfft_instance_q31 * S,
   uint16_t fftLen)
 {

@@ -56,12 +56,11 @@
   @param[in]     blockSize  number of samples in input vector
   @param[out]    pResult    minimum value returned here
   @param[out]    pIndex     index of minimum value returned here
-  @return        none
  */
 
 #if defined(ARM_MATH_MVEF) && !defined(ARM_MATH_AUTOVECTORIZE)
 
-void arm_min_f32(
+ARM_DSP_ATTRIBUTE void arm_min_f32(
   const float32_t * pSrc,
   uint32_t blockSize,
   float32_t * pResult,
@@ -145,7 +144,7 @@ void arm_min_f32(
 
 #else
 #if defined(ARM_MATH_NEON) && !defined(ARM_MATH_AUTOVECTORIZE)
-void arm_min_f32(
+ARM_DSP_ATTRIBUTE void arm_min_f32(
   const float32_t * pSrc,
   uint32_t blockSize,
   float32_t * pResult,
@@ -258,7 +257,7 @@ void arm_min_f32(
   *pIndex = outIndex;
 }
 #else
-void arm_min_f32(
+ARM_DSP_ATTRIBUTE void arm_min_f32(
   const float32_t * pSrc,
         uint32_t blockSize,
         float32_t * pResult,
@@ -274,7 +273,7 @@ void arm_min_f32(
   /* Initialise index value to zero. */
   outIndex = 0U;
 
-  /* Load first input value that act as reference value for comparision */
+  /* Load first input value that act as reference value for comparison */
   out = *pSrc++;
 
 #if defined (ARM_MATH_LOOPUNROLL) && !defined(ARM_MATH_AUTOVECTORIZE)

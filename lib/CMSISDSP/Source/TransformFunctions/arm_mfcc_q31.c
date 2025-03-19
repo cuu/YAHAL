@@ -56,9 +56,8 @@
   @param[in]     pSrc points to the input samples in Q31
   @param[out]     pDst  points to the output MFCC values in q8.23 format
   @param[inout]     pTmp  points to a temporary buffer of complex
-
-  @return        none
-
+  @return        error status
+  
   @par           Description
                    The number of input samples is the FFT length used
                    when initializing the instance data structure.
@@ -71,15 +70,39 @@
                    big and the number of MEL filters too small then the fixed
                    point computations may saturate.
 
+  @par Neon implementation
+       There is an additional temporary buffer used for the RFFT.
+       It has 2*fftLength size.
+
+
+  @code 
+      arm_status arm_mfcc_q31(
+  const arm_mfcc_instance_q31 * S,
+  q31_t *pSrc,
+  q31_t *pDst,
+  q31_t *pTmp,
+  q31_t *pTmp_rfft
+  )
+  @endcode
+
  */
 
-
-arm_status arm_mfcc_q31(
+#if defined(ARM_MATH_NEON) && !defined(ARM_MATH_AUTOVECTORIZE)
+ARM_DSP_ATTRIBUTE arm_status arm_mfcc_q31(
+  const arm_mfcc_instance_q31 * S,
+  q31_t *pSrc,
+  q31_t *pDst,
+  q31_t *pTmp,
+  q31_t *pTmp_rfft
+  )
+#else
+ARM_DSP_ATTRIBUTE arm_status arm_mfcc_q31(
   const arm_mfcc_instance_q31 * S,
   q31_t *pSrc,
   q31_t *pDst,
   q31_t *pTmp
   )
+#endif
 {
     q31_t m;
     uint32_t index;
@@ -97,7 +120,7 @@ arm_status arm_mfcc_q31(
     // q31
     arm_absmax_q31(pSrc,S->fftLen,&m,&index);
 
-    if (m !=0)
+    if ((m != 0) && (m != 0x7FFFFFFF))
     {
        q31_t quotient;
        int16_t shift;
@@ -119,6 +142,10 @@ arm_status arm_mfcc_q31(
     /* Compute spectrum magnitude 
     */
     fftShift = 31 - __CLZ(S->fftLen);
+#if defined(ARM_MATH_NEON) && !defined(ARM_MATH_AUTOVECTORIZE)
+    /* Default RFFT based implementation */
+    arm_rfft_q31(&(S->rfft),pSrc,pTmp2,pTmp_rfft,0);
+#else
 #if defined(ARM_MFCC_CFFT_BASED)
     /* some HW accelerator for CMSIS-DSP used in some boards
        are only providing acceleration for CFFT.
@@ -138,6 +165,7 @@ arm_status arm_mfcc_q31(
     /* Default RFFT based implementation */
     arm_rfft_q31(&(S->rfft),pSrc,pTmp2);
 #endif
+#endif
     filterLimit = 1 + (S->fftLen >> 1);
 
 
@@ -155,6 +183,7 @@ arm_status arm_mfcc_q31(
         S->filterLengths[i],
         &result);
 
+
       coefsPos += S->filterLengths[i];
 
       // q16.48 - fftShift
@@ -165,7 +194,11 @@ arm_status arm_mfcc_q31(
 
     }
 
-
+    if ((m != 0) && (m != 0x7FFFFFFF))
+    {
+      arm_scale_q31(pTmp,m,0,pTmp,S->nbMelFilters);
+    }
+   
     // q16.29 - fftShift - satShift
     /* Compute the log */
     arm_vlog_q31(pTmp,pTmp,S->nbMelFilters);
