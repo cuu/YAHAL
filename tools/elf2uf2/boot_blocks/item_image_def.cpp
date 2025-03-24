@@ -82,7 +82,7 @@ void item_image_def::write(uint32_t* & ptr) {
     *ptr++ = _header.value;
 }
 
-uint16_t item_image_def::size32() {
+uint16_t item_image_def::size32() const {
     return _header.block_size;
 }
 

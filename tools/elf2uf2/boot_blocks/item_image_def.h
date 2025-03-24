@@ -93,9 +93,9 @@ public:
 
     void read (uint32_t* & ptr) override;
     void write(uint32_t* & ptr) override;
-    uint16_t size32() override;
+    uint16_t size32() const override;
 
-    inline item_type_t get_type() override {
+    inline item_type_t get_type() const override {
         return _header.item_type;
     }
 

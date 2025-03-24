@@ -5,6 +5,7 @@
 #include "block.h"
 #include "item_image_def.h"
 #include "item_version.h"
+#include "item_load_map.h"
 
 uint32_t * block::read (uint32_t* & ptr) {
 
@@ -19,6 +20,7 @@ uint32_t * block::read (uint32_t* & ptr) {
     uint16_t items_size = 0;
     item_image_def * image_def;
     item_version   * version;
+    item_load_map  * load_map;
     int32_t link_offset = 0;
 
     do {
@@ -28,7 +30,6 @@ uint32_t * block::read (uint32_t* & ptr) {
                 image_def->read(ptr);
                 items_size += image_def->size32();
                 _items.push_back(image_def);
-                //std::cout << *image_def << std::endl;
                 break;
 
             case item_type_t::VERSION: {
@@ -36,12 +37,21 @@ uint32_t * block::read (uint32_t* & ptr) {
                 version->read(ptr);
                 items_size += version->size32();
                 _items.push_back(version);
-                //std::cout << *version << std::endl;
+                break;
+            }
+
+            case item_type_t::LOAD_MAP: {
+                load_map = new item_load_map;
+                load_map->read(ptr);
+                items_size += load_map->size32();
+                _items.push_back(load_map);
+                break;
             }
 
             case item_type_t::LAST: {
                 uint16_t sum_size = (*ptr++) >> 8;
                 if (sum_size != items_size) {
+                    std::cout << "Sum:" << sum_size << " items_size:" << items_size << std::endl;
                     throw "LAST item has wrong size";
                 }
                 link_offset = *ptr++;
@@ -55,7 +65,6 @@ uint32_t * block::read (uint32_t* & ptr) {
             case item_type_t::VECTOR_TABLE:
             case item_type_t::ENTRY_POINT:
             case item_type_t::ROLLING_WINDOW_DELTA:
-            case item_type_t::LOAD_MAP:
             case item_type_t::HASH_DEF:
             case item_type_t::SIGNATURE:
             case item_type_t::PARTITION_TABLE:

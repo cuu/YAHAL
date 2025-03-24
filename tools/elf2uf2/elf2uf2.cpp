@@ -11,6 +11,13 @@
 //
 // ---------------------------------------------
 //
+
+// TODO: Change checking size for boot blocks (4096 bytes/whole image)
+//       move block searching code to boot blocks
+//       implement all ITMES is boot blocks
+//       implement callback methods for ITEMs -> no searching...
+//       implement propper exceptions
+
 #include <iostream>
 #include <cstring>
 #include <vector>
@@ -19,6 +26,7 @@
 #include "crc32.h"
 #include "elfio/elfio_dump.hpp"
 #include "item_image_def.h"
+#include "item_load_map.h"
 #include "uf2_ofstream.h"
 
 using namespace ELFIO;
@@ -37,6 +45,50 @@ void usage(const char * bin) {
 }
 
 int main(int argc, char *argv[]) {
+
+//    uint32_t tmp[100];
+//    uint32_t * ptr = tmp;
+//
+//    item_image_def id1;
+//    id1.set_image_type(image_type_t::EXE);
+//    id1.set_chip(chip_t::RP2350);
+//    id1.set_cpu(cpu_t::ARM);
+//    id1.set_security(security_t::S);
+//    id1.set_tbyb(true);
+//    id1.write(ptr);
+//
+//    item_load_map load_map;
+//    load_map.set_absolute(true);
+//    load_map_entry_t entry {};
+//    entry.storage_start_addr = 0x12345;
+//    entry.runtime_start_addr = 0x6778;
+//    entry.storage_end_addr   = 0x876544;
+//    load_map.add_load_map_item(entry);
+//    entry.runtime_start_addr = 0x90;
+//    load_map.add_load_map_item(entry);
+//    load_map.write(ptr);
+//
+//    for (int i=0; i < 10; ++i)
+//        cout << hex << tmp[i] << endl;
+//
+//    ptr = tmp;
+//
+//    item_image_def id;
+//    id.read(ptr);
+//    item_load_map load_map2;
+//    load_map2.read(ptr);
+//
+//    cout << id << endl;
+//    cout << load_map << endl;
+//    cout << load_map2 << endl;
+
+
+
+
+
+
+
+
     // Flags
     bool verbose         = false;
     bool found_boot2     = false;
@@ -155,6 +207,7 @@ int main(int argc, char *argv[]) {
     // Make sure the bin_array is n * PAGE_SIZE;
     while (bin_size & (PAGE_SIZE-1)) bin_size++;
     auto * bin_array = new uint8_t [bin_size];
+    for (int i=0; i < bin_size; ++i) bin_array[i] = 0;
 
     // Load all segments
     if (verbose) cout << "Loading segments ..." << endl;
@@ -180,7 +233,7 @@ int main(int argc, char *argv[]) {
 
     std::vector<block *> blocks;
     try {
-        // Check for boot blocks in for 4096 bytes of the image
+        // Check for boot blocks in first 4096 bytes of the image
         auto *bin_array_32 = (uint32_t *) bin_array;
         uint32_t bin_size_32 = bin_size >= 4096 ? 1024 : bin_size / 4;
         for (int i = 0; i < bin_size_32; ++i) {

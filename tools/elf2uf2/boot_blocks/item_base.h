@@ -31,8 +31,8 @@ class item_base {
 public:
     virtual void read (uint32_t* & ptr) = 0;
     virtual void write(uint32_t* & ptr) = 0;
-    virtual uint16_t size32() = 0;
-    virtual item_type_t get_type() = 0;
+    virtual uint16_t size32() const = 0;
+    virtual item_type_t get_type() const = 0;
 };
 
 

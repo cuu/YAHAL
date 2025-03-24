@@ -38,7 +38,7 @@ void item_version::write(uint32_t* & ptr) {
     ptr = (uint32_t *)ptr16;
 }
 
-uint16_t item_version::size32() {
+uint16_t item_version::size32() const {
     return _header.block_size;
 }
 
