@@ -28,7 +28,7 @@ typedef struct {
 
 class pcm_audio_interface {
 public:
-    pcm_audio_interface(uint16_t fifo_size)
+    explicit pcm_audio_interface(uint16_t fifo_size)
     : pcmFIFO(fifo_size) { }
 
     // Set the PCM outout rate in Hz.

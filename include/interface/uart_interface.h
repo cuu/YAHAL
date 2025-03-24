@@ -13,61 +13,19 @@
 //
 //  This file defines a generic and abstract C++
 //  interface for a UART (Universal Asynchronous
-//  Receiver/Transmitter).
+//  Receiver/Transmitter) data communication and
+//  UART control.
 
 #ifndef _UART_INTERFACE_H_
 #define _UART_INTERFACE_H_
 
-#include <cstdint>
-#include <functional>
-using std::function;
+#include "uart_data_interface.h"
+#include "uart_ctrl_interface.h"
 
-typedef uint16_t uart_mode_t;
-
-namespace UART {
-const uart_mode_t  BITS_7       = 0x0001;
-const uart_mode_t  BITS_8       = 0x0002;
-const uart_mode_t  NO_PARITY    = 0x0004;
-const uart_mode_t  EVEN_PARITY  = 0x0008;
-const uart_mode_t  ODD_PARITY   = 0x0010;
-const uart_mode_t  STOPBITS_1   = 0x0020;
-const uart_mode_t  STOPBITS_2   = 0x0040;
-}
-
-class uart_interface {
-public:
-    // Check if a character is available for reading.
-    virtual bool available() = 0;
-
-    // get a character
-    virtual char getc() = 0;
-
-    // write/send a character
-    virtual void putc(char c) = 0;
-
-    // set the uart mode
-    virtual void uartMode(uart_mode_t mode) = 0;
-
-    // set the baudrate in Hz
-    virtual void setBaudrate(uint32_t) = 0;
-
-    // send a break condition for ms milliseconds.
-    // A value of 0xffff means indefinitely 'on',
-    // a value of 0 means immediate 'off'
-    virtual void sendBreak(uint16_t ms) = 0;
-
-    // set hw control lines
-    virtual void setDTR(bool dtr) = 0;
-    virtual void setRTS(bool rts) = 0;
-
-    // Interrupt handling
-    virtual void uartAttachIrq (function<void(char)> f) = 0;
-    virtual void uartDetachIrq () = 0;
-    virtual void uartEnableIrq () = 0;
-    virtual void uartDisableIrq() = 0;
-
+class uart_interface : public uart_data_interface,
+                       public uart_ctrl_interface {
 protected:
-    virtual ~uart_interface() = default;
+    ~uart_interface() override = default;
 };
 
 #endif /* _UART_INTERFACE_H_ */
