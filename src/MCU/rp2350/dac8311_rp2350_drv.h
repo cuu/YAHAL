@@ -36,7 +36,7 @@ public:
         _enable.gpioWrite(!v);
     }
 
-    void setPcmRate(uint32_t Hz = 44100) override;
+    void setPcmRate(uint32_t Hz) override;
 
 private:
     gpio_rp2350 _enable;    // Audio enable Pin

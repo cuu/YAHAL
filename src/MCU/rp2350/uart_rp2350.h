@@ -32,7 +32,6 @@ void UART1_IRQ_Handler(void);
 class uart_rp2350 : public uart_interface {
 public:
     explicit uart_rp2350(
-                uint8_t     index  = 1, // default: back channel UART
                 gpio_pin_t  tx_pin = 26,
                 gpio_pin_t  rx_pin = 27,
                 uint32_t    baud = 115200,

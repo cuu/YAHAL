@@ -28,31 +28,33 @@ function<void(char)> uart_rp2350::_intHandler[2];
 int8_t uart_rp2350::_uart_tx_pins[2][6] =
     { { 0, 12, 16, 28, 32, 44 }, { 4,  8, 20, 24, 36, 40 } };
 
-uart_rp2350::uart_rp2350(uint8_t index,
-                         gpio_pin_t  tx_pin, gpio_pin_t  rx_pin,
+uart_rp2350::uart_rp2350(gpio_pin_t  tx_pin, gpio_pin_t  rx_pin,
                          uint32_t    baud,   uart_mode_t mode)
-: _init(false),_index(index), _tx(tx_pin),
-  _rx(rx_pin), _baud(baud),   _mode(mode) {
+: _init(false), _tx(tx_pin), _rx(rx_pin), _baud(baud), _mode(mode) {
 
-    assert(index < 2);
+    bool tx_found = false;
+    bool rx_found = false;
+    for (_index=0; _index < 2; ++_index) {
+        tx_found = false;
+        rx_found = false;
+        for (size_t i = 0; i < 6; ++i) {
+            if ( (tx_pin ==  _uart_tx_pins[_index][i]+0) ||
+                 (tx_pin == (_uart_tx_pins[_index][i]+2)) ) {
+                tx_found = true;
+            }
+            if ( (rx_pin ==  _uart_tx_pins[_index][i]+1) ||
+                 (rx_pin == (_uart_tx_pins[_index][i]+3)) ) {
+                rx_found = true;
+            }
+        }
+        if (tx_found && rx_found) break;
+    }
+    assert(tx_found && rx_found);
+
+    // Set register pointer
     _uart     = (index==0) ? &UART0     : &UART1;
     _uart_set = (index==0) ? &UART0_SET : &UART1_SET;
     _uart_clr = (index==0) ? &UART0_CLR : &UART1_CLR;
-    bool tx_found = false;
-    bool rx_found = false;
-    for (size_t i = 0; i < 6; ++i) {
-        if ( (tx_pin ==  _uart_tx_pins[index][i]+0) ||
-             (tx_pin == (_uart_tx_pins[index][i]+2)) ) {
-            tx_found = true;
-        }
-        if ( (rx_pin ==  _uart_tx_pins[index][i]+1) ||
-             (rx_pin == (_uart_tx_pins[index][i]+3)) ) {
-            rx_found = true;
-        }
-    }
-    (void)tx_found; // suppress warnings
-    (void)rx_found;
-    assert(tx_found && rx_found);
 }
 
 void uart_rp2350::init() {

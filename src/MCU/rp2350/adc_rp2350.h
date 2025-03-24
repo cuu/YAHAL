@@ -35,7 +35,7 @@ private:
 
     adc_rp2350();
 
-    uint16_t _modes[8];
+    uint16_t _modes[8] {};
 };
 
 

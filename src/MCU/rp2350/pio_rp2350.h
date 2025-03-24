@@ -301,15 +301,15 @@ struct SM {
         return pio.CTRL.SM_ENABLE & (1 << sm_index);
     }
 
-    void attachIrq(const function<void()>& handler);
+    void attachIrq(const function<void()>& handler) const;
     void enableIrq();
     void disableIrq();
 
-    void attachTXNFULLIrq(const function<void()>& handler);
+    void attachTXNFULLIrq(const function<void()>& handler) const;
     void enableTXNFULLIrq();
     void disableTXNFULLIrq();
 
-    void attachRXNEMPTYIrq(const function<void()>& handler);
+    void attachRXNEMPTYIrq(const function<void()>& handler) const;
     void enableRXNEMPTYIrq();
     void disableRXNEMPTYIrq();
 };

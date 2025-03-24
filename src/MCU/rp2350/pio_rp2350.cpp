@@ -76,7 +76,7 @@ void SM::setClock(uint32_t hz) {
     regs.SM_CLKDIV.FRAC = frac;
 }
 
-void SM::attachIrq(const function<void()>& handler) {
+void SM::attachIrq(const function<void()>& handler) const {
     if (pio_index)
         pio_rp2350::_handler_pio1[sm_index + 8] = handler;
     else
@@ -91,7 +91,7 @@ void SM::disableIrq() {
     pio_clr.IRQ0_INTE = 1 << (sm_index + 8);
 }
 
-void SM::attachTXNFULLIrq(const function<void()>& handler) {
+void SM::attachTXNFULLIrq(const function<void()>& handler) const {
     if (pio_index)
         pio_rp2350::_handler_pio1[sm_index + 4] = handler;
     else
@@ -106,7 +106,7 @@ void SM::disableTXNFULLIrq() {
     pio_clr.IRQ0_INTE = 1 << (sm_index + 4);
 }
 
-void SM::attachRXNEMPTYIrq(const function<void()>& handler) {
+void SM::attachRXNEMPTYIrq(const function<void()>& handler) const {
     if (pio_index)
         pio_rp2350::_handler_pio1[sm_index + 0] = handler;
     else

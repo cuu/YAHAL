@@ -28,17 +28,16 @@ class i2c_rp2350 : public i2c_interface {
 
 public:
 
-    i2c_rp2350(uint8_t     index,
-               gpio_pin_t  sda_pin,
+    i2c_rp2350(gpio_pin_t  sda_pin,
                gpio_pin_t  scl_pin,
                uint16_t    mode);
 
-    ~i2c_rp2350();
+    ~i2c_rp2350() override;
 
     int16_t i2cRead (uint16_t addr, uint8_t *rxbuf,
-                     uint16_t len, bool sendStop=true) override;
+                     uint16_t len, bool sendStop) override;
     int16_t i2cWrite(uint16_t addr, uint8_t *txbuf,
-                     uint16_t len, bool sendStop=true) override;
+                     uint16_t len, bool sendStop) override;
 
     void setSpeed(uint32_t) override;
 

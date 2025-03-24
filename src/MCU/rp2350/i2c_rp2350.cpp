@@ -19,25 +19,25 @@ using namespace _I2C1_;
 using namespace _IO_BANK0_;
 using namespace _RESETS_;
 
-i2c_rp2350::i2c_rp2350(uint8_t      index,
-                       gpio_pin_t   sda_pin,
+i2c_rp2350::i2c_rp2350(gpio_pin_t   sda_pin,
                        gpio_pin_t   scl_pin,
                        uint16_t     mode)
-    : _initialized(false), _index(index), _sda(sda_pin), _scl(scl_pin), _mode(mode),
-       _restart_on_next(false) {
+    : _initialized(false), _sda(sda_pin), _scl(scl_pin),
+      _mode(mode), _restart_on_next(false) {
 
-    assert(index < 2);
-    assert((sda_pin <= 28) && (scl_pin <= 29));
-    if (index == 0) {
-        assert( (((sda_pin-0) % 4) == 0) &&
-                (((scl_pin-1) % 4) == 0) );
+    if ((((sda_pin-0) % 4) == 0) && (((scl_pin-1) % 4) == 0)) {
+        _index = 0;
+        _i2c     = &I2C0;
+        _i2c_set = &I2C0_SET;
+        _i2c_clr = &I2C0_CLR;
+    } else if ((((sda_pin-2) % 4) == 0) && (((scl_pin-3) % 4) == 0) ) {
+        _index = 1;
+        _i2c     = &I2C1;
+        _i2c_set = &I2C1_SET;
+        _i2c_clr = &I2C1_CLR;
     } else {
-        assert( (((sda_pin-2) % 4) == 0) &&
-                (((scl_pin-3) % 4) == 0) );
+        assert(false && "I2C pins do not fit!");
     }
-    _i2c     = (index==0) ? &I2C0     : &I2C1;
-    _i2c_set = (index==0) ? &I2C0_SET : &I2C1_SET;
-    _i2c_clr = (index==0) ? &I2C0_CLR : &I2C1_CLR;
 }
 
 i2c_rp2350::~i2c_rp2350() {
