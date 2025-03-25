@@ -18,13 +18,17 @@
 #ifndef RP2350_LAUNCHPAD_BOARD_H
 #define RP2350_LAUNCHPAD_BOARD_H
 
-#define S1_GPIO 28
-#define S2_GPIO 29
-#define LED_RED_GPIO 38
-#define LED_RGB_GPIO 39
-#define LED_RGB_COUNT 8
+#define PSRAM_CS_GPIO   8
 
-#define PSRAM_CS_GPIO 8
+#define BC_UART_TX      26
+#define BC_UART_RX      27
+
+#define S1_GPIO         28
+#define S2_GPIO         29
+
+#define LED_RED_GPIO    38
+#define LED_RGB_GPIO    39
+#define LED_RGB_COUNT   8
 
 // Use PSRAM without copying code/data or zeroing
 #define PSRAM __attribute__((section(".ps_noload")))

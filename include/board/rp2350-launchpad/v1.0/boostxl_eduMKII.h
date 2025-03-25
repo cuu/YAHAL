@@ -42,7 +42,7 @@
 #define EDU_LCD_SCLK    30
 #define EDU_LCD_CS      13
 #define EDU_LCD_RST     19
-#define EDU_LCD_DC       9  // 2 in v1.1
+#define EDU_LCD_DC       9
 #define EDU_LCD_BL      24
 
 // I2C sensors
