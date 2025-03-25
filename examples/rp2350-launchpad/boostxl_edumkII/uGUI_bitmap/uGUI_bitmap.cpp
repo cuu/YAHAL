@@ -46,7 +46,7 @@ int main(void) {
 
     // Setup SPI interface
     gpio_rp2350 lcd_cs (EDU_LCD_CS);
-    spi_rp2350  spi(1, EDU_LCD_MISO, EDU_LCD_MOSI, EDU_LCD_SCLK, lcd_cs);
+    spi_rp2350  spi(EDU_LCD_MISO, EDU_LCD_MOSI, EDU_LCD_SCLK, lcd_cs);
     spi.setSpeed(24000000);
 
     // Setup LCD driver
