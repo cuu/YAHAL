@@ -13,7 +13,7 @@
 //
 // A simple example using the CMSIS DSP library.
 // The microphone signal on the EDU-MKII board
-// is read in via channel 4 of the ADC.
+// is read in via ab ADC channel.
 // It is sampled with 8kHz, which means a sample
 // is taken every 125us. Using Nyquists theorem,
 // we can generate a spectrum of up to 4kHz.
@@ -27,7 +27,7 @@
 // resolution of 7.8Hz.
 //
 // For more details on the CMSIS DSP library, visit
-// http://www.keil.com/pack/doc/CMSIS/DSP/html/index.html
+// https://arm-software.github.io/CMSIS_6/latest/DSP/index.html
 
 #include "boostxl_eduMKII.h"
 #include "arm_math.h"
@@ -62,12 +62,15 @@ q15_t data_result[FFT_SIZE];     // magnitudes of FFT result
 // buffers gets filled by the ADC
 bool fill_data_adc0 = true;
 
-
 int main(void)
 {
     // Setup LCD backlight
     gpio_rp2350 bl( EDU_LCD_BL );
     bl.gpioMode(GPIO::OUTPUT | GPIO::INIT_HIGH);
+
+    // Setup ADC channel to microphone
+    adc_rp2350_channel mic(EDU_MIC);
+    mic.adcMode(ADC::ADC_12_BIT);
 
     // Setup timer for measurements
     // T[us] = 1E6[us] / f (result is 125us for f=8kHz)
@@ -76,10 +79,13 @@ int main(void)
     timer.setCallback([&]() {
         static int index = 0;
         // Read in ADC value
-        uint16_t val = adc_rp2350::inst.adcReadRaw(EDU_MIC);
+        uint16_t val = mic.adcReadRaw();
         // Copy value to correct buffer
         q15_t * data_adc = fill_data_adc0 ? data_adc0 : data_adc1;
-        data_adc[index++] = (val - 2048) << 4;
+        // The mic signal has an offset of max/2, so with 12 bit
+        // resolution, we have an offset of 2048. To convert to a
+        // q15, we subtract the offset and shift 4 bits left.
+        data_adc[index++] = (q15_t)(val - 2048) << 4;
         // Check if all samples have been recorded
         if (index == FFT_SIZE) {
             timer.stop();
@@ -89,14 +95,14 @@ int main(void)
 
     // Setup SPI interface
     gpio_rp2350 lcd_cs (EDU_LCD_CS);
-    spi_rp2350  spi(1, EDU_LCD_MISO, EDU_LCD_MOSI, EDU_LCD_SCLK, lcd_cs);
+    spi_rp2350  spi(EDU_LCD_MISO, EDU_LCD_MOSI, EDU_LCD_SCLK, lcd_cs);
     spi.setSpeed(10000000);
     spi.generateCS(false);
     spi.setCS(LOW);
 
     // Setup LCD driver
-    gpio_rp2350 lcd_rst(19);
-    gpio_rp2350 lcd_dc (9);
+    gpio_rp2350 lcd_rst(EDU_LCD_RST);
+    gpio_rp2350 lcd_dc (EDU_LCD_DC);
     st7735s_drv lcd(spi, lcd_rst, lcd_dc, st7735s_drv::Crystalfontz_128x128);
 
     // Setup uGUI
@@ -132,17 +138,22 @@ int main(void)
     gui.SetForecolor(C_YELLOW);
     gui.PutString(102, 119, "kHz");
 
-    // Initialize Hann Window (see Wikipedia)
-    // The float value is multiplied by 32768 so we get a q15_t result!
+    // Initialize Hann Window
+    // (see https://de.wikipedia.org/wiki/Fensterfunktion#Von-Hann-Fenster)
+    // The float value is multiplied by 32768, so we get a q15_t result!
+    float alpha = 0.5f; // Hann window
+    float beta  = 0.5f;
+//    float alpha = 0.54; // Hamming window
+//    float beta  = 0.46;
     for(int i = 0; i < FFT_SIZE; i++) {
-        data_hann[i] = 16384.0 * (1.0 - cosf((2 * PI * i) / (FFT_SIZE-1)));
+        data_hann[i] = 32768.0f * (alpha - beta * cosf((2 * PI * i) / (FFT_SIZE-1)));
     }
 
     // FFT instance to be used in main loop
     arm_rfft_instance_q15 instance;
     arm_rfft_init_q15(&instance, FFT_SIZE, 0, 1);
 
-    while(1) {
+    while(true) {
         // Wait until ADC sampling has finished
         // (usually it should be finished already)
         while(timer.isRunning());
@@ -172,7 +183,7 @@ int main(void)
             // Calculate mean value of 2 bins, using only the upper 8 bits
             int y = std::min(100, (int)((data_result[i] + data_result[i + 1]) >> 9));
             int16_t x = i/2;
-            gui.DrawLine(x, 14,    x, 114-y-1, C_BLACK);
+            gui.DrawLine(x, 14,    x, 114-y-1, C_DARK_RED);
             gui.DrawLine(x, 114-y, x, 114,     C_GREEN);
         }
     }

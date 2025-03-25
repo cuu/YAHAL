@@ -80,7 +80,7 @@ int main()
     // is _exactly_ 500ms!
     while(true) {
         __WFE();
-        delay(500000);        // wait 500ms
-        leds[1].toggle();    // toggle the blue LED
+        delay(500000);      // wait 500ms
+        leds[1].toggle();   // toggle the blue LED
     }
 }
