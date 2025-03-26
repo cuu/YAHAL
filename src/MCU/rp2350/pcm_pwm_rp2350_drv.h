@@ -25,6 +25,7 @@ using namespace _PWM_;
 class pcm_pwm_rp2350_drv : public pcm_audio_interface {
 public:
     pcm_pwm_rp2350_drv(gpio_pin_t left, gpio_pin_t right);
+    pcm_pwm_rp2350_drv(gpio_pin_t mono);
     virtual ~pcm_pwm_rp2350_drv();
 
     void enable_output(bool v);
@@ -32,6 +33,7 @@ public:
     inline void timer_reset() { _pcm_timer.reset(); }
 
 private:
+    bool            _stereo;
     gpio_rp2350     _gpio_left;
     gpio_rp2350     _gpio_right;
     timer_rp2350    _pcm_timer;

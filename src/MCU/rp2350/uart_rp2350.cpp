@@ -52,9 +52,9 @@ uart_rp2350::uart_rp2350(gpio_pin_t  tx_pin, gpio_pin_t  rx_pin,
     assert(tx_found && rx_found);
 
     // Set register pointer
-    _uart     = (index==0) ? &UART0     : &UART1;
-    _uart_set = (index==0) ? &UART0_SET : &UART1_SET;
-    _uart_clr = (index==0) ? &UART0_CLR : &UART1_CLR;
+    _uart     = (_index==0) ? &UART0     : &UART1;
+    _uart_set = (_index==0) ? &UART0_SET : &UART1_SET;
+    _uart_clr = (_index==0) ? &UART0_CLR : &UART1_CLR;
 }
 
 void uart_rp2350::init() {
