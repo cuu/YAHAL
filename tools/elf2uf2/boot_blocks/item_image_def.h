@@ -37,11 +37,11 @@ union __attribute__((packed)) image_def_t {
         uint8_t block_size;
         image_type_t image_type : 4;
         security_t security     : 2;
-        uint16_t                : 2;
+        uint8_t                 : 2;
         cpu_t cpu               : 3;
-        uint16_t                : 1;
+        uint8_t                 : 1;
         chip_t chip             : 3;
-        uint16_t tbyb           : 1;
+        uint8_t tbyb            : 1;
     };
     uint32_t value;
 };
