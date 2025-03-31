@@ -15,13 +15,10 @@
 #define _MP3_DECODER_TASK_H_
 
 #include <cstdint>
-#include "pcm_audio_interface.h"
-//#include "gpio_rp2350.h"
-#include "task.h"
-#include "mad.h"
 #include "boostxl_eduMKII.h"
-
-#define MP3_BUF_SIZE   4096
+#include "mad.h"
+#include "pcm_audio_interface.h"
+#include "task.h"
 
 class mp3_decoder_task : public task
 {
@@ -38,8 +35,7 @@ private:
     static int16_t       scale (mad_fixed_t sample);
 
     pcm_audio_interface &   _pcm_if;
-    mad_decoder             _decoder;
-    uint8_t                 _mp3_buf[MP3_BUF_SIZE];
+    mad_decoder             _decoder {};
     uint32_t                _pcm_rate;
 };
 

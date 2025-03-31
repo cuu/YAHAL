@@ -115,11 +115,11 @@ void task::sleep_ms(uint32_t ms) {
 }
 
 void task::suspend() {
-    _state  = state_t::SUSPENDED;
+    _state = state_t::SUSPENDED;
 }
 
 void task::resume() {
-    _state  = state_t::READY;
+    _state = state_t::READY;
 }
 
 void task::block(lock_base_interface * lbi) {

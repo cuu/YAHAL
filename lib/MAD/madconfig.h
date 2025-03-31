@@ -125,7 +125,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.15.1b"
+// #define VERSION "0.15.1b"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

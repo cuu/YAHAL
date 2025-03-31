@@ -13,7 +13,6 @@
 //
 #include "mp3_decoder_task.h"
 #include "song.h"
-#include <cstdio>
 
 mp3_decoder_task::mp3_decoder_task(pcm_audio_interface & pcm_if) :
     task("MP3 decoder", 8500), _pcm_if(pcm_if), _pcm_rate(0) {
@@ -48,7 +47,7 @@ enum mad_flow mp3_decoder_task::input(void *data, struct mad_stream *stream) {
 // libmad header callback //
 ////////////////////////////
 enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * header) {
-    mp3_decoder_task * _this = (mp3_decoder_task *)data;
+    auto * _this = (mp3_decoder_task *)data;
     if (header->samplerate != _this->_pcm_rate) {
         _this->_pcm_rate = header->samplerate;
         _this->_pcm_if.setPcmRate( header->samplerate );
@@ -62,7 +61,7 @@ enum mad_flow mp3_decoder_task::header(void *data, struct mad_header const * hea
 enum mad_flow mp3_decoder_task::output(void *data, mad_header const *header, mad_pcm *pcm)
 {
     (void)(header);
-    mp3_decoder_task * _this = (mp3_decoder_task *)data;
+    auto * _this = (mp3_decoder_task *)data;
 
     // Wait until the PCM result can be written
     while (_this->_pcm_if.pcmFifoAvailablePut() < pcm->length) {
@@ -110,6 +109,5 @@ int16_t mp3_decoder_task::scale(mad_fixed_t sample)
     // Convert to a standard 16 bit PCM value
     // (signed) in the range of -32768...32767
     sample >>= (MAD_F_FRACBITS + 1 - 16);
-    // Reduce volume, so divide by 4
     return sample;
 }

@@ -62,7 +62,7 @@ q15_t data_result[FFT_SIZE];     // magnitudes of FFT result
 // buffers gets filled by the ADC
 bool fill_data_adc0 = true;
 
-int main(void)
+int main()
 {
     // Setup LCD backlight
     gpio_rp2350 bl( EDU_LCD_BL );
@@ -85,7 +85,7 @@ int main(void)
         // The mic signal has an offset of max/2, so with 12 bit
         // resolution, we have an offset of 2048. To convert to a
         // q15, we subtract the offset and shift 4 bits left.
-        data_adc[index++] = (q15_t)(val - 2048) << 4;
+        data_adc[index++] = (q15_t)(((val - 2048) << 4));
         // Check if all samples have been recorded
         if (index == FFT_SIZE) {
             timer.stop();

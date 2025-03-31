@@ -23,15 +23,15 @@
 // The program logic is contained in the main_task
 // and not here!
 
-#include "uart_rp2350.h"
+#include "boostxl_eduMKII.h"
+#include "mp3_decoder_task.h"
+#include "pcm_pwm_rp2350_drv.h"
 #include "posix_io.h"
 #include "task.h"
 #include "task_monitor.h"
-#include "mp3_decoder_task.h"
-#include "pcm_pwm_rp2350_drv.h"
-#include "boostxl_eduMKII.h"
+#include "uart_rp2350.h"
 
-int main(void)
+int main()
 {
     // Redirect stdout to our back channel UART, so
     // we can see the output of the task monitor
@@ -41,8 +41,9 @@ int main(void)
 
     // Start Main task as privileged task
     task Main( []() {
-        // Use the PCM-PWM driver for RP2040. This driver
-        // will output the left/right audio on GPIO14/15.
+        // Use the PCM-PWM driver for RP2350. This driver
+        // will output the mono audio channel on the
+        // buzzer/loudspeaker of the Edu-MKII boosterpack.
         pcm_pwm_rp2350_drv pcm_if(EDU_BUZZER);
         // The decoder task generates the PCM samples from
         // the MP3 file, and outputs the samples to the PCM-PWM
