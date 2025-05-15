@@ -1,4 +1,4 @@
-image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-image:14.1.0
+image: registry.git.fh-aachen.de/docker-images/gcc-arm-none-eabi-image:14.2.rel1-alpine
 
 stages:
   - examples
@@ -45,19 +45,19 @@ rp2040_examples:
       - tools/**/*
       - examples/rp2040-launchpad/**/*
 
-#rp2350_examples:
-#  extends: .common
-#  variables:
-#    EXAMLE_FOLDER: "rp2350-launchpad"
-#  only:
-#    changes:
-#      - .gitlab-ci.yml
-#      - cmake/**/*
-#      - include/**/*
-#      - lib/**/*
-#      - src/**/*
-#      - tools/**/*
-#      - examples/rp2350-launchpad/**/*
+rp2350_examples:
+  extends: .common
+  variables:
+    EXAMLE_FOLDER: "rp2350-launchpad"
+  only:
+    changes:
+      - .gitlab-ci.yml
+      - cmake/**/*
+      - include/**/*
+      - lib/**/*
+      - src/**/*
+      - tools/**/*
+      - examples/rp2350-launchpad/**/*
 
 pages:
   image: alpine:3.21.2
