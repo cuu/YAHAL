@@ -36,7 +36,7 @@ public:
                         const string & outfile,
                         XMLElement *root,
                         bool generateIrqNumbers);
- private:
+private:
     // Singleton, so no public CTOR
     svd2cpp() = default;
 
@@ -49,22 +49,23 @@ public:
 
     static void ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &bitWidth);
 
-    void ProcessComment(XMLElement *elem);
+    void ProcessAsComment(XMLElement *elem);
 
     // Utility methods
 
     // Output a single/multi-line text as a comment. This
     // is used e.g. for description values in the SVD file.
-    void outputAsComment(const char *desc, bool continueLine = false);
+    void outputAsComment(string s, bool continueLine = false);
+    void outputAsComment2(const char *desc, bool continueLine = false);
 
 
     // Parse a string with a numerical value to an uint32_t.
     // Automatically detect binary, decimal and hex values.
-    static uint32_t parseNumber(const char *val);
+    static uint32_t parseNumber(const string &s);
 
     // Get the value of a child element with name 'name'.
     // Return nullptr if child is not existing or there is no value
-    static const char* getChildElement(XMLElement *elem, const char *name);
+    static string getChildElement(XMLElement *elem, const char *name);
 
     // Check if a child node with name 'name' is existing
     static bool childExists(XMLElement *elem, const char *name);
@@ -82,54 +83,61 @@ public:
         return s == nullptr ? "" : s;
     }
 
-    // Attributes
+    // Device attributes
     string _device_name;
+    string _device_size;
+    string _device_access;
+    string _device_protection;
+    string _device_resetValue;
+    string _device_resetMask;
 
-    const char * _device_size;
-    const char * _device_access;
-    const char * _device_protection;
-    const char * _device_resetValue;
-    const char * _device_resetMask;
-
+    // Peripheral attributes
     string _peri_name;
-    const char * _peri_baseAddress;
-    const char * _peri_description;
+    string _peri_size;
+    string _peri_access;
+    string _peri_protection;
+    string _peri_resetValue;
+    string _peri_resetMask;
+    string _peri_baseAddress;
+    string _peri_description;
 
-    const char * _peri_size;
-    const char * _peri_access;
-    const char * _peri_protection;
-    const char * _peri_resetValue;
-    const char * _peri_resetMask;
-
+    // Register attributes
     string _reg_name;
-    const char * _reg_addrOffset;
-    const char * _reg_description;
+    string _reg_size;
+    string _reg_access;
+    string _reg_protection;
+    string _reg_resetValue;
+    string _reg_resetMask;
+    string _reg_addrOffset;
+    string _reg_description;
 
-    const char * _reg_size;
-    const char * _reg_access;
-    const char * _reg_protection;
-    const char * _reg_resetValue;
-    const char * _reg_resetMask;
+    // Field attributes
+    string _field_name ;
+    string _field_description;
+    string _field_access;
+    string _field_modWrVal;
+    string _field_wrConst;
+    string _field_read_action;
 
     // The output file
-    ofstream    _ofs;
+    ofstream _ofs;
 
     // List of register information
     registerInfo _registerInfo;
 
     // List of enum value properties
     struct enum_info_t {
-        const char *field {nullptr};
-        const char *desc  {nullptr};
-        const char *name  {nullptr};
-        const char *value {nullptr};
+        string field;
+        string desc;
+        string name;
+        string value;
     };
     vector<enum_info_t> enum_info;
 
     // List of interrupts
     struct irq_info_t {
-        const char *name  {nullptr};
-        uint32_t    value {0};
+        string      name;
+        uint32_t    value;
     };
     vector<irq_info_t> irq_info;
 

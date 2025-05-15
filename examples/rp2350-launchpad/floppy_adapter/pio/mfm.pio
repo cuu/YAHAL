@@ -1,0 +1,70 @@
+;
+; Copyright (c) 2025 A. Terstegge
+;
+; MFM decoder for floppy drives.
+;
+; This PIO program will wait for the INDEX
+; pulse to become active (falling edge) and
+; read the whole track afterwards.
+; The measured times are reported as 32-bit
+; It generates
+; values, which
+; bytes, which are time measures between the
+; flux changes.
+;
+
+.program mfm_decoder
+
+            ; Wait for the next INDEX start (falling edge)
+            wait    1 PIN 0
+            wait    0 PIN 0
+
+            ; Set the counter to maximal value
+            ; and wait for first READ_DATA pulse
+find_pulse: mov     y, !NULL
+wait_pulse: jmp     pin, wait_pulse
+
+            ; Jump if READ_DATA pulse ends ...
+count_low:  jmp     pin, pulse_end
+
+            ; ... or measure the length of the pulse
+            ; by decrementing the counter
+            jmp     y-- count_low
+
+            ; READ_DATA pulse ended, measure time
+            ; until we get the next pulse (jump)
+pulse_end:  jmp     pin, count_high
+
+            ; We found a new pulse: Report the counter
+            ; value and reset it to maximal value
+            in      y, 8
+            mov     y, !NULL
+
+            ; Measure the pulse length again
+            jmp     count_low
+
+            ; No pulse yet, measure time by
+            ; decrementing the counter
+count_high: jmp     y-- pulse_end
+
+            ; Here we have a strange case: The counter
+            ; decremented to zero -> very looong pulse.
+            ; Try to find the next pulse by waiting for
+            ; the next edge.
+            jmp     find_pulse
+
+% yahal {
+void configure_SM(SM * sm, uint8_t index_pin, uint8_t read_data_pin) {
+    // Set SM clock rate
+    sm->setClock(20000000);
+    // Configure the ISR
+    sm->regs.SM_SHIFTCTRL.PUSH_THRESH = 32;
+    sm->regs.SM_SHIFTCTRL.IN_SHIFTDIR = 1; // shift right
+    sm->regs.SM_SHIFTCTRL.AUTOPUSH    = 1;
+    sm->regs.SM_SHIFTCTRL.FJOIN_RX    = 1;
+    // Configure JMP pin
+    sm->regs.SM_EXECCTRL.JMP_PIN      = read_data_pin;
+    // Set the input mapping base
+    sm->regs.SM_PINCTRL.IN_BASE       = index_pin;
+}
+%}

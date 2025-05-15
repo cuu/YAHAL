@@ -102,7 +102,6 @@ int main(int argc, char *argv[]) {
     }
 
     // Start the translation process
-    svd2cpp::inst.processSvdFile(infile, outfile, root,
-                                 generateIrqNumbers);
+    svd2cpp::inst.processSvdFile(infile, outfile, root, generateIrqNumbers);
     return 0;
 }

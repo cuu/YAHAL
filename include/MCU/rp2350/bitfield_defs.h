@@ -1,10 +1,21 @@
-/*
- * bitfield_defs.h
- *
- *  Created on: 14.10.2022
- *      Author: andreas
- */
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// Definitions and templates for register
+// bitmap handling (reading/writing of 
+// specific bitfields within a register).
+// Related C++ operators are provided.
+//
 #ifndef _BITFIELD_DEFS_H_
 #define _BITFIELD_DEFS_H_
 

@@ -12,12 +12,14 @@
 // ---------------------------------------------
 //
 // Small program to convert a SVD file into a C++
-// structure. Not all features of SVD are supported!
+// structure. Not all features of SVD are (yet) supported!
 //
 #include "svd2cpp.h"
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <regex>
+#include <cassert>
 
 using namespace std;
 using namespace tinyxml2;
@@ -35,7 +37,7 @@ void svd2cpp::processSvdFile(const string & infile,
                              XMLElement *elem,
                              bool generateIrqNumbers) {
     // get some basic device properties
-    _device_name        = ValOrEmpty(getChildElement(elem, "name"));
+    _device_name        = getChildElement(elem, "name");
 
     // get default values for registerPropertiesGroup
     _device_size        = getChildElement(elem, "size");
@@ -46,7 +48,7 @@ void svd2cpp::processSvdFile(const string & infile,
 
     // Check MCU name
     if (_device_name.empty()) {
-        cerr << "Can not find device (MCU) name in file " << infile
+        cerr << "Can not find device name (MCU) in file " << infile
              << endl;
         exit(1);
     }
@@ -80,7 +82,7 @@ void svd2cpp::processSvdFile(const string & infile,
         }
         else {
             // All other first-level items are written as a comment
-            ProcessComment(elem);
+            ProcessAsComment(elem);
         }
         elem = elem->NextSiblingElement();
     }
@@ -94,32 +96,31 @@ void svd2cpp::processSvdFile(const string & infile,
                   });
         _ofs << indent << "// Interrupt numbers" << endl;
         for (auto & irq : irq_info) {
-            string tmp = "#define " + string(irq.name) + " ";
-            while (tmp.size() < 30) tmp += ' ';
-            _ofs << indent << tmp << dec << irq.value << endl;
+            _ofs << indent << "#define " + irq.name
+                 << string(25-irq.name.size(),' ') << dec << irq.value << endl;
         }
     }
 }
 
 void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
     // get some basic device properties
-    _peri_name          = ValOrEmpty(getChildElement(peripheral, "name"));
+    _peri_name          = getChildElement(peripheral, "name");
     _peri_baseAddress   = getChildElement(peripheral, "baseAddress");
     _peri_description   = getChildElement(peripheral, "description");
 
     // get default values for registerPropertiesGroup
-    _peri_size        = getChildElement(peripheral, "size");
-    _peri_access      = getChildElement(peripheral, "access");
-    _peri_protection  = getChildElement(peripheral, "protection");
-    _peri_resetValue  = getChildElement(peripheral, "resetValue");
-    _peri_resetMask   = getChildElement(peripheral, "resetMask");
+    _peri_size          = getChildElement(peripheral, "size");
+    _peri_access        = getChildElement(peripheral, "access");
+    _peri_protection    = getChildElement(peripheral, "protection");
+    _peri_resetValue    = getChildElement(peripheral, "resetValue");
+    _peri_resetMask     = getChildElement(peripheral, "resetMask");
 
     // Some sanity checks
     if (_peri_name.empty()) {
         cerr << "Can not find name for peripheral. Exit." << endl;
         exit(1);
     }
-    if (_peri_baseAddress == nullptr) {
+    if (_peri_baseAddress.empty()) {
         cerr << "Can not find base address for peripheral. Exit." << endl;
         exit(1);
     }
@@ -147,7 +148,7 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
     outputAsComment(_peri_description);
 
     // Start a new namespace for every peripheral
-    _ofs << indent << "namespace _" << _peri_name << "_  {" << endl << endl;
+    _ofs << indent << "namespace _" << _peri_name << "_ {" << endl << endl;
     incIndent();
 
     // Loop over all registers. This will output all register
@@ -181,7 +182,6 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
         // Loop over all registers
         uint32_t curr_off = 0;
         int res_index     = 0;
-        //string tmp;
         while(_registerInfo.registers_left()) {
             // Get next register with the smallest offset
             register_info_t * reg = _registerInfo.next_register();
@@ -189,13 +189,13 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
             // Check if we have to fill a gap with 'reserved'
             if (curr_off != reg->offset) {
                 uint32_t diff  = reg->offset - curr_off;
-                uint32_t typelen = 1;
+                uint32_t type_size = 1;
                 // Try to use same int length as register
                 if ((diff % reg->size) == 0) {
                     diff   /= reg->size;
-                    typelen = reg->size;
+                    type_size = reg->size;
                 }
-                string type = "uint" + to_string(typelen * 8) + "_t";
+                string type = "uint" + to_string(type_size * 8) + "_t";
                 pad_str(type, 30);
                 _ofs << indent << type << "reserved"
                      << to_string(res_index++);
@@ -289,7 +289,7 @@ void svd2cpp::ProcessPeripheral(XMLElement *peripheral) {
 
 void svd2cpp::ProcessRegister(XMLElement *register_) {
     // get some register properties
-    _reg_name        = ValOrEmpty(getChildElement(register_, "name"));
+    _reg_name        = getChildElement(register_, "name");
     _reg_addrOffset  = getChildElement(register_, "addressOffset");
     _reg_description = getChildElement(register_, "description");
 
@@ -305,7 +305,7 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
         exit(1);
     }
 
-    if (_reg_addrOffset == nullptr) {
+    if (_reg_addrOffset.empty()) {
         cerr << "Can not find address Offset for register " << _reg_name
              << ". Exit." << endl;
         exit(1);
@@ -314,18 +314,17 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
 
     // Print out description if available
     outputAsComment(_reg_description);
-    if (_reg_resetValue) {
-        string tmp = "Reset value: " + string(_reg_resetValue);
-        outputAsComment(tmp.c_str());
+    if (!_reg_resetValue.empty()) {
+        outputAsComment("Reset value: " + _reg_resetValue);
     }
 
     // Get the valid register size in bytes
     uint32_t regByteSize = 0;
-    if (_reg_size) {
+    if (!_reg_size.empty()) {
         regByteSize = parseNumber(_reg_size) / 8;
-    } else if (_peri_size) {
+    } else if (!_peri_size.empty()) {
         regByteSize = parseNumber(_peri_size) / 8;
-    } else if (_device_size) {
+    } else if (!_device_size.empty()) {
         regByteSize = parseNumber(_device_size) / 8;
     } else {
         cerr << "Can not determine register size for " << _reg_name << ". Exit" << endl;
@@ -336,10 +335,10 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
     ri.userIndex = false;
 
     // Handle dimensions
-    const char *dim          = getChildElement(register_, "dim");
-    const char *dimIncrement = getChildElement(register_, "dimIncrement");
-    if (dim) {
-        if (!dimIncrement) {
+    string dim          = getChildElement(register_, "dim");
+    string dimIncrement = getChildElement(register_, "dimIncrement");
+    if (!dim.empty()) {
+        if (dimIncrement.empty()) {
             cerr << "dim given without dimIncrement for register " << _reg_name
                  << ". Exit." << endl;
             exit(1);
@@ -347,9 +346,9 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
         ri.dim    = parseNumber(dim);
         ri.dimInc = parseNumber(dimIncrement);
         // Check if we have a specific register naming
-        const char *dimIndex = getChildElement(register_, "dimIndex");
+        string dimIndex = getChildElement(register_, "dimIndex");
         string index;
-        if (dimIndex) {
+        if (!dimIndex.empty()) {
             string indices = dimIndex;
             ri.userIndex = true;
             // Check for range
@@ -434,13 +433,10 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
         _ofs << indent << "END_TYPE()" << endl << endl;
         ri.type = _reg_name + "_t";
     } else {
-        //        ri.type = "uint" + to_string(regBitSize) + "_t";
         ri.type = _reg_name + "_t";
         _ofs << indent;
         _ofs << "typedef " << "uint" << dec << regByteSize*8 << "_t "
              << named_register(_reg_name, "") << "_t" << ";" << endl << endl;
-        //        _ofs << "// Register: " << ri.type << " " << name;
-        //        _ofs << endl << endl;
     }
 
     ri.name   = _reg_name;
@@ -464,21 +460,24 @@ void svd2cpp::ProcessRegister(XMLElement *register_) {
 
 void svd2cpp::ProcessField(XMLElement *field) {
     // Get all field parameters
-    const char *name   = getChildElement(field, "name");
-    const char *desc   = getChildElement(field, "description");
-    const char *access = getChildElement(field, "access");
+    _field_name         = getChildElement(field, "name");
+    _field_description  = getChildElement(field, "description");
+    _field_access       = getChildElement(field, "access");
+    _field_modWrVal     = getChildElement(field, "modifiedWriteValues");
+    _field_wrConst      = getChildElement(field, "writeConstraint");
+    _field_read_action  = getChildElement(field, "readAction");
 
-    if (name == nullptr) {
+    if (_field_name.empty()) {
         cerr << "Can not find name for field. Exit." << endl;
         exit(1);
     }
-    if (access == nullptr) {
-        if (_reg_access) {
-            access = _reg_access;
-        } else if (_peri_access) {
-            access = _peri_access;
-        } else if (_device_access) {
-            access = _device_access;
+    if (_field_access.empty()) {
+        if (!_reg_access.empty()) {
+            _field_access = _reg_access;
+        } else if (!_peri_access.empty()) {
+            _field_access = _peri_access;
+        } else if (!_device_access.empty()) {
+            _field_access = _device_access;
         } else {
             cerr << "Can not find access level for field. Exit." << endl;
             exit(1);
@@ -491,24 +490,34 @@ void svd2cpp::ProcessField(XMLElement *field) {
 
     // Process access mode
     string accessMode = "??";
-    if (!strcmp(access, "read-write") || !strcmp(access, "read-writeonce")) {
+    if (_field_access == "read-write" ||
+        _field_access == "read-writeonce") {
         accessMode = "RW";
-    } else if (!strcmp(access, "read-only")) {
+    } else if (_field_access == "read-only") {
         accessMode = "RO";
-    } else if (!strcmp(access, "write-only")) {
+    } else if (_field_access == "write-only") {
         accessMode = "WO";
     } else {
-        cerr << "Unknown mode " << access << endl;
+        cerr << "Unknown mode " << _field_access << endl;
         exit(1);
     }
 
     // Print out description if available
-    outputAsComment(desc);
+    outputAsComment(_field_description);
+    if (!_field_modWrVal.empty()) {
+        outputAsComment("modifiedWriteValues: " + _field_modWrVal);
+    }
+    if (!_field_wrConst.empty()) {
+        outputAsComment("writeConstraint: " + _field_wrConst);
+    }
+    if (!_field_read_action.empty()) {
+        outputAsComment("readAction: " + _field_read_action);
+    }
 
     // Output the field
     _ofs << indent << dec << "ADD_BITFIELD_"
          << accessMode;
-    _ofs << "(" << name << ", " << bitOffset << ", " << bitWidth << ")";
+    _ofs << "(" << _field_name << ", " << bitOffset << ", " << bitWidth << ")";
     _ofs << endl;
 
     // Add enum values if available
@@ -516,14 +525,11 @@ void svd2cpp::ProcessField(XMLElement *field) {
         XMLElement *enums = field->FirstChildElement("enumeratedValues");
         for (XMLElement *enu  = enums->FirstChildElement("enumeratedValue");
              enu; enu  = enu->NextSiblingElement()) {
-            const char *ename = getChildElement(enu, "name");
-            const char *eval  = getChildElement(enu, "value");
-            const char *edesc = getChildElement(enu, "description");
             enum_info_t ei;
-            ei.name  = ename;
-            ei.value = eval;
-            ei.desc  = edesc;
-            ei.field = name;
+            ei.field = _field_name;
+            ei.name  = getChildElement(enu, "name");
+            ei.value = getChildElement(enu, "value");
+            ei.desc  = getChildElement(enu, "description");
             enum_info.push_back(ei);
         }
     }
@@ -531,19 +537,18 @@ void svd2cpp::ProcessField(XMLElement *field) {
 
 void svd2cpp::ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &bitWidth) {
     // Try to find a bitRange Element
-    const char *range = getChildElement(field, "bitRange");
-    if (range != nullptr) {
+    string range = getChildElement(field, "bitRange");
+    if (!range.empty()) {
         // Process bitRange
-        string rangeStr = range;
-        size_t colon = rangeStr.find(':');
+        size_t colon = range.find(':');
         if (colon == string::npos) {
             cerr << "Can not find colon in bitRange. Exit!" << endl;
             exit(1);
         }
-        rangeStr[0] = ' ';
-        rangeStr[colon] = ' ';
-        rangeStr[rangeStr.length() - 1] = ' ';
-        istringstream iss(rangeStr);
+        range[0] = ' ';
+        range[colon] = ' ';
+        range[range.length() - 1] = ' ';
+        istringstream iss(range);
         int high, low;
         iss >> high >> low;
         if (low > high)
@@ -554,9 +559,9 @@ void svd2cpp::ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &
     }
 
     // Try to find bitOffset and bitWidth Elements
-    const char *offset = getChildElement(field, "bitOffset");
-    const char *width  = getChildElement(field, "bitWidth");
-    if (offset != nullptr && width != nullptr) {
+    string offset = getChildElement(field, "bitOffset");
+    string width  = getChildElement(field, "bitWidth");
+    if (!offset.empty() && !width.empty()) {
         // Process bitOffset and bitWidth
         bitOffset = parseNumber(offset);
         bitWidth  = parseNumber(width);
@@ -564,9 +569,9 @@ void svd2cpp::ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &
     }
 
     // Try to find lsb and msb
-    const char *lsb = getChildElement(field, "lsb");
-    const char *msb = getChildElement(field, "msb");
-    if (lsb != nullptr && msb != nullptr) {
+    string lsb = getChildElement(field, "lsb");
+    string msb = getChildElement(field, "msb");
+    if (!lsb.empty() && !msb.empty()) {
         // Process lsb and msb
         uint32_t low  = parseNumber(lsb);
         uint32_t high = parseNumber(msb);
@@ -574,11 +579,11 @@ void svd2cpp::ProcessBitRange(XMLElement *field, uint32_t &bitOffset, uint32_t &
         bitWidth  = high - low + 1;
         return;
     }
-    cerr << "No valid bitrange: " << range  << endl;
+    cerr << "No valid bitrange: " << range << endl;
     exit(1);
 }
 
-void svd2cpp::ProcessComment(XMLElement *elem) {
+void svd2cpp::ProcessAsComment(XMLElement *elem) {
     _ofs << "// " << indent << elem->Name();
     const char * text = elem->GetText();
     if (text != nullptr) {
@@ -595,7 +600,7 @@ void svd2cpp::ProcessComment(XMLElement *elem) {
         incIndent();
         for (XMLElement *e = elem->FirstChildElement(); e;
              e = e->NextSiblingElement()) {
-            ProcessComment(e);
+            ProcessAsComment(e);
         }
         decIndent();
     }
@@ -603,48 +608,121 @@ void svd2cpp::ProcessComment(XMLElement *elem) {
 
 // Output a single/multi-line text as a comment. This
 // is used e.g. for description values in the SVD file.
-void svd2cpp::outputAsComment(const char *desc, bool continueLine) {
-    if (!desc)
-        return;  // Silently return if we have a null-pointer
-    string descStr = desc;
+void svd2cpp::outputAsComment(string desc, bool continueLine) {
+    if (desc.empty()) {
+        // Silently return if we have a null-pointer
+        return;
+    }
+    desc = regex_replace(desc, regex("[' ']{2,}"), " ");
+
     size_t index = 0;
     bool firstLine = true;
+
     while (true) {
-        size_t newline = descStr.find("\\n", index);
+        // Start with C++ comment if not continuing a line
         if (!continueLine || !firstLine) {
             _ofs << indent << "// ";
         }
+        // Find a newline in text
+        size_t newline = desc.find("\\n", index);
         if (newline == string::npos) {
-            _ofs << Trim(descStr.substr(index)) << endl;
-            break;
+            if ((desc.size() - index) < 70) {
+                // We (finally) have a short line ->
+                // output it and exit.
+                _ofs << Trim(desc.substr(index)) << endl;
+                break;
+            } else {
+                // Line too long. Find last blank in line.
+                size_t blank = desc.rfind(' ', index+70);
+                if ((blank != string::npos) && (blank >= index)) {
+                    _ofs << Trim(desc.substr(index, blank-index)) << endl;
+                    index = blank+1;
+                } else {
+                    // Strange: very long line without any blank ...
+                    _ofs << Trim(desc.substr(index)) << endl;
+                    break;
+                }
+            }
         } else {
-            _ofs << Trim(descStr.substr(index, newline - index)) << endl;
-            index = newline + 2;
+            // We found a newline. Also check for long string
+            if ((newline - index) < 70) {
+                _ofs << Trim(desc.substr(index, newline - index)) << endl;
+                index = newline + 2;
+            } else {
+                // Line too long. Find last blank in line
+                size_t blank = desc.rfind(' ', index+70);
+                if ((blank != string::npos) && (blank >= index)) {
+                    _ofs << Trim(desc.substr(index, blank - index)) << endl;
+                    index = blank+1;
+                } else {
+                    // Strange:: very long line without blank...
+                    _ofs << Trim(desc.substr(index, newline - index)) << endl;
+                    index = newline + 2;
+                }
+            }
         }
         firstLine = false;
     }
 }
 
-uint32_t svd2cpp::parseNumber(const char *val) {
-    if (val == nullptr) {
-        cerr << "Can not parse nullptr. Exit" << endl;
+
+enum output_state {
+    TRIM_START,
+    FIND_LINE_END
+};
+
+void svd2cpp::outputAsComment2(const char *desc, bool continueLine) {
+    if (!desc) {
+        // Silently return if we have a null-pointer
+        return;
+    }
+
+    const char *typeOfWhitespaces = " \t\n";
+    string descStr = desc;
+    // Convert all literal newlines to real newlines
+    descStr = regex_replace(descStr, regex("[\"\\n\"]{2,}"), "\n");
+
+
+    bool running = true;
+    string str = desc;
+    output_state state = TRIM_START;
+    size_t line_start = 0;
+
+    while(running) {
+        switch(state) {
+            case TRIM_START: {
+                line_start= str.find_first_not_of(typeOfWhitespaces);
+                assert(line_start != string::npos);
+                state = FIND_LINE_END;
+                break;
+            }
+            case FIND_LINE_END: {
+//                if ()
+            }
+        }
+    }
+}
+
+
+uint32_t svd2cpp::parseNumber(const string & s) {
+    if (s.empty()) {
+        cerr << "Can not parse empty string as number. Exit" << endl;
         exit(1);
     }
     uint32_t result;
-    size_t len = strlen(val);
-    if (len > 1 && val[0] == '0' && tolower(val[1]) == 'x') {
-        result = strtol(val, nullptr, 16);
-    } else if (len > 1 && val[0] == '#') {
-        result = strtol(val+1, nullptr, 2);
+    if (s.size() > 1 && s[0] == '0' && tolower(s[1]) == 'x') {
+        result = strtol(s.c_str()+2, nullptr, 16);
+    } else if (s.size() > 1 && s[0] == '#') {
+        result = strtol(s.c_str()+1, nullptr, 2);
     } else {
-        result = strtol(val, nullptr, 10);
+        result = strtol(s.c_str(), nullptr, 10);
     }
     return result;
 }
 
-const char* svd2cpp::getChildElement(XMLElement *elem, const char *name) {
+string svd2cpp::getChildElement(XMLElement *elem, const char *name) {
     XMLElement *child = elem->FirstChildElement(name);
-    return child ? child->GetText() : nullptr;
+    return child ? child->GetText() : "";
 }
 
 bool svd2cpp::childExists(XMLElement *elem, const char *name) {
