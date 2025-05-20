@@ -7,9 +7,15 @@ include(YAHAL_import.cmake)
 project(floppy_adapter CXX ASM)
 
 add_executable(floppy_adapter
-    floppy_adapter.cpp
-    MFM_reader.cpp
-    MFM_reader_states.cpp
+        floppy_defines.cpp
+        floppy_drv.cpp
+        floppy_error_codes.cpp
+        floppy_logger.cpp
+        floppy_mfm_reader.cpp
+        floppy_mfm_reader_states.cpp
+        floppy_statistics.cpp
+
+        floppy_adapter.cpp
 )
 
 target_compile_options(floppy_adapter

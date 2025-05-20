@@ -1,4 +1,4 @@
-#include "board.h"
+//#include "board.h"
 
 #include "usb_dcd.h"
 #include "usb_device_controller.h"
@@ -9,10 +9,8 @@
 #include "uart_rp2350.h"
 #include "gpio_rp2350.h"
 #include "pio_rp2350.h"
+#include "timer_rp2350.h"
 
-//#include "spi_rp2350.h"
-
-#include "sd_spi_drv.h"
 #include "task.h"
 #include "mutex.h"
 #include "lock_base_rp2350.h"
@@ -21,18 +19,13 @@
 
 #include "mfm.pio.h"
 
-#include "MFM_reader.h"
+#include "floppy_mfm_reader.h"
+#include "floppy_logger.h"
 
-// SD card hardware configuration.
-//#define SPI       0
-//#define SCLK_PIN  2
-//#define MOSI_PIN  3
-//#define MISO_PIN  4
-//#define CS_PIN    5
-
-uint8_t psram[8*1024*1024] PSRAM;
+#include "floppy_drv.h"
 
 using namespace _TIMER0_;
+using namespace FLOPPY;
 
 int main() {
     uart_rp2350 uart; // default is back-channel UART!
@@ -43,7 +36,7 @@ int main() {
 
     // Floppy adapter GPIOs
     gpio_rp2350 index           (20);
-    gpio_rp2350 drive_select_1  (18);
+    gpio_rp2350 drive_select    (18);
     gpio_rp2350 motor_on        (17);
     gpio_rp2350 direction_select(11);
     gpio_rp2350 step            (16);
@@ -55,169 +48,57 @@ int main() {
     gpio_rp2350 side_one_select (2);
     gpio_rp2350 disk_change     (1);
 
-    index.gpioMode           (GPIO::INPUT             | GPIO::PULLUP);
-    drive_select_1.gpioMode  (GPIO::OUTPUT_OPEN_DRAIN | GPIO::PULLUP | GPIO::INIT_HIGH);
-    motor_on.gpioMode        (GPIO::OUTPUT_OPEN_DRAIN | GPIO::PULLUP | GPIO::INIT_HIGH);
-    direction_select.gpioMode(GPIO::OUTPUT_OPEN_DRAIN | GPIO::PULLUP | GPIO::INIT_HIGH);
-    step.gpioMode            (GPIO::OUTPUT_OPEN_DRAIN | GPIO::PULLUP | GPIO::INIT_HIGH);
-    write_data.gpioMode      (GPIO::OUTPUT_OPEN_DRAIN | GPIO::PULLUP | GPIO::INIT_HIGH);
-    write_gate.gpioMode      (GPIO::OUTPUT_OPEN_DRAIN | GPIO::PULLUP | GPIO::INIT_HIGH);
-    track_00.gpioMode        (GPIO::INPUT             | GPIO::PULLUP);
-    write_protect.gpioMode   (GPIO::INPUT             | GPIO::PULLUP);
-    read_data.gpioMode       (GPIO::INPUT      | GPIO::PULLUP);
-    side_one_select.gpioMode (GPIO::OUTPUT_OPEN_DRAIN | GPIO::PULLUP | GPIO::INIT_HIGH);
-    disk_change.gpioMode     (GPIO::INPUT             | GPIO::PULLUP);
+    timer_rp2350 motor_timer;
 
-    //
-    // decoder(20, 14, buffer);
+    floppy_pins pin_config = {
+            .index              = index,
+            .drive_select       = drive_select,
+            .motor_on           = motor_on,
+            .direction_select   = direction_select,
+            .step               = step,
+            .write_data         = write_data,
+            .write_gate         = write_gate,
+            .track_00           = track_00,
+            .write_protect      = write_protect,
+            .read_data          = read_data,
+            .side_one_select    = side_one_select,
+            .disk_change        = disk_change
+    };
 
+    LOG_LEVEL(FLOPPY::LOG_INFO);
 
-    drive_select_1 = 0;
-    motor_on       = 0;
-    task::sleep_ms(500);
+    // The Floppy driver
+    uint8_t * data;
+    ret_t res;
 
-    // Find track 0
-    direction_select = 1;
-    while(track_00) {
-        step = 0;
-        task::sleep_ms(3);
-        step = 1;
-        task::sleep_ms(3);
-    }
+    floppy_drv fd(pin_config, FLOPPY::TEAC_FD_235HF, motor_timer);
 
-    task::sleep_ms(200);
+    res = fd.init();
+    printf("Code %d, Field %d\n", res.code, res.field);
+    floppy_statistics::inst().reset();
 
-    // Step out to track 80
-    direction_select = 0;
-    task::sleep_ms(100);
-
-    for(int i=0; i < 0; ++i) {
-        step = 0;
-        task::sleep_ms(3);
-        step = 1;
-        task::sleep_ms(3);
-    }
-
-    task::sleep_ms(200);
-
-
-
-//    index.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
-//    read_data.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
-//    side.setSEL(_IO_BANK0_::GPIO_CTRL_FUNCSEL__pio0);
-
-    printf("Start READ\n");
-
-    MFM::PULSE pulse_buffer[100000] {};
-    uint32_t pulse_count = 0;
-    uint32_t time_start  = TIMER0.TIMELR;
-
-    // Wait for next INDEX pulse
-    while(index.gpioRead() == LOW) ;
-    while(index.gpioRead() == HIGH) ;
-
-    read_data.gpioAttachIrq(GPIO::FALLING, [&]() {
-        // Calculate pulse duration
-        uint32_t time  = TIMER0.TIMELR;
-        uint32_t delta = time - time_start;
-        time_start     = time;
-        // Check pulse length
-        MFM::PULSE p;
-        if (delta < 500)      p = MFM::PULSE::S;
-        else if (delta > 700) p = MFM::PULSE::L;
-        else                  p = MFM::PULSE::M;
-
-        pulse_buffer[pulse_count++] = p;
-
-        if (pulse_count == sizeof(pulse_buffer)) {
-            read_data.gpioDisableIrq();
+    for (int track=0; track < 10; ++track) {
+        printf("track %d: ", track);
+        for(int head=0; head <= fd.format->double_sided; ++head) {
+            printf(" head %d: ", head);
+            for(int sector=1; sector <= fd.format->sectors_per_track; ++sector) {
+                res = fd.read_sector(track,head,sector, data);
+                if (res == RET_CODE::SUCCESS) printf(".");
+                else printf("Code %d, Field %d\n", res.code, res.field);
+            }
         }
-    });
-
-    task::sleep_ms(200);
-    read_data.gpioDisableIrq();
-    motor_on = true;
-    printf("Received %ld flux pulses!\n", pulse_count);
-
-
-    uint8_t data_buffer[10000] {};
-    MFM_reader reader(data_buffer);
-    reader.set_data_size(18 * 520);
-    int result;
-
-    uint32_t st = TIMER0.TIMERAWL;
-    for(uint32_t i=0; i < pulse_count; ++i) {
-        //printf("proc pulse %d\n", i);
-        result = reader.process_pulse(pulse_buffer[i]);
-        if (result) break;
+        puts("");
     }
-    uint32_t d = TIMER0.TIMERAWL - st;
-    printf("Result:   %d\n", result);
-    printf("Duration: %ld\n", d/200);
+    puts("");
+    printf("Code %d, Field %d\n", res.code, res.field);
 
-//    mutex<lock_base_rp2350> m;
+    floppy_statistics::inst().show();
 
-//    SM * mfm_sm = pio_rp2350::pio0.loadProgram(mfm_decoder_program);
-//    configure_SM(mfm_sm, index.getGpio(), read_data.getGpio());
-//    mfm_sm->attachRXNEMPTYIrq([&] () {
-        //while(!mfm_sm->RxFifoEmpty()) {
-//            uint32_t val = mfm_sm->readRxFifo();
-//            m.lock();
-//            if (buffer_index < 30000) {
-//                buffer[buffer_index++] = val;
-//            }
-//            m.unlock();
-        //}
-//    });
-//    mfm_sm->enableRXNEMPTYIrq();
-//    mfm_sm->enable();
+    while(true) { __WFE(); }
 
-//    while(true) {
-//        m.lock();
-//        bool b = buffer_index >= 30000;
-//        m.unlock();
-//        if (b) {
-//            mfm_sm->disable();
-//            break;
-//        }
-//        task::sleep_ms(5);
-//    }
-
-//    decoder.read_track();
-
-    printf("Stop READ\n");
-//    printf("buffer index: %d\n", buffer_index);
-
-    motor_on = 1;
-
-//    uint8_t user_data[20000];
-//    MFM_decoder decode(user_data);
-
-//    for(int i=0; i < 15000; ++i) {
-//        switch (pulse_buffer[i]) {
-//            case MFM::PULSE::S: printf("S"); break;
-//            case MFM::PULSE::M: printf("M"); break;
-//            case MFM::PULSE::L: printf("L"); break;
-//        }
-//    }
-
-    return 0;
-
-    //    while(true) {
-//        task::sleep_ms(2);
-//    }
-
-
-
-
-    // Set up the driver stack for the SD card
-    // The SPI speed is handled in the SD card driver!
-//    gpio_rp2350 cs(CS_PIN);     // CS Line of SPI interface
-//    spi_rp2350  spi(SPI, MISO_PIN, MOSI_PIN, SCLK_PIN, cs);
-//    sd_spi_drv  sd(spi);        // SD card low level driver
 
     // Switch on USB logging
-    usb_log::inst.setLevel(LOG_INFO);
+    usb_log::inst.setLevel(::LOG_INFO);
     // USB Device driver
     usb_dcd &driver = usb_dcd::inst();
     // USB device: Root object of USB descriptor tree
@@ -265,7 +146,7 @@ int main() {
         block_count = 8192 * 2; //sd.getBlockCount();
     };
     msc_device.read_handler = [&](uint8_t *buff, uint32_t block) {
-        memcpy(buff, psram + (block << 9), 512);
+//        memcpy(buff, psram + (block << 9), 512);
 //        auto res = sd.readBlock(buff, block, 1);
 //        if (res != BLOCKIO::result_t::OK) {
 //            TUPP_LOG(LOG_ERROR, "Reading SD card failed (%d)", res);
@@ -274,7 +155,7 @@ int main() {
         return BLOCKIO::result_t::OK;
     };
     msc_device.write_handler = [&](uint8_t *buff, uint32_t block) {
-        memcpy(psram + (block << 9), buff, 512);
+//        memcpy(psram + (block << 9), buff, 512);
 //        auto res = sd.writeBlock(buff, block, 1);
 //        if (res != BLOCKIO::result_t::OK) {
 //            TUPP_LOG(LOG_ERROR, "Writing SD card failed (%d)", res);
