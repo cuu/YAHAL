@@ -30,6 +30,9 @@ SECTIONS
     /* Code */
     /********/
     .text : {
+        __image_load__  = LOADADDR(.text);
+        __image_start__ = .;
+
         __vector_start__ = .;
         KEEP (*(.isr_vector))
         . = ALIGN(4);

@@ -6,8 +6,8 @@
 //////////////////////////
 ili9488_drv::config ili9488_drv::PICO320(320, 320,320,480,0,0,BGR_COLOR_FILTER);
 
-ili9488_drv::ili9488_drv(spi_interface & spi, gpio_pin & rst_pin,
-                         gpio_pin & dc_pin, config & lcd,
+ili9488_drv::ili9488_drv(spi_interface & spi, gpio_interface & rst_pin,
+                         gpio_interface & dc_pin, config & lcd,
                          mutex_interface * mutex)
         : _spi(spi), _rst_pin(rst_pin), _dc_pin(dc_pin), _lcd(lcd), _mutex(mutex) {
 

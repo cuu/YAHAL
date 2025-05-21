@@ -43,8 +43,8 @@ public:
     static config PICO320;//
 public:
     ili9488_drv(spi_interface   & spi,//spi1_tx,spi1_rx,spi1_cs,spi1_sck
-                gpio_pin        & rst_pin,
-                gpio_pin        & dc_pin,
+                gpio_interface        & rst_pin,
+                gpio_interface        & dc_pin,
                 config          & lcd,
                 mutex_interface * mutex = nullptr);
 
@@ -78,8 +78,8 @@ private:
 
     uint8_t             _tx_buffer[BUF_LEN];
     spi_interface   &   _spi;
-    gpio_pin        &   _rst_pin;
-    gpio_pin        &   _dc_pin;
+    gpio_interface        &   _rst_pin;
+    gpio_interface        &   _dc_pin;
     config          &   _lcd;
     mutex_interface *   _mutex;
     int16_t      _first_row; // Vertical scroll start address
