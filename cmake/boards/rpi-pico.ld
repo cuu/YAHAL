@@ -1,10 +1,10 @@
 /*******************************/
-/* RPi pico  GCC linker script */
+/* YAHAL RPi pico Multi boot GCC linker script */
 /*******************************/
 
 MEMORY
 {
-    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 2048k
+    FLASH(rx)      : ORIGIN = 0x10000000 + 152k, LENGTH = 2048k - 152k
     RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 256k
     SCRATCH_X(rwx) : ORIGIN = 0x20040000, LENGTH = 4k
     SCRATCH_Y(rwx) : ORIGIN = 0x20041000, LENGTH = 4k
@@ -17,14 +17,6 @@ SECTIONS
     /***************************/
     /* Second stage bootloader */
     /***************************/
-    .boot2 : {
-        __boot2_start__ = .;
-        KEEP (*(.boot2))
-        __boot2_end__ = .;
-    } > FLASH
-
-    ASSERT(__boot2_end__ - __boot2_start__ == 256,
-        "ERROR: Pico second stage bootloader must be 256 bytes in size")
 
     /********/
     /* Code */
