@@ -58,9 +58,9 @@ namespace FLOPPY {
         void show_sync(FIELD f, const stat_item item[3]);
         void show_gap (FIELD f, const stat_item item[4]);
 
-        uint32_t        _number_of_read_track_ops {0};
-        stat_item       _sync_items[3][3] {};
-        stat_item       _gap_items[5][4] {};
+        uint32_t    _number_of_read_track_ops {0};
+        stat_item   _sync_items[3][3] {};
+        stat_item   _gap_items[5][4] {};
     };
 }
 

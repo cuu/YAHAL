@@ -44,14 +44,15 @@ extern uint32_t __bss_end__;
 class task_monitor : public task_timer
 {
 public:
-    task_monitor() : task_timer("Monitor", 1024, 5) {
-        task_timer::setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
-        task_timer::setCallback([this]() {
-            task * p = _list.getHead();
+    task_monitor() : task_timer("Monitor", DEFAULT_STACK_SIZE) {
+        setPeriod(MONITOR_WAIT * 1000000, TIMER::PERIODIC);
+        setCallback([this]() {
+            task * p = _list[_core].getHead();
             uint32_t millis  = task::millis();
             printf(CLEAR_SCREEN);
             printf(VT100_COLOR, BLUE);
-            printf("\n       ---< YAHAL Task Monitor  (uptime: %ldh %ldm %ld.%03lds) >--- \n\n",
+            printf("\n    ---< YAHAL Task Monitor (core:%d uptime: %ldh %ldm %ld.%03lds) >--- \n\n",
+                   _core,
                     millis/3600000,
                    (millis/60000) % 60,
                    (millis/1000)  % 60,
@@ -69,19 +70,20 @@ public:
             puts("+------------------+-----+------+-----------+-------------+--------+");
             do {
                 uint32_t t = p->getDeltaTicks();
-                printf("| %-16s | %c/%c | %4d | %-9s | %4d / %-4d | %2ld.%1ld %% |\n",
+                printf("| %-16s | %c/%c | %4d | %-9s | %4d / %4d |%3ld.%1ld %% |\n",
                        p->getName(),
                        p->isPrivileged() ? 'P' : 'U', p->isUsingFloat() ? 'F' : 'I',
-                               p->getPriority(),
-                               state_to_str(p->getState()),
-                               p->getUsedStack(), p->getStackSize(),
-                                t * 100  / MONITOR_WAIT / TICK_FREQUENCY,
-                               (t * 1000 / MONITOR_WAIT / TICK_FREQUENCY) % 10
+                       p->getPriority(),
+                       state_to_str(p->getState()),
+                       p->getUsedStack(), p->getStackSize(),
+                        t * 100  / MONITOR_WAIT / TICK_FREQUENCY,
+                       (t * 1000 / MONITOR_WAIT / TICK_FREQUENCY) % 10
                 );
                 p = p->_next;
-            } while(p != _list.getHead());
+            } while(p != _list[_core].getHead());
             puts("+------------------+-----+------+-----------+-------------+--------+");
         });
+        start();
     }
 
     ~task_monitor() override = default;

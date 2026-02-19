@@ -22,7 +22,10 @@
 
 #include <cassert>
 #include "block_io_interface.h"
+#include "gpio_rp2350.h"
+#include "pio_rp2350.h"
 #include "timer_interface.h"
+
 #include "floppy_defines.h"
 #include "floppy_mfm_reader.h"
 
@@ -55,18 +58,17 @@ namespace FLOPPY {
         // or there is no disk in the drive.
         const floppy_format * const & format;
 
-        // (Optionally) set the floppy disk format
-        inline void set_format(floppy_format * f) {
-            _format = f;
-        }
+        // Set the floppy disk format
+        void set_format(floppy_format * f);
 
         // Read a single sector. The method will first call
         // init() (see above) The method will then check if
         // the track data is already in the data buffer and
         // use this data if possible. If the method returned
-        // SUCCESS, ptr will point to the sector data. In
-        // case of errors, ptr will be set to nullptr.
-        ret_t read_sector(uint8_t track, uint8_t head, uint8_t sector, uint8_t * & ptr);
+        // SUCCESS, ret_t.data_ptr will point to the sector
+        // data. In case of errors, this pointer will be set
+        // to nullptr.
+        ret_t read_sector(uint8_t track, uint8_t head, uint8_t sector);
 
         // Calibrate the head (seek to track 0, then to maximum track
         // and then back to 0 again). Afterward try to autodetect the
@@ -80,16 +82,16 @@ namespace FLOPPY {
         // Store the data in buff, which has to point to a memory buffer
         // with at least 512 * count bytes size.
         BLOCKIO::result_t readBlock(uint8_t* buff, uint32_t start_block,
-                                    uint16_t count) override {
-
-            return BLOCKIO::result_t::OK;
-        }
+                                    uint16_t count) override;
 
         // Write 'count' 512-byte blocks. Start storing at 'start_block'.
         // Read the data from buff, which has to point to a memory buffer
         // with at least 512 * count bytes size.
         BLOCKIO::result_t writeBlock(const uint8_t* buff, uint32_t start_block,
                                      uint16_t count) override {
+            (void)(buff);
+            (void)(start_block);
+            (void)(count);
             return BLOCKIO::result_t::OK;
         }
 
@@ -103,7 +105,20 @@ namespace FLOPPY {
         }
 
     private:
-        floppy_pins &       _pins;
+        // Floppy adapter GPIOs
+        gpio_rp2350 _pin_index;
+        gpio_rp2350 _pin_drive_select;
+        gpio_rp2350 _pin_motor_on;
+        gpio_rp2350 _pin_direction_select;
+        gpio_rp2350 _pin_step;
+        gpio_rp2350 _pin_write_data;
+        gpio_rp2350 _pin_write_gate;
+        gpio_rp2350 _pin_track_00;
+        gpio_rp2350 _pin_write_protect;
+        gpio_rp2350 _pin_read_data;
+        gpio_rp2350 _pin_side_one_select;
+        gpio_rp2350 _pin_disk_change;
+
         floppy_drive &      _drive;
         floppy_format *     _format {nullptr};
         timer_interface &   _motor_timer;
@@ -114,17 +129,13 @@ namespace FLOPPY {
         floppy_mfm_reader  _mfm_reader;
         uint32_t    _pulse_M_low_threshold {0};
         uint32_t    _pulse_M_high_threshold {0};
-        PULSE       _flux_buffer[100000] {};
-        uint32_t    _flux_buffer_count {0};
-        uint32_t    _pulse_start {0};
+        uint8_t     _flux_buffer[100000] {};
+        uint32_t *  _flux_buffer_ptr {nullptr}; // Used by PIO irq handler
         uint8_t     _data_buffer[12000] {};
         bool        _data_buffer_valid {false};
-
-        // The IRQ handler for the READ_DATA line
-        void read_data_irq_handler();
-
-        // The motor timer IRQ handler
-        void motor_timer_irq_handler();
+        // The PIO state machine for track reading
+        SM *        _sm_read_track;
+        SM *        _sm_write_track;
 
         // Start the motor and select the drive.
         // The motor will be automatically switched
@@ -138,6 +149,12 @@ namespace FLOPPY {
 
         // Read the current track into the flux and data buffers.
         ret_t read_track();
+
+        // Calculate a CRC using the mark and a buffer of data
+        static uint16_t calculate_crc(const MARK_TYPE & mark, uint8_t* buffer, size_t length);
+        // Update the current running CRC-value with a new data-byte.
+        static uint16_t update_crc(uint16_t crc, uint8_t value);
+
     };
 
 }

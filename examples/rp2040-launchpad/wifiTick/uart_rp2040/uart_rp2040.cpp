@@ -41,7 +41,7 @@ int main(void)
     posix_io::inst.register_stdout(uart);
 
     // UART which is connected to the ESP8266
-    uart_rp2040 uart_esp(1, 20, 21, 115200);
+    uart_rp2040 uart_esp(20, 21, 115200);
 
     // Receive message handler:
     // All received chars are collected in a String.

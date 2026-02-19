@@ -18,7 +18,7 @@
 #define _LCD_INTERFACE_H_
 
 #include <stdint.h>
-#include "yahal_assert.h"
+#include <cassert>
 
 // Colors use a 32-bit integer. The upper 8 bits
 // define the concrete color type.
@@ -81,7 +81,7 @@ public:
                     ((c & 0x000000f8) >> 3) |
                     LCD::COLORTYPE_RGB565 );
         }
-        yahal_assert(0);
+        assert(false);
         return 0;
     }
 

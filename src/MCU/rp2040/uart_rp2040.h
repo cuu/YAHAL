@@ -1,10 +1,26 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// UART driver for RP2040.
+//
 #ifndef _UART_RP2040_H_
 #define _UART_RP2040_H_
 
 #include <cstdint>
-#include "gpio_interface.h"
 #include "uart_interface.h"
+#include "gpio_rp2040.h"
 #include "RP2040.h"
+#include "board.h"
 
 using namespace _UART0_;
 using namespace _UART1_;
@@ -16,14 +32,14 @@ void UART1_IRQ_Handler(void);
 
 class uart_rp2040 : public uart_interface {
 public:
-    uart_rp2040(uint8_t     index  = 0, // default: backchannel UART
-                gpio_pin_t  tx_pin = 0,
-                gpio_pin_t  rx_pin = 1,
+    explicit uart_rp2040(
+                gpio_pin_t  tx_pin = BC_UART_TX,
+                gpio_pin_t  rx_pin = BC_UART_RX,
                 uint32_t    baud = 115200,
                 uart_mode_t mode = UART::BITS_8   |
                                    UART::NO_PARITY |
                                    UART::STOPBITS_1);
-    virtual ~uart_rp2040();
+    ~uart_rp2040() override;
 
     // Basic read/write operations on a UART
     bool available() override;
@@ -43,6 +59,9 @@ public:
     void uartEnableIrq () override;
     void uartDisableIrq() override;
 
+    // FIFO control
+    void enableFIFO(bool) override;
+
     // The IRQ handlers are our friends :)
     friend void UART0_IRQ_Handler(void);
     friend void UART1_IRQ_Handler(void);
@@ -59,8 +78,8 @@ private:
     UART0_t *       _uart_set;
     UART0_t *       _uart_clr;
     int             _index;
-    uint8_t         _tx_pin;
-    uint8_t         _rx_pin;
+    gpio_rp2040     _tx;
+    gpio_rp2040     _rx;
     uint32_t        _baud;
     uart_mode_t     _mode;
 };

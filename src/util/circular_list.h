@@ -27,7 +27,7 @@
 //  above, a C++ friendship to this class might be
 //  declared.
 //  Main usage of this class in YAHAL is the multitasking
-//  kernel, which organizes task_base instances as a
+//  kernel, which organizes task instances as a
 //  circular list. It is also used for the condition_variable.
 
 #ifndef _CIRCULAR_LIST_H_

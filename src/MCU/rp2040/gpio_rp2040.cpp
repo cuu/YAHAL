@@ -1,12 +1,20 @@
-/*
- * gpio_rp2040.cpp
- *
- *  Created on: 17.10.2022
- *      Author: Andreas Terstegge
- */
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// GPIO driver for RP2040. Supports open-source and
+// open-drain modes as well as interrupts.
+//
 #include "gpio_rp2040.h"
-
 #include "RP2040.h"
 #include <cassert>
 
@@ -107,8 +115,8 @@ gpio_rp2040::gpioDetachIrq () {
 void
 gpio_rp2040::gpioEnableIrq () {
     assert(_gpio < 30);
-    PROC0_INTE0_t *INTE_SET = &IO_BANK0_SET.PROC0_INTE0 + (_gpio >> 3);
-    INTR0_t       *INTR     = &IO_BANK0.INTR0           + (_gpio >> 3);
+    PROC0_INTE0_t *INTE_SET = &IO_BANK0_SET.PROC0_INTE0 + (_gpio >> 3) + (SIO.CPUID*12);
+    INTR0_t       *INTR     = &IO_BANK0.INTR0           + (_gpio >> 3) + (SIO.CPUID*12);
     int mask_shift = (_gpio & 0x7) * 4;
     // Switch off NVIC irq so we get no
     // handler calls during configuration
@@ -125,7 +133,7 @@ gpio_rp2040::gpioEnableIrq () {
 void
 gpio_rp2040::gpioDisableIrq () {
     assert(_gpio < 30);
-    PROC0_INTE0_t *INTE_CLR = &IO_BANK0_CLR.PROC0_INTE0 + (_gpio >> 3);
+    PROC0_INTE0_t *INTE_CLR = &IO_BANK0_CLR.PROC0_INTE0 + (_gpio >> 3) + (SIO.CPUID*12);
     INTR0_t       *INTR     = &IO_BANK0.INTR0           + (_gpio >> 3);
     int mask_shift = (_gpio & 0x7) * 4;
     // Clear pending interrupts
@@ -208,7 +216,7 @@ void gpio_rp2040::setMode (uint16_t mode) {
 extern "C" {
 
 void IO_IRQ_BANK0_Handler(void) {
-    PROC0_INTS0_t *INTS = &IO_BANK0.PROC0_INTS0;
+    PROC0_INTS0_t *INTS = &IO_BANK0.PROC0_INTS0 + (SIO.CPUID*12);
     INTR0_t       *INTR = &IO_BANK0.INTR0;
     for (int i=0; i < 4; ++i, INTS++, INTR++) {
         while (uint8_t pos = __builtin_ffs(*INTS)) {

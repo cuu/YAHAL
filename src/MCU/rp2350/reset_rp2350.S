@@ -62,8 +62,7 @@ reset_handler:
             #ifdef PSRAM_CS_GPIO
             mov     r5, #PSRAM_CS_GPIO
 
-            // Set ISO=0, drive sthrengh 4mA,
-            // PUE=1, SLEWFAST=1
+            // Set ISO=0, drive strengh 4mA, PUE=1, SLEWFAST=1
             ldr     r0, =GPIO0_PAD_CTRL
             mov     r1, #0x19
             str     r1, [r0, r5, LSL #2]
@@ -85,7 +84,6 @@ reset_handler:
             ldr     r1, =__image_start__
             cmp     r0, r1
             beq     no_copy
-
 copy_loop:
             // Copy the complete image (.text, .rodata, .data)
             // to the runtime memory area in RAM
@@ -94,7 +92,6 @@ copy_loop:
             stmia   r1!, {r3}
             cmp     r1, r2
             blo     copy_loop
-
 no_copy:
             // Setup stack pointer, because the C-part
             // of the reset handler will use it!!

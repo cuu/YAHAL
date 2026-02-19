@@ -265,10 +265,21 @@ struct SM {
         return pio.FSTAT.TXEMPTY & (1 << sm_index);
     }
 
+    // Check if RX FIFO is empty.
+    inline bool RxFifoEmpty() {
+        return pio.FSTAT.RXEMPTY & (1 << sm_index);
+    }
+
     // Write a 32 bit value to the TX FIFO
     inline void writeTxFifo(uint32_t val) {
         while(TxFifoFull()) ;
         pio.TXF[sm_index] = val;
+    }
+
+    // Read a 32 bit value from the RX FIFO
+    inline uint32_t readRxFifo() {
+        while(RxFifoEmpty()) ;
+        return pio.RXF[sm_index];
     }
 
     // Set the WRAP addresses. Parameters are relative to

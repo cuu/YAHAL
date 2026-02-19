@@ -25,11 +25,11 @@ using namespace _RESETS_;
 // The three PIO instances
 pio_rp2350 pio_rp2350::pio0(PIO0, 0);
 pio_rp2350 pio_rp2350::pio1(PIO1, 1);
-pio_rp2350 pio_rp2350::pio2(PIO2, 1);
+pio_rp2350 pio_rp2350::pio2(PIO2, 2);
 
-function<void()> pio_rp2350::_handler_pio0[12] = { nullptr };
-function<void()> pio_rp2350::_handler_pio1[12] = { nullptr };
-function<void()> pio_rp2350::_handler_pio2[12] = { nullptr };
+function<void()> pio_rp2350::_handler_pio0[16] = { nullptr };
+function<void()> pio_rp2350::_handler_pio1[16] = { nullptr };
+function<void()> pio_rp2350::_handler_pio2[16] = { nullptr };
 
 void SM_regs::init() {
     // Initialize SM registers with reset values;
@@ -60,7 +60,7 @@ void SM::setRegister(out_dest_t reg, uint32_t val,
     }
     // Write value to TX Fifo first.
     // Then pull it and write it to destination.
-    writeTxFifo(val);
+    pio.TXF[sm_index] = val;
     execute( op_PULL(0, 0)      );
     execute( op_OUT (0, reg, 0) );
     // Restore original state
@@ -72,15 +72,23 @@ void SM::setRegister(out_dest_t reg, uint32_t val,
 void SM::setClock(uint32_t hz) {
     regs.SM_CLKDIV.INT  =   CLK_SYS / hz;
     uint64_t frac       = ((CLK_SYS % hz) << 8);
+    //frac               += hz/2;
     frac               /= hz;
     regs.SM_CLKDIV.FRAC = frac;
 }
 
 void SM::attachIrq(const function<void()>& handler) const {
-    if (pio_index)
-        pio_rp2350::_handler_pio1[sm_index + 8] = handler;
-    else
-        pio_rp2350::_handler_pio0[sm_index + 8] = handler;
+    switch(pio_index) {
+        case 0:
+            pio_rp2350::_handler_pio0[sm_index + 8] = handler;
+            break;
+        case 1:
+            pio_rp2350::_handler_pio1[sm_index + 8] = handler;
+            break;
+        case 2:
+            pio_rp2350::_handler_pio2[sm_index + 8] = handler;
+            break;
+    }
 }
 
 void SM::enableIrq() {

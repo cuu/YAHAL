@@ -34,7 +34,7 @@ public:
         // create a new element and store task pointer
         stop_list_elem elem;
         elem._task = task::currentTask();
-        // store element so we can resume the task afterwards
+        // store element so we can resume the task later
         _stop_list_mutex.lock();
         _stop_list.push_back(&elem);
         _stop_list_mutex.unlock();

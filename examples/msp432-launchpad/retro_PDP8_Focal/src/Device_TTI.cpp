@@ -13,7 +13,7 @@
 //
 
 #undef PC
-#include "yahal_assert.h"
+#include <cassert>
 
 #include "Device_TTI.h"
 #include "CPU.h"
@@ -83,7 +83,7 @@ void Device_TTI::processPulse(unsigned int pulse, CPU & cpu) {
         break;
     }
     default:
-        yahal_assert(0);
+        assert(false);
         break;
     }
 

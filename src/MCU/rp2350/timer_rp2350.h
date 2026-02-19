@@ -51,6 +51,8 @@ public:
 
     void reset() override;
 
+    inline uint8_t getIndex() { return _index; }
+
     // IRQ handlers are our best friends
     friend void TIMER0_IRQ_0_Handler(void);
     friend void TIMER0_IRQ_1_Handler(void);

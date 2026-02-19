@@ -2,16 +2,17 @@
 #ifndef _FIFO_H_
 #define _FIFO_H_
 
-#include "yahal_assert.h"
+#include <cassert>
+#include <cstddef>
 
 template<typename T>
 class FIFO {
 public:
-    FIFO(int size)
+    FIFO(size_t size)
     : _buffer_size(size), _buffer(new T[_buffer_size]),
       _need_wrap(_buffer + _buffer_size), _get_ptr(_buffer), _put_ptr(_buffer)
     {
-        yahal_assert( _buffer != nullptr);
+        assert( _buffer != nullptr);
     }
 
     ~FIFO() {
@@ -45,7 +46,7 @@ public:
         return true;
     }
 
-    int available_get() volatile {
+    size_t available_get() volatile {
         int res = _put_ptr - _get_ptr;
         if (res < 0) {
             res += _buffer_size;
@@ -53,7 +54,7 @@ public:
         return res;
     }
 
-    int available_put() volatile {
+    size_t available_put() volatile {
         return _buffer_size - available_get() - 1;
     }
 
@@ -64,7 +65,7 @@ public:
 
 private:
 
-    int _buffer_size;
+    size_t _buffer_size;
     T * _buffer;
     T * _need_wrap;
     T * _get_ptr;

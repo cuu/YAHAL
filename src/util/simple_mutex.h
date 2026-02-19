@@ -5,7 +5,6 @@
 #define _SIMPLE_MUTEX_H_
 
 #include "mutex_interface.h"
-#include "yahal_assert.h"
 
 class simple_mutex : public mutex_interface {
 public:
@@ -32,7 +31,6 @@ public:
     }
 
 private:
-
     bool _lock;
 };
 

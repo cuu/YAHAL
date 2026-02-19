@@ -1,4 +1,19 @@
-//#include "board.h"
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+//
+//
+#include "board.h"
 
 #include "usb_dcd.h"
 #include "usb_device_controller.h"
@@ -8,20 +23,13 @@
 #include "posix_io.h"
 #include "uart_rp2350.h"
 #include "gpio_rp2350.h"
-#include "pio_rp2350.h"
 #include "timer_rp2350.h"
-
 #include "task.h"
-#include "mutex.h"
-#include "lock_base_rp2350.h"
-#include <cstdio>
-#include <cstring>
 
-#include "mfm.pio.h"
+#include <cstdio>
 
 #include "floppy_mfm_reader.h"
 #include "floppy_logger.h"
-
 #include "floppy_drv.h"
 
 using namespace _TIMER0_;
@@ -34,67 +42,39 @@ int main() {
     posix_io::inst.register_stdout(uart);
     posix_io::inst.register_stderr(uart);
 
-    // Floppy adapter GPIOs
-    gpio_rp2350 index           (20);
-    gpio_rp2350 drive_select    (18);
-    gpio_rp2350 motor_on        (17);
-    gpio_rp2350 direction_select(11);
-    gpio_rp2350 step            (16);
-    gpio_rp2350 write_data      (12);
-    gpio_rp2350 write_gate      (15);
-    gpio_rp2350 track_00        (13);
-    gpio_rp2350 write_protect   (10);
-    gpio_rp2350 read_data       (14);
-    gpio_rp2350 side_one_select (2);
-    gpio_rp2350 disk_change     (1);
-
-    timer_rp2350 motor_timer;
+    // Set up LED
+    gpio_rp2350 led(LED_RED_GPIO);
+    led.gpioMode(GPIO::OUTPUT);
 
     floppy_pins pin_config = {
-            .index              = index,
-            .drive_select       = drive_select,
-            .motor_on           = motor_on,
-            .direction_select   = direction_select,
-            .step               = step,
-            .write_data         = write_data,
-            .write_gate         = write_gate,
-            .track_00           = track_00,
-            .write_protect      = write_protect,
-            .read_data          = read_data,
-            .side_one_select    = side_one_select,
-            .disk_change        = disk_change
+        .index              = 20,   .drive_select       = 18,
+        .motor_on           = 17,   .direction_select   = 11,
+        .step               = 16,   .write_data         = 12,
+        .write_gate         = 15,   .track_00           = 13,
+        .write_protect      = 10,   .read_data          = 14,
+        .side_one_select    = 2,    .disk_change        = 1
     };
-
-    LOG_LEVEL(FLOPPY::LOG_INFO);
+    timer_rp2350 motor_timer;
 
     // The Floppy driver
-    uint8_t * data;
-    ret_t res;
-
+    LOG_LEVEL(FLOPPY::LOG_INFO);
     floppy_drv fd(pin_config, FLOPPY::TEAC_FD_235HF, motor_timer);
+    fd.init();
 
-    res = fd.init();
-    printf("Code %d, Field %d\n", res.code, res.field);
-    floppy_statistics::inst().reset();
-
-    for (int track=0; track < 10; ++track) {
-        printf("track %d: ", track);
-        for(int head=0; head <= fd.format->double_sided; ++head) {
-            printf(" head %d: ", head);
-            for(int sector=1; sector <= fd.format->sectors_per_track; ++sector) {
-                res = fd.read_sector(track,head,sector, data);
-                if (res == RET_CODE::SUCCESS) printf(".");
-                else printf("Code %d, Field %d\n", res.code, res.field);
-            }
-        }
-        puts("");
-    }
-    puts("");
-    printf("Code %d, Field %d\n", res.code, res.field);
-
-    floppy_statistics::inst().show();
-
-    while(true) { __WFE(); }
+//    auto foo = fd.read_sector(0, 1, 1);
+//    for(int t=0; t < fd.format->number_of_tracks; ++t) {
+//        for(int h=0; h < fd.format->number_of_heads; ++h) {
+//            for(int s=1; s <= fd.format->sectors_per_track; ++s) {
+//                ret_t r = fd.read_sector(t, h, s);
+//                if (r != RET_CODE::SUCCESS)
+//                    printf("%d %d %d -> %s\n", t, h, s, r.to_str());
+//            }
+//        }
+//    }
+//
+//    floppy_statistics::inst().show();
+//
+//    exit(0);
 
 
     // Switch on USB logging
@@ -143,18 +123,19 @@ int main() {
     msc_device.capacity_handler = [&](uint16_t &block_size,
                                       uint32_t &block_count) {
         block_size  = 512;
-        block_count = 8192 * 2; //sd.getBlockCount();
+        block_count = fd.getBlockCount();
     };
     msc_device.read_handler = [&](uint8_t *buff, uint32_t block) {
-//        memcpy(buff, psram + (block << 9), 512);
-//        auto res = sd.readBlock(buff, block, 1);
-//        if (res != BLOCKIO::result_t::OK) {
-//            TUPP_LOG(LOG_ERROR, "Reading SD card failed (%d)", res);
-//        }
-//        read_active = true;
+        auto res = fd.readBlock(buff, block, 1);
+        if (res != BLOCKIO::result_t::OK) {
+            TUPP_LOG(::LOG_ERROR, "Reading SD card failed (%d)", res);
+            return BLOCKIO::result_t::ERROR;
+        }
         return BLOCKIO::result_t::OK;
     };
     msc_device.write_handler = [&](uint8_t *buff, uint32_t block) {
+        (void)(buff);
+        (void)(block);
 //        memcpy(psram + (block << 9), buff, 512);
 //        auto res = sd.writeBlock(buff, block, 1);
 //        if (res != BLOCKIO::result_t::OK) {
@@ -166,12 +147,16 @@ int main() {
     msc_device.is_writeable_handler = [&]() {
         return true;
     };
-    msc_device.start_stop_handler = [&](bool start, bool load_eject) {
-        if (load_eject && !start) {
+    msc_device.start_stop_handler = [&](uint8_t power_condition, bool start, bool load_eject) {
+        (void)(power_condition);
+        (void)(start);
+        (void)(load_eject);
+//        if (load_eject && !start) {
 //            driver.pullup_enable(false);
-        }
+//        }
     };
     msc_device.remove_handler = [&](bool prevent_removal) {
+        (void)(prevent_removal);
 //        led_rem = prevent_removal;
     };
 
@@ -188,7 +173,7 @@ int main() {
     task msc_worker([&]() {
         while(true) msc_device.handle_request();
     }, "MSC worker");
-    msc_worker.start();
+    msc_worker.sign_up();
 
     // The second task resets the LEDs to off. Since this task has
     // the same priority as the first task, it will get runtime, but
@@ -200,6 +185,8 @@ int main() {
 //            write_active= false;
             // Sleep, and during this sleep the variables above
             // might be set again...
+            led.gpioToggle();
+
             task::sleep_ms(200);
             // Check if the LEDs reflect the needed state.
             // Change the state if needed, and wait a little
@@ -214,7 +201,7 @@ int main() {
 //            }
         }
     }, "LED reset");
-//    led_reset.start();
+    led_reset.sign_up();
 
     task::start_scheduler();
 }

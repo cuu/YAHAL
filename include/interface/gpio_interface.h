@@ -59,6 +59,7 @@ typedef uint16_t gpio_irq_t;
 namespace GPIO {
 
 // basic gpio modes
+const gpio_mode_t  NONE               = 0x0000;
 const gpio_mode_t  INPUT              = 0x0001;
 const gpio_mode_t  OUTPUT             = 0x0002;
 const gpio_mode_t  OUTPUT_OPEN_DRAIN  = 0x0004;

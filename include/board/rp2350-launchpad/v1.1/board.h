@@ -18,6 +18,8 @@
 #ifndef RP2350_LAUNCHPAD_BOARD_H
 #define RP2350_LAUNCHPAD_BOARD_H
 
+#define YAHAL_BOARD_RP2350_LAUNCHPAD
+
 #define PSRAM_CS_GPIO   0
 
 #define BC_UART_TX      26
@@ -30,6 +32,8 @@
 #define LED_RGB_GPIO    39
 #define LED_RGB_COUNT   8
 
+#define BATT_ADC        7
+
 // Use PSRAM without copying code/data or zeroing
 #define PSRAM __attribute__((section(".ps_noload")))
 
@@ -38,5 +42,11 @@
 
 // Use PSRAM and copy code/data
 #define PSRAM_LOAD __attribute__((section(".ps_data")))
+
+// Generic defines
+#define COPY_TO_RAM     __attribute__((section(".move_to_ram")))
+#define NO_INLINE       __attribute__((__noinline__))
+#define FORCE_INLINE    __attribute__((always_inline))
+#define CONSTRUCTOR     __attribute__((constructor))
 
 #endif // RP2350_LAUNCHPAD_BOARD_H

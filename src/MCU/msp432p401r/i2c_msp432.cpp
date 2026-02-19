@@ -5,8 +5,8 @@
  *      Author: Andreas Terstegge
  */
 
+#include <cassert>
 #include "i2c_msp432.h"
-#include "yahal_assert.h"
 
 // If existing, use the global SubsystemMasterClock. If not, use our own
 // copy of the SystemCoreClock, assuming that MCLK equals SMCLK ...
@@ -32,7 +32,7 @@ i2c_msp432::i2c_msp432(EUSCI_B_Type *mod, uint16_t mode)
         _sda.setGpio (PORT_PIN(10, 2));
         _scl.setGpio (PORT_PIN(10, 3));
     }
-    else yahal_assert(false);
+    else assert(false);
 }
 
 

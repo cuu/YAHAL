@@ -19,11 +19,12 @@
                 .syntax unified                 @ use unified assembler syntax
                 .thumb                          @ generate thumb machine code
                 .text                           @ put the following code in the text (code) section
+                .type main, function
 
                 .func
 gpio_init:      ldr         r1, PAD_CTRL38      @ load r1 with the address of GPIO38 pad control register
                 mov         r2, 0
-                str         r2,[r1]             @ disable pullup/pulldown resistors and reset ISO
+                str         r2, [r1]            @ disable pullup/pulldown resistors and reset ISO
 
                 ldr         r1, GPIO38_CTRL     @ load r1 with the address of the GPIO38_CTRL register
                 mov         r2, 5               @ 5 is SIO mode
@@ -35,6 +36,7 @@ gpio_init:      ldr         r1, PAD_CTRL38      @ load r1 with the address of GP
                                                 @ We have to subtract 32 from the shift value
                                                 @ because GPIO_HI_* registers handle GPIOs 32-47
                                                 @ in their lower 16 bits!
+
                 str         r2, [r1]            @ Enable GPIO 38 for output
                 bx          lr                  @ return from subroutine
                 .endfunc
@@ -81,13 +83,13 @@ COUNTER:        .word   500 * 66500
                 .equ    PAD_CTRL_PD_ENABLE, 2
                 .equ    PAD_CTRL_PU_ENABLE, 3
                 .equ    PAD_CTRL_ISO, 8
-                #define PAD_CTRL(x) (PADS_BANK0_BASE + (x << 2) + 4)
+                #define PAD_CTRL(x) (PADS_BANK0_BASE + (x*4) + 4)
 PAD_CTRL38:     .word   PAD_CTRL(38)
 
                 @ IO BANK0 Registers
                 .equ    IO_BANK0_BASE,   PERI_REGION + 0x28000
-                #define GPIO_STATUS(x)  (IO_BANK0_BASE + (x << 3))
-                #define GPIO_CTRL(x)    (IO_BANK0_BASE + (x << 3) + 4)
+                #define GPIO_STATUS(x)  (IO_BANK0_BASE + (x*8))
+                #define GPIO_CTRL(x)    (IO_BANK0_BASE + (x*8) + 4)
 GPIO38_STATUS:  .word   GPIO_STATUS(38)
 GPIO38_CTRL:    .word   GPIO_CTRL(38)
 

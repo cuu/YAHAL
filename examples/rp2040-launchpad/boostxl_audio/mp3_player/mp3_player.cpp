@@ -37,14 +37,14 @@ int main(void)
     posix_io::inst.register_stdout(uart);
     posix_io::inst.register_stderr(uart);
 
-    // Start Main task as privileged task, because
+    // Sign up the Main task as privileged task, because
     // it has to initialize the PIO stuff...
     main_task Main;
-    Main.start(50, true);
+    Main.sign_up(core_t::CURRENT_CORE, 50, true);
 
     // Start the Task monitor
     task_monitor monitor;
-    monitor.start();
+    monitor.sign_up();
 
     // Start the multitasking
     task::start_scheduler();

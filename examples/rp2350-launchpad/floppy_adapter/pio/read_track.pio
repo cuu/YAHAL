@@ -1,0 +1,99 @@
+;
+; Copyright (c) 2025 A. Terstegge
+;
+; Read the flux data from a floppy track.
+;
+; Hardware configuration:
+;   The JMP_PIN is mapped to the READ_DATA pin of the floppy disk drive.
+;
+; Functional description:
+;   This PIO program should be started after the C++-program has detected
+;   the falling edge of the INDEX pin. This logic is not implemented in the
+;   PIO program, because it might be that there is no floppy disk in the
+;   drive and therefore not INDEX pulse is detected. Implementing a timeout
+;   in the PIO program is more difficult than in the C++ program.
+;   After detecting the first falling edge of the READ_DATA signal, (loop
+;   with label wait_first), the program will measure the distances of the
+;   falling edges of the READ_DATA signal. This is done by first measuring
+;   the LOW-duration and afterwards the HIGH-duration until the process is
+;   started from the beginning. The measured values are bytes, which are
+;   counted down from their maximal value 255 (PIO has no instruction to
+;   increment the X or Y register). To have counter values starting from 0,
+;   the measured values are bit-complemented before they are put into the
+;   input shift register. The  input shift register is shifted to right,
+;   so that the 32-bit values in the FIFO can be directly stored into the
+;   RP2xxx memory as uint8_t values in the correct order (the first measured
+;   byte will be the LSB of the 32 bit value, which has the lowest memory
+;   address). We do not use the RXNEmpty interrupt here, because there is no
+;   way to specify the FIFO level when an interrupt is generated. Instead we
+;   'manually' generate the interrupt based on the 'mov x, STATUS'-value.
+;   Here we check if the RX FIFO has 6 stored values. In this case an IRQ
+;   is generated, which will happen every 48us (approx.).
+;
+
+            .program read_track
+
+            ; Set the counter to maximal value
+            ; and wait for first READ_DATA pulse
+            mov     y, !NULL
+wait_first: jmp     pin, wait_first
+
+            ; Measure time of the LOW state
+count_low:  jmp     pin, count_high
+            jmp     y-- count_low
+
+            ; Measure time of HIGH state
+count_high: jmp     y-- count
+count:      jmp     pin, count_high
+
+            ; We found a new pulse: Report the last counter
+            ; value and reset it to maximal value
+            mov     y, ~y
+            in      y, 8
+            mov     y, !NULL
+
+            ; Generate IRQ if RX FIFO has 6 entries
+            ; (6*4 = 24 flux pulses -> approx. 48 us)
+            mov     x, STATUS
+            jmp     !x, send_irq
+            jmp     again
+send_irq:   irq     0 rel
+
+            ; Repeat measurements
+again:      jmp     count_low
+
+% yahal {
+
+// SM running at 50000000, which will make sure that also
+// double density floppys (250kHz data rate) will have a
+// reported value less than 255 (so uint8_t still fits).
+#define PIO_READ_CLK 50000000
+
+// Calculate the number of PIO SM cycles per reported 'count'.
+// The high/low counting loops have 2 instructions per iteration, plus 8
+// instructions for storing the value and checking for irq generation.
+#define CYCLES_PER_COUNT(count)  (((count)  * 2) + 8)
+
+// Vice versa as above. Put in the PIO SM cycles, and get back the
+// reported counter value.
+#define COUNT_PER_CYCLES(cycles) (((cycles) - 8) / 2)
+
+void configure_read_SM(SM * sm, uint8_t read_data_pin) {
+    // Set SM clock rate
+    sm->setClock(PIO_READ_CLK);
+
+    // Set the wrap values
+    sm->setWrap(read_track_wrap_target, read_track_wrap);
+
+    // Configure the ISR
+    sm->regs.SM_SHIFTCTRL.PUSH_THRESH = 32; // push 32 bit values to FIFO
+    sm->regs.SM_SHIFTCTRL.IN_SHIFTDIR = 1;  // shift right
+    sm->regs.SM_SHIFTCTRL.AUTOPUSH    = 1;  // push automatically
+    sm->regs.SM_SHIFTCTRL.FJOIN_RX    = 1;
+
+    // Configure JMP pin and STATUS
+    sm->regs.SM_EXECCTRL.JMP_PIN    = read_data_pin;
+    sm->regs.SM_EXECCTRL.STATUS_SEL = SM_EXECCTRL_STATUS_SEL__RXLEVEL;
+    sm->regs.SM_EXECCTRL.STATUS_N   = 6;
+}
+%}

@@ -21,7 +21,7 @@ int main() {
     posix_io::inst.register_stderr(uart);
 
     // ESP8266 UART
-    uart_rp2040     uart_esp( 1, 20, 21, 115200 );
+    uart_rp2040 uart_esp( 20, 21, 115200 );
 
     gpio_rp2040_pin button_s1( 16 );
     gpio_rp2040_pin button_s2( 17 );

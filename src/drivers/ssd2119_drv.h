@@ -44,7 +44,7 @@ public:
                 config          & lcd,
                 mutex_interface * mutex = nullptr);
 
-    virtual ~ssd2119_drv();
+    ~ssd2119_drv() override;
 
     uint16_t getSizeX() override;
     uint16_t getSizeY() override;

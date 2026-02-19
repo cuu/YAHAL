@@ -169,6 +169,6 @@ SECTIONS
     /* Higher stack limits */
     __StackXTop = ORIGIN(SCRATCH_X) + LENGTH(SCRATCH_X);
     __StackYTop = ORIGIN(SCRATCH_Y) + LENGTH(SCRATCH_Y);
-    __StackTop  = __StackYTop;
+    __StackTop  = __StackLimit;
     PROVIDE(__stack = __StackTop);
 }

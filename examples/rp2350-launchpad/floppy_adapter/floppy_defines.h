@@ -27,21 +27,21 @@ typedef std::array<uint8_t, 4> MARK_TYPE;
 
 namespace FLOPPY {
 
-    // A struct containing all gpio (interfaces)
-    // which we need to connect to the floppy drive
+    // A struct containing all gpio pins which
+    // we need to connect to the floppy drive
     struct floppy_pins {
-        gpio_interface & index;
-        gpio_interface & drive_select;
-        gpio_interface & motor_on;
-        gpio_interface & direction_select;
-        gpio_interface & step;
-        gpio_interface & write_data;
-        gpio_interface & write_gate;
-        gpio_interface & track_00;
-        gpio_interface & write_protect;
-        gpio_interface & read_data;
-        gpio_interface & side_one_select;
-        gpio_interface & disk_change;
+        gpio_pin_t index;
+        gpio_pin_t drive_select;
+        gpio_pin_t motor_on;
+        gpio_pin_t direction_select;
+        gpio_pin_t step;
+        gpio_pin_t write_data;
+        gpio_pin_t write_gate;
+        gpio_pin_t track_00;
+        gpio_pin_t write_protect;
+        gpio_pin_t read_data;
+        gpio_pin_t side_one_select;
+        gpio_pin_t disk_change;
     };
 
     // Size enum for floppy drives and floppy disks
@@ -75,7 +75,7 @@ namespace FLOPPY {
         FLOPPY_SIZE     floppy_size;
         uint16_t        data_rate_kHz;
         uint16_t        number_of_tracks;
-        bool            double_sided;
+        uint16_t        number_of_heads;
         uint16_t        sector_size;
         uint16_t        sectors_per_track;
         // MFM format details
@@ -96,11 +96,12 @@ namespace FLOPPY {
         uint8_t     head;
         uint8_t     sector;
         uint8_t     sector_size;
-        uint16_t    crc_id;
+        uint8_t     crc_msb;
+        uint8_t     crc_lsb;
     };
 
     // List of all available floppy disk drive definitions
-    extern floppy_drive  TEAC_FD_235HF;
+    extern floppy_drive     TEAC_FD_235HF;
 
     // List of all available floppy disk formats
     extern floppy_format    IBM_1440_kB;

@@ -47,7 +47,7 @@ const char *ssid     = APSSID;
 const char *password = APPSK;
 
 ESP8266WebServer server(80);
-gpio_esp8266_pin led(2);
+gpio_esp8266 led(2);
 
 /* Just a little test message.  Go to http://192.168.4.1 in a web browser
    connected to this access point to see it.

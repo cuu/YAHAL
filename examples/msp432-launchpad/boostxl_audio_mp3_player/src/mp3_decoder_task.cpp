@@ -11,7 +11,7 @@
 //
 // ---------------------------------------------
 //
-
+#include <cassert>
 #include <mp3_decoder_task.h>
 #include <memory.h>
 
@@ -89,7 +89,7 @@ enum mad_flow mp3_decoder_task::input(void *data, struct mad_stream *stream) {
 
     if (res) {
         // Read error.
-        yahal_assert( false );
+        assert( false );
         return MAD_FLOW_STOP;
     } else if (sd.eof()) {
         // End of file. Append MAD_BUFFER_GUARD zero bytes to make

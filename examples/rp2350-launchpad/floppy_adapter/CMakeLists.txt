@@ -30,9 +30,12 @@ yahal_add_custom_targets(floppy_adapter)
 yahal_add_extra_outputs(floppy_adapter)
 
 # generate PIO header files
-generate_pio_header(
-        floppy_adapter
-        ${CMAKE_CURRENT_LIST_DIR}/pio/mfm.pio
+generate_pio_header(floppy_adapter
+        ${CMAKE_CURRENT_LIST_DIR}/pio/read_track.pio
+        OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
+
+generate_pio_header(floppy_adapter
+        ${CMAKE_CURRENT_LIST_DIR}/pio/write_track.pio
         OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
 
 target_compile_options(YAHAL_floppy_adapter

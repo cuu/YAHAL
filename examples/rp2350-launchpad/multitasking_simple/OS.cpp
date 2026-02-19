@@ -98,7 +98,7 @@ void setup_stack(void(*func)(void), int stack_size, TCB *tcb ) {
 
 // This method allocates a new TCB, allocates a
 // new stack area and sets the stack pointer values
-// (see above). Finally it links in the TCB in the
+// (see above). Finally, it links in the TCB in the
 // linked list so it is executed by the scheduler.
 // During modifications of the linked list, the
 // interrupts are disabled so the process is not

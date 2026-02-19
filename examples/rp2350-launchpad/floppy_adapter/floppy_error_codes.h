@@ -11,8 +11,8 @@
 //
 // ---------------------------------------------
 //
-#ifndef FLOPPY_ERRORS_CODES_H
-#define FLOPPY_ERRORS_CODES_H
+#ifndef FLOPPY_ERROR_CODES_H
+#define FLOPPY_ERROR_CODES_H
 
 #include <cstdint>
 #include <cstdio>
@@ -36,31 +36,41 @@ namespace FLOPPY {
         WRONG_ADDRESS_MARK  = -2,
         NO_DISK             = -200,
         UNSUPPORTED_FORMAT  = -201,
-        SECTOR_NOT_FOUND    = -202
+        SECTOR_NOT_FOUND    = -202,
+        DATA_CRC_ERROR      = -203,
+        IDAM_CRC_ERROR      = -204
     };
 
     // Convert an error code to a C-string
     const char * code_to_str(RET_CODE c);
 
     struct ret_t {
-        ret_t(RET_CODE c, FIELD f = FIELD::NONE) : code(c), field(f) {}
-        ret_t() : ret_t(RET_CODE::SUCCESS) {};
-        RET_CODE code;
-        FIELD    field;
-        bool operator == (RET_CODE r) { return code == r; }
-        bool operator != (RET_CODE r) { return !(*this == r); }
+        ret_t(RET_CODE c) : code(c), field(FIELD::NONE), data_ptr(nullptr) {}
+        ret_t(RET_CODE c, FIELD f) : code(c), field(f), data_ptr(nullptr) {}
+        ret_t(RET_CODE c, uint8_t *p) : code(c), field(FIELD::NONE), data_ptr(p) {}
+        ret_t() : ret_t(RET_CODE::SUCCESS, FIELD::NONE) {};
 
-        const char * to_str() {
+        RET_CODE    code;
+        FIELD       field;
+        uint8_t *   data_ptr;
+
+        bool operator == (RET_CODE r) const { return code == r; }
+        bool operator != (RET_CODE r) const { return !(*this == r); }
+
+        const char * to_str() const {
             static char buffer[100];
-            if (field == FIELD::NONE) {
-                return code_to_str(code);
-            } else {
+            if (field != FIELD::NONE) {
                 sprintf(buffer, "%s (%s)", code_to_str(code), field_to_str(field));
                 return buffer;
+            } else if (data_ptr != nullptr) {
+                sprintf(buffer, "%s (%p)", code_to_str(code), data_ptr);
+                return code_to_str(code);
+            } else {
+                return code_to_str(code);
             }
         }
     };
 
 }
 
-#endif // FLOPPY_ERRORS_CODES_H
+#endif // FLOPPY_ERROR_CODES_H

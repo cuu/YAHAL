@@ -1,10 +1,10 @@
 /*******************************/
-/* YAHAL RPi pico Multi boot GCC linker script */
+/* RPi pico  GCC linker script */
 /*******************************/
 
 MEMORY
 {
-    FLASH(rx)      : ORIGIN = 0x10000000 + 200k, LENGTH = 2048k - 200k
+    FLASH(rx)      : ORIGIN = 0x10000000, LENGTH = 2048k
     RAM(rwx)       : ORIGIN = 0x20000000, LENGTH = 256k
     SCRATCH_X(rwx) : ORIGIN = 0x20040000, LENGTH = 4k
     SCRATCH_Y(rwx) : ORIGIN = 0x20041000, LENGTH = 4k
@@ -17,20 +17,34 @@ SECTIONS
     /***************************/
     /* Second stage bootloader */
     /***************************/
+    .boot2 : {
+        __boot2_start__ = .;
+        KEEP (*(.boot2))
+        __boot2_end__ = .;
+    } > FLASH
+
+    ASSERT(__boot2_end__ - __boot2_start__ == 256,
+        "ERROR: Pico second stage bootloader must be 256 bytes in size")
 
     /********/
     /* Code */
     /********/
     .text : {
+
         __image_load__  = LOADADDR(.text);
         __image_start__ = .;
 
+        /* We always begin with the ISR vector */
         __vector_start__ = .;
         KEEP (*(.isr_vector))
+
+        /* Align our reset code to start of flash + 256, */
+        /* followed by the boot blocks                   */
+        . = ALIGN(256);
+        KEEP (*(.reset))
         . = ALIGN(4);
         KEEP (*(.boot_blocks))
         . = ALIGN(4);
-        KEEP (*(.reset))
 
         *(.text.*)
 
@@ -164,6 +178,6 @@ SECTIONS
     /* Higher stack limits */
     __StackXTop = ORIGIN(SCRATCH_X) + LENGTH(SCRATCH_X);
     __StackYTop = ORIGIN(SCRATCH_Y) + LENGTH(SCRATCH_Y);
-    __StackTop  = __StackYTop;
+    __StackTop  = __StackLimit;
     PROVIDE(__stack = __StackTop);
 }

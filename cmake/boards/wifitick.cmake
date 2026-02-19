@@ -5,6 +5,7 @@
 message("Using board WiFiTick") 
 
 # set(ARDUINO_INSTALL_PATH "/usr/local/arduino-1.8.16")
+set(ARDUINO_BOARD_MANAGER_URL "https://arduino.esp8266.com/stable/package_esp8266com_index.json")
 set(ARDUINO_BOARD "Generic ESP8266 Module [esp8266.generic]")
 
 # Toolchain and MCU configuration

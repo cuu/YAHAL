@@ -38,9 +38,9 @@
 // the byte arrays needed for the SPI transmission.
 
 #include <cstdlib>
+#include <cassert>
 #include "gpio_msp432.h"
 #include "spi_msp432.h"
-#include "yahal_assert.h"
 #include "task.h"
 
 class WS2812 {
@@ -67,7 +67,7 @@ public:
     // Color is specified with one byte for R, G and B.
     void setRGB(int led, int r, int g, int b)
     {
-        yahal_assert(led < _size);
+        assert(led < _size);
         // SPI values for  '00'  '01'  '10'  '11'
         char values[] = { 0x88, 0x8e, 0xe8, 0xee };
         for (int i = 0; i < 4; ++i)

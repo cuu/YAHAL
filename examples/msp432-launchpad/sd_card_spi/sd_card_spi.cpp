@@ -15,6 +15,10 @@
 // as a file storage. The SD card has to be formatted
 // with a FAT-filesystem.
 
+#include <cstdio>
+#include <cassert>
+#include <cstring>
+
 #include "ff.h"
 #include "gpio_msp432.h"
 #include "posix_io.h"
@@ -22,11 +26,6 @@
 #include "spi_msp432.h"
 #include "uart_msp432.h"
 #include "yahal_String.h"
-#include "yahal_assert.h"
-
-#include <cstdio>
-#include <cassert>
-#include <cstring>
 
 // Hardware configuration.
 #define CS_PIN  PORT_PIN(10,0)
@@ -60,7 +59,7 @@ int main(void)
     // Mount the SD card. Using this command,
     // the SD-card is opened by the FatFs driver
     ////////////////////////////////////////////
-    yahal_assert(fs.mount() == FatFs::FR_OK);
+    assert(fs.mount() == FatFs::FR_OK);
     // Print out number of 512 Byte blocks on SD card
     printf("Block count: %ld\n", sd.getBlockCount());
 
@@ -77,7 +76,7 @@ int main(void)
     led = 1;
     // Open file for reading and writing
     FILE * f = fopen("test.dat", "w+");
-    yahal_assert(f != NULL);
+    assert(f != NULL);
     // Write numbers 0..99 to file
     for (int i=0; i < 100; ++i) {
         fprintf(f, "%d\n", i);
@@ -100,7 +99,7 @@ int main(void)
     fclose(f);
 
     // Unmount the SD card
-    yahal_assert(fs.umount() == FatFs::FR_OK);
+    assert(fs.umount() == FatFs::FR_OK);
 
     return 0;
 }

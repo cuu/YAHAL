@@ -5,13 +5,17 @@ set(YAHAL_BOARD "rp2350-launchpad")
 
 # Locate the YAHAL library folder
 include(YAHAL_import.cmake)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 
 project(multitasking_simple C CXX ASM)
 
 add_executable(multitasking_simple
     multitasking_simple.cpp
     OS.cpp
+)
+
+# Switch compiler optimizations off
+target_compile_options(multitasking_simple
+    PRIVATE -O0
 )
 
 # Add YAHAL to target

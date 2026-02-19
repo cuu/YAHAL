@@ -6,7 +6,6 @@
  */
 
 #include "timer_msp432.h"
-#include "yahal_assert.h"
 
 extern uint32_t SystemCoreClock;
 

@@ -12,7 +12,7 @@
 // ---------------------------------------------
 //
 
-#include "yahal_assert.h"
+#include <cassert>
 #include <cstring>
 #include "yahal_String.h"
 
@@ -80,12 +80,12 @@ String & String::operator = (String && s) {
 }
 
 const char & String::operator [] (uint16_t pos) const {
-    yahal_assert(pos < _len);
+    assert(pos < _len);
     return _ptr[pos];
 }
 
 char & String::operator [] (uint16_t pos) {
-    yahal_assert(pos < _len);
+    assert(pos < _len);
     return _ptr[pos];
 }
 

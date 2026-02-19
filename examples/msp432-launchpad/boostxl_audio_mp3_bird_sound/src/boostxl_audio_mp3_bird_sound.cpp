@@ -39,11 +39,11 @@ int main(void)
     // Start Main task as privileged task, because
     // it has to initialize the DMA stuff...
     main_task Main;
-    Main.start(50, true);
+    Main.sign_up(core_t::CORE_0, 50, true);
 
     // Start the Task monitor
     task_monitor monitor;
-    monitor.start();
+    monitor.sign_up();
 
     // Start the multitasking
     task::start_scheduler();

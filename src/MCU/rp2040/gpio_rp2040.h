@@ -1,10 +1,19 @@
-/*
- * gpio_rp2040.h
- *
- *  Created on: 29.02.2016
- *      Author: Andreas Terstegge
- */
-
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// GPIO driver for RP2040. Supports open-source and
+// open-drain modes as well as interrupts.
+//
 #ifndef _GPIO_RP2040_H_
 #define _GPIO_RP2040_H_
 
@@ -37,11 +46,11 @@ public:
         return *this;
     };
 
+    // Get and Set the GPIO number during runtime
     void setGpio(gpio_pin_t gpio) override;
     gpio_pin_t getGpio() const override;
 
     // Generic GPIO methods
-    ///////////////////////
     void gpioMode  (gpio_mode_t mode) override;
     bool gpioRead  () const override;
     void gpioWrite (bool value) override;
@@ -55,7 +64,6 @@ public:
     void gpioDisableIrq() override;
 
     // RP2040 specific methods
-    //////////////////////////
     void setSEL (uint8_t  sel);
     void setMode(gpio_mode_t mode);
 
@@ -63,7 +71,6 @@ public:
     using gpio_interface::operator bool;
 
     // IRQ handlers are our best friends
-    ////////////////////////////////////
     friend void IO_IRQ_BANK0_Handler(void);
 
 private:

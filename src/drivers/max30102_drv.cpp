@@ -71,7 +71,7 @@ namespace MAX30102 {
 }
 
 max30102_drv::max30102_drv(i2c_interface & i2c, uint8_t i2c_addr)
-: _i2c(i2c),  _i2c_addr(i2c_addr), _data{10,10,10,10},
+: _i2c(i2c),  _i2c_addr(i2c_addr), _data {10,10,10,10},
   _active_slots(0), _pulse_width(0) {
 }
 

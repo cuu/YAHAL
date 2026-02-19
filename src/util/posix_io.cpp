@@ -214,25 +214,31 @@ int _getpid(void) {
 
 }
 
-void posix_io::register_stdin(uart_interface & uart_in, bool echo) {
+void posix_io::register_stdin(uart_data_interface & uart_in, bool echo) {
     _uart_in    = &uart_in;
     _local_echo = echo;
     // line-buffering with 100 chars
     setvbuf(stdin, NULL, _IOLBF, 100);
 }
 
-void posix_io::register_stdout(uart_interface & uart_out, bool add_CR) {
+void posix_io::register_stdout(uart_data_interface & uart_out, bool add_CR) {
     _uart_out   = &uart_out;
     _add_CR_out = add_CR;
     // line-buffering with 100 chars
     setvbuf(stdout, NULL, _IOLBF, 100);
 }
 
-void posix_io::register_stderr(uart_interface & uart_out, bool add_CR) {
+void posix_io::register_stderr(uart_data_interface & uart_out, bool add_CR) {
     _uart_err   = &uart_out;
     _add_CR_err = add_CR;
     // line-buffering with 100 chars
     setvbuf(stderr, NULL, _IOLBF, 100);
+}
+
+void posix_io::register_stdio (uart_data_interface & uart, bool echo, bool add_CR) {
+    register_stdin(uart, echo);
+    register_stdout(uart, add_CR);
+    register_stderr(uart, add_CR);
 }
 
 void posix_io::register_fileio(posix_io_interface & file_io) {

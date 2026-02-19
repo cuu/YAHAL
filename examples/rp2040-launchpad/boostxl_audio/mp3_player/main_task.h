@@ -106,11 +106,11 @@ public:
             // Start the SD reader and decoder tasks
             // to play the song :)
             sd_reader.start(&_fs, &_file);
-            decoder.start();
+            decoder.sign_up();
 
             // Wait until file has been played. Check
             // for NEXT-button to skip to next file
-            while(sd_reader.isAlive() || decoder.isAlive()) {
+            while(sd_reader.isLinkedIn() || decoder.isLinkedIn()) {
                 if (_next.gpioRead() == LOW) {
                     // Stop playing the current title
                     sd_reader.force_eof();

@@ -39,6 +39,9 @@ public:
     void uartEnableIrq () override;
     void uartDisableIrq() override;
 
+    // FIFO control
+    void enableFIFO(bool) override;
+
     // The IRQ handlers are our friends :)
     friend void EUSCIA0_UART_IRQHandler(void);
     friend void EUSCIA1_UART_IRQHandler(void);

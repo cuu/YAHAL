@@ -51,7 +51,7 @@ int main(void)
 
     // Initialize the UART which is connected to the ESP8266
     // and handle all incoming chars via an interrupt routine
-    uart_rp2040 uart_esp(1, 20, 21, 115200);
+    uart_rp2040 uart_esp(20, 21, 115200);
 
     // Forward any chars from the ESP8266 UART to the back channel UART
     // so we can see the debug messages from the ESP8266!

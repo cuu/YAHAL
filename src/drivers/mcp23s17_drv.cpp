@@ -5,8 +5,8 @@
  *      Author: Andreas Terstegge
  */
 
+#include <cassert>
 #include "mcp23s17_drv.h"
-#include "yahal_assert.h"
 
 namespace MCP23S17 {
 // Chip register addresses
@@ -71,7 +71,7 @@ void mcp23s17_drv::gpioMode(uint16_t mode) {
             break;
         }
         default: {
-            yahal_assert(false);
+            assert(false);
         }
     }
 

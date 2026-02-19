@@ -102,16 +102,16 @@ bool uart_rp2350::available() {
 
 char uart_rp2350::getc() {
     if (!_init) init();
-    // Wait until the RX Buffer is filled....
-    while( (_uart->UARTFR.RXFE) != 0) ;
+    // Wait until the RX Buffer is not empty....
+    while(_uart->UARTFR.RXFE) ;
     // Transfer single char from RX buffer
     return _uart->UARTDR.DATA;
 }
 
 void uart_rp2350::putc(char c) {
     if (!_init) init();
-    // Wait until the TX FIFO is empty....
-    while( (_uart->UARTFR.TXFE) == 0) ;
+    // Wait until the TX FIFO is not full....
+    while(_uart->UARTFR.TXFF) ;
     // Transfer single char to TX buffer
     _uart->UARTDR.DATA = (uint16_t)c;
 }
@@ -127,7 +127,6 @@ int uart_rp2350::puts(const char *s) {
 
 void uart_rp2350::uartMode(uart_mode_t mode) {
     _mode = mode;
-
     if (mode & UART::BITS_7) {
         _uart->UARTLCR_H.WLEN = 2;
     }
@@ -214,6 +213,11 @@ void uart_rp2350::uartEnableIrq () {
 void uart_rp2350::uartDisableIrq() {
     _uart_clr->UARTIMSC.RXIM <<= 1;
     _uart_clr->UARTIMSC.RTIM <<= 1;
+}
+
+void uart_rp2350::enableFIFO(bool val) {
+    if (!_init) init();
+    _uart->UARTLCR_H.FEN = val;
 }
 
 // Interrupt handler for UART0/1

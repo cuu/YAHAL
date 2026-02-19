@@ -278,16 +278,16 @@ int main(void)
     gui.PutString(12, 115, "Temp :",   false);
 
     task_monitor monitor;
-    monitor.start();
+    monitor.sign_up();
 
     task_mic mic_task(gui);
-    mic_task.start();
+    mic_task.sign_up();
 
     task_joy joy_task(gui);
-    joy_task.start();
+    joy_task.sign_up();
 
     task_sensor sensor_task(gui);
-    sensor_task.start();
+    sensor_task.sign_up();
 
     // Start the multitasking kernel.
     task::start_scheduler();

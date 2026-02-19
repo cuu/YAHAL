@@ -1,11 +1,10 @@
+#include <cstring>
+#include <cassert>
 
 #include "uart_msp432.h"
 #include "gpio_msp432.h"
-#include "yahal_assert.h"
 #include "irq_dispatcher.h"
 #include "task.h"
-
-#include <string.h>
 #include "msp.h"
 
 // If existing, use the global SubsystemMasterClock. If not, use our own
@@ -30,7 +29,7 @@ void uart_msp432::init() {
     else if (_EUSCI==EUSCI_A1) { _port = 2; _rx_pin = 2; _tx_pin = 3; }
     else if (_EUSCI==EUSCI_A2) { _port = 3; _rx_pin = 2; _tx_pin = 3; }
     else if (_EUSCI==EUSCI_A3) { _port = 9; _rx_pin = 6; _tx_pin = 7; }
-    else yahal_assert(false);
+    else assert(false);
     gpio_msp432 rx_pin(PORT_PIN(_port,_rx_pin));
     gpio_msp432 tx_pin(PORT_PIN(_port,_tx_pin));
     rx_pin.setSEL(1);
@@ -165,11 +164,11 @@ void uart_msp432::sendBreak(uint16_t ms) {
 }
 
 void uart_msp432::setDTR(bool) {
-    yahal_assert(false && "Not implemented");
+    assert(false && "Not implemented");
 }
 
 void uart_msp432::setRTS(bool) {
-    yahal_assert(false && "Not implemented");
+    assert(false && "Not implemented");
 }
 
 void uart_msp432::uartAttachIrq(function<void(char)> f) {
@@ -194,6 +193,11 @@ void uart_msp432::uartEnableIrq () {
 
 void uart_msp432::uartDisableIrq() {
     _EUSCI->IE = 0;
+}
+
+void uart_msp432::enableFIFO(bool val) {
+    // no-op
+    (void)(val);
 }
 
 void uart_msp432::handleIrq(EUSCI_A_Type * uart) {

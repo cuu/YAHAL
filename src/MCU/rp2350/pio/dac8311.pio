@@ -33,7 +33,7 @@ bitloop:    out     pins, 1         side 1        ; Output a single bit on ..
 #include <cassert>
 
 // Method to set the PCM rate.
-void setRate(SM * pcm_sm, /*SM * timer_sm,*/ uint32_t Hz) {
+void setRate(SM * pcm_sm, uint32_t Hz) {
     static uint32_t last_Hz = 0;
     if (Hz != last_Hz) {
         pcm_sm->setRegister(out_dest_t::Y, SM_CLK/Hz - CYCLES_PER_SAMPLE);

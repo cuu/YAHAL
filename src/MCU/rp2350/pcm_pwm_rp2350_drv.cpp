@@ -124,16 +124,16 @@ pcm_pwm_rp2350_drv::pcm_pwm_rp2350_drv( gpio_pin_t mono )
         // Try to get next sample
         if (pcmFifoGet(pcm_value)) {
             // Add left and right channel for mono signal
-            uint32_t left  = (pcm_value.left + pcm_value.right) / 2;
+            uint32_t mono  = (pcm_value.left + pcm_value.right) / 2;
             // Convert the int16_t PCM values to uint16_t
-            left  += 32768;
+            mono += 32768;
             // Scale down the 16-bit PCM values to 11 bit
-            left  >>= 5;
+            mono >>= 5;
             // Set the PCM values as PWM counter compare (CC) values
             if (_left_is_pwm_b) {
-                _left_pwm_cc->B = left;
+                _left_pwm_cc->B = mono;
             } else {
-                _left_pwm_cc->A = left;
+                _left_pwm_cc->A = mono;
             }
         }
     });

@@ -27,6 +27,7 @@
 namespace FLOPPY {
 
     class floppy_mfm_reader {
+
         // The concrete states are our friend :)
         friend class STATE;
         friend class READ_GAP;
@@ -103,10 +104,10 @@ namespace FLOPPY {
             bool    two_bits;
             bool    even;
         } _decode_table[3][2] = {
-                //      ODD               EVEN
-                { { ONE_BIT,  ODD }, {ONE_BIT,  EVEN} }, // PULSE::S
-                { { ONE_BIT,  EVEN}, {TWO_BITS, ODD } }, // PULSE::M
-                { { TWO_BITS, ODD }, {TWO_BITS, EVEN} }  // PULSE::L
+            //      ODD               EVEN
+            { { ONE_BIT,  ODD }, {ONE_BIT,  EVEN} }, // PULSE::S
+            { { ONE_BIT,  EVEN}, {TWO_BITS, ODD } }, // PULSE::M
+            { { TWO_BITS, ODD }, {TWO_BITS, EVEN} }  // PULSE::L
         };
 
         // Decode a single MFM pulse

@@ -114,14 +114,14 @@ int main(void)
     // 'ready' to run. But the kernel is
     // not yet started, so no task code
     // is run after the two next lines!
-    t1.start();
-    t2.start();
+    t1.sign_up();
+    t2.sign_up();
 
     // Start the task monitor. When a terminal
     // is connected to /dev/ttyACM0, then the
     // task status can be seen!
     task_monitor monitor;
-    monitor.start();
+    monitor.sign_up();
 
     // Start the multitasking kernel.
     // This call is blocking (it will

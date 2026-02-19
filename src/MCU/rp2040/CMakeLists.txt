@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 3.16)
 
 target_sources(${YAHAL_TARGET} PRIVATE
         adc_rp2040.cpp
+        bootrom_rp2040.cpp
         dac8311_rp2040_drv.cpp
         gpio_rp2040.cpp
         i2c_rp2040.cpp
         lock_base_rp2040.cpp
+        max98357_rp2040_drv.cpp
+        multicore_rp2040.cpp
         pcm_pwm_rp2040_drv.cpp
         pio_rp2040.cpp
         spi_rp2040.cpp
@@ -29,6 +32,10 @@ generate_pio_header(
 generate_pio_header(
         ${YAHAL_TARGET}
         ${CMAKE_CURRENT_LIST_DIR}/pio/dac8311.pio
+        OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
+generate_pio_header(
+        ${YAHAL_TARGET}
+        ${CMAKE_CURRENT_LIST_DIR}/pio/max98357.pio
         OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
 
 add_subdirectory(wrappers)

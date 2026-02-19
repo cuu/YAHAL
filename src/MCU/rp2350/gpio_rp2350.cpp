@@ -15,7 +15,6 @@
 // open-drain modes as well as interrupts.
 //
 #include "gpio_rp2350.h"
-
 #include "RP2350.h"
 #include <cassert>
 
@@ -23,7 +22,7 @@
 // GPIO number is larger than 31. The register for the
 // 'higher' GPIOs (32 to 47) is usually at the following
 // address location.
-#define OFF32(x) (*(&x + (_gpio >> 5)))
+#define OFF32(x) (*(&x + _high_gpio))
 
 using namespace _SIO_;
 using namespace _IO_BANK0_;
@@ -33,14 +32,18 @@ function<void()> gpio_rp2350::_intHandler[48] {nullptr};
 uint8_t          gpio_rp2350::_irqConfig [48] {0};
 
 gpio_rp2350::gpio_rp2350(gpio_pin_t gpio) : _gpio(gpio) {
-    // Set GPIO mask
+    // Set GPIO mask and 'high' boolean
+    // The value gpio is not checked, because
+    // it might be 'not connected' (0xffff)
     _mask = 1 << (gpio % 32);
+    _high_gpio = (gpio > 31);
 }
 
 void gpio_rp2350::setGpio(gpio_pin_t gpio) {
     assert(gpio < 48);
     _gpio = gpio;
     _mask = 1 << (gpio % 32);
+    _high_gpio = (gpio > 31);
 }
 
 gpio_pin_t gpio_rp2350::getGpio() const {
@@ -49,8 +52,8 @@ gpio_pin_t gpio_rp2350::getGpio() const {
 
 void gpio_rp2350::gpioMode (uint16_t mode) {
     assert(_gpio < 48);
-    setSEL  (GPIO_CTRL_FUNCSEL__sio);
-    setMode (mode);
+    setSEL (GPIO_CTRL_FUNCSEL__sio);
+    setMode(mode);
 }
 
 bool gpio_rp2350::gpioRead () const {
@@ -98,7 +101,7 @@ void gpio_rp2350::gpioToggle() {
 }
 
 void gpio_rp2350::gpioAttachIrq (gpio_mode_t mode,
-                            function<void()> handler) {
+                                 function<void()> handler) {
     _irqConfig[_gpio] = 0;
     // configure irqs according to mode
     if (mode & GPIO::LEVEL_LOW) {
@@ -127,8 +130,8 @@ void gpio_rp2350::gpioDetachIrq () {
 }
 
 void gpio_rp2350::gpioEnableIrq() {
-    PROC0_INTE0_t *INTE_SET = &IO_BANK0_SET.PROC0_INTE0 + (_gpio >> 3);
-    PROC0_INTE0_t *INTE_CLR = &IO_BANK0_CLR.PROC0_INTE0 + (_gpio >> 3);
+    PROC0_INTE0_t *INTE_SET = &IO_BANK0_SET.PROC0_INTE0 + (_gpio >> 3) + (SIO.CPUID*18);
+    PROC0_INTE0_t *INTE_CLR = &IO_BANK0_CLR.PROC0_INTE0 + (_gpio >> 3) + (SIO.CPUID*18);
     INTR0_t       *INTR     = &IO_BANK0.INTR0           + (_gpio >> 3);
     int mask_shift = (_gpio & 0x7) * 4;
     // Switch off NVIC irq, so we get no
@@ -145,7 +148,7 @@ void gpio_rp2350::gpioEnableIrq() {
 }
 
 void gpio_rp2350::gpioDisableIrq() {
-    PROC0_INTE0_t *INTE_CLR = &IO_BANK0_CLR.PROC0_INTE0 + (_gpio >> 3);
+    PROC0_INTE0_t *INTE_CLR = &IO_BANK0_CLR.PROC0_INTE0 + (_gpio >> 3) + (SIO.CPUID*18);
     INTR0_t       *INTR     = &IO_BANK0.INTR0           + (_gpio >> 3);
     int mask_shift = (_gpio & 0x7) * 4;
     // Clear pending interrupts
@@ -182,7 +185,7 @@ void gpio_rp2350::setMode (uint16_t mode) {
     GPIO_t *PAD_CTRL = &PADS_BANK0.GPIO[_gpio];
     PAD_CTRL->ISO      = 0;
     PAD_CTRL->OD       = 0;
-    PAD_CTRL->IE       = 1; // 0 Bug E9
+    PAD_CTRL->IE       = 0;
     PAD_CTRL->DRIVE    = GPIO_DRIVE__2mA;
     PAD_CTRL->PUE      = 0;
     PAD_CTRL->PDE      = 0;
@@ -190,10 +193,12 @@ void gpio_rp2350::setMode (uint16_t mode) {
     PAD_CTRL->SLEWFAST = 0;
 
     if (mode & GPIO::INPUT) {
-        // Default is okay
+        // Enable input
+        PAD_CTRL->IE = 1;
     }
     if (mode & GPIO::INPUT_INVERT) {
-        // Default is NEARLY okay :)
+        // Enable input
+        PAD_CTRL->IE = 1;
         GPIO_CTRL_t *io_ctrl = &IO_BANK0.GPIO0_CTRL + (_gpio << 1);
         io_ctrl->INOVER = GPIO_CTRL_INOVER__INVERT;
     }
@@ -233,7 +238,7 @@ void gpio_rp2350::setMode (uint16_t mode) {
 extern "C" {
 
 void IO_IRQ_BANK0_Handler(void) {
-    PROC0_INTS0_t *INTS = &IO_BANK0.PROC0_INTS0;
+    PROC0_INTS0_t *INTS = &IO_BANK0.PROC0_INTS0 + (SIO.CPUID*18);
     INTR0_t       *INTR = &IO_BANK0.INTR0;
     for (int i = 0; i < 6; ++i, INTS++, INTR++) {
         while (uint8_t pos = __builtin_ffs(*INTS)) {

@@ -6,6 +6,8 @@ target_sources(${YAHAL_TARGET} PRIVATE
         gpio_rp2350.cpp
         i2c_rp2350.cpp
         lock_base_rp2350.cpp
+        max98357_rp2350_drv.cpp
+        multicore_rp2350.cpp
         pcm_pwm_rp2350_drv.cpp
         pio_rp2350.cpp
         spi_rp2350.cpp
@@ -29,6 +31,10 @@ generate_pio_header(
 generate_pio_header(
         ${YAHAL_TARGET}
         ${CMAKE_CURRENT_LIST_DIR}/pio/dac8311.pio
+        OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
+generate_pio_header(
+        ${YAHAL_TARGET}
+        ${CMAKE_CURRENT_LIST_DIR}/pio/max98357.pio
         OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/pio)
 
 target_include_directories(${YAHAL_TARGET} PUBLIC

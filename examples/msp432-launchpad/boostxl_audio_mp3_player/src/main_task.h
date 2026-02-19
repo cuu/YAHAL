@@ -37,6 +37,7 @@
 #ifndef _MAIN_TASK_H_
 #define _MAIN_TASK_H_
 
+#include <cassert>
 #include "gpio_msp432.h"
 #include "spi_msp432.h"
 #include "sd_spi_drv.h"
@@ -102,23 +103,23 @@ public:
         FatFs::FRESULT res = _fs.mount(_part.gpioRead() == LOW ? 2 : 0);
 
         // Find first MP3 file
-        yahal_assert(res == FatFs::FR_OK);
+        assert(res == FatFs::FR_OK);
         res = _fs.findfirst(&_dir, &_finfo, "", "*.mp3");
 
         // Loop over all MP3 files
         while(res == FatFs::FR_OK && _finfo.fname[0]) {
             // Open the MP3 file
             res = _fs.open (&_file, _finfo.fname, FA_OPEN_EXISTING | FA_READ);
-            yahal_assert(res == FatFs::FR_OK);
+            assert(res == FatFs::FR_OK);
 
             // Start the SD reader and decoder tasks
             // to play the song :)
             sd_reader.start(&_fs, &_file);
-            decoder.start();
+            decoder.sign_up();
 
             // Wait until file has been played. Check
             // for NEXT-button to skip to next file
-            while(sd_reader.isAlive() || decoder.isAlive()) {
+            while(sd_reader.isLinkedIn() || decoder.isLinkedIn()) {
                 if (_next.gpioRead() == LOW) {
                     // Stop playing the current title
                     sd_reader.force_eof();

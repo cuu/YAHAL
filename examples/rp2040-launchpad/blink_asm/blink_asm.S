@@ -19,6 +19,7 @@
                 .syntax unified                 @ use unified assembler syntax
                 .thumb                          @ generate thumb machine code
                 .text                           @ put the following code in the text (code) section
+                .type main, function
 
                 .func
 gpio_init:      ldr         r1, GPIO13_CTRL     @ load r1 with the word located at GPIO13_CTRL

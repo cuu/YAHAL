@@ -17,8 +17,8 @@
 // pass in a CS gpio pin, which might be used by
 // higher layers or automatically in this driver.
 
+#include <cassert>
 #include "spi_msp432.h"
-#include "yahal_assert.h"
 #include "irq_dispatcher.h"
 #include "msp.h"
 
@@ -66,7 +66,7 @@ spi_msp432::spi_msp432(EUSCI_A_SPI_Type *mod, gpio_interface & cs,
         _mosi.setGpio(PORT_PIN(9, 7));
         _irq = EUSCIA3_IRQn;
     }
-    else yahal_assert(false);
+    else assert(false);
 }
 
 spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_interface & cs,
@@ -101,7 +101,7 @@ spi_msp432::spi_msp432(EUSCI_B_SPI_Type *mod, gpio_interface & cs,
         _mosi.setGpio(PORT_PIN(10, 2));
         _irq = EUSCIB3_IRQn;
     }
-    else yahal_assert(false);
+    else assert(false);
 }
 
 spi_msp432::~spi_msp432() {

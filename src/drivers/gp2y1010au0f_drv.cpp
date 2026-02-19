@@ -6,7 +6,6 @@
  */
 
 #include "gp2y1010au0f_drv.h"
-#include "yahal_assert.h"
 
 gp2y1010au0f_drv::gp2y1010au0f_drv(adc_channel &adc,
                                    gpio_interface &led,

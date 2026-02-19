@@ -47,7 +47,7 @@ public:
         audio_output.start();
 
         // Start decoder tasks to play the MP3
-        decoder.start();
+        decoder.sign_up();
 
         // Wait until file has been played
         while(true) {

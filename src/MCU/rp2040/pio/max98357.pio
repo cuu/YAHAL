@@ -1,0 +1,95 @@
+;
+; Copyright (c) 2025 A. Terstegge
+;
+; This program generates I2S data (16 bits per sample)
+; for the MAX98357A class D amplifier. Left and right
+; channel are encoded into unsigned 32 bit integers
+; (upper 16 bits left channel, lower 16 bits right
+; channel), which are put into the TX FIFO by the
+; application. LRCLK and BCLK have to be synchronized,
+; so depending on the needed sample rate, the clock rate
+; of the state machine has to be adapted accordingly.
+; Each PCM bit takes 8 state machine cycles, so the
+; state machine clock can be calculated as
+;
+;   SM_CLOCK = SAMPLE_RATE * 32 * 8
+;
+; For a sample rate of 44.1 kHz, we get a SM clock rate
+; of 11.2896 MHz. The BCLK signal is generated with the
+; (only) sideset pin, and the LRCLK signal is generated
+; with the 'set pin' instruction. So all 3 needed signals
+; DIN, BCLK and LRCLK can be assigned to any GPIO pin
+; (they do not need to be consecutive)!
+
+.program max98357
+.side_set 1
+
+    mov     y, STATUS       side 0      ; Get TX FIFO status
+    jmp     !y, get_data_s  side 1
+    irq     0 rel           side 1      ; Request for more data...
+    jmp     get_data        side 1
+get_data_s:
+    nop                     side 1 [1]
+get_data:
+    pull    ifempty         side 1
+
+left_data:
+    out     pins, 1         side 0 [3]  ; Transmit 15 left channel bits
+    jmp     x-- left_data   side 1 [3]
+    set     pins, 1         side 0      ; Set LRCLK to right channel (HIGH)
+    out     pins, 1         side 0 [2]  ; Output LSB of left channel
+    set     x, 14           side 1 [3]  ; Load counter for 15 cycles
+
+right_data:
+    out     pins, 1         side 0 [3]  ; Transmit 15 right channel bits
+    jmp     x-- right_data  side 1 [3]
+    set     pins, 0         side 0      ; Set LRCLK to left channel (LOW)
+    out     pins, 1         side 0      ; Output LSB of right channel
+    set     x, 14           side 0      ; Load counter for 15 cycles
+
+
+% yahal {
+
+// Method to set the PCM rate.
+void setRate(SM * pcm_sm, uint32_t Hz) {
+    static uint32_t last_Hz = 0;
+    if (Hz != last_Hz) {
+        pcm_sm->setClock(Hz * 32 * 8);
+        last_Hz = Hz;
+    }
+}
+
+void configure_SM(SM * pcm_sm, uint8_t din_pin, uint8_t bclk_pin, uint8_t lrclk_pin) {
+    // Set the PINDIR register
+    pcm_sm->setRegister(out_dest_t::PINDIRS, 1, din_pin,   1);
+    pcm_sm->setRegister(out_dest_t::PINDIRS, 1, bclk_pin,  1);
+    pcm_sm->setRegister(out_dest_t::PINDIRS, 1, lrclk_pin, 1);
+
+    // Set default (CD standard) PCM rate
+    setRate(pcm_sm, 44100);
+
+    // Configure EXECCTRL register
+    pcm_sm->regs.SM_EXECCTRL.SIDE_EN     = 0;
+    pcm_sm->regs.SM_EXECCTRL.SIDE_PINDIR = 0;
+    pcm_sm->regs.SM_EXECCTRL.STATUS_SEL  = 0;   // TX FIFO level < N
+    pcm_sm->regs.SM_EXECCTRL.STATUS_N    = 3;
+
+    // Set the wrap values
+    pcm_sm->setWrap(max98357_wrap_target, max98357_wrap);
+
+    // Configure SHIFTCTRL register
+    pcm_sm->regs.SM_SHIFTCTRL.FJOIN_TX     = 1;
+    pcm_sm->regs.SM_SHIFTCTRL.PULL_THRESH  = 32;
+    pcm_sm->regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 0; // shift left
+    pcm_sm->regs.SM_SHIFTCTRL.AUTOPULL     = 0;
+
+    // Configure PINCTRL register
+    pcm_sm->regs.SM_PINCTRL.SIDESET_BASE  = bclk_pin;
+    pcm_sm->regs.SM_PINCTRL.SIDESET_COUNT = 1;
+    pcm_sm->regs.SM_PINCTRL.SET_BASE      = lrclk_pin;
+    pcm_sm->regs.SM_PINCTRL.SET_COUNT     = 1;
+    pcm_sm->regs.SM_PINCTRL.OUT_BASE      = din_pin;
+    pcm_sm->regs.SM_PINCTRL.OUT_COUNT     = 1;
+}
+
+%}

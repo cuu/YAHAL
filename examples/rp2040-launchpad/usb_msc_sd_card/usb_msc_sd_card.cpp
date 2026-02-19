@@ -124,7 +124,7 @@ int main() {
     task msc_worker([&]() {
         while(true) msc_device.handle_request();
     }, "MSC worker");
-    msc_worker.start();
+    msc_worker.sign_up();
 
     // The second task resets the LEDs to off. Since this task has
     // the same priority as the first task, it will get runtime, but
@@ -150,7 +150,7 @@ int main() {
             }
         }
     }, "LED reset");
-    led_reset.start();
+    led_reset.sign_up();
 
     task::start_scheduler();
 }

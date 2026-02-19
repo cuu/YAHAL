@@ -45,7 +45,9 @@ void soft_i2c_slave::set_callbacks(
 }
 
 void soft_i2c_slave::init() {
-    uint16_t mode = GPIO::OUTPUT_OPEN_DRAIN | GPIO::INIT_HIGH;
+    uint16_t mode = GPIO::INPUT |
+                    GPIO::OUTPUT_OPEN_DRAIN |
+                    GPIO::INIT_HIGH;
     if (_pullup) {
         mode |= GPIO::PULLUP;
     }

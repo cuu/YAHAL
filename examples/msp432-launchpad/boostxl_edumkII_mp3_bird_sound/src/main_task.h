@@ -38,15 +38,15 @@ public:
 
     void run() override {
 
-        audio_output     audio_output;
+        audio_output audio_output;
         decoder_task decoder(audio_output);
         audio_output.start();
 
         // Start decoder tasks to play the MP3
-        decoder.start();
+        decoder.sign_up();
 
         // Wait until file has been played
-        while(decoder.isAlive()) {
+        while(decoder.isLinkedIn()) {
             sleep_ms(200);
         }
     }

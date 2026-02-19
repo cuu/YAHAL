@@ -13,7 +13,6 @@
 //
 #include "RP2350.h"
 #include "adc_rp2350.h"
-#include "task.h"
 #include <cassert>
 
 using namespace _IO_BANK0_;
@@ -21,17 +20,18 @@ using namespace _RESETS_;
 adc_rp2350 adc_rp2350::inst;
 
 adc_rp2350::adc_rp2350() {
-    // Take SPI out of reset state
+    // Take ADC out of reset state
     RESETS_CLR.RESET.ADC <<= 1;
     while (!RESETS.RESET_DONE.ADC) ;
     // Enable the ADC
     _ADC_::ADC.CS.EN = 1;
     while (!_ADC_::ADC.CS.READY) ;
     // Prepare ADC inputs
-    for (int i=40; i <= 47; ++i) {
-        // Disable pull-resistors
+    for (int i=40; i < 48; ++i) {
+        // Disable pull-resistors and isolation
         _PADS_BANK0_::PADS_BANK0.GPIO[i].PUE = 0;
         _PADS_BANK0_::PADS_BANK0.GPIO[i].PDE = 0;
+        _PADS_BANK0_::PADS_BANK0.GPIO[i].ISO = 0;
     }
 }
 

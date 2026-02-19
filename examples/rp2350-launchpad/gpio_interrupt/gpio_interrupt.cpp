@@ -25,8 +25,8 @@ int main()
 {
     // Set up the LEDs
     ws2812_rp2350 leds(LED_RGB_GPIO, LED_RGB_COUNT);
-    leds[0].set_on_color(0x080000);	// left  LED is red
-    leds[7].set_on_color(0x000600);	// right LED is green
+    leds[0].set_on_color(0x080000); // left  LED is red
+    leds[7].set_on_color(0x000600); // right LED is green
 
     // GPIO pins with buttons
     gpio_rp2350 button_S1(S1_GPIO); // left button

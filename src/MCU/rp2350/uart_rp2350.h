@@ -20,6 +20,7 @@
 #include "uart_interface.h"
 #include "gpio_rp2350.h"
 #include "RP2350.h"
+#include "board.h"
 
 using namespace _UART0_;
 using namespace _UART1_;
@@ -32,8 +33,8 @@ void UART1_IRQ_Handler(void);
 class uart_rp2350 : public uart_interface {
 public:
     explicit uart_rp2350(
-                gpio_pin_t  tx_pin = 26,
-                gpio_pin_t  rx_pin = 27,
+                gpio_pin_t  tx_pin = BC_UART_TX,
+                gpio_pin_t  rx_pin = BC_UART_RX,
                 uint32_t    baud = 115200,
                 uart_mode_t mode = UART::BITS_8   |
                                    UART::NO_PARITY |
@@ -57,6 +58,9 @@ public:
     void uartDetachIrq () override;
     void uartEnableIrq () override;
     void uartDisableIrq() override;
+
+    // FIFO control
+    void enableFIFO(bool) override;
 
     // The IRQ handlers are our friends :)
     friend void UART0_IRQ_Handler(void);

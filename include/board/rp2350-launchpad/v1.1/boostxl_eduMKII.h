@@ -20,7 +20,7 @@
 
 // Big Buttons
 #define EDU_BUTTON1     15
-#define EDU_BUTTON2     17
+#define EDU_BUTTON2     10
 
 // 3 color LED
 #define EDU_RGB_RED     24

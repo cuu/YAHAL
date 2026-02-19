@@ -16,10 +16,15 @@ public:
     // Posix IO is a singleton
     static posix_io inst;
 
-    void register_stdin (uart_interface     & uart_in , bool local_echo=true);
-    void register_stdout(uart_interface     & uart_out, bool add_CR=true);
-    void register_stderr(uart_interface     & uart_out, bool add_CR=true);
-    void register_fileio(posix_io_interface & file_io);
+    void register_stdin (uart_data_interface & uart_in , bool local_echo=true);
+    void register_stdout(uart_data_interface & uart_out, bool add_CR=true);
+    void register_stderr(uart_data_interface & uart_out, bool add_CR=true);
+
+    // Utility method for registering all three
+    // standard IO streams (stdin/out/err)
+    void register_stdio (uart_data_interface & uart, bool local_echo=true, bool add_CR=true);
+
+    void register_fileio(posix_io_interface  & file_io);
 
 private:
     posix_io()
@@ -29,9 +34,9 @@ private:
     }
 
 public:
-    uart_interface *        _uart_in;
-    uart_interface *        _uart_out;
-    uart_interface *        _uart_err;
+    uart_data_interface *   _uart_in;
+    uart_data_interface *   _uart_out;
+    uart_data_interface *   _uart_err;
     posix_io_interface *    _file_io;
     bool                    _local_echo;
     bool                    _add_CR_out;

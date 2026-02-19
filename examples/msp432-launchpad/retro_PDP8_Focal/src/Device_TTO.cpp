@@ -14,7 +14,7 @@
 
 #undef PC
 
-#include "yahal_assert.h"
+#include <cassert>
 #include "Device_TTO.h"
 #include "CPU.h"
 
@@ -77,7 +77,7 @@ void Device_TTO::processPulse(unsigned int pulse, CPU & cpu) {
         break;
     }
     default:
-        yahal_assert(0);
+        assert(false);
         break;
     }
 }

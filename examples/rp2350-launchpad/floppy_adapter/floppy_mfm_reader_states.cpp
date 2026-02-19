@@ -31,7 +31,7 @@ namespace FLOPPY {
     ret_t READ_GAP::pulse(PULSE p) {
         LOG(LOG_DEBUG, "READ_GAP::pulse(%d) pulse_count:%d tag_count:%d", p, _pulse_count, _tag_count);
         // Check maximal pulse count
-        if (++_pulse_count >= _max_pulses) {
+        if (++_pulse_count > _max_pulses) {
             return {RET_CODE::TOO_MANY_PULSES, _field_type};
         }
         // Check for wrong L pulses. The 'window' method
@@ -80,17 +80,18 @@ namespace FLOPPY {
     void READ_SYNC::enter() {
         LOG(LOG_DEBUG, "READ_SYNC::enter()");
         _pulse_count = 0;
-        _s_counter   = 0;
+        _s_counter   = 1;
     }
     ret_t READ_SYNC::pulse(PULSE p) {
         LOG(LOG_DEBUG, "READ_SYNC::pulse(%d) _pulse_count=%d", p, _pulse_count);
-        if (++_pulse_count >= _max_pulses) {
+        if (++_pulse_count > _max_pulses) {
             return {RET_CODE::TOO_MANY_PULSES, _field_type};
         }
         if (p == PULSE::S) {
             // Regular S pulse
             ++_s_counter;
         } else if (p == PULSE::M) {
+            ++_s_counter;
             if (_s_counter > 80) {
                 floppy_statistics::inst().sync_length(_field_type, _s_counter);
                 _context.setState(_next_state);
@@ -118,7 +119,7 @@ namespace FLOPPY {
     }
     ret_t READ_MARK::pulse(PULSE p) {
         LOG(LOG_DEBUG, "READ_MARK::pulse(%d)", p);
-        if (++_pulse_count == _max_pulses) {
+        if (++_pulse_count > _max_pulses) {
             return {RET_CODE::TOO_MANY_PULSES, _field_type};
         } else {
             return _context.decode_pulse(p);
@@ -154,6 +155,7 @@ namespace FLOPPY {
     ret_t READ_DATA::byte(uint8_t b) {
         LOG(LOG_DEBUG, "READ_DATA::byte(0x%x)", b);
         _context.write_byte(b);
+        // Check for end of data transfer
         if (++_byte_counter == _size) {
             _context.setState(_next_state);
         }

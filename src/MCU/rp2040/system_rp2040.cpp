@@ -28,6 +28,7 @@ uint32_t CLK_USB  = 0;
 uint32_t CLK_ADC  = 0;
 uint32_t CLK_RTC  = 0;
 uint32_t _ticks_per_millis = 0;
+uint32_t _ticks_per_micros = 0;
 
 /*---------------------------------------------------------------------------
   System initialization function
@@ -162,6 +163,7 @@ void __attribute__((constructor)) ClockUpdate (void) {
     CLK_ADC  = pll_usb / CLOCKS.CLK_ADC_DIV.INT;
     CLK_RTC  = pll_usb / CLOCKS.CLK_RTC_DIV.INT;
     _ticks_per_millis = CLK_TICK / 1000;
+    _ticks_per_micros = CLK_TICK / 1000000;
 }
 
 #ifdef __cplusplus

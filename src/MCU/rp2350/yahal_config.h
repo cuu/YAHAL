@@ -10,6 +10,8 @@
 // task configuration
 /////////////////////
 
+// Number of cores
+#define NUMBER_OF_CORES 2
 // Tick frequency in Hz
 #define TICK_FREQUENCY 1000
 // Default stack size in bytes

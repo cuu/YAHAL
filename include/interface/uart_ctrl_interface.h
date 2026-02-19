@@ -48,6 +48,9 @@ public:
     virtual void setDTR(bool dtr) = 0;
     virtual void setRTS(bool rts) = 0;
 
+    // FIFO control
+    virtual void enableFIFO(bool) = 0;
+
 protected:
     virtual ~uart_ctrl_interface() = default;
 };

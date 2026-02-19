@@ -35,8 +35,10 @@
 #include "RP2350.h"
 
 // A microsecond delay method based on a timer.
-// The second timer is used here (constructor
-// parameter 1, range is 0..3).
+// The timer_rp2350 constructor takes one integer
+// argument in the range of 0..7 to select one
+// specific timer. When there is no parameter,
+// the next available timer is used!
 void delay(int us) {
     // Set up the second time in ONE_SHOT mode
     // and simply wait until the callback
@@ -45,10 +47,10 @@ void delay(int us) {
     // lambda expression, which can access this
     // variable (capture [&]).
     bool expired = false;
-    timer_rp2350 timer(1);
-    timer.setPeriod(us, TIMER::ONE_SHOT);
-    timer.setCallback([&]() { expired = true; });
-    timer.start();
+    timer_rp2350 timer1(1);
+    timer1.setPeriod(us, TIMER::ONE_SHOT);
+    timer1.setCallback([&]() { expired = true; });
+    timer1.start();
     // Now (actively) wait until the callback
     // method has changed the 'expired' variable...
     while(!expired) ;

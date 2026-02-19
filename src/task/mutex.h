@@ -18,6 +18,7 @@
 #ifndef _MUTEX_H_
 #define _MUTEX_H_
 
+#include <cassert>
 #include "mutex_interface.h"
 #include "lock_base_interface.h"
 #include "task.h"
@@ -25,7 +26,7 @@
 template<typename T>
 class mutex : public mutex_interface {
 public:
-    mutex(MUTEX::mutex_type type = MUTEX::BLOCK) : _type(type), _task(nullptr) { }
+    explicit mutex(MUTEX::mutex_type type = MUTEX::BLOCK) : _type(type), _task(nullptr) { }
 
     inline void lock() override {
         while (!try_lock())
@@ -54,7 +55,7 @@ public:
 
     inline void unlock() override {
         if (_task){
-            yahal_assert(task::currentTask() == _task);
+            assert(task::currentTask() == _task);
         }
         _task = nullptr;
         _lock.unlock();

@@ -1,4 +1,19 @@
 
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+//
+// UART driver for RP2040.
+//
 #include "uart_rp2040.h"
 #include "gpio_rp2040.h"
 #include "system_rp2040.h"
@@ -15,25 +30,31 @@ function<void(char)> uart_rp2040::_intHandler[2];
 int8_t uart_rp2040::_uart_tx_pins[2][4] =
     { { 0, 12, 16, 28 }, { 4,  8, 20, 24 } };
 
-uart_rp2040::uart_rp2040(uint8_t index,
-                         gpio_pin_t  tx_pin, gpio_pin_t  rx_pin,
+uart_rp2040::uart_rp2040(gpio_pin_t  tx_pin, gpio_pin_t  rx_pin,
                          uint32_t    baud,   uart_mode_t mode)
-: _init(false),    _index(index), _tx_pin(tx_pin),
-  _rx_pin(rx_pin), _baud(baud),   _mode(mode) {
+: _init(false), _tx(tx_pin), _rx(rx_pin), _baud(baud), _mode(mode) {
 
-    assert(index < 2);
-    _uart     = (index==0) ? &UART0     : &UART1;
-    _uart_set = (index==0) ? &UART0_SET : &UART1_SET;
-    _uart_clr = (index==0) ? &UART0_CLR : &UART1_CLR;
     bool tx_found = false;
     bool rx_found = false;
-    for (int i = 0; i < 4; ++i) {
-        if (tx_pin ==  _uart_tx_pins[index][i])    tx_found = true;
-        if (rx_pin == (_uart_tx_pins[index][i]+1)) rx_found = true;
+    for (_index=0; _index < 2; ++_index) {
+        tx_found = false;
+        rx_found = false;
+        for (size_t i = 0; i < 4; ++i) {
+            if (tx_pin ==  _uart_tx_pins[_index][i]) {
+                tx_found = true;
+            }
+            if (rx_pin == (_uart_tx_pins[_index][i]+1)) {
+                rx_found = true;
+            }
+        }
+        if (tx_found && rx_found) break;
     }
-    (void)tx_found; // suppress warnings
-    (void)rx_found;
     assert(tx_found && rx_found);
+
+    // Set register pointer
+    _uart     = (_index==0) ? &UART0     : &UART1;
+    _uart_set = (_index==0) ? &UART0_SET : &UART1_SET;
+    _uart_clr = (_index==0) ? &UART0_CLR : &UART1_CLR;
 }
 
 void uart_rp2040::init() {
@@ -41,10 +62,8 @@ void uart_rp2040::init() {
     if (_index)  RESETS_CLR.RESET.uart1 = 1;
     else         RESETS_CLR.RESET.uart0 = 1;
     // Configure GPIO pins
-    gpio_rp2040 tx_gpio(_tx_pin);
-    gpio_rp2040 rx_gpio(_rx_pin);
-    tx_gpio.setSEL(GPIO_CTRL_FUNCSEL__uart);
-    rx_gpio.setSEL(GPIO_CTRL_FUNCSEL__uart);
+    _tx.setSEL(GPIO_CTRL_FUNCSEL__uart);
+    _rx.setSEL(GPIO_CTRL_FUNCSEL__uart);
     // Configure UART protocol (default 8N1)
     uartMode(_mode);
     // Set baud rate
@@ -64,10 +83,8 @@ uart_rp2040::~uart_rp2040() {
     if (_index)  RESETS_SET.RESET.uart1 = 1;
     else         RESETS_SET.RESET.uart0 = 1;
     // De-configure the digital RX/TX lines
-    gpio_rp2040 rx_gpio(_rx_pin);
-    rx_gpio.setSEL(GPIO_CTRL_FUNCSEL__null);
-    gpio_rp2040 tx_gpio(_tx_pin);
-    tx_gpio.setSEL(GPIO_CTRL_FUNCSEL__null);
+    _tx.setSEL( GPIO_CTRL_FUNCSEL__null );
+    _rx.setSEL( GPIO_CTRL_FUNCSEL__null );
 }
 
 bool uart_rp2040::available() {
@@ -77,16 +94,16 @@ bool uart_rp2040::available() {
 
 char uart_rp2040::getc() {
     if (!_init) init();
-    // Wait until the RX Buffer is filled....
-    while( (_uart->UARTFR.RXFE) != 0) ;
+    // Wait until the RX Buffer is not empty....
+    while(_uart->UARTFR.RXFE) ;
     // Transfer single char from RX buffer
     return _uart->UARTDR.DATA;
 }
 
 void uart_rp2040::putc(char c) {
     if (!_init) init();
-    // Wait until the TX FIFO is empty....
-    while( (_uart->UARTFR.TXFE) == 0) ;
+    // Wait until the TX FIFO is not full....
+    while(_uart->UARTFR.TXFF) ;
     // Transfer single char to TX buffer
     _uart->UARTDR.DATA = (uint16_t)c;
 }
@@ -102,7 +119,6 @@ int uart_rp2040::puts(const char *s) {
 
 void uart_rp2040::uartMode(uart_mode_t mode) {
     _mode = mode;
-
     if (mode & UART::BITS_7) {
         _uart->UARTLCR_H.WLEN = 2;
     }
@@ -189,6 +205,11 @@ void uart_rp2040::uartEnableIrq () {
 void uart_rp2040::uartDisableIrq() {
     _uart_clr->UARTIMSC.RXIM <<= 1;
     _uart_clr->UARTIMSC.RTIM <<= 1;
+}
+
+void uart_rp2040::enableFIFO(bool val) {
+    if (!_init) init();
+    _uart->UARTLCR_H.FEN = val;
 }
 
 // Interrupt handler for UART0/1

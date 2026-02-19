@@ -264,19 +264,35 @@ struct SM {
     void setClock(uint32_t hz);
 
     // Check if TX FIFO is full.
-    inline bool TxFifoFull() {
+    inline bool TxFifoFull() const {
         return pio.FSTAT.TXFULL & (1 << sm_index);
     }
 
     // Check if TX FIFO is empty.
-    inline bool TxFifoEmpty() {
+    inline bool TxFifoEmpty() const {
         return pio.FSTAT.TXEMPTY & (1 << sm_index);
+    }
+
+    // Check if RX FIFO is full.
+    inline bool RxFifoFull() const {
+        return pio.FSTAT.RXFULL & (1 << sm_index);
+    }
+
+    // Check if RX FIFO is empty.
+    inline bool RxFifoEmpty() const {
+        return pio.FSTAT.RXEMPTY & (1 << sm_index);
     }
 
     // Write a 32 bit value to the TX FIFO
     inline void writeTxFifo(uint32_t val) {
         while(TxFifoFull()) ;
         pio.TXF[sm_index] = val;
+    }
+
+    // Read a 32 bit value from the RX FIFO
+    inline uint32_t readRxFifo() {
+        //while(RxFifoEmpty()) ;
+        return pio.RXF[sm_index];
     }
 
     // Set the WRAP addresses. Parameters are relative to
@@ -297,9 +313,26 @@ struct SM {
     }
 
     // Check if SM is enabled
-    inline bool isEnabled() {
+    inline bool isEnabled() const {
         return pio.CTRL.SM_ENABLE & (1 << sm_index);
     }
+
+    // Reset the SM to its initial state
+    inline void reset() {
+        pio_clr.CTRL.SM_ENABLE  = (1 << sm_index);
+        pio_set.CTRL.SM_RESTART = (1 << sm_index);
+        // Set the initial PC
+        setRegister(out_dest_t::PC, load_addr);
+    }
+
+    // Reset the SM to its initial state
+    inline void restart() {
+//        pio_clr.CTRL.SM_ENABLE  = (1 << sm_index);
+        pio_set.CTRL.SM_RESTART = (1 << sm_index);
+        // Set the initial PC
+//        setRegister(out_dest_t::PC, load_addr);
+    }
+
 
     void attachIrq(const function<void()>& handler) const;
     void enableIrq();
@@ -334,9 +367,9 @@ public:
 
     SM* loadProgram(const pio_program & prgm);
 
-    static function<void()> _handler_pio0[12];
-    static function<void()> _handler_pio1[12];
-    static function<void()> _handler_pio2[12];
+    static function<void()> _handler_pio0[16];
+    static function<void()> _handler_pio1[16];
+    static function<void()> _handler_pio2[16];
 
 private:
     pio_rp2350(PIO0_t & pio, uint8_t pio_index);

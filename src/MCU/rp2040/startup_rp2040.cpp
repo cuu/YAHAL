@@ -11,7 +11,7 @@
 //
 // ---------------------------------------------
 //
-// Startup code for RP2350.
+// Startup code for RP2040
 //
 #include "boot/boot_blocks.h"
 #include "system_rp2040.h"

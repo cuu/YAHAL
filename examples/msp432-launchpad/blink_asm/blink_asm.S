@@ -21,7 +21,8 @@
             .syntax unified         @ use unified assembler syntax
             .thumb                  @ generate thumb machine code
             .text                   @ put the following code in the text (code) section
-                                    
+            .type main, function
+
             @ .equ defines an alias for a given name.
             @ It is comparable to #define in C/C++
             @

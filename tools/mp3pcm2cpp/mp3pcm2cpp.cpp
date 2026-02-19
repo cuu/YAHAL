@@ -360,8 +360,9 @@ int main(int argc, char *argv[]) {
         ofs_cpp << "//  Source file was: " << infile << endl;
         ofs_cpp << "//" << endl;
         ofs_cpp << "#include <cstdint>" << endl;
+        ofs_cpp << "#include <array>" << endl;
         ofs_cpp << endl;
-        ofs_cpp << "extern const uint16_t " << base << "[" << pcm_size/2 << "] = {"
+        ofs_cpp << "extern const std::array<uint16_t, " << pcm_size/2 << "> " << base << " = {"
                 << endl;
 
         ofs_h << "//" << endl;
@@ -372,8 +373,9 @@ int main(int argc, char *argv[]) {
         ofs_h << "//  Source file was: " << infile << endl;
         ofs_h << "//" << endl;
         ofs_h << "#include <cstdint>" << endl;
+        ofs_h << "#include <array>" << endl;
         ofs_h << endl;
-        ofs_h << "extern const uint16_t " << base << "[" << pcm_size/2 << "];"
+        ofs_h << "extern const std::array<uint16_t, " << pcm_size/2 << "> " << base << ";"
               << endl;
     }
 

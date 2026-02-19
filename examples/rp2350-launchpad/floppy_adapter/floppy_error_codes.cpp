@@ -49,6 +49,14 @@ namespace FLOPPY {
             case RET_CODE::SECTOR_NOT_FOUND: {
                 return "SECTOR_NOT_FOUND"; break;
             }
+            case RET_CODE::DATA_CRC_ERROR: {
+                return "DATA_CRC_ERROR"; break;
+            }
+            case RET_CODE::IDAM_CRC_ERROR: {
+                return "IDAM_CRC_ERROR"; break;
+            }
+            default:
+                return "UNKNOWN_ERROR"; break;
         }
     }
 }

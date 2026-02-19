@@ -5,8 +5,8 @@
  *      Author: aterstegge
  */
 
+#include <cassert>
 #include "timerA_msp432.h"
-#include "yahal_assert.h"
 
 extern uint32_t SubsystemMasterClock;
 
@@ -53,7 +53,7 @@ void timerA_msp432::setPeriod(uint32_t us, TIMER::timer_mode mode) {
         }
         if (found) break;
     }
-    yahal_assert(found);
+    assert(found);
     // Set the calculated results
     _timer->CTL   &= ~TIMER_A_CTL_ID_MASK;
     _timer->CTL   |= (id << TIMER_A_CTL_ID_OFS);

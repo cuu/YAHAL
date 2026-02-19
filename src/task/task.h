@@ -28,7 +28,13 @@
 #include "yahal_config.h"
 #include "circular_list.h"
 #include "lock_base_interface.h"
-#include "yahal_assert.h"
+
+enum class core_t {
+    CURRENT_CORE = -1,
+    CORE_0       =  0,
+    CORE_1       =  1,
+    CORE_2       =  2,
+    CORE_3       =  3 };
 
 class task {
 public:
@@ -60,7 +66,7 @@ public:
         READY     = 0,  // task is ready to run
         SLEEPING  = 1,  // sleep() was called on task
         SUSPENDED = 2,  // suspend() was called on task
-        BLOCKED   = 3   // block() was called on task
+        BLOCKED   = 3,  // block() was called on task
     };
 
     static inline const char * state_to_str(state_t state) {
@@ -69,13 +75,15 @@ public:
         return names[state];
     }
 
-    // Start a thread. This means that the stack space of
+    // Sign up a thread. This means that the stack space of
     // the task is set up, and the task is linked into the
     // circular list of tasks, which is used by the scheduler.
-    // The second parameter offers the possibility to start
+    // The third parameter offers the possibility to start
     // this thread as a privileged task, if this is supported
     // by the HW platform.
-    void start(uint16_t priority = DEFAULT_PRIORITY, bool priv = false);
+    void sign_up(core_t            = core_t::CURRENT_CORE,
+                 uint16_t priority = DEFAULT_PRIORITY,
+                 bool priv         = false);
 
     // Stop a task. This means that the task is immediately
     // linked out of the circular list of tasks, and will
@@ -116,17 +124,16 @@ public:
     // Join a task. This means that the caller of this method
     // waits until the called thread has ended its execution
     // (returns from the run() method).
-    void join();
+    void join() const;
 
     // getters and setters for some attributes
     inline const char *  getName()      const    { return _name;     }
-    inline uint8_t       getPriority()  const    { return _priority; }
-    inline void          setPriority(uint8_t p)  { _priority = p;    }
+    inline uint16_t      getPriority()  const    { return _priority; }
+    inline void          setPriority(uint16_t p) { _priority = p;    }
     inline state_t       getState()     const    { return _state;    }
     inline uint32_t      getMillisRun() const    { return (_ticks * 1000) / TICK_FREQUENCY; }
     inline uint16_t      getStackSize() const    { return _stack_size; }
-    inline static task * currentTask()           { return _run_ptr;    }
-    inline bool          isAlive()      const    { return _linked_in;  }
+    inline bool          isLinkedIn()   const    { return _linked_in;  }
 
     // method to report the number of used bytes in the stack
     uint16_t getUsedStack();
@@ -135,13 +142,14 @@ public:
     uint32_t getDeltaTicks();
 
 private:
-    char            _name[16] {0};  // name of the task
-    uint8_t         _priority;      // Task priority
-    state_t         _state;         // state of this task
-    uint32_t        _ticks;         // consumed tick_count
-    uint32_t        _last_ticks;    // _ticks at last call to getDeltaTicks()
-    uint64_t        _sleep_until;   // system time in millis when sleep ends
-    lock_base_interface * _lock;    // pointer to lock if thread is blocked
+    char            _name[16] {0};      // name of the task
+    int8_t          _core {0};          // core this task is running on
+    uint16_t        _priority {0};      // task priority
+    state_t         _state;             // state of this task
+    uint32_t        _ticks {0};         // consumed tick_count
+    uint32_t        _last_ticks {0};    // _ticks at last call to getDeltaTicks()
+    uint64_t        _sleep_until {0};   // system time in millis when sleep ends
+    lock_base_interface * _lock;        // pointer to lock if thread is blocked
 
     // stack-pointer related attributes
     uint8_t *       _stack_base;    // stack base address
@@ -149,22 +157,23 @@ private:
     uint8_t *       _stack_ptr;     // saved stack pointer of this task
 
     // static members for global ticks and current task
-    static task *   _run_ptr;       // Pointer to running Task
-    static task *   _run_next;      // Pointer to next running Task
-    static uint64_t _up_ticks;      // global tick count from start
+    static task *   _run_ptr [NUMBER_OF_CORES]; // Pointer to running Task
+    static task *   _run_next[NUMBER_OF_CORES]; // Pointer to next running Task
+    static uint64_t _up_ticks[NUMBER_OF_CORES]; // global tick count from start
 
     // tasks are organized as a circular list, so
     // here are the related private members
     friend class circular_list<task>;
     friend class task_monitor;
-    static circular_list<task> _list;
+    static circular_list<task> _list[NUMBER_OF_CORES];
     bool            _linked_in;     // is this task in the list?
     task *          _next;          // pointer to next task
     task *          _prev;          // pointer to previous task
 
     // Helper method for calling the virtual run() method
     void _run();
-    std::function<void(void)> _f;   // Function to execute if provided in CTOR
+    // Function to execute if provided in CTOR
+    std::function<void(void)> _f;
 
     ///////////////////////////////////////////////
     // CPU-specific interface, which needs to be //
@@ -174,12 +183,15 @@ private:
     static void     _context_switch();
 
 public:
-    static void start_scheduler();
-    static void yield();
-    static void cpu_sleep();
-    static void enterCritical();
-    static void leaveCritical();
+    static void     start_scheduler();
+    static void     yield();
+    static void     cpu_sleep();
+    static void     enterCritical();
+    static void     leaveCritical();
     static uint64_t millis();
+    static bool     is_irq_context();
+    static bool     multitasking_running();
+    static int8_t   get_core();
 
     bool isPrivileged() const;
     bool isUsingFloat() const;
@@ -189,13 +201,33 @@ public:
     // task implementation (IRQ handlers). Therefore, //
     // these methods need to be public and static.    //
     ////////////////////////////////////////////////////
-    static void      _scheduler();
-    static void      _tick_handler ();
-    static void      _switchToHead()          { _run_ptr = _list.getHead();   }
-    static void      _switchToNext()          { _run_ptr = _run_next;         }
-    static uint8_t * _getStackBase()          { return _run_ptr->_stack_base; }
-    static uint8_t * _getStackPtr()           { return _run_ptr->_stack_ptr;  }
-    static void      _setStackPtr(uint8_t *s) { _run_ptr->_stack_ptr = s;     }
+    static void _scheduler();
+    static void _tick_handler ();
+
+    static task * currentTask() {
+        int c = get_core();
+        return _run_ptr[c];
+    }
+    static void _switchToHead() {
+        int c = get_core();
+        _run_ptr[c] = _list[c].getHead();
+    }
+    static inline void _switchToNext() {
+        int c = get_core();
+        _run_ptr[c] = _run_next[c];
+    }
+    static inline uint8_t * _getStackBase() {
+        int c = get_core();
+        return _run_ptr[c]->_stack_base;
+    }
+    static inline uint8_t * _getStackPtr() {
+        int c = get_core();
+        return _run_ptr[c]->_stack_ptr;
+    }
+    static inline void _setStackPtr(uint8_t *s) {
+        int c = get_core();
+        _run_ptr[c]->_stack_ptr = s;
+    }
 };
 
 #endif // _TASK_H_

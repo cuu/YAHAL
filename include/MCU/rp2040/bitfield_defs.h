@@ -8,7 +8,7 @@
 #ifndef _BITFIELD_DEFS_H_
 #define _BITFIELD_DEFS_H_
 
-#include <stdint.h>
+#include <cstdint>
 
 //////////////////////////////
 // Helper templates and macros

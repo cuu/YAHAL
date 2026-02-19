@@ -1,0 +1,5 @@
+# XDS110 rules
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="bef3", MODE="0666"
+SUBSYSTEM=="usb_device", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="bef3", MODE="0666"
+
+# Run `sudo udevadm control --reload-rules && sudo udevadm trigger` to refresh the udev rules!

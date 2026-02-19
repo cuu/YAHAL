@@ -4,12 +4,14 @@
 #include <cstdint>
 
 //////////////////////////////////////////
-// YAHAL Parameters for MSP432 platform //
+// YAHAL Parameters for RP2040 platform //
 //////////////////////////////////////////
 
 // task configuration
 /////////////////////
 
+// Number of cores
+#define NUMBER_OF_CORES 2
 // Tick frequency in Hz
 #define TICK_FREQUENCY 1000
 // Default stack size in bytes
@@ -20,7 +22,7 @@
 #define STACK_MAGIC 0xA5
 // Define to check stack overflow
 #define CHECK_STACK_OVERFLOW
-// Define to use simple round robin without priorities
+// Define to use simple round-robin without priorities
 #undef SIMPLE_ROUND_ROBIN
 
-#endif // _CONFIG_MSP432_H_
+#endif // _YAHAL_CONFIG_RP2040_H_

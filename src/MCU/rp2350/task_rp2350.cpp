@@ -16,71 +16,22 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpmf-conversions"
 
-#include "RP2350.h"
-
-#include "task.h"
+#include <cassert>
+#include "task_rp2350.h"
+#include "multicore_rp2350.h"
 #include "task_idle.h"
 #include "system_rp2350.h"
 #include "yahal_config.h"
-#include <cassert>
 
+#include "RP2350.h"
 using namespace _PPB_;
-
-//////////////////
-// System call API
-//////////////////
-#define sys_call(code)  asm volatile ("svc %0":: "I" (code));
-
-#define SYS_START_SCHEDULER     0
-#define SYS_YIELD               1
+using namespace _SIO_;
+using namespace _TIMER0_;
 
 // Global vars
 //////////////
-task_idle idle_task;
-
-//////////////////////////////////////////
-// The following structure defines a stack
-// frame without floating-point data. Such
-// a frame is set up for every Task before
-// it is started.
-//////////////////////////////////////////
-
-struct callee_saved_registers {
-
-    // The following 10 registers have to be saved by
-    // the context switching handler (callee-saved registers)
-
-    uint32_t exc_return;    // the LR value inside the handler
-    uint32_t ctrl;          // the CONTROL register
-    uint32_t r4;            // register R4 ...
-    uint32_t r5;            // .
-    uint32_t r6;            // .
-    uint32_t r7;            // . ...to ...
-    uint32_t r8;            // .
-    uint32_t r9;            // .
-    uint32_t r10;           // .
-    uint32_t r11;           // register R11
-};
-
-struct caller_saved_registers {
-
-    // The following 8 registers are automatically
-    // saved when handling an exception (caller-saved registers)
-
-    task *      r0;     // register R0 (the 'this' pointer in C++ calls)
-    uint32_t    r1;     // .
-    uint32_t    r2;     // . ...to ...
-    uint32_t    r3;     // register R3
-    uint32_t    r12;    // register R12
-    uint32_t    lr;     // register R14 (=LR)
-    void        (*pc)();// register R15 (=PC)
-    uint32_t    psr;    // PSR
-};
-
-struct Stack_Frame {
-    callee_saved_registers  cesr;
-    caller_saved_registers  crsr;
-};
+bool multitasking_on_core[NUMBER_OF_CORES] {false};
+task_idle idle_tasks[NUMBER_OF_CORES];
 
 void task::_setup_stack(bool priv) {
     assert(_stack_size > sizeof(Stack_Frame));
@@ -103,17 +54,32 @@ void task::_context_switch() {
 }
 
 uint64_t task::millis() {
-    uint32_t lo = _TIMER0_::TIMER0.TIMELR;
-    uint32_t hi = _TIMER0_::TIMER0.TIMEHR;
+    uint32_t lo = TIMER0.TIMELR;
+    uint32_t hi = TIMER0.TIMEHR;
     return (((uint64_t)hi << 32l) | lo) / timer_ticks_per_us / 1000;
 }
 
+bool task::is_irq_context() {
+    return __get_IPSR() != 0;
+}
+
+bool task::multitasking_running() {
+    return multitasking_on_core[SIO.CPUID];
+}
+
+int8_t task::get_core() {
+    return SIO.CPUID;
+}
+
 void task::start_scheduler() {
+    assert(!multitasking_running());
     sys_call(SYS_START_SCHEDULER);
 }
 
 void task::yield() {
-    sys_call(SYS_YIELD);
+    if(multitasking_running()) {
+        sys_call(SYS_YIELD);
+    }
 }
 
 void task::cpu_sleep() {
@@ -135,7 +101,7 @@ void task::leaveCritical() {
 
 bool task::isPrivileged() const {
     uint32_t ctrl;
-    if (_run_ptr == this) {
+    if (_run_ptr[_core] == this) {
         ctrl = __get_CONTROL();
     } else {
         ctrl = ((Stack_Frame *)_stack_ptr)->cesr.ctrl;
@@ -145,7 +111,7 @@ bool task::isPrivileged() const {
 
 bool task::isUsingFloat() const {
     uint32_t ctrl;
-    if (_run_ptr == this) {
+    if (_run_ptr[_core] == this) {
         ctrl = __get_CONTROL();
     } else {
         ctrl = ((Stack_Frame *)_stack_ptr)->cesr.ctrl;
@@ -159,8 +125,7 @@ bool task::isUsingFloat() const {
 
 extern "C" {
 
-void SysTick_Handler(void) __attribute__((weak));
-void SysTick_Handler(void) {
+void __attribute__((weak)) SysTick_Handler(void) {
     task::_tick_handler();
 }
 
@@ -173,9 +138,7 @@ uint8_t * switch_context(uint8_t * last_sp) {
     return task::_getStackPtr();
 }
 
-void PendSV_Handler(void) __attribute__((naked));
-void PendSV_Handler(void) {
-
+void __attribute__((naked)) PendSV_Handler(void) {
     asm volatile(
     "       mrs         r0, psp             @ get the current SP \n"
     "       tst         lr, #0x10           @ EXC_RETURN_INT_ONLY_STACK_FRAME \n"
@@ -196,8 +159,7 @@ void PendSV_Handler(void) {
     "       bx          lr                  @ jump to new task \n");
 }
 
-void SVC_Handler(void) __attribute__((naked));
-void SVC_Handler(void) {
+void __attribute__((naked)) SVC_Handler(void) {
     asm volatile(
     "       tst         lr, #4              @ EXC_RETURN_PROCESS_STACK_POINTER \n"
     "       ite         eq                  @ \n"
@@ -227,13 +189,16 @@ uint32_t SVC_Handler_C(uint32_t * sp, uint32_t exc_return) {
         case SYS_START_SCHEDULER:
         /////////////////////////
         {
+            // Mark this core as multitasking
+            multitasking_on_core[SIO.CPUID] = true;
+
             // Disable the sysTick Timer
             SysTick->CTRL = 0;
 
-            // Start the Idle Task with the lowest priority (1).
-            idle_task.start(1);
+            // Start the Idle task with the lowest priority (1).
+            idle_tasks[SIO.CPUID].sign_up(core_t::CURRENT_CORE, 1);
 
-            // The first Task to run is the first created task
+            // The first task to run is the first created task
             task::_switchToHead();
 
             // Set scheduler priorities

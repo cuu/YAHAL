@@ -5,11 +5,10 @@
  *      Author: Andreas Terstegge
  */
 
-#include "msp.h"
-
+#include <cassert>
 #include "adc14_msp432.h"
 #include "gpio_msp432.h"
-#include "yahal_assert.h"
+#include "msp.h"
 
 adc14_msp432 adc14_msp432::inst;
 
@@ -43,15 +42,13 @@ adc14_msp432::adc14_msp432() {
 }
 
 void adc14_msp432::adcMode(uint8_t channel, uint16_t mode) {
-    yahal_assert(channel < 24);
+    assert(channel < 24);
     _modes[channel] = mode;
     uint16_t port_pin = (5 << 3) + 5; // A0 is on P5.5
     if (channel > 13)
         port_pin = (6 << 3) + 1 + 14; // A14 is on P6.1
     if (channel > 15)
         port_pin = (9 << 3) + 1 + 16; // A16 is on P9.1
-    if (channel > 23)
-        yahal_assert(false);
     // Calculate the port and pin for the given ADC channel
     port_pin -= channel;
     uint8_t port = port_pin >>  3;
@@ -62,12 +59,12 @@ void adc14_msp432::adcMode(uint8_t channel, uint16_t mode) {
 }
 
 adc_mode_t adc14_msp432::getMode(uint8_t channel) {
-    yahal_assert(channel < 24);
+    assert(channel < 24);
     return _modes[channel];
 }
 
 uint16_t adc14_msp432::adcReadRaw(uint8_t channel) {
-    yahal_assert(channel < 24);
+    assert(channel < 24);
     // set resolution
     if (_current_mode !=_modes[channel]) {
         set_resolution( _modes[channel] );
@@ -98,7 +95,7 @@ float adc14_msp432::rawToVoltage(uint8_t channel, uint16_t raw) {
     case ADC::ADC_10_BIT: voltage /= 1023.0f;  break;
     case ADC::ADC_12_BIT: voltage /= 4095.0f;  break;
     case ADC::ADC_14_BIT: voltage /= 16383.0f; break;
-    default: yahal_assert(false);
+    default: assert(false);
     }
     return voltage;
 }
@@ -111,7 +108,7 @@ void adc14_msp432::adcSetupScan(uint16_t mode) {
 }
 
 void adc14_msp432::adcStartScan(uint8_t  start, uint8_t end) {
-    yahal_assert((start < 24) && (end < 24) && (start <= end));
+    assert((start < 24) && (end < 24) && (start <= end));
     adcStopScan();
     // set up start channel
     ADC14->CTL1 &= ~ADC14_CTL1_CSTARTADD_MASK;
@@ -136,13 +133,13 @@ void adc14_msp432::adcStopScan() {
 }
 
 uint16_t adc14_msp432::adcReadScan(uint8_t channel) {
-    yahal_assert(channel < 24);
+    assert(channel < 24);
     return ADC14->MEM[channel];
 }
 
 void adc14_msp432::attachScanIrq(uint8_t channel,
                                  void (*handler)(uint16_t chan, uint16_t val) ) {
-    yahal_assert(channel < 24);
+    assert(channel < 24);
     adcStopScan();
     // store handler function
     _irqHandlers[channel] = handler;
@@ -154,11 +151,11 @@ void adc14_msp432::attachWinIrq(uint8_t channel,
                                 void (*handler)(uint16_t val, uint16_t mode),
                                 uint16_t low, uint16_t high,
                                 uint16_t mode) {
-    yahal_assert(channel < 24);
+    assert(channel < 24);
     // Window irqs are only allowed on ONE channel!
-    yahal_assert(!(ADC14->IER1 & (ADC14_IER1_HIIE |
-                                  ADC14_IER1_LOIE |
-                                  ADC14_IER1_INIE) ));
+    assert(!(ADC14->IER1 & (ADC14_IER1_HIIE |
+                            ADC14_IER1_LOIE |
+                            ADC14_IER1_INIE) ));
 
     adcStopScan();
     _irqWinHandler = handler;
@@ -195,7 +192,7 @@ void adc14_msp432::set_resolution(uint16_t mode) {
         _current_mode = ADC::ADC_14_BIT;
         break;
     default:
-        yahal_assert(false);
+        assert(false);
     }
 }
 

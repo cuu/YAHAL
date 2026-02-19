@@ -1,0 +1,131 @@
+// ---------------------------------------------
+//           This file is part of
+//      _  _   __    _   _    __    __
+//     ( \/ ) /__\  ( )_( )  /__\  (  )
+//      \  / /(__)\  ) _ (  /(__)\  )(__
+//      (__)(__)(__)(_) (_)(__)(__)(____)
+//
+//     Yet Another HW Abstraction Library
+//      Copyright (C) Andreas Terstegge
+//      BSD Licensed (see file LICENSE)
+//
+// ---------------------------------------------
+// PIO code for handling the CMSIS DAP SWD protocol. Every operation
+// starts with a command word, which is written to the TX FIFO. The
+// structure of this word is:
+//
+//        |  31:14 | 13 | 12:8 |  7:0  |
+//        | unused | OE |  PC  | Count |
+//
+// Count specifies the number of bits to read/write or the number of
+// clock cycles MINUS one (a value of 0 will e.g. write one bit, 1 will
+// write two bits, and so on)!
+// PC specifies the command to execute by its PC offset relative to the
+// load address of the PIO program. Available commands are:
+//
+// setdir: Use the OE bit in the command to enable the SWDIO output
+//         mode (0=read, 1=write).
+// read:   Read 'Count+1' (1..32) bits from SWDIO. The result will be
+//         pushed to the RX FIFO. The pindir register is NOT modified
+//         by this command, so the application has to make sure that
+//         SWDIO is in input mode!
+// write:  Write 'Count+1' (1..32) bits to SWDIO. The data word to write
+//         is written to the TX FIFO after the command word. The pindir
+//         register is NOT modified by this command, so the application
+//         has to make sure that SWDIO is in output mode!
+// cycle:  Cycle the SWCLK line for 'Count+1' times. Depending on the
+//         previous command, the SWDIO line can be high-Z (e.g. during a
+//         turnaround phase), or drive a value.
+//
+// The PIO program uses four SM cycles per SWCLK cycle. E.g. a SM clock
+// of 1MHz will result in a 250kHz SWCLK frequency!
+// The SWDIO line is controlled with in/out instructions.
+// The SWCLK line is controlled with a sideset bit.
+//
+.define PUBLIC SM_CYCLES_PER_SWCLK 4
+.program pio_swd
+.side_set 1 opt
+
+//------------------------| SWCLK |-------------
+public write:
+    pull
+write1:
+    out     pins, 1     [1] side 0  // Host writes data on neg edge
+    jmp     x--, write1 [1] side 1  // Target samples data on pos edge
+
+    .wrap_target
+next_cmd:
+    pull                    side 0  // Get next command and start
+                                    // with SWCLK=LOW
+    out     x, 8                    // Read count
+    out     pc, 5                   // Jump to command
+
+public setdir:
+    out     pindirs, 1              // Set SWDIO OE and jump back
+    jmp     next_cmd
+
+public cycle:
+    nop                 [1] side 1  // Perform n cycles -> HIGH -> LOW
+    jmp     x--, cycle  [1] side 0
+    jmp     next_cmd
+
+public read:
+    in      pins, 1         side 0  // Host will read after neg edge
+                                    // The first bit is driven already
+                                    // (Data Phase Shift)!
+    nop                 [1] side 1  // Target will set SWDIO on pos edge
+    jmp     x--, read       side 0
+    push
+    .wrap
+
+
+% yahal {
+
+// SWD PIO command structure
+union __attribute__((__packed__)) swd_cmd_t {
+    struct __attribute__((__packed__)) {
+        uint32_t len    : 8;
+        uint32_t cmd    : 5;
+        uint32_t out_en : 1;
+        uint32_t        : 18;
+    };
+    uint32_t value {0};
+};
+
+void configure_SM(SM * sm, uint8_t swdio_pin, uint8_t swclk_pin) {
+    // Set the default SM clock rate (250kHz SWCLK)
+    // This value will be overwritten by the DAP protocol code
+    sm->setClock(1000000);
+
+    // Set the PINDIR register. SWDIO and SWCLK
+    // are both outputs as default.
+    sm->setRegister(out_dest_t::PINDIRS, 1, swdio_pin, 1);
+    sm->setRegister(out_dest_t::PINDIRS, 1, swclk_pin, 1);
+
+    // Set the wrap values
+    sm->setWrap(pio_swd_wrap_target, pio_swd_wrap);
+
+    // Set the PC to the wrap target
+    sm->setRegister(out_dest_t::PC, sm->load_addr + pio_swd_wrap_target);
+
+    // Configure sideset functions
+    sm->regs.SM_EXECCTRL.SIDE_EN     = 1;   // see 'opt' above
+    sm->regs.SM_EXECCTRL.SIDE_PINDIR = 0;
+
+    // Configure the shift control register
+    sm->regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 1; // shift right
+    sm->regs.SM_SHIFTCTRL.IN_SHIFTDIR  = 1; // shift right
+    sm->regs.SM_SHIFTCTRL.AUTOPULL     = 0; // no autopull
+    sm->regs.SM_SHIFTCTRL.AUTOPUSH     = 0; // no autopush
+
+    // SWDIO is controlled by IN/OUT
+    sm->regs.SM_PINCTRL.OUT_COUNT = 1;
+    sm->regs.SM_PINCTRL.OUT_BASE  = swdio_pin;
+    sm->regs.SM_PINCTRL.IN_BASE   = swdio_pin;
+
+    // SWCLK is controlled via sideset
+    sm->regs.SM_PINCTRL.SIDESET_COUNT = 2;  // includes EN bit
+    sm->regs.SM_PINCTRL.SIDESET_BASE  = swclk_pin;
+}
+
+%}

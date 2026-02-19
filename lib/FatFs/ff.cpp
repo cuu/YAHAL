@@ -7118,11 +7118,25 @@ int FatFs::_fstat (int file, struct stat *st) {
 }
 
 int FatFs::_lseek (int file, int offset, int whence) {
-    assert(whence == SEEK_SET);
-    (void)whence; // Suppress warnings
-    FRESULT res = this->lseek(_f_ptrs[file-16], offset);
+    FSIZE_t position  = _f_ptrs[file-16]->fptr;
+    FSIZE_t file_size = _f_ptrs[file-16]->obj.objsize;
+    switch(whence) {
+        case SEEK_SET:
+            position = offset;
+            break;
+        case SEEK_CUR:
+            position += offset;
+            break;
+        case SEEK_END:
+            assert(offset <= 0);
+            position = file_size + offset;
+            break;
+        default:
+            assert(false && "Wrong seek mode!");
+    }
+    FRESULT res = this->lseek(_f_ptrs[file-16], position);
     set_errno(res);
-    return res ? -1 : offset;
+    return res ? -1 : position;
 }
 
 int FatFs::_isatty(int file) {

@@ -49,19 +49,19 @@ int main(void)
         // the MP3 file, and outputs the samples to the PCM-PWM
         mp3_decoder_task decoder(pcm_if);
         // Start decoder tasks to play the MP3
-        decoder.start();
+        decoder.sign_up();
         // Wait until file has been played. The decode library
         // will automatically repeat the song, so this loop will
         // never end!
-        while(decoder.isAlive()) {
+        while(decoder.isLinkedIn()) {
             task::sleep_ms(200);
         }
     }, "Main task", 5000);
-    Main.start(50, true);
+    Main.sign_up(core_t::CURRENT_CORE, 50, true);
 
     // Start the Task monitor
     task_monitor monitor;
-    monitor.start();
+    monitor.sign_up();
 
     // Start the multitasking
     task::start_scheduler();

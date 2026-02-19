@@ -31,11 +31,11 @@ namespace FLOPPY {
     };
 
     floppy_format IBM_1440_kB {
-            .name               = "IBM 1.44MB standard (DS,DD,80 tracks,18 sec/track)",
+            .name               = "IBM 1.44MB (DS,HD,80 tracks,18 sec/track)",
             .floppy_size        = FLOPPY_SIZE::_3_5_inch,
             .data_rate_kHz      = 500,
             .number_of_tracks   = 80,
-            .double_sided       = true,
+            .number_of_heads    = 2,
             .sector_size        = 512,
             .sectors_per_track  = 18,
             .I_AM               = {0xc2, 0xc2, 0xc2, 0xfc},
@@ -49,11 +49,11 @@ namespace FLOPPY {
     };
 
     floppy_format IBM_1680_kB {
-            .name               = "IBM 1.68MB DMF format (DS,DD,80 tracks,21 sec/track)",
+            .name               = "IBM 1.68MB DMF format (DS,HD,80 tracks,21 sec/track)",
             .floppy_size        = FLOPPY_SIZE::_3_5_inch,
             .data_rate_kHz      = 500,
             .number_of_tracks   = 80,
-            .double_sided       = true,
+            .number_of_heads    = 2,
             .sector_size        = 512,
             .sectors_per_track  = 21,
             .I_AM               = {0xc2, 0xc2, 0xc2, 0xfc},
@@ -67,11 +67,11 @@ namespace FLOPPY {
     };
 
     floppy_format IBM_720_kB {
-            .name               = "IBM 720kB standard (DS,SD,80 tracks,9 sec/track)",
+            .name               = "IBM 720kB (DS,DD,80 tracks,9 sec/track)",
             .floppy_size        = FLOPPY_SIZE::_3_5_inch,
             .data_rate_kHz      = 250,
             .number_of_tracks   = 80,
-            .double_sided       = true,
+            .number_of_heads    = 2,
             .sector_size        = 512,
             .sectors_per_track  = 9,
             .I_AM               = {0xc2, 0xc2, 0xc2, 0xfc},

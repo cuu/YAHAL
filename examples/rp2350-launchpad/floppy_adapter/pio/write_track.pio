@@ -1,0 +1,74 @@
+;
+; Copyright (c) 2025 A. Terstegge
+;
+; Write flux data to a floppy track.
+;
+; Hardware configuration:
+
+            .program write_track
+            .side_set 1
+
+            ;                           WRITE_DATA    cycles
+            ;-------------------------+-------------+--------
+
+            ; Enable WRITE_GATE
+            set     pins, 0             side 1      ;   1
+            mov     x, !NULL            side 1
+
+new_pulse:  set     y, 18               side 0  [1] ;   2
+delay_low:  jmp     y--, delay_low      side 0  [1] ;   19*2=38
+
+            ; Check for IRQ generation
+            mov     y, STATUS           side 1      ;   1
+            jmp     !y, delay1          side 1      ;   1
+            irq     0 rel               side 1      ;   1
+            jmp     get_len             side 1      ;   1
+delay1:     nop                         side 1  [1]
+
+get_len:    out     y, 8                side 1      ;   1
+delay_high: jmp     y--, delay_high     side 1  [1] ;   (val+1)*2
+
+            ; Start over with new flux pulse
+            jmp     x--, new_pulse      side 1      ;   1
+
+            ; Disable WRITE_GATE
+            set     pins, 1             side 1      ;   1
+
+            ; Wait for restart
+idle:       jmp     idle                side 1      ;   1
+
+
+% yahal {
+
+// SM running at 50000000, which will make sure that also
+// double density floppys (250kHz data rate) will have a
+// reported value less than 255 (so uint8_t still fits).
+#define PIO_WRITE_CLK 50000000
+
+void configure_write_SM(SM * sm, uint8_t write_gate_pin, uint8_t write_data_pin) {
+
+    // Set the PINDIR register
+    sm->setRegister(out_dest_t::PINDIRS, 1, write_data_pin, 1);
+
+    // Set SM clock rate
+    sm->setClock(PIO_WRITE_CLK);
+
+    // Set the wrap values
+    sm->setWrap(write_track_wrap_target, write_track_wrap);
+    // Configure EXECCTRL register
+    sm->regs.SM_EXECCTRL.STATUS_SEL     = SM_EXECCTRL_STATUS_SEL__TXLEVEL;
+    sm->regs.SM_EXECCTRL.STATUS_N       = 5;
+    //sm->regs.SM_EXECCTRL.SIDE_PINDIR    = 1;
+    // Configure the input shift register
+    sm->regs.SM_SHIFTCTRL.FJOIN_TX     = 1;
+    sm->regs.SM_SHIFTCTRL.PULL_THRESH  = 32; // pull 32 bits from FIFO
+    sm->regs.SM_SHIFTCTRL.OUT_SHIFTDIR = 1;  // shift right
+    sm->regs.SM_SHIFTCTRL.AUTOPULL     = 1;  // pull automatically
+    // Configure PINCTRL register
+    sm->regs.SM_PINCTRL.SIDESET_BASE    = write_data_pin;
+    sm->regs.SM_PINCTRL.SIDESET_COUNT   = 1;
+    sm->regs.SM_PINCTRL.SET_BASE        = write_gate_pin;
+    sm->regs.SM_PINCTRL.SET_COUNT       = 1;
+}
+
+%}

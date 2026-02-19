@@ -76,6 +76,7 @@ private:
     gpio_pin_t  _gpio;
     bool        _open_source {false};
     bool        _open_drain  {false};
+    bool        _high_gpio   {false};
     uint32_t    _mask {0};
 
     static function<void()> _intHandler[48];
